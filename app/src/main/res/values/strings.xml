@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="res_type" translatable="false"></string>
+
+    <string name="app_name">Basketball Scoreboard</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_confirm_new_game">Start new game?</string>
+    <string name="action_close">Close</string>
+    <string name="action_fullscreen">Fullscreen</string>
+    <string name="action_fullscreen_toggle">Toggle fullscreen</string>
+    <string name="action_new_game">New game</string>
+    <string name="action_save">Save</string>
+    <string name="action_save_result">Save game result?</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
+    <string name="action_share_via">Share via</string>
+    <string name="action_rate">Rate</string>
+    <string name="action_resluts">Results</string>
+    <string name="action_help">Help</string>
+    <string name="dont_ask">Don\'t ask again</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_new_neutral_option">Yes (Save result)</string>
+    <string name="confirm_new_game_message_win">Team %1$s won %2$d-%3$d.</string>
+    <string name="confirm_new_game_message_settings">Settings changed. Changes will take effect at the start of a new game.</string>
+    <string name="description_horn">Horn</string>
+    <string name="description_new_period">New period</string>
+    <string name="description_start_camera">Start camera</string>
+    <string name="description_whistle">Whistle</string>
+
+    <string name="final_result">Final</string>
+    <string name="team">Team</string>
+    <string name="timeout_clock" translatable="false">60.0</string>
+    <string name="timeout_title">Timeout</string>
+    <string name="shot_time" translatable="false">24</string>
+    <string name="main_time" translatable="false">10:00</string>
+    <string name="one_zero" translatable="false">0</string>
+    <string name="number_one" translatable="false">1</string>
+    <string name="quoter_one" translatable="false">Q1</string>
+    <string name="two_zeros" translatable="false">00</string>
+    <string name="minus" translatable="false">-</string>
+    <string name="plus1" translatable="false">+1</string>
+    <string name="plus3" translatable="false">+3</string>
+    <string name="minus1" translatable="false">-1</string>
+    <string name="set_main_time">Set time</string>
+    <string name="edit_team_name">Enter new team name</string>
+    <string name="edit_home_name">Enter new home team name</string>
+    <string name="edit_guest_name">Enter new guest team name</string>
+    <string name="edit_name">Enter new name</string>
+
+    <string name="label_timeouts">timeouts</string>
+    <string name="label_timeouts_left">TO left</string>
+    <string name="label_timeout_full" translatable="false">full</string>
+    <string name="label_timeout_20" translatable="false">:20</string>
+    <string name="label_fouls">fouls</string>
+    <string name="label_period">period</string>
+
+    <string name="toast_confirm_exit">Click again to exit</string>
+
+
+    <string name="help_text">Interface interaction.\n
+        \n
+        Single tap provides expected action:\n
+        - main clock: start/pause;\n
+        - shot clock: start new or switch to short possession (if enabled in settings);\n
+        - score: increase value by 2;\n
+        - period: set new period and set to default corresponding values.\n
+        \n
+        Long press on both main and shot clock allows to change value.\n
+        Long press on other elements will set default value or null it.\n
+        Actions on long press work only if the game does not go.</string>
+
+    <string name="timeout_format_1">%1$d minutes break</string>
+    <string name="timeout_format_2">%1$s %2$d seconds timeout</string>
+    <string-array name="timeout_variants">
+        <item>2 minutes break</item>
+        <item>15 minutes break</item>
+        <item>20 seconds timeout</item>
+        <item>60 seconds timeout</item>
+        <item>100 seconds timeout</item>
+    </string-array>
+
+    <string-array name="new_period_variants">
+        <item>Regular period</item>
+        <item>Overtime</item>
+    </string-array>
+    <string name="title_activity_results">Results history</string>
+    <string name="choose_game">Choose game</string>
+    <string name="save_picture">save picture</string>
+    <string name="camera_take_picture">Take picture</string>
+    <string name="action_delete">Delete</string>
+    <string name="cab_subtitle">Selected %1$d</string>
+    <string name="cab_success">Results deleted</string>
+    <string name="no_results">No saved games</string>
+
+</resources>

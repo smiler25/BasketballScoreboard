@@ -1,0 +1,7 @@
+<resources>
+
+    <dimen name="led_simple_font_size">120dp</dimen>
+    <dimen name="simple_name_font_size">40sp</dimen>
+    <dimen name="no_led_font_size">30sp</dimen>
+
+</resources>

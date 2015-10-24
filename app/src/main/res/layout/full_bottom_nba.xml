@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="5"
+    android:rowCount="2"
+    android:layout_gravity="center"
+    android:stretchMode="spacingWidth"
+    android:id="@+id/full_bottom"
+    >
+
+    <TableRow>
+        <TextView
+            android:id="@+id/homeTimeoutsLabel"
+            style="@style/label"
+            android:text="@string/label_timeouts_left"
+            android:layout_weight="1"
+            android:layout_marginBottom="@dimen/label_margin2"
+            />
+        <TextView
+            android:id="@+id/homeFoulsLabel"
+            style="@style/label"
+            android:layout_weight="1"
+            android:text="@string/label_fouls"
+            />
+        <TextView
+            android:id="@+id/periodLabel"
+            style="@style/label"
+            android:text="@string/label_period"
+            android:layout_weight="6"
+            />
+        <TextView
+            android:id="@+id/guestFoulsLabel"
+            style="@style/label"
+            android:text="@string/label_fouls"
+            android:layout_weight="1"
+            />
+        <TextView
+            android:id="@+id/guestTimeoutsLabel"
+            style="@style/label"
+            android:text="@string/label_timeouts_left"
+            android:layout_weight="1"
+            android:layout_marginBottom="@dimen/label_margin2"
+            />
+    </TableRow>
+
+    <TableRow>
+        <TableLayout android:layout_weight="1">
+            <TableRow>
+                <TextView
+                    android:id="@+id/homeTimeoutsFullLabel"
+                    style="@style/label"
+                    android:text="@string/label_timeout_full"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:id="@+id/homeTimeouts20Label"
+                    style="@style/label"
+                    android:text="@string/label_timeout_20"
+                    android:layout_weight="1"
+                    />
+                </TableRow>
+            <TableRow>
+                <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+                    android:id="@+id/homeTimeoutsView"
+                    style="@style/nbaTimeoutsStyle"
+                    android:layout_weight="1"
+                    android:text="@string/one_zero"
+                    />
+                <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+                    android:id="@+id/homeTimeouts20View"
+                    style="@style/nbaTimeoutsStyle"
+                    android:layout_weight="1"
+                    android:text="@string/one_zero"
+                    />
+            </TableRow>
+        </TableLayout>
+
+        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            android:id="@+id/homeFoulsView"
+            style="@style/bottomLineStyle"
+            android:layout_weight="1"
+            android:text="@string/one_zero"
+            />
+
+        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            android:id="@+id/periodView"
+            style="@style/bottomLineStyle"
+            android:layout_weight="6"
+            android:text="@string/number_one"
+            android:padding="@dimen/period_view_padding"
+            android:maxWidth="@dimen/period_max_width" />
+
+        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            android:id="@+id/guestFoulsView"
+            style="@style/bottomLineStyle"
+            android:layout_weight="1"
+            android:text="@string/one_zero"
+            />
+
+        <TableLayout android:layout_weight="1">
+            <TableRow>
+                <TextView
+                    android:id="@+id/guestTimeouts20Label"
+                    style="@style/label"
+                    android:text="@string/label_timeout_20"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:id="@+id/guestTimeoutsFullLabel"
+                    style="@style/label"
+                    android:text="@string/label_timeout_full"
+                    android:layout_weight="1"
+                    />
+            </TableRow>
+            <TableRow>
+                <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+                    android:id="@+id/guestTimeouts20View"
+                    style="@style/nbaTimeoutsStyle"
+                    android:layout_weight="1"
+                    android:text="@string/one_zero"
+                    />
+                <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+                    android:id="@+id/guestTimeoutsView"
+                    style="@style/nbaTimeoutsStyle"
+                    android:layout_weight="1"
+                    android:text="@string/one_zero"
+                    />
+            </TableRow>
+        </TableLayout>
+
+    </TableRow>
+
+</TableLayout>

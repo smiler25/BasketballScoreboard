@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+    <PreferenceScreen
+        android:key="time_screen"
+        android:title="@string/time_screen"
+        >
+        <!--android:summary="%s" >-->
+
+        <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+            android:key="regular_time_length"
+            android:title="@string/main_time_length"
+            android:defaultValue="@string/main_time_length_default"
+            max="60"
+            min="1" />
+
+        <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+            android:key="overtime_length"
+            android:title="@string/overtime_length"
+            android:defaultValue="@string/overtime_length_default"
+            max="60"
+            min="1" />
+
+        <CheckBoxPreference
+            android:key="direct_timer"
+            android:title="@string/direct_timer"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="enable_shot_time"
+            android:title="@string/enable_shot_time"
+            android:defaultValue="true" />
+
+        <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+            android:key="shot_time_length"
+            android:dependency="enable_shot_time"
+            android:title="@string/shot_time_length"
+            android:defaultValue="@string/shot_time_length_default"
+            max="60"
+            min="1" />
+
+        <CheckBoxPreference
+            android:key="enable_short_shot_time"
+            android:dependency="enable_shot_time"
+            android:title="@string/enable_short_shot_time"
+            android:defaultValue="true" />
+
+        <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+            android:key="short_shot_time_length"
+            android:dependency="enable_short_shot_time"
+            android:title="@string/short_shot_time_length"
+            android:defaultValue="@string/short_shot_time_length_default"
+            max="60"
+            min="1" />
+
+    </PreferenceScreen>
+
+    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+        android:key="number_of_regular_periods"
+        android:title="@string/number_of_regular_periods"
+        android:defaultValue="@string/number_of_regular_periods_default"
+        max="10"
+        min="1" />
+
+    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+        android:key="pref_max_fouls"
+        android:title="@string/max_fouls"
+        android:defaultValue="@string/max_fouls_default"
+        max="10"
+        min="1" />
+
+    <ListPreference
+        android:key="list_timeout_rules"
+        android:title="@string/pref_timeouts_rules"
+        android:defaultValue="0"
+        android:summary="%s"
+        android:entries="@array/pref_timeouts_rules_titles"
+        android:entryValues="@array/pref_values_0_2"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.smiler.basketball_scoreboard.elements.EditTextPreference
+        android:key="home_team_name"
+        android:title="@string/home_team_name"
+        android:defaultValue="@string/home_team_name_default"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:singleLine="true"
+        android:maxLength="25"
+        android:maxLines="1" />
+
+    <com.smiler.basketball_scoreboard.elements.EditTextPreference
+        android:key="guest_team_name"
+        android:title="@string/guest_team_name"
+        android:defaultValue="@string/guest_team_name_default"
+        android:selectAllOnFocus="true"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLength="25"
+        android:maxLines="1" />
+
+
+    <ListPreference
+        android:key="list_actual_time"
+        android:title="@string/pref_clear_time"
+        android:defaultValue="1"
+        android:summary="%s"
+        android:entries="@array/pref_clear_time_titles"
+        android:entryValues="@array/pref_values_0_3"
+        />
+
+
+    <PreferenceCategory
+        android:key="@string/default_category"
+        android:title="@string/default_category"
+        >
+
+        <com.smiler.basketball_scoreboard.elements.SetDefaultPreference
+            android:key="set_official_rules"
+            android:title="@string/pref_default_prefs"
+            android:dialogMessage="@string/set_default_dialog_message"
+            android:positiveButtonText="@string/nba"
+            android:negativeButtonText="@string/fiba"
+            />
+        <!--android:summary="Revert all settings to their default values."-->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/app_category">
+
+        <ListPreference
+            android:key="list_layout"
+            android:title="@string/pref_layout"
+            android:defaultValue="0"
+            android:summary="%s"
+            android:entries="@array/pref_layout_titles"
+            android:entryValues="@array/pref_values_0_1"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <ListPreference
+            android:key="list_auto_sounds"
+            android:title="@string/pref_auto_sounds"
+            android:defaultValue="0"
+            android:summary="%s"
+            android:entries="@array/pref_auto_sounds_titles"
+            android:entryValues="@array/pref_values_0_3"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+
+        <ListPreference
+            android:key="auto_save_results"
+            android:title="@string/pref_auto_save_save_results"
+            android:defaultValue="0"
+            android:summary="%s"
+            android:entries="@array/pref_auto_save_save_results_titles"
+            android:entryValues="@array/pref_values_0_2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <CheckBoxPreference
+            android:key="pause_on_sound"
+            android:title="@string/pref_pause_on_sound"
+            android:summary="@string/pref_pause_on_sound_descr"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="auto_show_break"
+            android:title="@string/pref_auto_break"
+            android:summary="@string/pref_auto_break_descr"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="auto_show_timeout"
+            android:title="@string/pref_auto_timeout"
+            android:summary="@string/pref_auto_timeout_descr"
+            android:defaultValue="true" />
+
+        <!--<CheckBoxPreference
+            android:key="auto_save_results"
+            android:title="@string/pref_save_on_exit"
+            android:defaultValue="true" />-->
+
+        <CheckBoxPreference
+            android:key="save_on_exit"
+            android:title="@string/pref_save_on_exit"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

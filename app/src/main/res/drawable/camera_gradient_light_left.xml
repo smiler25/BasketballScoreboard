@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:type="linear"
+        android:angle="-90"
+        android:startColor="@color/camera_color1"
+        android:centerColor="@color/camera_color1"
+        android:endColor="@color/camera_color2"
+        />
+
+    <corners
+        android:topLeftRadius="2dp"
+        android:bottomLeftRadius="2dp"
+        />
+
+</shape>

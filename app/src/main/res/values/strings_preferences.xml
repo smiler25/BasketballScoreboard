@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+    <string name="time_category">Time settings</string>
+    <string name="default_category">Default values</string>
+    <string name="app_category">App behavior</string>
+
+    <string name="main_time_length">Main period duration (minutes)</string>
+    <string name="main_time_length_default" translatable="false">10</string>
+    <string name="overtime_length">Overtime duration (minutes)</string>
+    <string name="overtime_length_default" translatable="false">5</string>
+    <string name="direct_timer">Use direct timer</string>
+    <string name="shot_time_length">Shot clock (seconds)</string>
+    <string name="shot_time_length_default" translatable="false">24</string>
+    <string name="enable_shot_time">Enable shot clock</string>
+    <string name="enable_short_shot_time">Enable short shot clock</string>
+    <string name="short_shot_time_length">Short shot clock (seconds)</string>
+    <string name="short_shot_time_length_default" translatable="false">14</string>
+    <string name="number_of_regular_periods">Number of regular periods</string>
+    <string name="number_of_regular_periods_default" translatable="false">4</string>
+    <string name="max_fouls">Accumulate team fouls</string>
+    <string name="max_fouls_default" translatable="false">5</string>
+    <string name="max_timeouts">Maximum timeouts</string>
+    <string name="max_timeouts_default" translatable="false">3</string>
+    <string name="home_team_name">Default home team name</string>
+    <string name="home_team_name_default">HOME</string>
+    <string name="guest_team_name">Default guest team name</string>
+    <string name="guest_team_name_default">GUEST</string>
+    <string name="pref_pause_on_sound">Pause on sound</string>
+    <string name="pref_pause_on_sound_descr">Stop times if whistle or horn sounded</string>
+    <string name="pref_auto_break">Show break time</string>
+    <string name="pref_auto_break_descr">Automatically show break interval timer when period is over</string>
+    <string name="pref_auto_timeout">Show timeout</string>
+    <string name="pref_auto_timeout_descr">Automatically show countdown timer if timeout was taken</string>
+    <string name="pref_save_on_exit">Save current state on exit</string>
+    <string name="set_default_dialog_message">Set values according to official rules.</string>
+    <string name="fiba" translatable="false">FIBA</string>
+    <string name="nba" translatable="false">NBA</string>
+
+
+    <string name="pref_clear_time">Actual playing time</string>
+    <string-array name="pref_clear_time_titles">
+        <item>Don\'t use</item>
+        <item>Pause only if foul</item>
+        <item>Pause if foul or score changed</item>
+        <item>Pause if foul or score changed in 1 minute before end</item>
+    </string-array>
+
+    <string name="pref_auto_sounds">Play sounds</string>
+    <string-array name="pref_auto_sounds_titles">
+        <item>Off</item>
+        <item>On shot clock expire</item>
+        <item>On main time expire</item>
+        <item>On main time or shot clock expire</item>
+    </string-array>
+
+    <string name="pref_auto_save_save_results">Save result before start new game</string>
+    <string-array name="pref_auto_save_save_results_titles">
+        <item>On</item>
+        <item>Off</item>
+        <item>Show dialog</item>
+    </string-array>
+
+    <string name="pref_timeouts_rules">Timeouts rules</string>
+    <string-array name="pref_timeouts_rules_titles">
+        <item>Don\'t use</item>
+        <item>FIBA</item>
+        <item>NBA</item>
+    </string-array>
+
+    <string name="pref_default_prefs">Settings according to rules</string>
+    <string-array name="pref_default_prefs_titles" translatable="false">
+        <item>FIBA</item>
+        <item>NBA</item>
+    </string-array>
+
+    <string name="pref_layout">Layout</string>
+    <string-array name="pref_layout_titles">
+        <item>Full with shot clock, period, fouls and timeouts</item>
+        <item>Simple without shot clock, period, fouls and timeouts</item>
+    </string-array>
+
+    <string-array name="pref_values_0_1" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_values_0_2" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_values_0_3" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="pref_choose_sound">Choose sound</string>
+    <string name="time_screen">Time settings</string>
+
+</resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera_line"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_gravity="bottom|center_horizontal"
+    android:background="@drawable/camera_shape"
+    >
+
+        <TextView
+            android:id="@+id/camera_home_name"
+            style="@style/cameraLineView"
+            android:background="@drawable/camera_gradient_light_left"
+            android:maxLength="5"
+            android:text="@string/home_team_name_default" />
+
+        <TextView
+            android:id="@+id/camera_home_score"
+            style="@style/cameraLineView"
+            android:background="@drawable/camera_gradient_light"
+            android:text="@string/two_zeros" />
+
+        <TextView
+            style="@style/cameraLineView"
+            android:minWidth="2dp"
+            android:background="@drawable/camera_gradient_light"
+            android:text="@string/minus" />
+
+        <TextView
+            android:id="@+id/camera_guest_score"
+            style="@style/cameraLineView"
+            android:background="@drawable/camera_gradient_light"
+            android:text="@string/two_zeros" />
+
+        <TextView
+            android:id="@+id/camera_guest_name"
+            style="@style/cameraLineView"
+            android:background="@drawable/camera_gradient_light"
+            android:maxLength="5"
+            android:text="@string/guest_team_name_default" />
+
+        <TextView
+            android:id="@+id/camera_period"
+            style="@style/cameraLineView"
+            android:text="@string/quoter_one" />
+
+        <TextView
+            android:id="@+id/camera_time"
+            style="@style/cameraLineView"
+            android:text="@string/main_time" />
+
+        <TextView
+            android:id="@+id/camera_shot_clock"
+            style="@style/cameraLineView"
+            android:text="@string/shot_time" />
+
+</LinearLayout>

@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'smiler_key'
+            keyPassword 'Z(zO_:/P0-xB&F9+g3~$79Y8z}6F~Oa='
+            storeFile file('C:/Users/smiler/Documents/AndroidStudio/smiler_key.jks')
+            storePassword 'Ks-K_CYOogL5Q{k32(Qp=k\')RC:H_uN('
+        }
+    }
+    compileSdkVersion 22
+    buildToolsVersion "21.1.2"
+    defaultConfig {
+        applicationId "com.smiler.scoreboard"
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 4
+        versionName "1.2.1"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile('com.mikepenz.materialdrawer:library:2.9.2@aar') {
+        transitive = true
+    }
+}

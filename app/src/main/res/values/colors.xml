@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="mainBackground">#ff000000</color>
+    <color name="black">#ff000000</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="colorPrimary">#ff9800</color>
+    <color name="colorPrimaryDark">#f57c00</color>
+    <!--<color name="colorPrimaryLight">#ffcc80</color>-->
+    <color name="colorPrimaryLight">#ffb74d</color>
+    <color name="window_background">#ff653c41</color>
+    <color name="white">#ffffff</color>
+    <color name="red">#fffe1508</color>
+    <color name="orange">#fffea31d</color>
+    <color name="green">#ff00aa00</color>
+    <color name="floating_fragment">#ff2a2a2a</color>
+    <color name="pref_system_bars">#ff252525</color>
+    <color name="result_table_item_color">#97249eff</color>
+    <color name="result_table_header_color">@color/colorPrimaryLight</color>
+    <color name="pressed_color">#fff3e0</color>
+    <color name="cab_color">#757575</color>
+
+    <color name="camera_background">#c8bbe7fd</color>
+    <color name="camera_text">#333333</color>
+    <color name="camera_border">#b696d7f9</color>
+    <color name="camera_color1">#1b6fc2</color>
+    <color name="camera_color2">#02488c</color>
+    <color name="camera_color4">#005cb4</color>
+    <color name="camera_color5">#004587</color>
+
+</resources>

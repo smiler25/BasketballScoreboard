@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/floating_fragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_title"
+        android:text="@string/set_main_time"
+        android:textSize="@dimen/dialog_title_font_size"
+        android:gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
+            android:id="@+id/pickerMinutes"
+            style="@style/numberPicker"
+            max="60"
+            min="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"/>
+
+        <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
+            android:id="@+id/pickerSeconds"
+            style="@style/numberPicker"
+            max="59"
+            min="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="."/>
+
+        <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
+            android:id="@+id/pickerMillis"
+            style="@style/numberPicker"
+            max="9"
+            min="0" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonApply"
+        android:text="@string/action_apply"/>
+
+</LinearLayout>

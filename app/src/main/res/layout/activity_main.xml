@@ -1,0 +1,188 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/board_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
+    android:orientation="vertical">
+
+    <!-- first line -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/matchParentCenter"
+            android:layout_weight="1" >
+
+            <ImageView
+                style="@style/matchParentCenter"
+                android:id="@+id/hornView"
+                android:layout_weight="1"
+                android:scaleType="center"
+                android:contentDescription="@string/description_horn"
+                android:src="@drawable/ic_bullhorn" />
+
+            <ImageView
+                style="@style/matchParentCenter"
+                android:id="@+id/whistleView"
+                android:layout_weight="1"
+                android:scaleType="center"
+                android:contentDescription="@string/description_whistle"
+                android:src="@drawable/ic_whistle" />
+
+        </LinearLayout>
+
+
+        <TextView
+            style="@style/matchParentCenter"
+            android:layout_weight="2"
+            android:maxWidth="@dimen/team_name_max_width"
+            android:id="@+id/homeNameView"
+            android:text="@string/home_team_name_default"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/team_name_font_size" />
+
+        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            style="@style/ledDigitsWeight2"
+            android:layout_weight="2"
+            android:id="@+id/mainTimeView"
+            android:text="@string/main_time"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            style="@style/matchParentCenter"
+            android:layout_weight="2"
+            android:maxWidth="@dimen/team_name_max_width"
+            android:id="@+id/guestNameView"
+            android:text="@string/guest_team_name_default"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/team_name_font_size" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/matchParentCenter"
+            android:layout_weight="1" >
+
+            <ImageView
+                style="@style/matchParentCenter"
+                android:layout_weight="1"
+                android:id="@+id/cameraView"
+                android:contentDescription="@string/description_start_camera"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_dock" />
+
+            <ImageView
+                style="@style/matchParentCenter"
+                android:layout_weight="1"
+                android:id="@+id/rightIconView"
+                android:contentDescription="@string/label_timeouts"
+                android:scaleType="center"
+                android:src="@drawable/ic_timeout" />
+        </LinearLayout>
+        
+
+
+    </LinearLayout>
+    <!-- end of first line -->
+
+
+    <!-- second line -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/matchParentCenter"
+            android:layout_weight="1" >
+
+
+            <TextView
+                style="@style/scoreChangers"
+                android:layout_weight="1"
+                android:id="@+id/plus1HomeView"
+                android:text="@string/plus1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                style="@style/scoreChangers"
+                android:layout_weight="1"
+                android:id="@+id/plus3HomeView"
+                android:text="@string/plus3"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                style="@style/scoreChangers"
+                android:layout_weight="1"
+                android:id="@+id/minus1HomeView"
+                android:text="@string/minus1"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+        </LinearLayout>
+
+         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            style="@style/scoreStyle"
+            android:layout_weight="2"
+            android:id="@+id/homeScoreView"
+            android:text="@string/two_zeros"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            style="@style/ledDigitsWeight2"
+            android:layout_weight="2"
+            android:id="@+id/shotTimeView"
+            android:text="@string/shot_time"
+            android:maxWidth="@dimen/shot_time_max_width"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+            style="@style/scoreStyle"
+            android:layout_weight="2"
+            android:id="@+id/guestScoreView"
+            android:text="@string/two_zeros"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/matchParentCenter"
+            android:layout_weight="1" >
+
+            <TextView
+                style="@style/scoreChangers"
+                android:layout_weight="1"
+                android:id="@+id/plus1GuestView"
+                android:text="@string/plus1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                style="@style/scoreChangers"
+                android:layout_weight="1"
+                android:id="@+id/plus3GuestView"
+                android:text="@string/plus3"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                style="@style/scoreChangers"
+                android:layout_weight="1"
+                android:id="@+id/minus1GuestView"
+                android:text="@string/minus1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ViewStub
+        android:id="@+id/layout_stub"
+        android:inflatedId="@+id/full_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <!-- end of third line -->
+
+</LinearLayout>

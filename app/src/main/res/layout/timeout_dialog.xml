@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/floating_fragment"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_title"
+        android:text="@string/timeout_title"
+        android:textSize="@dimen/dialog_title_font_size"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        />
+
+    <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+        android:id="@+id/timeoutClock"
+        style="@style/ledDigits"
+        android:layout_gravity="center"
+        android:text="@string/timeout_clock"
+        android:textSize="@dimen/timeout_font_size"
+        android:textColor="@color/red"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonClose"
+        android:text="@string/action_close"/>
+
+</LinearLayout>
