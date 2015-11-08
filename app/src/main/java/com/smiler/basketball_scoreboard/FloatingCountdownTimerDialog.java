@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+
 public class FloatingCountdownTimerDialog extends DialogFragment {
 
     public String title = "Timeout";
@@ -15,6 +17,7 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
     private long timeLeft;
     private TextView clockView, titleView;
     private CountDownTimer timer;
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("ss.S");
 
 
     @Override
@@ -57,7 +60,9 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
         if (millis >= 60000) {
             clockView.setText(Constants.timeFormat.format(millis));
         } else {
-            clockView.setText(Constants.timeFormatMillis.format(millis));
+            clockView.setText(String.format(Constants.TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
+//            clockView.setText(timeFormat.format(millis));
+//            clockView.setText(Constants.timeFormatMillis.format(millis));
         }
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="res_type" translatable="false"></string>
+    <string name="res_type" translatable="false"> </string>
 
     <string name="app_name">Basketball Scoreboard</string>
     <string name="action_apply">Apply</string>

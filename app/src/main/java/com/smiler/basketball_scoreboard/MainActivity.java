@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        System.out.println(getResources().getString(R.string.res_type));
+
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
@@ -629,11 +631,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             hFoulsView.setText(Short.toString(hFouls));
             gFoulsView.setText(Short.toString(gFouls));
             long mainTimeTemp = mainTime;
-            System.out.println(mainTime);
             setPeriod();
-            System.out.println(mainTime);
             mainTime = mainTimeTemp;
-            System.out.println(mainTime);
             setTimeouts();
             hTimeoutsView.setText(Short.toString(hTimeouts));
             gTimeoutsView.setText(Short.toString(gTimeouts));
