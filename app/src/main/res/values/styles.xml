@@ -27,20 +27,6 @@
 
     </style>
 
-    <declare-styleable name="CustomFontTxtView">
-        <attr name="customFont" format="string" />
-    </declare-styleable>
-
-    <style name="matchParentCenter" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">wrap_content</item>
-        <!--<item name="android:layout_height">wrap_content</item>-->
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/red</item>
-        <!--<item name="android:padding">10dp</item>-->
-        <!--<item name="android:layout_margin">10dp</item>-->
-    </style>
-
     <style name="actionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="android:layout_height">150dp</item>
         <item name="background">@color/red</item>
@@ -48,16 +34,17 @@
         <!--<item name="actionModeBackground">@color/red</item>-->
         <!--<item name="actionMode">@color/red</item>-->
     </style>
-    <style name="scoreChangers" parent="matchParentCenter">
-        <item name="android:textSize">@dimen/no_led_font_size</item>
-        <item name="android:textColor">@color/red</item>
-    </style>
 
-    <style name="label" parent="matchParentCenter">
-        <item name="android:textSize">@dimen/label_font_size</item>
+    <declare-styleable name="CustomFontTxtView">
+        <attr name="customFont" format="string" />
+    </declare-styleable>
+
+    <style name="matchParentCenter">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--<item name="android:layout_height">match_parent</item>-->
+        <item name="android:gravity">center</item>
         <item name="android:textColor">@color/red</item>
-        <item name="android:layout_marginBottom">@dimen/label_margin</item>
-        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="ledDigits" parent="matchParentCenter">
@@ -65,22 +52,23 @@
         <!--<item name="android:layout_height">wrap_content</item>-->
     </style>
 
-    <style name="numberPicker">
-        <!--<item name="android:layout_width">match_parent</item>-->
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:orientation">vertical</item>
-    </style>
-
-
     <style name="ledDigitsWeight2" parent="ledDigits">
         <item name="android:textSize">@dimen/led_weight2_font_size</item>
         <item name="android:textColor">@color/red</item>
     </style>
 
-    <style name="scoreStyle" parent="ledDigitsWeight2">
+    <style name="mainTime" parent="ledDigits">
+        <item name="android:textSize">@dimen/main_time_size</item>
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+
+
+    <style name="scoreStyle" parent="ledDigits">
+        <item name="android:textSize">@dimen/score_size</item>
         <item name="android:textColor">@color/orange</item>
+        <item name="android:padding">@dimen/score_padding</item>
+        <item name="android:layout_margin">10dp</item>
     </style>
 
     <style name="scoreStyleSimple" parent="ledDigits">
@@ -90,7 +78,9 @@
 
     <style name="bottomLineStyle" parent="ledDigits">
         <item name="android:textColor">@color/green</item>
-        <item name="android:textSize">@dimen/led_weight1_font_size</item>
+        <item name="android:textSize">@dimen/bottom_line_size</item>
+        <item name="android:padding">@dimen/bottom_line_padding</item>
+        <item name="android:layout_margin">@dimen/bottom_line_elements_margin</item>
         <item name="android:layout_marginBottom">@dimen/bottom_line_margin</item>
     </style>
 
@@ -98,6 +88,27 @@
         <item name="android:textColor">@color/green</item>
         <item name="android:textSize">@dimen/led_nba_to_font_size</item>
         <item name="android:layout_marginBottom">@dimen/bottom_line_margin2</item>
+    </style>
+
+    <style name="scoreChangers" parent="matchParentCenter">
+        <item name="android:textSize">@dimen/score_changer_size</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:padding">@dimen/score_changer_padding</item>
+        <item name="android:layout_margin">@dimen/score_changer_margin</item>
+    </style>
+
+    <style name="label" parent="matchParentCenter">
+        <item name="android:textSize">@dimen/label_font_size</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:layout_marginBottom">@dimen/label_margin</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="numberPicker">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
     <style name="cameraLineView">

@@ -1,12 +1,13 @@
 <resources>
     <dimen name="led_weight1_font_size">170dp</dimen>
     <dimen name="led_weight2_font_size">180dp</dimen>
+    <dimen name="score_size">180dp</dimen>
+    <dimen name="shot_clock_size">60dp</dimen>
     <dimen name="led_nba_to_font_size">110dp</dimen>
     <dimen name="no_led_font_size">30sp</dimen>
     <dimen name="label_font_size">20sp</dimen>
     <dimen name="team_name_font_size">30sp</dimen>
     <dimen name="team_name_max_width">100dp</dimen>
-    <dimen name="shot_time_size">160dp</dimen>
     <dimen name="shot_time_max_width">110dp</dimen>
     <dimen name="period_view_padding">1dp</dimen>
     <dimen name="drawer_header_height">100dp</dimen>
@@ -18,6 +19,7 @@
     <dimen name="label_margin">2dp</dimen>
     <dimen name="help_text_size">20sp</dimen>
     <dimen name="drawer_width">320dp</dimen>
+    <dimen name="bottom_line_size">170dp</dimen>
 
 
     <!-- for simple layout-->

@@ -10,76 +10,134 @@
     android:id="@+id/full_bottom"
     >
 
-    <TableRow>
+    <TableRow
+        android:gravity="center"
+        >
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
         <TextView
             android:id="@+id/homeTimeoutsLabel"
             style="@style/label"
             android:text="@string/label_timeouts_left"
+            />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-             />
+            />
         <TextView
             android:id="@+id/homeFoulsLabel"
             style="@style/label"
-            android:layout_weight="1"
             android:text="@string/label_fouls"
-             />
+            />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
         <TextView
             android:id="@+id/periodLabel"
             style="@style/label"
             android:text="@string/label_period"
-            android:layout_weight="6"
-             />
+            />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
         <TextView
             android:id="@+id/guestFoulsLabel"
             style="@style/label"
             android:text="@string/label_fouls"
+            />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-             />
+            />
         <TextView
             android:id="@+id/guestTimeoutsLabel"
             style="@style/label"
             android:text="@string/label_timeouts_left"
+            />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-             />
+            />
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:gravity="center"
+        >
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             android:id="@+id/homeTimeoutsView"
             style="@style/bottomLineStyle"
-            android:layout_weight="1"
             android:text="@string/one_zero"
-             />
+            />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             android:id="@+id/homeFoulsView"
             style="@style/bottomLineStyle"
-            android:layout_weight="1"
             android:text="@string/one_zero"
-             />
+            />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             android:id="@+id/periodView"
             style="@style/bottomLineStyle"
-            android:layout_weight="6"
             android:text="@string/number_one"
-            android:padding="@dimen/period_view_padding"
-            android:maxWidth="@dimen/period_max_width"
+           />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             android:id="@+id/guestFoulsView"
             style="@style/bottomLineStyle"
-            android:layout_weight="1"
             android:text="@string/one_zero"
-             />
+            />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             android:id="@+id/guestTimeoutsView"
             style="@style/bottomLineStyle"
-            android:layout_weight="1"
             android:text="@string/one_zero"
+           />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             />
+
     </TableRow>
 
 </TableLayout>

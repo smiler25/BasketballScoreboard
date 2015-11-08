@@ -8,16 +8,31 @@
     <dimen name="led_weight1_font_size">85dp</dimen>
     <dimen name="led_nba_to_font_size">55dp</dimen>
     <dimen name="led_weight2_font_size">100dp</dimen>
+
+    <dimen name="main_time_size">100dp</dimen>
+
+    <dimen name="score_size">100dp</dimen>
+    <dimen name="score_padding">10dp</dimen>
+    <dimen name="score_margin">10dp</dimen>
+    <dimen name="shot_clock_size">90dp</dimen>
+    <dimen name="shot_time_max_width">90dp</dimen>
+    <dimen name="short_shot_clock_size">50dp</dimen>
+    <dimen name="short_shot_clock_margin">3dp</dimen>
+    <dimen name="icons_padding">3dp</dimen>
+    <dimen name="score_changer_size">15sp</dimen>
+    <dimen name="score_changer_margin">2dp</dimen>
+    <dimen name="score_changer_padding">5dp</dimen>
+
     <dimen name="no_led_font_size">15sp</dimen>
     <dimen name="label_font_size">10sp</dimen>
     <dimen name="team_name_font_size">20sp</dimen>
     <dimen name="team_name_max_width">60dp</dimen>
-    <dimen name="period_max_width">60dp</dimen>
-    <dimen name="shot_time_size">80dp</dimen>
-    <dimen name="shot_time_max_width">80dp</dimen>
+    <dimen name="period_max_width">150dp</dimen>
     <dimen name="period_view_padding">0dp</dimen>
+    <dimen name="bottom_line_size">85dp</dimen>
     <dimen name="bottom_line_margin">7dp</dimen>
     <dimen name="bottom_line_margin2">10dp</dimen>
+    <dimen name="bottom_line_padding">5dp</dimen>
     <dimen name="label_margin">1dp</dimen>
     <dimen name="label_margin2">0dp</dimen>
     <dimen name="drawer_header_height">60dp</dimen>
@@ -27,6 +42,7 @@
     <!-- for simple layout-->
     <dimen name="led_simple_font_size">160dp</dimen>
     <dimen name="simple_name_font_size">10sp</dimen>
+    <dimen name="simple_score_changer_size">20sp</dimen>
 
     <!-- results activity-->
     <dimen name="list_width">230dp</dimen>
@@ -41,4 +57,6 @@
     <dimen name="camera_text_size">15sp</dimen>
     <dimen name="camera_bottom_margin">15dp</dimen>
     <dimen name="camera_team_width">75dp</dimen>
+    <dimen name="bottom_line_elements_margin">5dp</dimen>
+
 </resources>

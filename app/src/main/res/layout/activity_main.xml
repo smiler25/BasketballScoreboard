@@ -4,81 +4,93 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <!-- first line -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2">
+        android:layout_weight="2"
+        android:gravity="center"
+        >
 
         <LinearLayout
             android:orientation="vertical"
             style="@style/matchParentCenter"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:gravity="center"
+            >
 
             <ImageView
                 style="@style/matchParentCenter"
                 android:id="@+id/hornView"
                 android:layout_weight="1"
+                android:padding="@dimen/icons_padding"
                 android:scaleType="center"
                 android:contentDescription="@string/description_horn"
-                android:src="@drawable/ic_bullhorn" />
+                android:src="@drawable/ic_bullhorn"
+                />
 
             <ImageView
                 style="@style/matchParentCenter"
                 android:id="@+id/whistleView"
                 android:layout_weight="1"
                 android:scaleType="center"
+                android:padding="@dimen/icons_padding"
                 android:contentDescription="@string/description_whistle"
-                android:src="@drawable/ic_whistle" />
+                android:src="@drawable/ic_whistle"
+                />
 
         </LinearLayout>
 
-
         <TextView
+            android:id="@+id/homeNameView"
             style="@style/matchParentCenter"
             android:layout_weight="2"
             android:maxWidth="@dimen/team_name_max_width"
-            android:id="@+id/homeNameView"
             android:text="@string/home_team_name_default"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="@dimen/team_name_font_size" />
+            android:textSize="@dimen/team_name_font_size"
+            />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            style="@style/ledDigitsWeight2"
-            android:layout_weight="2"
             android:id="@+id/mainTimeView"
+            style="@style/mainTime"
+            android:layout_weight="2"
             android:text="@string/main_time"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            />
 
         <TextView
+            android:id="@+id/guestNameView"
             style="@style/matchParentCenter"
             android:layout_weight="2"
             android:maxWidth="@dimen/team_name_max_width"
-            android:id="@+id/guestNameView"
             android:text="@string/guest_team_name_default"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="@dimen/team_name_font_size" />
+            android:textSize="@dimen/team_name_font_size"
+            />
 
         <LinearLayout
             android:orientation="vertical"
             style="@style/matchParentCenter"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:gravity="center"
+            >
 
             <ImageView
+                android:id="@+id/cameraView"
                 style="@style/matchParentCenter"
                 android:layout_weight="1"
-                android:id="@+id/cameraView"
+                android:padding="@dimen/icons_padding"
                 android:contentDescription="@string/description_start_camera"
                 android:scaleType="center"
                 android:src="@drawable/ic_action_dock" />
 
             <ImageView
+                android:id="@+id/rightIconView"
                 style="@style/matchParentCenter"
                 android:layout_weight="1"
-                android:id="@+id/rightIconView"
+                android:padding="@dimen/icons_padding"
                 android:contentDescription="@string/label_timeouts"
                 android:scaleType="center"
                 android:src="@drawable/ic_timeout" />
@@ -92,76 +104,94 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2">
+        android:layout_weight="2"
+        android:gravity="center"
+        >
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
 
         <LinearLayout
             android:orientation="vertical"
             style="@style/matchParentCenter"
-            android:layout_weight="1" >
+            >
 
 
             <TextView
+                android:id="@+id/plus1HomeView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
-                android:id="@+id/plus1HomeView"
                 android:text="@string/plus1"
                 />
 
             <TextView
+                android:id="@+id/plus3HomeView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
-                android:id="@+id/plus3HomeView"
                 android:text="@string/plus3"
                 />
 
             <TextView
+                android:id="@+id/minus1HomeView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
-                android:id="@+id/minus1HomeView"
                 android:text="@string/minus1"
                 />
         </LinearLayout>
 
          <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            style="@style/scoreStyle"
-            android:layout_weight="2"
-            android:id="@+id/homeScoreView"
-            android:text="@string/two_zeros"
+             android:id="@+id/homeScoreView"
+             style="@style/scoreStyle"
+             android:text="@string/two_zeros"
+            />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             />
 
         <LinearLayout
             android:orientation="vertical"
             style="@style/matchParentCenter"
-            android:layout_weight="2"
+            android:layout_weight="1"
             >
 
             <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                style="@style/ledDigitsWeight2"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="2"
                 android:id="@+id/shotTimeView"
-                android:text="@string/shot_time"
-                android:maxWidth="@dimen/shot_time_max_width"
-                android:textSize="80dp"
-                />
-
-            <TextView
-                android:id="@+id/shotTimeSwitch"
-                style="@style/label"
+                style="@style/ledDigits"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:text="@string/switch_shot_clock"
-                android:layout_weight="2"
-                android:layout_marginBottom="@dimen/label_margin2"
+                android:text="@string/shot_time"
+                android:maxWidth="@dimen/shot_time_max_width"
+                android:textSize="@dimen/shot_clock_size"
+                android:minWidth="@dimen/shot_clock_size"
+                />
+
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+                android:id="@+id/shotTimeSwitch"
+                style="@style/ledDigits"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/short_shot_clock"
+                android:layout_marginTop="@dimen/short_shot_clock_margin"
+                android:textSize="@dimen/short_shot_clock_size"
+                android:textColor="@color/light_red"
                 />
 
         </LinearLayout>
 
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            style="@style/scoreStyle"
-            android:layout_weight="2"
             android:id="@+id/guestScoreView"
+            style="@style/scoreStyle"
             android:text="@string/two_zeros"
             />
 
@@ -169,29 +199,35 @@
         <LinearLayout
             android:orientation="vertical"
             style="@style/matchParentCenter"
-            android:layout_weight="1" >
+            >
 
             <TextView
-                style="@style/scoreChangers"
-                android:layout_weight="1"
                 android:id="@+id/plus1GuestView"
+                style="@style/scoreChangers"
+                android:layout_weight="1"
                 android:text="@string/plus1"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                />
 
             <TextView
-                style="@style/scoreChangers"
-                android:layout_weight="1"
                 android:id="@+id/plus3GuestView"
-                android:text="@string/plus3"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
                 style="@style/scoreChangers"
                 android:layout_weight="1"
+                android:text="@string/plus3"
+                />
+
+            <TextView
                 android:id="@+id/minus1GuestView"
+                style="@style/scoreChangers"
+                android:layout_weight="1"
                 android:text="@string/minus1"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                />
         </LinearLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
 
     </LinearLayout>
 
@@ -200,6 +236,7 @@
         android:inflatedId="@+id/full_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         />
     <!-- end of third line -->
 

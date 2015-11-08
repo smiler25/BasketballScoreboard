@@ -11,6 +11,7 @@
     <color name="window_background">#ff653c41</color>
     <color name="white">#ffffff</color>
     <color name="red">#fffe1508</color>
+    <color name="light_red">#ff5e54</color>
     <color name="orange">#fffea31d</color>
     <color name="green">#ff00aa00</color>
     <color name="floating_fragment">#ff2a2a2a</color>

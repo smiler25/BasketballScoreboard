@@ -6,10 +6,17 @@
     <dimen name="label_font_size">20sp</dimen>
     <dimen name="team_name_font_size">30sp</dimen>
     <dimen name="team_name_max_width">100dp</dimen>
-    <dimen name="shot_time_size">160dp</dimen>
     <dimen name="shot_time_max_width">110dp</dimen>
     <dimen name="period_view_padding">1dp</dimen>
     <dimen name="drawer_header_height">100dp</dimen>
+
+    <dimen name="main_time_size">180dp</dimen>
+    <dimen name="score_size">180dp</dimen>
+    <dimen name="shot_clock_size">130dp</dimen>
+    <dimen name="short_shot_clock_size">60dp</dimen>
+    <dimen name="short_shot_clock_margin">4dp</dimen>
+    <dimen name="score_changer_size">30sp</dimen>
+    <dimen name="bottom_line_size">170dp</dimen>
 
     <dimen name="timeout_font_size">220dp</dimen>
     <dimen name="dialog_title_font_size">40sp</dimen>

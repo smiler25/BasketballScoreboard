@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="res_type" translatable="false"> </string>
+    <string name="res_type" translatable="false">-</string>
 
     <string name="app_name">Basketball Scoreboard</string>
     <string name="action_apply">Apply</string>
@@ -48,7 +48,7 @@
     <string name="edit_guest_name">Enter new guest team name</string>
     <string name="edit_name">Enter new name</string>
 
-    <string name="switch_shot_clock" translatable="false">14</string>
+    <string name="short_shot_clock" translatable="false">14</string>
     <string name="label_timeouts">timeouts</string>
     <string name="label_timeouts_left">TO left</string>
     <string name="label_timeout_full" translatable="false">full</string>

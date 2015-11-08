@@ -106,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        System.out.println("getResources().getString(R.string.res_type)");
+        System.out.println(getResources().getString(R.string.res_type));
+
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
@@ -825,7 +828,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void newGame() {
         if (PrefActivity.gamePrefChanged || PrefActivity.appPrefChanged) {
             getSettings();
-            if (enableShotTime) {
+            if (enableShotTime && layout == 0 && !layoutChanged) {
                 shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
             }
         }
