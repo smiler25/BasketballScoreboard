@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView hScoreView, gScoreView;
     private TextView hTimeoutsView, hTimeouts20View;
     private TextView gTimeoutsView, gTimeouts20View;
-    private TextView hFoulsView;
-    private TextView gFoulsView;
+    private TextView hFoulsView, gFoulsView;
+    private TextView shotTimeSwitchView;
     private Drawer.Result drawer;
 
     private int layout, autoSaveResults, autoSound, actualTime, timeoutRules;
@@ -105,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        System.out.println(getResources().getString(R.string.res_type));
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
@@ -217,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hFoulsView = (TextView) findViewById(R.id.homeFoulsView);
         gFoulsView = (TextView) findViewById(R.id.guestFoulsView);
         shotTimeView = (TextView) findViewById(R.id.shotTimeView);
+        shotTimeSwitchView = (TextView) findViewById(R.id.shotTimeSwitch);
 
         periodView.setOnClickListener(this);
         hFoulsView.setOnClickListener(this);
@@ -229,8 +228,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (enableShotTime) {
             shotTimeView.setOnClickListener(this);
             shotTimeView.setOnLongClickListener(this);
+            shotTimeSwitchView.setOnClickListener(this);
+            shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
         } else {
             shotTimeView.setVisibility(View.INVISIBLE);
+            shotTimeSwitchView.setVisibility(View.INVISIBLE);
         }
 
         initBottomLineTimeouts();
@@ -437,6 +439,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         shotTime = shotTimePref;
                     }
+                    setShotTimeText(shotTime);
+                }
+                break;
+            case R.id.shotTimeSwitch:
+                shotTickInterval = Constants.SECOND;
+                if (shotTimer != null && enableShotTime && shotTimerOn) { shotTimer.cancel(); }
+                shotTime = shortShotTimePref;
+                if (mainTimerOn) {
+                    startShotCountDownTimer(shortShotTimePref);
+                } else {
                     setShotTimeText(shotTime);
                 }
                 break;
@@ -811,7 +823,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void newGame() {
-        if (PrefActivity.gamePrefChanged || PrefActivity.appPrefChanged) { getSettings(); }
+        if (PrefActivity.gamePrefChanged || PrefActivity.appPrefChanged) {
+            getSettings();
+            if (enableShotTime) {
+                shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
+            }
+        }
         if (layoutChanged || timeoutsRulesChanged) {
             if (layout == 0) {
                 initExtensiveLayout();

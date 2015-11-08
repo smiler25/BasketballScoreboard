@@ -83,12 +83,9 @@
                 android:scaleType="center"
                 android:src="@drawable/ic_timeout" />
         </LinearLayout>
-        
-
 
     </LinearLayout>
     <!-- end of first line -->
-
 
     <!-- second line -->
     <LinearLayout
@@ -108,21 +105,21 @@
                 android:layout_weight="1"
                 android:id="@+id/plus1HomeView"
                 android:text="@string/plus1"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                />
 
             <TextView
                 style="@style/scoreChangers"
                 android:layout_weight="1"
                 android:id="@+id/plus3HomeView"
                 android:text="@string/plus3"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                />
 
             <TextView
                 style="@style/scoreChangers"
                 android:layout_weight="1"
                 android:id="@+id/minus1HomeView"
                 android:text="@string/minus1"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
+                />
         </LinearLayout>
 
          <com.smiler.basketball_scoreboard.elements.CustomFontTextView
@@ -130,22 +127,43 @@
             android:layout_weight="2"
             android:id="@+id/homeScoreView"
             android:text="@string/two_zeros"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            />
 
-        <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            style="@style/ledDigitsWeight2"
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/matchParentCenter"
             android:layout_weight="2"
-            android:id="@+id/shotTimeView"
-            android:text="@string/shot_time"
-            android:maxWidth="@dimen/shot_time_max_width"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            >
+
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
+                style="@style/ledDigitsWeight2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/shotTimeView"
+                android:text="@string/shot_time"
+                android:maxWidth="@dimen/shot_time_max_width"
+                android:textSize="80dp"
+                />
+
+            <TextView
+                android:id="@+id/shotTimeSwitch"
+                style="@style/label"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/switch_shot_clock"
+                android:layout_weight="2"
+                android:layout_marginBottom="@dimen/label_margin2"
+                />
+
+        </LinearLayout>
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             style="@style/scoreStyle"
             android:layout_weight="2"
             android:id="@+id/guestScoreView"
             android:text="@string/two_zeros"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            />
 
 
         <LinearLayout

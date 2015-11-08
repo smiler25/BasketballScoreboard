@@ -48,6 +48,7 @@
     <string name="edit_guest_name">Enter new guest team name</string>
     <string name="edit_name">Enter new name</string>
 
+    <string name="switch_shot_clock" translatable="false">14</string>
     <string name="label_timeouts">timeouts</string>
     <string name="label_timeouts_left">TO left</string>
     <string name="label_timeout_full" translatable="false">full</string>
@@ -56,7 +57,6 @@
     <string name="label_period">period</string>
 
     <string name="toast_confirm_exit">Click again to exit</string>
-
 
     <string name="help_text">Interface interaction.\n
         \n
