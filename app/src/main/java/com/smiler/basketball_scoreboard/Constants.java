@@ -7,6 +7,8 @@ public class Constants {
     public static final long SECOND = 1000;
     public static final long SECONDS_60 = 60 * SECOND;
     public static final long MINUTES_2 = 120 * SECOND;
+    public static final int LAYOUT_FULL= 0;
+    public static final int LAYOUT_SIMPLE= 1;
 
     public static long mainTickInterval = SECOND;
     public static long shotTickInterval = SECOND;

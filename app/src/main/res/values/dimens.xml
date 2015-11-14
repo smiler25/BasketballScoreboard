@@ -18,10 +18,11 @@
     <dimen name="shot_time_max_width">90dp</dimen>
     <dimen name="short_shot_clock_size">50dp</dimen>
     <dimen name="short_shot_clock_margin">3dp</dimen>
-    <dimen name="icons_padding">3dp</dimen>
+    <dimen name="icons_padding">4dp</dimen>
     <dimen name="score_changer_size">15sp</dimen>
     <dimen name="score_changer_margin">2dp</dimen>
     <dimen name="score_changer_padding">5dp</dimen>
+    <dimen name="simple_score_changer_padding">12dp</dimen>
 
     <dimen name="no_led_font_size">15sp</dimen>
     <dimen name="label_font_size">10sp</dimen>

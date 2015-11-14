@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView shotTimeSwitchView;
     private Drawer.Result drawer;
 
-    private int layout, autoSaveResults, autoSound, actualTime, timeoutRules;
+    private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
     private boolean doubleBackPressedFirst, layoutChanged, timeoutsRulesChanged;
     private boolean saveOnExit, autoShowTimeout, autoShowBreak, pauseOnSound;
     private boolean mainTimerOn, shotTimerOn, enableShotTime, restartShotTimer;
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
         }
 
-        if (layout == 0) {
+        if (layoutType == Constants.LAYOUT_FULL) {
             initExtensiveLayout();
         } else {
             initSimpleLayout();
@@ -636,7 +636,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
         setTeamNames();
 
-        if (layout == 0) {
+        if (layoutType == Constants.LAYOUT_FULL) {
             if (enableShotTime) {
                 setShotTimeText(shotTime);
             }
@@ -672,9 +672,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getGameSettings() {
         int temp_int = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_LAYOUT, "0"));
-        if (temp_int != layout) {
+        if (temp_int != layoutType) {
             layoutChanged = true;
-            layout = temp_int;
+            layoutType = temp_int;
         }
         useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, 24) * 1000;
@@ -796,7 +796,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         changeGuestScore(0);
         changeHomeScore(0);
         setTeamNames();
-        if (layout == 0) {
+        if (layoutType == Constants.LAYOUT_FULL) {
             if (enableShotTime) {
                 shotTimerOn = false;
                 shotTime = shotTimePref;
@@ -826,21 +826,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void newGame() {
         if (PrefActivity.gamePrefChanged || PrefActivity.appPrefChanged) {
             getSettings();
-            if (enableShotTime && layout == 0 && !layoutChanged) {
+            if (enableShotTime && layoutType == Constants.LAYOUT_FULL && !layoutChanged) {
                 shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
             }
         }
         if (layoutChanged || timeoutsRulesChanged) {
-            if (layout == 0) {
+            if (layoutType == Constants.LAYOUT_FULL) {
                 initExtensiveLayout();
-            } else if (layout == 1) {
+            } else if (layoutType == 1) {
                 initSimpleLayout();
             }
             initCommonLayout();
         }
         pauseGame();
         zeroState();
-        setTimeouts();
+        if (layoutType == Constants.LAYOUT_FULL) {
+            setTimeouts();
+        }
         gameResult = new Results(hName, gName);
     }
 
@@ -994,7 +996,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeScore() {
-        if (enableShotTime && layout == 0 && restartShotTimer) {
+        if (enableShotTime && layoutType == Constants.LAYOUT_FULL && restartShotTimer) {
             if (mainTimerOn) {
                 startShotCountDownTimer(shotTimePref);
             } else {

@@ -118,22 +118,21 @@
             style="@style/matchParentCenter"
             >
 
-
-            <TextView
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                 android:id="@+id/plus1HomeView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
                 android:text="@string/plus1"
                 />
 
-            <TextView
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                 android:id="@+id/plus3HomeView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
                 android:text="@string/plus3"
                 />
 
-            <TextView
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                 android:id="@+id/minus1HomeView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
@@ -201,21 +200,21 @@
             style="@style/matchParentCenter"
             >
 
-            <TextView
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                 android:id="@+id/plus1GuestView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
                 android:text="@string/plus1"
                 />
 
-            <TextView
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                 android:id="@+id/plus3GuestView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
                 android:text="@string/plus3"
                 />
 
-            <TextView
+            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                 android:id="@+id/minus1GuestView"
                 style="@style/scoreChangers"
                 android:layout_weight="1"
