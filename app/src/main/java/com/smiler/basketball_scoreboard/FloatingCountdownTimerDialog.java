@@ -61,8 +61,6 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
             clockView.setText(Constants.timeFormat.format(millis));
         } else {
             clockView.setText(String.format(Constants.TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
-//            clockView.setText(timeFormat.format(millis));
-//            clockView.setText(Constants.timeFormatMillis.format(millis));
         }
     }
 }

@@ -13,7 +13,8 @@ import android.widget.LinearLayout;
 import com.smiler.basketball_scoreboard.elements.SetDefaultPreference;
 
 public class PrefActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
-                                                      SetDefaultPreference.SetDefaultDialogListener {
+                                                      SetDefaultPreference.SetDefaultDialogListener,
+                                                      PrefFragment.OnSelectTimePreference {
 
     static boolean gamePrefChanged = false;
     static boolean appPrefChanged = false;
@@ -25,6 +26,7 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     static final String PREF_ENABLE_SHOT_TIME = "enable_shot_time";
     static final String PREF_ENABLE_SHORT_SHOT_TIME = "enable_short_shot_time";
     static final String PREF_SHORT_SHOT_TIME = "short_shot_time_length";
+    static final String PREF_SHOT_TIME_RESTART = "short_shot_restart";
     static final String PREF_MAX_FOULS = "max_fouls";
     static final String PREF_NUM_REGULAR = "number_of_regular_periods";
     static final String PREF_HOME_NAME = "home_team_name";
@@ -59,6 +61,7 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PrefFragment())
                 .commit();
@@ -69,13 +72,17 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        initToolbar();
+    }
+
+    private void initToolbar() {
         LinearLayout root = (LinearLayout)findViewById(android.R.id.list).getParent().getParent().getParent();
         Toolbar toolbar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.pref_toolbar, root, false);
         root.addView(toolbar, 0);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
     }
@@ -96,7 +103,6 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
             default:
                 gamePrefChanged = true;
                 break;
-
         }
     }
 
@@ -141,5 +147,13 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
         Intent intent = getIntent();
         finish();
         startActivity(intent);
+    }
+
+    @Override
+    public void onSelectTimePreference() {
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new PrefFragmentTime())
+                .addToBackStack(null)
+                .commit();
     }
 }

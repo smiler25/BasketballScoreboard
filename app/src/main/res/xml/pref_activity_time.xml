@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+
+    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+        android:key="regular_time_length"
+        android:title="@string/main_time_length"
+        android:defaultValue="@string/main_time_length_default"
+        max="60"
+        min="1" />
+
+    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+        android:key="overtime_length"
+        android:title="@string/overtime_length"
+        android:defaultValue="@string/overtime_length_default"
+        max="60"
+        min="1" />
+
+    <CheckBoxPreference
+        android:key="direct_timer"
+        android:title="@string/direct_timer"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="enable_shot_time"
+        android:title="@string/enable_shot_time"
+        android:defaultValue="true" />
+
+    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+        android:key="shot_time_length"
+        android:dependency="enable_shot_time"
+        android:title="@string/shot_time_length"
+        android:defaultValue="@string/shot_time_length_default"
+        max="60"
+        min="1" />
+
+    <CheckBoxPreference
+        android:key="enable_short_shot_time"
+        android:dependency="enable_shot_time"
+        android:title="@string/enable_short_shot_time"
+        android:defaultValue="true" />
+
+    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+        android:key="short_shot_time_length"
+        android:dependency="enable_short_shot_time"
+        android:title="@string/short_shot_time_length"
+        android:defaultValue="@string/short_shot_time_length_default"
+        max="60"
+        min="1" />
+
+    <CheckBoxPreference
+        android:key="shot_time_restart"
+        android:dependency="enable_shot_time"
+        android:title="@string/shot_time_restart"
+        android:defaultValue="false" />
+
+</PreferenceScreen>

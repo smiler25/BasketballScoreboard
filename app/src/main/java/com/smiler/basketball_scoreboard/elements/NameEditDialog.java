@@ -77,8 +77,9 @@ public class NameEditDialog extends DialogFragment {
 
 
     public interface OnChangeNameListener {
-        public void onNameChanged(String value, String team);
+        void onNameChanged(String value, String team);
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

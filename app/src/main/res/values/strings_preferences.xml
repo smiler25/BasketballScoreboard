@@ -16,6 +16,7 @@
     <string name="enable_shot_time">Enable shot clock</string>
     <string name="enable_short_shot_time">Enable short shot clock</string>
     <string name="short_shot_time_length">Short shot clock (seconds)</string>
+    <string name="shot_time_restart">Restart shot clock when score changed</string>
     <string name="short_shot_time_length_default" translatable="false">14</string>
     <string name="number_of_regular_periods">Number of regular periods</string>
     <string name="number_of_regular_periods_default" translatable="false">4</string>

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int layout, autoSaveResults, autoSound, actualTime, timeoutRules;
     private boolean doubleBackPressedFirst, layoutChanged, timeoutsRulesChanged;
     private boolean saveOnExit, autoShowTimeout, autoShowBreak, pauseOnSound;
-    private boolean mainTimerOn, shotTimerOn, enableShotTime;
+    private boolean mainTimerOn, shotTimerOn, enableShotTime, restartShotTimer;
     private boolean useDirectTimer, directTimerStopped;
     private long mainTime, mainTimePref, shotTime, shotTimePref, shortShotTimePref, overTimePref;
     private long startTime, totalTime;
@@ -105,9 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        System.out.println("getResources().getString(R.string.res_type)");
-        System.out.println(getResources().getString(R.string.res_type));
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
@@ -682,6 +679,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, 24) * 1000;
         enableShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
+        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
         shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, 14) * 1000 : shotTimePref;
         mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, 10) * Constants.SECONDS_60;
@@ -996,7 +994,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeScore() {
-        if (enableShotTime && layout == 0) {
+        if (enableShotTime && layout == 0 && restartShotTimer) {
             if (mainTimerOn) {
                 startShotCountDownTimer(shotTimePref);
             } else {

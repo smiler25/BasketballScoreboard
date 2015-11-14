@@ -31,8 +31,6 @@
         <item name="android:layout_height">150dp</item>
         <item name="background">@color/red</item>
         <item name="height">150dp</item>
-        <!--<item name="actionModeBackground">@color/red</item>-->
-        <!--<item name="actionMode">@color/red</item>-->
     </style>
 
     <declare-styleable name="CustomFontTxtView">
