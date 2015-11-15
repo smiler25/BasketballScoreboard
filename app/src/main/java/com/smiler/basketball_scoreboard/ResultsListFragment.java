@@ -72,11 +72,6 @@ public class ResultsListFragment extends ListFragment {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
     public Cursor getDataCursor() {
         DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();

@@ -12,9 +12,9 @@ import android.widget.NumberPicker;
 
 public class NumberPickerPreference extends DialogPreference {
 
-    public static final int DEFAULT_VALUE = 24;
-    public static int MAX_VALUE = 60;
-    public static int MIN_VALUE = 0;
+    private static final int DEFAULT_VALUE = 24;
+    private static int MAX_VALUE = 60;
+    private static int MIN_VALUE = 0;
     private NumberPicker picker;
     private int value;
 
@@ -67,22 +67,17 @@ public class NumberPickerPreference extends DialogPreference {
         setValue(restorePersistedValue ? getPersistedInt(DEFAULT_VALUE) : (Integer) defaultValue);
     }
 
-    public void setValue(int value) {
+    private void setValue(int value) {
         this.value = value;
         persistInt(this.value);
     }
 
-    public int getValue() {
+    private int getValue() {
         return this.value;
     }
 
     @Override
     public CharSequence getSummary() {
         return Integer.toString(this.value);
-    }
-
-    private void processAttributeSet(AttributeSet attrs) {
-        // MAX_VALUE1 = attrs.getAttributeIntValue(null, "min", 0);
-        // MIN_VALUE1 = attrs.getAttributeIntValue(null, "max", 60);
     }
 }

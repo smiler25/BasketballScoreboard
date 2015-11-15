@@ -65,7 +65,6 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         } else {
             titleId = R.string.action_save_result;
         }
-
         builder.setTitle(titleId);
         return builder.create();
     }
@@ -107,13 +106,5 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                 }
                 break;
         }
-    }
-
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-    }
-
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
     }
 }

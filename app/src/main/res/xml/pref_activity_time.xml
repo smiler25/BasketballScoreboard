@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     >
 
+    <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
         android:key="regular_time_length"
         android:title="@string/main_time_length"
@@ -12,6 +13,7 @@
         max="60"
         min="1" />
 
+    <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
         android:key="overtime_length"
         android:title="@string/overtime_length"
@@ -29,6 +31,7 @@
         android:title="@string/enable_shot_time"
         android:defaultValue="true" />
 
+    <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
         android:key="shot_time_length"
         android:dependency="enable_shot_time"
@@ -43,6 +46,7 @@
         android:title="@string/enable_short_shot_time"
         android:defaultValue="true" />
 
+    <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
         android:key="short_shot_time_length"
         android:dependency="enable_short_shot_time"

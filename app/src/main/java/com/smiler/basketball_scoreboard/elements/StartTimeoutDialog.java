@@ -45,7 +45,7 @@ public class StartTimeoutDialog extends DialogFragment {
         void onNewPeriodDialogItemClick(int which);
     }
 
-    NewTimeoutDialogListener mListener;
+    private NewTimeoutDialogListener mListener;
 
     @Override
     public void onAttach(Activity activity) {
@@ -53,16 +53,7 @@ public class StartTimeoutDialog extends DialogFragment {
         try {
             mListener = (NewTimeoutDialogListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement NewTimeoutDialogListener");
+            throw new ClassCastException(activity.toString() + " must implement NewTimeoutDialogListener");
         }
-    }
-
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-    }
-
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
     }
 }

@@ -11,7 +11,7 @@ import com.smiler.basketball_scoreboard.elements.ResultView;
 public class ResultViewFragment extends Fragment {
     private static final String SQL_ARG = "sqlId";
 
-    ViewGroup view;
+    private ViewGroup view;
 
     public static ResultViewFragment newInstance(int sqlId) {
         ResultViewFragment fragment = new ResultViewFragment();

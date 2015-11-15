@@ -24,9 +24,4 @@ public class ExpListMultiChoice extends BaseMultiChoice {
         super.onItemCheckedStateChanged(mode, position, adapterId, checked);
         adapter.toggleSelection(position, checked);
     }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-        super.onDestroyActionMode(mode);
-    }
 }

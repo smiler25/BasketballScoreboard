@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class ResultTableAdapter extends ArrayAdapter<String> {
 
-    ArrayList<String> objects;
-    Context context;
+    private ArrayList<String> objects;
+    private Context context;
 
     public ResultTableAdapter(Context context, int resource, ArrayList<String> objects) {
         super(context, resource, objects);

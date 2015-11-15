@@ -13,9 +13,11 @@ import com.smiler.basketball_scoreboard.R;
 
 public class TimePickerFragment extends DialogFragment {
 
-    OnChangeTimeListener changeTimeListener;
-    CustomNumberPicker minutesPicker, secondsPicker, millisPicker;
-    boolean isMain = true;
+    private OnChangeTimeListener changeTimeListener;
+    private CustomNumberPicker minutesPicker;
+    private CustomNumberPicker secondsPicker;
+    private CustomNumberPicker millisPicker;
+    private boolean isMain = true;
 
     public static TimePickerFragment newInstance(int minutes, int seconds, int millis) {
         TimePickerFragment f = new TimePickerFragment();

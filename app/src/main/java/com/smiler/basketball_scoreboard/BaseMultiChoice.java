@@ -12,16 +12,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
+class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
 
     private AbsListView listView;
     private Activity activity;
     private List<String> selectedIds = new ArrayList<>();
     public boolean actionModeEnabled;
     private TextView title;
-    ActionMode mode;
+    private ActionMode mode;
 
-    public BaseMultiChoice(AbsListView listView, Activity activity) {
+    BaseMultiChoice(AbsListView listView, Activity activity) {
         this.activity = activity;
         this.listView = listView;
     }
@@ -38,7 +38,7 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
         this.listener = listener;
     }
 
-    CabDeletedListener listener;
+    private CabDeletedListener listener;
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -51,11 +51,11 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
         return true;
     }
 
-    public void addSelectedId(long id){
+    void addSelectedId(long id){
         selectedIds.add(Long.toString(id));
     }
 
-    public void removeSelectedId(long id){
+    void removeSelectedId(long id){
         selectedIds.remove(Long.toString(id));
 
     }

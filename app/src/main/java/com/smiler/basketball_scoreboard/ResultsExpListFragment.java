@@ -114,11 +114,6 @@ public class ResultsExpListFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
     public Object[] getListEntries() {
         HashMap<Integer, ResultsExpListParent> posItems = new HashMap<>();
         HashMap<Integer, Integer> idPositions = new HashMap<>();

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class ResultTableTeamListAdapter extends ArrayAdapter<String> {
 
-    String[] objects;
+    private String[] objects;
 
     public ResultTableTeamListAdapter(Context context, int resource, String[] objects) {
         super(context, resource, objects);

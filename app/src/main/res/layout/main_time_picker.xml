@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
+        <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
         <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
             android:id="@+id/pickerMinutes"
             style="@style/numberPicker"
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:text=":"/>
 
+        <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
         <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
             android:id="@+id/pickerSeconds"
             style="@style/numberPicker"
@@ -42,6 +44,7 @@
             android:layout_height="wrap_content"
             android:text="."/>
 
+        <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
         <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
             android:id="@+id/pickerMillis"
             style="@style/numberPicker"

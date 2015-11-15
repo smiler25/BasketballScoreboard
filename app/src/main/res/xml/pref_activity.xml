@@ -11,6 +11,7 @@
         >
     </PreferenceScreen>
 
+    <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
         android:key="number_of_regular_periods"
         android:title="@string/number_of_regular_periods"
@@ -18,6 +19,7 @@
         max="10"
         min="1" />
 
+    <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
         android:key="pref_max_fouls"
         android:title="@string/max_fouls"
