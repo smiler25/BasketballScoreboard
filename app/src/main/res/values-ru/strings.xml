@@ -141,5 +141,6 @@
     <string name="direct_timer">Использовать прямой осчёт времени</string>
     <string name="time_screen">Настройки времени</string>
     <string name="camera_take_picture">Сделать снимок</string>
+    <string name="vibration">Вибрация при нажатии</string>
 
 </resources>

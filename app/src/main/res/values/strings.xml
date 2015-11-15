@@ -92,5 +92,6 @@
     <string name="cab_subtitle">Selected %1$d</string>
     <string name="cab_success">Results deleted</string>
     <string name="no_results">No saved games</string>
+    <string name="vibration">Vibration on click</string>
 
 </resources>

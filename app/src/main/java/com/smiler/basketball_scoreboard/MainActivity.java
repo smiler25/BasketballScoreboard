@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TimePickerFragment.OnChangeTimeListener {
 
 //    public String TAG = "MYLOG-MainActivity";
-    private SharedPreferences statePref;
+    private SharedPreferences statePref, sharedPref;
     private TextView shotTimeView, mainTimeView, hNameView, gNameView, periodView;
     private TextView hScoreView, gScoreView;
     private TextView hTimeoutsView, hTimeouts20View;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
     private boolean doubleBackPressedFirst, layoutChanged, timeoutsRulesChanged;
-    private boolean saveOnExit, autoShowTimeout, autoShowBreak, pauseOnSound;
+    private boolean saveOnExit, autoShowTimeout, autoShowBreak, pauseOnSound, vibrationOn;
     private boolean mainTimerOn, shotTimerOn, enableShotTime, restartShotTimer;
     private boolean useDirectTimer, directTimerStopped;
     private long mainTime, mainTimePref, shotTime, shotTimePref, shortShotTimePref, overTimePref;
@@ -99,12 +100,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int soundWhistleId, soundHornId;
     private Results gameResult;
     private SoundPool soundPool;
-    private SharedPreferences sharedPref;
-
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
@@ -418,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        if (vibrationOn) { vibrator.vibrate(200); }
         switch (v.getId()) {
             case R.id.homeScoreView:
                 changeHomeScore(2);
@@ -666,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         autoShowTimeout = sharedPref.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = sharedPref.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
         pauseOnSound = sharedPref.getBoolean(PrefActivity.PREF_PAUSE_ON_SOUND, true);
+        vibrationOn = vibrator.hasVibrator() && sharedPref.getBoolean(PrefActivity.PREF_VIBRATION, false);
         saveOnExit = sharedPref.getBoolean(PrefActivity.PREF_SAVE_ON_EXIT, true);
         PrefActivity.appPrefChanged = false;
     }

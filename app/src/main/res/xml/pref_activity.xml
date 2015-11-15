@@ -133,10 +133,10 @@
             android:summary="@string/pref_auto_timeout_descr"
             android:defaultValue="true" />
 
-        <!--<CheckBoxPreference
-            android:key="auto_save_results"
-            android:title="@string/pref_save_on_exit"
-            android:defaultValue="true" />-->
+        <CheckBoxPreference
+            android:key="vibration"
+            android:title="@string/vibration"
+            android:defaultValue="false" />
 
         <CheckBoxPreference
             android:key="save_on_exit"

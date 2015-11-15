@@ -41,6 +41,7 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     static final String PREF_PAUSE_ON_SOUND = "pause_on_sound";
     static final String PREF_AUTO_BREAK = "auto_show_break";
     static final String PREF_AUTO_TIMEOUT = "auto_show_timeout";
+    static final String PREF_VIBRATION = "vibration";
     static final String PREF_SAVE_ON_EXIT = "save_on_exit";
 
     private static final int DEFAULT_SHOT_TIME = 24;
