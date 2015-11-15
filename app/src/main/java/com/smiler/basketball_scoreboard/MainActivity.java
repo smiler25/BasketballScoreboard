@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Results gameResult;
     private SoundPool soundPool;
     private Vibrator vibrator;
+    private long[] longVibrationPattern = {0, 50, 50, 50};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -278,7 +279,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        if (PrefActivity.gamePrefChanged || PrefActivity.appPrefChanged) { showConfirmDialog("new_game", false); }
+        if (PrefActivity.prefChangedRestart) {
+            showConfirmDialog("new_game", false);
+        } else if (PrefActivity.prefChangedNoRestart) {
+            getAppSettings();
+        }
     }
 
     @Override
@@ -420,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (vibrationOn) { vibrator.vibrate(200); }
+        if (vibrationOn) { vibrator.vibrate(100); }
         switch (v.getId()) {
             case R.id.homeScoreView:
                 changeHomeScore(2);
@@ -516,6 +521,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
+        if (vibrationOn) { vibrator.vibrate(longVibrationPattern, -1); }
+
         if (!mainTimerOn) {
             switch (v.getId()) {
                 case R.id.homeScoreView:
@@ -671,7 +678,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pauseOnSound = sharedPref.getBoolean(PrefActivity.PREF_PAUSE_ON_SOUND, true);
         vibrationOn = vibrator.hasVibrator() && sharedPref.getBoolean(PrefActivity.PREF_VIBRATION, false);
         saveOnExit = sharedPref.getBoolean(PrefActivity.PREF_SAVE_ON_EXIT, true);
-        PrefActivity.appPrefChanged = false;
+        PrefActivity.prefChangedNoRestart = false;
     }
 
     private void getGameSettings() {
@@ -699,7 +706,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             timeoutsRulesChanged = true;
             timeoutRules = temp_int;
         }
-        PrefActivity.gamePrefChanged = false;
+        PrefActivity.prefChangedRestart = false;
     }
 
     private void setTimeouts() {
@@ -828,7 +835,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void newGame() {
-        if (PrefActivity.gamePrefChanged || PrefActivity.appPrefChanged) {
+        if (PrefActivity.prefChangedRestart || PrefActivity.prefChangedNoRestart) {
             getSettings();
             if (enableShotTime && layoutType == Constants.LAYOUT_FULL && !layoutChanged) {
                 shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));

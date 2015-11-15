@@ -73,8 +73,8 @@ public class TimePickerFragment extends DialogFragment {
     }
 
     public interface OnChangeTimeListener {
-        public void onTimeChanged(int minutes, int seconds, int millis);
-        public void onTimeChanged(int seconds, int millis);
+        void onTimeChanged(int minutes, int seconds, int millis);
+        void onTimeChanged(int seconds, int millis);
     }
 
     @Override

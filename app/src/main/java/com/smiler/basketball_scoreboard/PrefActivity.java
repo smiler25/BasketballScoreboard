@@ -16,8 +16,8 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
                                                       SetDefaultPreference.SetDefaultDialogListener,
                                                       PrefFragment.OnSelectTimePreference {
 
-    static boolean gamePrefChanged = false;
-    static boolean appPrefChanged = false;
+    static boolean prefChangedRestart = false;
+    static boolean prefChangedNoRestart = false;
     static final String PREF_TAG = "main_prefs";
     static final String PREF_REGULAR_TIME = "regular_time_length";
     static final String PREF_OVERTIME = "overtime_length";
@@ -96,13 +96,14 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
             case PREF_AUTO_BREAK:
             case PREF_AUTO_TIMEOUT:
             case PREF_SAVE_ON_EXIT:
-                appPrefChanged = true;
+            case PREF_VIBRATION:
+                prefChangedNoRestart = true;
                 break;
             case PREF_OFFICIAL_RULES:
                 setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
                 break;
             default:
-                gamePrefChanged = true;
+                prefChangedRestart = true;
                 break;
         }
     }
@@ -124,6 +125,7 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
             editor.putString(PREF_TIMEOUTS_RULES, DEFAULT_NBA_TIMEOUTS);
         }
         editor.apply();
+        prefChangedRestart = true;
         restartActivity();
     }
 
