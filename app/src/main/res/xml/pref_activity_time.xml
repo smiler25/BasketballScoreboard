@@ -61,4 +61,17 @@
         android:title="@string/shot_time_restart"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="fraction_seconds_main"
+        android:title="@string/fraction_seconds_main"
+        android:summary="@string/fraction_seconds_main_descr"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="fraction_seconds_shot"
+        android:dependency="enable_shot_time"
+        android:title="@string/fraction_seconds_shot"
+        android:summary="@string/fraction_seconds_shot_descr"
+        android:defaultValue="true" />
+
 </PreferenceScreen>

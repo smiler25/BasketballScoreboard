@@ -34,6 +34,7 @@ public class Constants {
     public static final String STATE_GUEST_TIMEOUTS20 = "guestTimeouts20";
     public static final String STATE_PERIOD = "period";
 
+    public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesFragment";
     public static final String TAG_FRAGMENT_HELP = "HelpFragment";
     public static final String TAG_FRAGMENT_TIME = "TimeDialog";
     public static final String TAG_FRAGMENT_LIST = "ListDialog";

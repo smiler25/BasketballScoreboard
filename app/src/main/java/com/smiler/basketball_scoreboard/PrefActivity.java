@@ -18,8 +18,9 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
 
     static boolean prefChangedRestart = false;
     static boolean prefChangedNoRestart = false;
-    static final String PREF_TAG = "main_prefs";
     static final String PREF_REGULAR_TIME = "regular_time_length";
+    static final String PREF_FRACTION_SECONDS_MAIN= "fraction_seconds_main";
+    static final String PREF_FRACTION_SECONDS_SHOT= "fraction_seconds_shot";
     static final String PREF_OVERTIME = "overtime_length";
     static final String PREF_DIRECT_TIMER = "direct_timer";
     static final String PREF_SHOT_TIME = "shot_time_length";
@@ -58,6 +59,8 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     private static final String DEFAULT_NBA_TIMEOUTS = "2";
 
     SharedPreferences prefs;
+    private Toolbar toolbar;
+    private boolean inNested;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +81,15 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
 
     private void initToolbar() {
         LinearLayout root = (LinearLayout)findViewById(android.R.id.list).getParent().getParent().getParent();
-        Toolbar toolbar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.pref_toolbar, root, false);
+        toolbar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.pref_toolbar, root, false);
         root.addView(toolbar, 0);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+                if (inNested) {
+                    toolbar.setTitle(R.string.title_activity_settings);
+                }
             }
         });
     }
@@ -97,6 +103,8 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
             case PREF_AUTO_TIMEOUT:
             case PREF_SAVE_ON_EXIT:
             case PREF_VIBRATION:
+            case PREF_FRACTION_SECONDS_MAIN:
+            case PREF_FRACTION_SECONDS_SHOT:
                 prefChangedNoRestart = true;
                 break;
             case PREF_OFFICIAL_RULES:
@@ -158,5 +166,7 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
                 .replace(android.R.id.content, new PrefFragmentTime())
                 .addToBackStack(null)
                 .commit();
+        toolbar.setTitle(R.string.time_screen);
+        inNested = true;
     }
 }

@@ -82,8 +82,7 @@
             android:layout_weight="1"
             />
 
-        <TableLayout
-            >
+        <TableLayout>
 
             <TableRow>
                 <TextView

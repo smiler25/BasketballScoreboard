@@ -1,7 +1,6 @@
 <resources>
     <dimen name="led_weight1_font_size">170dp</dimen>
     <dimen name="led_weight2_font_size">180dp</dimen>
-    <dimen name="led_nba_to_font_size">110dp</dimen>
     <dimen name="no_led_font_size">30sp</dimen>
     <dimen name="label_font_size">20sp</dimen>
     <dimen name="team_name_font_size">30sp</dimen>
@@ -17,6 +16,7 @@
     <dimen name="short_shot_clock_margin">4dp</dimen>
     <dimen name="score_changer_size">30sp</dimen>
     <dimen name="bottom_line_size">170dp</dimen>
+    <dimen name="led_nba_to_font_size">120dp</dimen>
 
     <dimen name="timeout_font_size">220dp</dimen>
     <dimen name="dialog_title_font_size">40sp</dimen>
@@ -25,7 +25,8 @@
     <dimen name="label_margin">2dp</dimen>
     <dimen name="help_text_size">20sp</dimen>
     <dimen name="drawer_width">320dp</dimen>
-
+    <dimen name="appupdate_dialog_title_size">22sp</dimen>
+    <dimen name="appupdate_dialog_text_size">20sp</dimen>
 
     <!-- for simple layout-->
     <dimen name="led_simple_font_size">270dp</dimen>

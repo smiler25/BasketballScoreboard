@@ -10,6 +10,7 @@
     <string name="action_fullscreen">Развернуть</string>
     <string name="action_fullscreen_toggle">Полноэкранный режим</string>
     <string name="action_help">Помощь</string>
+    <string name="action_whats_new">Что нового</string>
     <string name="action_new_game">Новая игра</string>
     <string name="action_rate">Оценить</string>
     <string name="action_save">Сохранить</string>
@@ -142,5 +143,19 @@
     <string name="time_screen">Настройки времени</string>
     <string name="camera_take_picture">Сделать снимок</string>
     <string name="vibration">Вибрация при нажатии</string>
+
+    <string name="fraction_seconds_main">Доли секунд в основном времени</string>
+    <string name="fraction_seconds_main_descr">Если время меньше 1 минуты показывать доли секунды</string>
+    <string name="fraction_seconds_shot">Доли секунд в времени на атаку</string>
+    <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд показывать доли секунды</string>
+
+
+    <string name="appupdate_title">Информация об обновлении</string>
+    <string name="appupdate_info">
+        v.1.2.3\n
+            - возможность выбора формата отображения времени по его подходу к концу,\n
+            -
+
+    </string>
 
 </resources>

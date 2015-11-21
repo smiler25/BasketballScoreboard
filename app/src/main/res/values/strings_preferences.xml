@@ -39,6 +39,10 @@
     <string name="fiba" translatable="false">FIBA</string>
     <string name="nba" translatable="false">NBA</string>
 
+    <string name="fraction_seconds_main">Main time fractions of a second</string>
+    <string name="fraction_seconds_main_descr">If time less than 1 minute show fractions of seconds</string>
+    <string name="fraction_seconds_shot">Shot clock fractions of seconds</string>
+    <string name="fraction_seconds_shot_descr">If time less than 5 seconds show fractions of seconds</string>
 
     <string name="pref_clear_time">Actual playing time</string>
     <string-array name="pref_clear_time_titles">

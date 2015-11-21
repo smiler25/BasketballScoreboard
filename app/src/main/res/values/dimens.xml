@@ -39,6 +39,8 @@
     <dimen name="drawer_header_height">60dp</dimen>
     <dimen name="help_text_size">15sp</dimen>
     <dimen name="edit_name_margin">10dp</dimen>
+    <dimen name="appupdate_dialog_title_size">20sp</dimen>
+    <dimen name="appupdate_dialog_text_size">15sp</dimen>
 
     <!-- for simple layout-->
     <dimen name="led_simple_font_size">160dp</dimen>

@@ -4,6 +4,7 @@
 
     <string name="app_name">Basketball Scoreboard</string>
     <string name="action_apply">Apply</string>
+    <string name="action_ok" translatable="false">OK</string>
     <string name="action_confirm_new_game">Start new game?</string>
     <string name="action_close">Close</string>
     <string name="action_fullscreen">Fullscreen</string>
@@ -17,6 +18,7 @@
     <string name="action_rate">Rate</string>
     <string name="action_resluts">Results</string>
     <string name="action_help">Help</string>
+    <string name="action_whats_new">What new</string>
     <string name="dont_ask">Don\'t ask again</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -57,19 +59,6 @@
     <string name="label_period">period</string>
 
     <string name="toast_confirm_exit">Click again to exit</string>
-
-    <string name="help_text">Interface interaction.\n
-        \n
-        Single tap provides expected action:\n
-        - main clock: start/pause;\n
-        - shot clock: start new or switch to short possession (if enabled in settings);\n
-        - score: increase value by 2;\n
-        - period: set new period and set to default corresponding values.\n
-        \n
-        Long press on both main and shot clock allows to change value.\n
-        Long press on other elements will set default value or null it.\n
-        Actions on long press work only if the game does not go.</string>
-
     <string name="timeout_format_1">%1$d minutes break</string>
     <string name="timeout_format_2">%1$s %2$d seconds timeout</string>
     <string-array name="timeout_variants">
@@ -93,5 +82,27 @@
     <string name="cab_success">Results deleted</string>
     <string name="no_results">No saved games</string>
     <string name="vibration">Vibration on click</string>
+
+
+
+    <string name="help_text">Interface interaction.\n
+        \n
+        Single tap provides expected action:\n
+        - main clock: start/pause;\n
+        - shot clock: start new or switch to short possession (if enabled in settings);\n
+        - score: increase value by 2;\n
+        - period: set new period and set to default corresponding values.\n
+        \n
+        Long press on both main and shot clock allows to change value.\n
+        Long press on other elements will set default value or null it.\n
+        Actions on long press work only if the game does not go.</string>
+
+    <string name="appupdate_title">Update info</string>
+    <string name="appupdate_info">
+        v.1.2.3:\n
+            - choose fractions of seconds for main time and shot clock,\n
+            -
+
+    </string>
 
 </resources>
