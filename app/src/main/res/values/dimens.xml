@@ -55,6 +55,7 @@
     <dimen name="indicator_margin">45dp</dimen>
     <dimen name="indicator_margin2">30dp</dimen>
     <dimen name="results_list_item_text">15sp</dimen>
+    <dimen name="list_vertical_padding">5dp</dimen>
 
     <!--camera-->
     <dimen name="camera_text_size">15sp</dimen>

@@ -61,6 +61,7 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     SharedPreferences prefs;
     private Toolbar toolbar;
     private boolean inNested;
+    static final String STATE_IN_NESTED = "inNested";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +87,11 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
                 if (inNested) {
+                    onBackPressed();
                     toolbar.setTitle(R.string.title_activity_settings);
-                }
+                    inNested = false;
+                } else { finish(); }
             }
         });
     }
@@ -147,12 +149,26 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
      protected void onResume() {
          super.onResume();
          prefs.registerOnSharedPreferenceChangeListener(this);
+         System.out.println(inNested);
+         if (inNested) {openTimeSettings();}
      }
      @Override
      protected void onPause() {
          super.onPause();
+         System.out.println(inNested);
          prefs.unregisterOnSharedPreferenceChangeListener(this);
      }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(STATE_IN_NESTED, inNested);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        inNested = savedInstanceState.getBoolean(STATE_IN_NESTED);
+    }
 
     private void restartActivity() {
         Intent intent = getIntent();
@@ -162,6 +178,10 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
 
     @Override
     public void onSelectTimePreference() {
+        openTimeSettings();
+    }
+
+    private void openTimeSettings() {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PrefFragmentTime())
                 .addToBackStack(null)

@@ -110,11 +110,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         System.out.println(getResources().getString(R.string.res_type));
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
-            // showUpdatesWindow();
+//            appUpdatesFragment = new AppUpdatesFragment();
+//            appUpdatesFragment.setCancelable(true);
+//            appUpdatesFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
@@ -142,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         floatingDialog = new FloatingCountdownTimerDialog();
         floatingDialog.setCancelable(false);
         helpFragment = new HelpFragment();
-        appUpdatesFragment = new AppUpdatesFragment();
 
         if (saveOnExit) {
             getSavedState();
@@ -376,7 +376,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_whats_new).withIcon(getResources().getDrawable(R.drawable.ic_action_help)).withCheckable(false),
         };
     }
 
@@ -397,10 +396,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case 4:
                 helpFragment.setCancelable(true);
                 helpFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_HELP);
-                break;
-            case 5:
-                appUpdatesFragment.setCancelable(true);
-                appUpdatesFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
                 break;
             default:
                 break;
