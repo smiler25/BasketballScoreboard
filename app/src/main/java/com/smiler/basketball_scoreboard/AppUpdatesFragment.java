@@ -14,7 +14,7 @@ public class AppUpdatesFragment extends DialogFragment{
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.app_updates_fragment, null);
-        v.findViewById(R.id.buttonApply).setOnClickListener(new View.OnClickListener() {
+        v.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();

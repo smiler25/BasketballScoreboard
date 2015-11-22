@@ -471,6 +471,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     setShotTimeText(shotTime);
                 }
+                if (shortShotTimePref < mainTime) {
+                    shotTimeView.setVisibility(View.VISIBLE);
+                }
                 break;
             case R.id.plus1HomeView:
                 changeHomeScore(1);
@@ -1165,6 +1168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (enableShotTime && mainTime < shotTime && shotTimeView.getVisibility() == View.VISIBLE) {
                     shotTimeView.setVisibility(View.INVISIBLE);
+                } else if (enableShotTime && mainTime < shortShotTimePref && shotTimeSwitchView.getVisibility() == View.VISIBLE) {
                     shotTimeSwitchView.setVisibility(View.INVISIBLE);
                 }
             }
