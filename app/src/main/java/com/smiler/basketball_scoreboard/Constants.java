@@ -1,6 +1,7 @@
 package com.smiler.basketball_scoreboard;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class Constants {
 
@@ -16,7 +17,8 @@ public class Constants {
     public static final String FORMAT_TWO_DIGITS = "%02d";
     public static final String TIME_FORMAT_SHORT = "%d.%d";
     public static final SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss");
-    public static final SimpleDateFormat timeFormatMillis = new SimpleDateFormat("ss.S ");
+    public static final SimpleDateFormat timeFormatMillis = new SimpleDateFormat("ss.S", Locale.ENGLISH);
+    public static String API16_TIME_REGEX = "(\\d{2}\\.\\d)(\\d{1,3})";
 
     public static final String STATE_MAIN_TIME = "mainTime";
     public static final String STATE_SHOT_TIME = "shotTime";

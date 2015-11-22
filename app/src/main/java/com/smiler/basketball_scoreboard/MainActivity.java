@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println(getResources().getString(R.string.res_type));
+//        System.out.println(getResources().getString(R.string.res_type));
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (PrefActivity.prefChangedRestart) {
             showConfirmDialog("new_game", false);
         } else if (PrefActivity.prefChangedNoRestart) {
-            getAppSettings();
+            getSettingsNoRestart();
         }
     }
 
@@ -373,8 +373,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return new IDrawerItem[]{
                 new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(getResources().getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_resluts).withIcon(getResources().getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
         };
     }
@@ -388,10 +388,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 runResultsActivity();
                 break;
             case 2:
-                shareResult();
+                runSettingsActivity();
                 break;
             case 3:
-                runSettingsActivity();
+                shareResult();
                 break;
             case 4:
                 helpFragment.setCancelable(true);
@@ -600,7 +600,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (useDirectTimer) {
                 startDirectTimer();
             } else {
-//                mainTimeFormat = Constants.timeFormat;
                 startMainCountDownTimer();
             }
         } else {
@@ -684,11 +683,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getSettings() {
-        getAppSettings();
+        getSettingsNoRestart();
         getGameSettings();
     }
 
-    private void getAppSettings() {
+    private void getSettingsNoRestart() {
         autoSound = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
         autoSaveResults = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0"));
         autoShowTimeout = sharedPref.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
@@ -696,6 +695,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pauseOnSound = sharedPref.getBoolean(PrefActivity.PREF_PAUSE_ON_SOUND, true);
         vibrationOn = vibrator.hasVibrator() && sharedPref.getBoolean(PrefActivity.PREF_VIBRATION, false);
         saveOnExit = sharedPref.getBoolean(PrefActivity.PREF_SAVE_ON_EXIT, true);
+        fractionSecondsMain = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_MAIN, true);
+        fractionSecondsShot = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_SHOT, true);
+
+        mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < Constants.SECONDS_60) ? Constants.timeFormatMillis : Constants.timeFormat;
+
+        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
         PrefActivity.prefChangedNoRestart = false;
     }
 
@@ -706,12 +711,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             layoutType = temp_int;
         }
         useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
-        fractionSecondsMain = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_MAIN, true);
-        fractionSecondsShot = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_SHOT, true);
-        useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, 24) * 1000;
         enableShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
-        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
         shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, 14) * 1000 : shotTimePref;
         mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, 10) * Constants.SECONDS_60;
@@ -1079,7 +1080,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setMainTimeText(long millis) {
-        mainTimeView.setText(mainTimeFormat.format(millis));
+        mainTimeView.setText(mainTimeFormat.format(millis).replaceAll(Constants.API16_TIME_REGEX, "$1"));
     }
 
     private void setShotTimeText(long millis) {

@@ -145,16 +145,15 @@
     <string name="vibration">Вибрация при нажатии</string>
 
     <string name="fraction_seconds_main">Доли секунд в основном времени</string>
-    <string name="fraction_seconds_main_descr">Если время меньше 1 минуты показывать доли секунды</string>
+    <string name="fraction_seconds_main_descr">Если время меньше 1 минуты, показывать доли секунды</string>
     <string name="fraction_seconds_shot">Доли секунд в времени на атаку</string>
-    <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд показывать доли секунды</string>
+    <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд, показывать доли секунды</string>
 
 
     <string name="appupdate_title">Информация об обновлении</string>
     <string name="appupdate_info">
         v.1.2.3\n
             - возможность выбора формата отображения времени по его подходу к концу,\n
-            -
 
     </string>
 
