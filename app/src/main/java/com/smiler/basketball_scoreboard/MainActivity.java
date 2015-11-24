@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private SimpleDateFormat mainTimeFormat = Constants.timeFormat;
     private long mainTickInterval = Constants.SECOND;
-    private long shotTickInterval = Constants.SECOND;
+    private long shotTickInterval = 100;
+//    private long shotTickInterval = Constants.SECOND;
     public boolean changedUnder2Minutes = false;
     public boolean scoreSaved = false;
 
@@ -1025,8 +1026,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (actualTime > 0) {
             pauseGame();
         }
-        if (enableShotTime) {
-            shotTime = (shotTime < shortShotTimePref) ? shortShotTimePref : shotTimePref;
+        if (enableShotTime && shotTime < shortShotTimePref) {
+            shotTime = shortShotTimePref;
+            setShotTimeText(shotTime);
         }
         switch (team) {
             case 0:
@@ -1217,7 +1219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onTick(long millisUntilFinished) {
                 shotTime = millisUntilFinished;
                 setShotTimeText(shotTime);
-                if (fractionSecondsShot && shotTime < 5 * Constants.SECOND && shotTickInterval == Constants.SECOND) {
+                if (shotTime < 5 * Constants.SECOND && shotTickInterval == Constants.SECOND) {
                     shotTickInterval = 100;
                     shotTimer.cancel();
                     startShotCountDownTimer();
@@ -1456,7 +1458,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onTimeChanged(int seconds, int millis) {
         shotTime = seconds * 1000 + millis * 100;
-        if (fractionSecondsShot && shotTime < 5 * Constants.SECOND) {
+        if (shotTime < 5 * Constants.SECOND) {
             shotTickInterval = 100;
         }
 
