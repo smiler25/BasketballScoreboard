@@ -81,9 +81,12 @@ public class Results {
         if (--period < hScorePeriods.size()) {
             hScorePeriods.remove(period);
             gScorePeriods.remove(period);
-            hScorePeriods.add(period, home);
-            gScorePeriods.add(period, guest);
+            hScorePeriods.add(period, home - hScore);
+            gScorePeriods.add(period, guest - gScore);
         }
+        hScore = home;
+        gScore = guest;
+
     }
 
     public String getHomeScoreByPeriodString() {

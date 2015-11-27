@@ -4,4 +4,7 @@
     <dimen name="simple_name_font_size">40sp</dimen>
     <dimen name="no_led_font_size">30sp</dimen>
 
+    <dimen name="short_shot_clock_size">50dp</dimen>
+    <dimen name="short_shot_clock_margin">3dp</dimen>
+
 </resources>

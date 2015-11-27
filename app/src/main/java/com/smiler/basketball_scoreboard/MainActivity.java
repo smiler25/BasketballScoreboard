@@ -93,8 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private SimpleDateFormat mainTimeFormat = Constants.timeFormat;
     private long mainTickInterval = Constants.SECOND;
-    private long shotTickInterval = 100;
-//    private long shotTickInterval = Constants.SECOND;
+    private long shotTickInterval = Constants.SECOND;
     public boolean changedUnder2Minutes = false;
     public boolean scoreSaved = false;
 
