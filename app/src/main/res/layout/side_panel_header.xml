@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="left"
+    android:layout_gravity="center"
+    >
+    <TextView
+        android:id="@+id/left_panel_number"
+        style="@style/playersPanel"
+        android:text="№"
+        android:layout_width="30dp"
+        />
+    <TextView
+        android:id="@+id/left_panel_name"
+        style="@style/playersPanel"
+        android:text="NAME"
+        android:layout_width="100dp"
+        />
+    <TextView
+        android:id="@+id/left_panel_points"
+        style="@style/playersPanel"
+        android:text="P"
+        android:layout_width="20dp"
+        />
+    <TextView
+        android:id="@+id/left_panel_fouls"
+        style="@style/playersPanel"
+        android:text="F"
+        android:layout_width="20dp"
+        />
+    <TextView
+        android:id="@+id/left_panel_edit"
+        style="@style/playersPanel"
+        android:layout_width="30dp"
+        />
+</TableRow>

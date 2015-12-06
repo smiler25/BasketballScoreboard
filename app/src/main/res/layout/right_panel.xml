@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/right_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    style="@style/matchParentCenter"
+    android:layout_gravity="center"
+    >
+
+    <Button
+        android:id="@+id/guest_player1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4"
+        />
+
+
+    <Button
+        android:id="@+id/guest_player2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7"
+        />
+
+
+    <Button
+        android:id="@+id/guest_player3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9"
+        />
+
+
+    <Button
+        android:id="@+id/guest_player4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12"
+        />
+
+
+    <Button
+        android:id="@+id/guest_player5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="18"
+        />
+
+
+    <Button
+        android:id="@+id/right_panel_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&lt;&lt;"
+        />
+
+</LinearLayout>

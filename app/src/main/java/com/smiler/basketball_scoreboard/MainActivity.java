@@ -2,6 +2,8 @@ package com.smiler.basketball_scoreboard;
 
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NameEditDialog.OnChangeNameListener,
         StartTimeoutDialog.NewTimeoutDialogListener,
         SoundPool.OnLoadCompleteListener,
-        TimePickerFragment.OnChangeTimeListener {
+        TimePickerFragment.OnChangeTimeListener,
+        SidePanelFragment.LeftPanelListener
+{
 
     private SharedPreferences statePref, sharedPref;
     private TextView shotTimeView, mainTimeView, hNameView, gNameView, periodView;
@@ -90,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingCountdownTimerDialog floatingDialog;
     private HelpFragment helpFragment;
     private AppUpdatesFragment appUpdatesFragment;
+    private SidePanelFragment leftPanel;
 
     private SimpleDateFormat mainTimeFormat = Constants.timeFormat;
     private long mainTickInterval = Constants.SECOND;
@@ -127,6 +133,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initSimpleLayout();
         }
         initCommonLayout();
+        if (true) {
+            initSidePanels();
+        }
+//        if (sidePanelsOn)
 
         if (sharedPref.getBoolean("first_launch", true)) {
             drawer.openDrawer();
@@ -243,6 +253,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initBottomLineTimeouts();
     }
+
+    private void initSidePanels() {
+        ViewStub left_players_stub = (ViewStub) findViewById(R.id.left_panel_stub);
+        ViewStub right_players_stub = (ViewStub) findViewById(R.id.right_panel_stub);
+        left_players_stub.setLayoutResource(R.layout.left_panel);
+        left_players_stub.inflate();
+        right_players_stub.setLayoutResource(R.layout.right_panel);
+        right_players_stub.inflate();
+
+        leftPanel = new SidePanelFragment();//.newInstance();
+//        FragmentManager fm = getFragmentManager();
+//        fm.beginTransaction()
+//                .setCustomAnimations(
+//                        R.anim.side_slide_show, R.anim.side_slide_hide
+////                        android.R.animator.fade_in, android.R.animator.fade_out
+//                )
+//                .add(R.id.left_panel_full, leftPanel)
+////                .show(leftPanel)
+//                .commit();
+        Button leftPanelToggle = (Button) findViewById(R.id.left_panel_toggle);
+        leftPanelToggle.setOnClickListener(this);
+
+    }
+
 
     private void initBottomLineTimeouts() {
         hTimeoutsView = (TextView) findViewById(R.id.homeTimeoutsView);
@@ -529,6 +563,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (checkCameraHardware(this)) {
                     runCameraActivity();
                 }
+                break;
+            case R.id.left_panel_toggle:
+                leftPanelShow();
                 break;
             default:
                 break;
@@ -1550,5 +1587,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onConfirmDialogNegative(boolean dontShow) {
         dontAskNewGame = (dontShow) ? 1 : 0;
+    }
+
+
+
+    private void leftPanelShow() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction()
+                .setCustomAnimations(R.anim.side_slide_show, R.anim.side_slide_show);
+
+        Fragment f = fm.findFragmentByTag("LEFT_SIDE_PANEL");
+        if (f != null) {
+            ft.show(f);
+        } else {
+            ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
+        }
+        ft.commit();
+    }
+
+    @Override
+    public void onLeftPanelClose() {
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.side_slide_hide, R.anim.side_slide_hide
+                )
+                .hide(leftPanel)
+                .commit();
+
+
     }
 }

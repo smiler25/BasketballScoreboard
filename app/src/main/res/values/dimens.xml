@@ -63,4 +63,7 @@
     <dimen name="camera_team_width">75dp</dimen>
     <dimen name="bottom_line_elements_margin">5dp</dimen>
 
+    <!--side panel-->
+    <dimen name="side_panel_font_size">15sp</dimen>
+
 </resources>
