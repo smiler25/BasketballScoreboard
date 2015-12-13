@@ -38,6 +38,7 @@
     <string name="set_default_dialog_message">Set values according to official rules.</string>
     <string name="fiba" translatable="false">FIBA</string>
     <string name="nba" translatable="false">NBA</string>
+    <string name="vibration">Vibration on click</string>
 
     <string name="fraction_seconds_main">Main time fractional seconds</string>
     <string name="fraction_seconds_main_descr">If time less than 1 minute show fractions of seconds</string>

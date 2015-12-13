@@ -5,92 +5,29 @@
     android:layout_height="match_parent"
     android:background="#7c7c7c"
     android:orientation="vertical"
+    android:clickable="true"
     >
 
-    <TableLayout
-        android:id="@+id/left_panel_table"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:columnCount="5"
-        android:rowCount="2"
-        android:paddingTop="10dp"
-        android:stretchMode="spacingWidth"
+        android:scrollbars="vertical"
         android:background="#ffffff"
+        android:layout_weight="3"
         >
 
-<!--
-        <TableRow
-            android:orientation="vertical"
+        <TableLayout
+            android:id="@+id/left_panel_table"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="left"
-            android:layout_gravity="center"
+            android:columnCount="5"
+            android:rowCount="2"
+            android:stretchMode="spacingWidth"
+            android:background="#ffffff"
             >
-            <TextView
-                android:id="@+id/left_panel_number"
-                style="@style/playersPanel"
-                android:text="№"
-                android:layout_width="30dp"
-                />
-            <TextView
-                android:id="@+id/left_panel_name"
-                style="@style/playersPanel"
-                android:text="NAME"
-                android:layout_width="100dp"
-                />
-            <TextView
-                android:id="@+id/left_panel_points"
-                style="@style/playersPanel"
-                android:text="P"
-                android:layout_width="20dp"
-                />
-            <TextView
-                android:id="@+id/left_panel_fouls"
-                style="@style/playersPanel"
-                android:text="F"
-                android:layout_width="20dp"
-                />
-            <TextView
-                android:id="@+id/left_panel_edit"
-                style="@style/playersPanel"
-                android:layout_width="30dp"
-                />
-        </TableRow>
 
-        <TableRow
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left"
-            android:layout_gravity="center"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            >
-            <TextView
-                android:id="@+id/left_panel_number1"
-                style="@style/playersPanel"
-                android:text="8"
-                />
-            <TextView
-                android:id="@+id/left_panel_name1"
-                style="@style/playersPanel"
-                android:text="Player"
-                />
-            <TextView
-                android:id="@+id/left_panel_points1"
-                style="@style/playersPanel"
-                android:text="0"
-                />
-            <TextView
-                android:id="@+id/left_panel_fouls1"
-                style="@style/playersPanel"
-                android:text="0"
-                />
-        </TableRow>
--->
-
-    </TableLayout>
+        </TableLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,7 +41,7 @@
         <TextView
             android:id="@+id/left_panel_close"
             style="@style/playersPanel"
-            android:text="close"
+            android:text="&lt;&lt;"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -114,7 +51,7 @@
         <TextView
             android:id="@+id/left_panel_add"
             style="@style/playersPanel"
-            android:text="add"
+            android:text="+"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -124,15 +61,30 @@
         <TextView
             android:id="@+id/left_panel_add_auto"
             style="@style/playersPanel"
-            android:text="add auto"
+            android:text="++"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            />
+<!--
+        <TextView
+            android:id="@+id/left_panel_select_active"
+            style="@style/playersPanel"
+            android:text="select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:padding="5dp"
             />
 
+-->
+        <ToggleButton
+            android:id="@+id/left_panel_select_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="select"
+            android:textOn="apply"/>
+
     </LinearLayout>
-
-
 </com.smiler.basketball_scoreboard.elements.SlidingRelativeLayout>
-<!--</FrameLayout>-->

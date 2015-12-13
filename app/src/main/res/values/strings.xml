@@ -5,10 +5,9 @@
     <string name="app_name">Basketball Scoreboard</string>
     <string name="action_apply">Apply</string>
     <string name="action_ok" translatable="false">OK</string>
+    <string name="action_confirm">Confirm action</string>
     <string name="action_confirm_new_game">Start new game?</string>
     <string name="action_close">Close</string>
-    <string name="action_fullscreen">Fullscreen</string>
-    <string name="action_fullscreen_toggle">Toggle fullscreen</string>
     <string name="action_new_game">New game</string>
     <string name="action_save">Save</string>
     <string name="action_save_result">Save game result?</string>
@@ -81,9 +80,14 @@
     <string name="cab_subtitle">Selected %1$d</string>
     <string name="cab_success">Results deleted</string>
     <string name="no_results">No saved games</string>
-    <string name="vibration">Vibration on click</string>
 
-
+    <string name="edit_player_dialog_title">Player\'s info</string>
+    <string name="edit_player_dialog_add">Save</string>
+    <string name="edit_player_dialog_add2">Save and add more</string>
+    <string name="edit_player_dialog_name">Name</string>
+    <string name="edit_player_dialog_number">Number</string>
+    <string name="edit_player_dialog_captain">Captain</string>
+    <string name="edit_player_dialog_captain_confirm">Captain already assigned. Change?</string>
 
     <string name="help_text">Interface interaction.\n
         \n

@@ -24,6 +24,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -40,11 +41,13 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
+import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
 import com.smiler.basketball_scoreboard.elements.StartTimeoutDialog;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -53,12 +56,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View.OnLongClickListener,
         ConfirmDialog.ConfirmDialogListener,
         Drawer.OnDrawerItemClickListener,
+        EditPlayerDialog.OnEditPlayerListener,
         NameEditDialog.OnChangeNameListener,
-        StartTimeoutDialog.NewTimeoutDialogListener,
+        OverlayFragment.OverlayFragmentListener,
+        SidePanelFragment.LeftPanelListener,
         SoundPool.OnLoadCompleteListener,
-        TimePickerFragment.OnChangeTimeListener,
-        SidePanelFragment.LeftPanelListener
-{
+        StartTimeoutDialog.NewTimeoutDialogListener,
+        TimePickerFragment.OnChangeTimeListener {
 
     private SharedPreferences statePref, sharedPref;
     private TextView shotTimeView, mainTimeView, hNameView, gNameView, periodView;
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView gTimeoutsView, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
     private TextView shotTimeSwitchView;
+    private ViewGroup left_players_buttons;
     private Drawer.Result drawer;
 
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private HelpFragment helpFragment;
     private AppUpdatesFragment appUpdatesFragment;
     private SidePanelFragment leftPanel;
+    private OverlayFragment overlay;
 
     private SimpleDateFormat mainTimeFormat = Constants.timeFormat;
     private long mainTickInterval = Constants.SECOND;
@@ -184,37 +190,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gScoreView = (TextView) findViewById(R.id.guestScoreView);
         hNameView = (TextView) findViewById(R.id.homeNameView);
         gNameView = (TextView) findViewById(R.id.guestNameView);
-        ImageView whistleView = (ImageView) findViewById(R.id.whistleView);
-        ImageView hornView = (ImageView) findViewById(R.id.hornView);
-        ImageView startTimeoutView = (ImageView) findViewById(R.id.rightIconView);
-        ImageView startCameratView = (ImageView) findViewById(R.id.cameraView);
-        TextView homeScoreMinus1 = (TextView) findViewById(R.id.minus1HomeView);
-        TextView guestScoreMinus1 = (TextView) findViewById(R.id.minus1GuestView);
-        TextView homeScorePlus1 = (TextView) findViewById(R.id.plus1HomeView);
-        TextView guestScorePlus1 = (TextView) findViewById(R.id.plus1GuestView);
-        TextView homeScorePlus3 = (TextView) findViewById(R.id.plus3HomeView);
-        TextView guestScorePlus3 = (TextView) findViewById(R.id.plus3GuestView);
 
         mainTimeView.setOnClickListener(this);
-        hScoreView.setOnClickListener(this);
-        gScoreView.setOnClickListener(this);
-        homeScorePlus1.setOnClickListener(this);
-        guestScorePlus1.setOnClickListener(this);
-        homeScorePlus3.setOnClickListener(this);
-        guestScorePlus3.setOnClickListener(this);
-        homeScoreMinus1.setOnClickListener(this);
-        guestScoreMinus1.setOnClickListener(this);
-
-        whistleView.setOnClickListener(this);
-        hornView.setOnClickListener(this);
-        startTimeoutView.setOnClickListener(this);
-        startCameratView.setOnClickListener(this);
-
         mainTimeView.setOnLongClickListener(this);
+        hScoreView.setOnClickListener(this);
         hScoreView.setOnLongClickListener(this);
+        gScoreView.setOnClickListener(this);
         gScoreView.setOnLongClickListener(this);
         hNameView.setOnLongClickListener(this);
         gNameView.setOnLongClickListener(this);
+
+        (findViewById(R.id.minus1HomeView)).setOnClickListener(this);
+        (findViewById(R.id.minus1GuestView)).setOnClickListener(this);
+        (findViewById(R.id.plus1HomeView)).setOnClickListener(this);
+        (findViewById(R.id.plus1GuestView)).setOnClickListener(this);
+        (findViewById(R.id.plus3HomeView)).setOnClickListener(this);
+        (findViewById(R.id.plus3GuestView)).setOnClickListener(this);
+
+        (findViewById(R.id.whistleView)).setOnClickListener(this);
+        (findViewById(R.id.hornView)).setOnClickListener(this);
+        (findViewById(R.id.rightIconView)).setOnClickListener(this);
+        (findViewById(R.id.cameraView)).setOnClickListener(this);
 
         layoutChanged = timeoutsRulesChanged = false;
 
@@ -262,21 +258,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         right_players_stub.setLayoutResource(R.layout.right_panel);
         right_players_stub.inflate();
 
-        leftPanel = new SidePanelFragment();//.newInstance();
-//        FragmentManager fm = getFragmentManager();
-//        fm.beginTransaction()
-//                .setCustomAnimations(
-//                        R.anim.side_slide_show, R.anim.side_slide_hide
-////                        android.R.animator.fade_in, android.R.animator.fade_out
-//                )
-//                .add(R.id.left_panel_full, leftPanel)
-////                .show(leftPanel)
-//                .commit();
-        Button leftPanelToggle = (Button) findViewById(R.id.left_panel_toggle);
-        leftPanelToggle.setOnClickListener(this);
+        left_players_buttons = (ViewGroup) findViewById(R.id.left_panel);
 
+        leftPanel = new SidePanelFragment();
+        overlay = new OverlayFragment();
+        (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
     }
-
 
     private void initBottomLineTimeouts() {
         hTimeoutsView = (TextView) findViewById(R.id.homeTimeoutsView);
@@ -308,7 +295,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStop() {
         super.onStop();
-        if (saveOnExit) { saveCurrentState(); }
+        if (saveOnExit) {
+            saveCurrentState();
+        }
     }
 
     @Override
@@ -1570,10 +1559,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConfirmDialogPositive(String type) {
-        if (type.equals("new_game")) {
-            newGame();
-        } else if (type.equals("save_result")) {
-            saveResultDb();
+        switch (type) {
+            case "new_game":
+                newGame();
+                break;
+            case "save_result":
+                saveResultDb();
+                break;
+            case "edit_player_captain":
+                EditPlayerDialog f = (EditPlayerDialog) getFragmentManager().findFragmentByTag(EditPlayerDialog.TAG);
+                if (f != null) {f.changeCaptainConfirmed();}
+                break;
         }
     }
 
@@ -1590,15 +1586,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     private void leftPanelShow() {
         FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction()
-                .setCustomAnimations(R.anim.side_slide_show, R.anim.side_slide_show);
+        FragmentTransaction ft = fm.beginTransaction();
+        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
+        if (o != null) {
+            ft.show(o);
+        } else {
+            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
+        }
 
-        Fragment f = fm.findFragmentByTag("LEFT_SIDE_PANEL");
-        if (f != null) {
-            ft.show(f);
+        ft.setCustomAnimations(R.anim.side_slide_show, R.anim.side_slide_show);
+        Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
+        if (lpanel != null) {
+            ft.show(lpanel);
         } else {
             ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
         }
@@ -1609,12 +1610,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onLeftPanelClose() {
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction()
-                .setCustomAnimations(
-                        R.anim.side_slide_hide, R.anim.side_slide_hide
-                )
+                .hide(overlay)
+                .setCustomAnimations(R.anim.side_slide_hide, R.anim.side_slide_hide)
                 .hide(leftPanel)
                 .commit();
+    }
 
+    @Override
+    public void onLeftPanelActiveSelected(ArrayList<String> numbers) {
+        for (int i = 0; i < numbers.size(); i++) {
+            ((Button)left_players_buttons.getChildAt(i)).setText(numbers.get(i));
+        }
 
+    }
+
+    @Override
+    public void onOverlayClick() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (overlay.isVisible()) {
+            ft.hide(overlay);
+        }
+        ft.setCustomAnimations(R.anim.side_slide_hide, R.anim.side_slide_hide);
+        if (leftPanel.isVisible()) {
+            ft.hide(leftPanel);
+        }
+//        if (rightPanel.isVisible()) { ft.hide(rightPanel); }
+        ft.commit();
+    }
+
+    @Override
+    public void onEditPlayer(String number, String name, boolean captain) {
+        leftPanel.addRow(number, name, captain);
+    }
+
+    @Override
+    public int onEditPlayerCheck(String number, boolean captain) {
+        return leftPanel.checkNewPlayer(number, captain);
     }
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_settings">Настройки</string>
+    <string name="time_category">Настройки времени</string>
+    <string name="time_screen">Настройки времени</string>
+    <string name="pref_pause_on_sound">Пауза при звуке</string>
+    <string name="pref_pause_on_sound_descr">Останавливать время, если прозвучал свисток или сирена</string>
+    <string name="pref_auto_break">Показывать перерывы</string>
+    <string name="pref_auto_break_descr">Начинать отсчет времени перерыва по окончании периода</string>
+    <string name="pref_auto_sounds">Проигрывать звуки</string>
+    <string name="pref_auto_timeout">Показывать таймаут</string>
+    <string name="pref_timeouts_rules">Правила таймаутов</string>
+    <string name="pref_auto_save_save_results">Сохранять результат перед запуском новой игры</string>
+    <string name="pref_save_on_exit">Сохранять текущее состояние при выходе</string>
+    <string name="pref_layout">Макет</string>
+    <string name="pref_clear_time">Чистое время</string>
+    <string name="pref_choose_sound">Выбрать звук</string>
+    <string name="pref_default_prefs">Настройки согласно правилам</string>
+    <string name="pref_auto_timeout_descr">Показывать обратный отсчёт, если был взят таймаут</string>
+    <string name="set_default_dialog_message">Установить значения согласно официальным правилам.</string>
+    <string name="shot_time_restart">Перезапуск времени на атаку при изменении счёта</string>
+    <string name="home_team_name">Название команды хозяев</string>
+    <string name="home_team_name_default">ХОЗЯЕВА</string>
+    <string name="guest_team_name">Название команды гостей</string>
+    <string name="guest_team_name_default">ГОСТИ</string>
+    <string name="main_time_length">Основное время (минуты)</string>
+    <string name="max_fouls">Количество командных фолов</string>
+    <string name="max_timeouts">Количество таймаутов</string>
+    <string name="default_category">Значения по умолчанию</string>
+    <string name="app_category">Настройки приложения</string>
+    <string name="vibration">Вибрация при нажатии</string>
+    <string name="shot_time_length">Время на атаку (секунды)</string>
+    <string name="short_shot_time_length">Укороченное время на атаку (секунды)</string>
+    <string name="number_of_regular_periods">Количество периодов</string>
+    <string name="overtime_length">Продолжительность овертайма (минуты)</string>
+    <string name="enable_shot_time">Использовать время на атаку</string>
+    <string name="enable_short_shot_time">Использовать укороченное время на атаку</string>
+    <string name="direct_timer">Использовать прямой осчёт времени</string>
+
+    <string name="fraction_seconds_main">Доли секунд в основном времени</string>
+    <string name="fraction_seconds_main_descr">Если время меньше 1 минуты, показывать доли секунды</string>
+    <string name="fraction_seconds_shot">Доли секунд в времени на атаку</string>
+    <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд, показывать доли секунды</string>
+
+    <string-array name="pref_layout_titles">
+        <item>Полный, с временем на атаку, периодом, фолами и таймаутами</item>
+        <item>Простой, без времени на атаку, периода, фолов и таймаутов</item>
+    </string-array>
+    <string-array name="timeout_variants">
+        <item>2-х минутный перерыв</item>
+        <item>15-ти минутный перерыв</item>
+        <item>20-ти секундный таймаут</item>
+        <item>60-ти секундный таймаут</item>
+        <item>100 секундный таймаут</item>
+    </string-array>
+    <string-array name="pref_auto_save_save_results_titles">
+        <item>Включено</item>
+        <item>Выключено</item>
+        <item>Показать диалог выбора</item>
+    </string-array>
+    <string-array name="pref_timeouts_rules_titles">
+        <item>Не использовать</item>
+        <item>FIBA</item>
+        <item>NBA</item>
+    </string-array>
+    <string-array name="pref_clear_time_titles">
+        <item>Не использовать</item>
+        <item>Пауза при фоле</item>
+        <item>Пауза при фоле или изменении счёта</item>
+        <item>Пауза при фоле или изменении счёта за минуту до конца периода</item>
+    </string-array>
+    <string-array name="pref_auto_sounds_titles">
+        <item>Выключено</item>
+        <item>По истечении времени на атаку</item>
+        <item>По истечении основного времени</item>
+        <item>По истечении основного времени или времени на атаку</item>
+    </string-array>
+</resources>

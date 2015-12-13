@@ -41,50 +41,58 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                 .setNegativeButton(R.string.no, this);
 
         Bundle args = getArguments();
-        type = args.getString("type");
+        type = args.getString("type", "");
 
         int titleId;
-        String msg;
-        if (type != null && type.equals("new_game")) {
-            titleId = R.string.action_confirm_new_game;
-            String team = args.getString("team", null);
-            if (team != null) {
-                int winScore = args.getInt("win_score");
-                int score2 = args.getInt("score2");
-                msg = String.format(getResources().getString(R.string.confirm_new_game_message_win),
-                                    team, winScore, score2);
+        switch (type) {
+            case "new_game":
+                String msg;
+                titleId = R.string.action_confirm_new_game;
+                String team = args.getString("team", null);
+                if (team != null) {
+                    int winScore = args.getInt("win_score");
+                    int score2 = args.getInt("score2");
+                    msg = String.format(getResources().getString(R.string.confirm_new_game_message_win),
+                            team, winScore, score2);
 
-                View checkboxView = getActivity().getLayoutInflater().inflate(R.layout.confirm_dialog_checkbox, null);
-                checkbox = (CheckBox) checkboxView.findViewById(R.id.confirm_checkbox);
-                builder.setNeutralButton(R.string.confirm_new_neutral_option, this)
-                       .setView(checkboxView);
-            } else {
-                msg = getResources().getString(R.string.confirm_new_game_message_settings);
-            }
-            builder.setMessage(msg);
-        } else {
-            titleId = R.string.action_save_result;
+                    View checkboxView = getActivity().getLayoutInflater().inflate(R.layout.confirm_dialog_checkbox, null);
+                    checkbox = (CheckBox) checkboxView.findViewById(R.id.confirm_checkbox);
+                    builder.setNeutralButton(R.string.confirm_new_neutral_option, this)
+                            .setView(checkboxView);
+                } else {
+                    msg = getResources().getString(R.string.confirm_new_game_message_settings);
+                }
+                builder.setMessage(msg);
+                break;
+            case "save_result":
+                titleId = R.string.action_save_result;
+                break;
+            case "edit_player_captain":
+                titleId = R.string.edit_player_dialog_captain_confirm;
+                break;
+            default:
+                titleId = R.string.action_confirm;
+                break;
         }
         builder.setTitle(titleId);
         return builder.create();
     }
 
     public interface ConfirmDialogListener {
-        void onConfirmDialogPositive(String type, boolean dontShow);
         void onConfirmDialogPositive(String type);
+        void onConfirmDialogPositive(String type, boolean dontShow);
         void onConfirmDialogNeutral(boolean dontShow);
         void onConfirmDialogNegative(boolean dontShow);
     }
-    ConfirmDialogListener mListener;
+    ConfirmDialogListener listener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (ConfirmDialogListener) activity;
+            listener = (ConfirmDialogListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ConfirmDialogListener");
+            throw new ClassCastException(activity.toString() + " must implement ConfirmDialogListener");
         }
     }
 
@@ -92,17 +100,17 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
                 if (checkbox != null) {
-                    mListener.onConfirmDialogPositive(type, checkbox.isChecked());
+                    listener.onConfirmDialogPositive(type, checkbox.isChecked());
                 } else {
-                    mListener.onConfirmDialogPositive(type);
+                    listener.onConfirmDialogPositive(type);
                 }
                 break;
             case Dialog.BUTTON_NEUTRAL:
-                mListener.onConfirmDialogNeutral(checkbox.isChecked());
+                listener.onConfirmDialogNeutral(checkbox.isChecked());
                 break;
             case Dialog.BUTTON_NEGATIVE:
                 if (checkbox != null) {
-                    mListener.onConfirmDialogNegative(checkbox.isChecked());
+                    listener.onConfirmDialogNegative(checkbox.isChecked());
                 }
                 break;
         }

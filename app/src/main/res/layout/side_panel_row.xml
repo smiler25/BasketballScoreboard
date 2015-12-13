@@ -8,7 +8,8 @@
     android:layout_gravity="center"
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
-    >
+    android:clickable="false"
+    android:longClickable="false">
 
     <TextView
         android:id="@+id/left_panel_number"

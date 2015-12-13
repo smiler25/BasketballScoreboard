@@ -5,5 +5,5 @@
     android:propertyName="translationX"
     android:valueType="floatType"
     android:valueFrom="0"
-    android:valueTo="-1000"
-    android:duration="@android:integer/config_longAnimTime"/>
+    android:valueTo="-200"
+    android:duration="100"/>
