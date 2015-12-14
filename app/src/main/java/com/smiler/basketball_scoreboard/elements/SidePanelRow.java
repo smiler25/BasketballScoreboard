@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
 
 public class SidePanelRow extends TableRow{
@@ -16,6 +15,8 @@ public class SidePanelRow extends TableRow{
     private String name, number;
     private boolean captain = false, onCourt = false, selected = false;
     private Context context;
+    private static int count = 0;
+    private int id = 0;
 
     public SidePanelRow(Context context) {
         super(context);
@@ -30,11 +31,7 @@ public class SidePanelRow extends TableRow{
     public SidePanelRow(Context context, String number, String name, boolean captain) {
         super(context);
         createView(context);
-        this.captain = captain;
-        this.name = name;
-        this.number = number;
-        setNumber(number);
-        setName(name);
+        edit(number, name, captain);
     }
 
     private void createView(Context context) {
@@ -49,10 +46,10 @@ public class SidePanelRow extends TableRow{
             @Override
             public void onClick(View v) {
                 changePoints(2);
-                editRow();
+                edit();
             }
         });
-
+        id = count++;
     }
 
     private void createHeaderRow(Context context) {
@@ -60,11 +57,16 @@ public class SidePanelRow extends TableRow{
     }
 
     public void setNumber(String value) {
-        if (this.captain) {value += "*";}
+        if (captain) {value += "*";}
         numberView.setText(value);
     }
+
     public String getNumber() {
-        return this.number;
+        return number;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setName(String value) {
@@ -89,10 +91,17 @@ public class SidePanelRow extends TableRow{
         foulsView.setText(String.valueOf(fouls));
     }
 
-    public void editRow() {
-        (new EditPlayerDialog()).show(((Activity) context).getFragmentManager(), EditPlayerDialog.TAG);
-        EditPlayerDialog.newInstance(this.number, this.name, this.captain)
-                .show(((Activity) context).getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
+    public void edit() {
+        EditPlayerDialog.newInstance(id, number, name, captain)
+                .show(((Activity) context).getFragmentManager(), EditPlayerDialog.TAG);
+    }
+
+    public void edit(String number, String name, boolean captain) {
+        this.captain = captain;
+        this.name = name;
+        this.number = number;
+        setNumber(number);
+        setName(name);
     }
 
     public void cancelCaptain() {

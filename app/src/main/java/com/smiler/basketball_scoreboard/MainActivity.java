@@ -43,6 +43,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
+import com.smiler.basketball_scoreboard.elements.SidePanelRow;
 import com.smiler.basketball_scoreboard.elements.StartTimeoutDialog;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 
@@ -1617,22 +1618,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onLeftPanelActiveSelected(ArrayList<String> numbers) {
-        for (int i = 0; i < numbers.size(); i++) {
-            ((Button)left_players_buttons.getChildAt(i)).setText(numbers.get(i));
+    public void onLeftPanelActiveSelected(ArrayList<SidePanelRow> rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            Button bu = (Button)left_players_buttons.getChildAt(i);
+            SidePanelRow row = rows.get(i);
+            bu.setText(row.getNumber());
+            bu.setTag(row);
         }
-
     }
 
     @Override
     public void onOverlayClick() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        if (overlay.isVisible()) {
-            ft.hide(overlay);
-        }
         ft.setCustomAnimations(R.anim.side_slide_hide, R.anim.side_slide_hide);
+        int toClose = 1;
         if (leftPanel.isVisible()) {
-            ft.hide(leftPanel);
+            if (leftPanel.selectionConfirmed()) {
+                ft.hide(leftPanel);
+                toClose--;
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
+            }
+        }
+        if (overlay.isVisible() && toClose == 0) {
+            ft.hide(overlay);
         }
 //        if (rightPanel.isVisible()) { ft.hide(rightPanel); }
         ft.commit();
@@ -1641,6 +1650,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onEditPlayer(String number, String name, boolean captain) {
         leftPanel.addRow(number, name, captain);
+    }
+
+    @Override
+    public void onEditPlayer(int id, String number, String name, boolean captain) {
+        leftPanel.editRow(id, number, name, captain);
+    }
+
+    @Override
+    public void onEditPlayer(int id) {
+        leftPanel.deleteRow(id);
     }
 
     @Override

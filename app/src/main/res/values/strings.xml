@@ -81,13 +81,22 @@
     <string name="cab_success">Results deleted</string>
     <string name="no_results">No saved games</string>
 
+    <string name="side_panel_confirm">Confirm selection</string>
+    <string name="side_panel_select_on">Apply</string>
+    <string name="side_panel_select_off">Select</string>
+    <string name="side_panel_few">Too few players (%1$d)</string>
+    <string name="side_panel_many">Too many players (%1$d)</string>
+
     <string name="edit_player_dialog_title">Player\'s info</string>
     <string name="edit_player_dialog_add">Save</string>
     <string name="edit_player_dialog_add2">Save and add more</string>
+    <string name="edit_player_dialog_cancel">Cancel</string>
+    <string name="edit_player_dialog_delete">Delete</string>
     <string name="edit_player_dialog_name">Name</string>
     <string name="edit_player_dialog_number">Number</string>
     <string name="edit_player_dialog_captain">Captain</string>
     <string name="edit_player_dialog_captain_confirm">Captain already assigned. Change?</string>
+    <string name="edit_player_dialog_number_warning">Number already assigned</string>
 
     <string name="help_text">Interface interaction.\n
         \n
@@ -103,9 +112,10 @@
 
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info">
+        v.2.0:\n
+            - players panels (see help).\n
         v.1.2.3:\n
             - choose fractions of seconds for main time and shot clock,\n
-
     </string>
 
 </resources>

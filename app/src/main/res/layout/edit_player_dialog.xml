@@ -74,7 +74,7 @@
             />
 
         <Button
-            android:id="@+id/button_add_another"
+            android:id="@+id/button_custom_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -89,7 +89,7 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             style="?android:attr/segmentedButtonStyle"
-            android:text="cancel"/>
+            android:text="@string/edit_player_dialog_cancel"/>
 
     </LinearLayout>
 </LinearLayout>
