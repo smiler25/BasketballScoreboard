@@ -3,6 +3,8 @@
     <string name="title_activity_settings">Настройки</string>
     <string name="time_category">Настройки времени</string>
     <string name="time_screen">Настройки времени</string>
+    <string name="side_panels_category">Панели игроков</string>
+    <string name="side_panels_screen">Настройки панелей игроков</string>
     <string name="pref_pause_on_sound">Пауза при звуке</string>
     <string name="pref_pause_on_sound_descr">Останавливать время, если прозвучал свисток или сирена</string>
     <string name="pref_auto_break">Показывать перерывы</string>
@@ -41,6 +43,25 @@
     <string name="fraction_seconds_main_descr">Если время меньше 1 минуты, показывать доли секунды</string>
     <string name="fraction_seconds_shot">Доли секунд в времени на атаку</string>
     <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд, показывать доли секунды</string>
+
+    <string name="side_panels_interaction">Взаимодействие с кнопками игроков</string>
+    <string name="side_panels_connection">Связь между панелями</string>
+    <string name="side_panels_connection_descr">Показывать/скрывать панели синхронно</string>
+    <string name="side_panels_fouls_rules">Отслеживание персональных фолов</string>
+    <string name="side_panels_max_fouls">Количество персональных фолов</string>
+    <string name="side_panels_interaction_time">Время ожидания действия (секунды)</string>
+    <string name="side_panels_activate">Использовать панели игроков</string>
+    <string-array name="side_panels_fouls_rules_titles">
+        <item>Не отслеживать</item>
+        <item>Правило для команд</item>
+        <item>Настроить</item>
+    </string-array>
+    <string-array name="side_panels_interaction_titles">
+        <item>Применить в течение времени. Приписать капитану по истечению</item>
+        <item>Применить в течение времени. Приписать невидимому игроку по истечению</item>
+        <item>Запоминать действия пока кнопка игрока не будет нажата</item>
+    </string-array>
+
 
     <string-array name="pref_layout_titles">
         <item>Полный, с временем на атаку, периодом, фолами и таймаутами</item>

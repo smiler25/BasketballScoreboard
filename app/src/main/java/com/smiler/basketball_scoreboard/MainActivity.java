@@ -95,13 +95,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String hName, gName;
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
+    private short hActionType = -1, gActionType = -1;
+    private int hActionValue = 0, gActionValue = 0;
 
     private int dontAskNewGame;
     private boolean showTimeoutDialog = true;
     private FloatingCountdownTimerDialog floatingDialog;
     private HelpFragment helpFragment;
     private AppUpdatesFragment appUpdatesFragment;
-    private SidePanelFragment leftPanel;
+    private SidePanelFragment leftPanel, rightPanel;
     private OverlayFragment overlay;
 
     private SimpleDateFormat mainTimeFormat = Constants.timeFormat;
@@ -254,16 +256,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initSidePanels() {
         ViewStub left_players_stub = (ViewStub) findViewById(R.id.left_panel_stub);
         ViewStub right_players_stub = (ViewStub) findViewById(R.id.right_panel_stub);
-        left_players_stub.setLayoutResource(R.layout.left_panel);
+        left_players_stub.setLayoutResource(R.layout.side_panel_left);
         left_players_stub.inflate();
-        right_players_stub.setLayoutResource(R.layout.right_panel);
+        right_players_stub.setLayoutResource(R.layout.side_panel_right);
         right_players_stub.inflate();
 
         left_players_buttons = (ViewGroup) findViewById(R.id.left_panel);
+        for (int i = 0; i < left_players_buttons.getChildCount(); i++) {
+            left_players_buttons.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SidePanelRow row = ((SidePanelRow) v.getTag());
+                    if (hActionType != -1) {
+                        if (hActionType == 0) {
+                            row.changePoints(hActionValue);
+                        } else if (hActionType == 1) {
+                            row.changeFouls(hActionValue);
+                        }
+                        hActionType = -1;
+                        hActionValue = 0;
+                    }
+                }
+            });
+        }
 
-        leftPanel = new SidePanelFragment();
+        leftPanel = SidePanelFragment.newInstance(true);
+        rightPanel = SidePanelFragment.newInstance(false);
+//        leftPanel = new SidePanelFragment();
+//        rightPanel = new SidePanelFragment();
         overlay = new OverlayFragment();
         (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
+        (findViewById(R.id.right_panel_toggle)).setOnClickListener(this);
     }
 
     private void initBottomLineTimeouts() {
@@ -556,6 +579,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.left_panel_toggle:
                 leftPanelShow();
+                break;
+            case R.id.right_panel_toggle:
+                rightPanelShow();
                 break;
             default:
                 break;
@@ -1058,6 +1084,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         switch (team) {
             case 0:
+                hActionType = 1;
+                hActionValue += 1;
                 if (hFouls < maxFouls) {
                     hFoulsView.setText(Short.toString(++hFouls));
                     if (hFouls == maxFouls) {
@@ -1066,6 +1094,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case 1:
+                gActionType = 0;
+                gActionValue += 1;
                 if (gFouls < maxFouls) {
                     gFoulsView.setText(Short.toString(++gFouls));
                     if (gFouls == maxFouls) {
@@ -1092,6 +1122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeGuestScore(int value) {
+        gActionType = 0;
+        gActionValue += value;
         gScore += value;
         gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
         if (value != 0) {
@@ -1100,6 +1132,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeHomeScore(int value) {
+        hActionType = 0;
+        hActionValue += value;
         hScore += value;
         hScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, hScore));
         if (value != 0) {
@@ -1590,6 +1624,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void leftPanelShow() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
         Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
         if (o != null) {
             ft.show(o);
@@ -1597,7 +1632,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
         }
 
-        ft.setCustomAnimations(R.anim.side_slide_show, R.anim.side_slide_show);
+        ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
         Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
         if (lpanel != null) {
             ft.show(lpanel);
@@ -1607,14 +1642,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ft.commit();
     }
 
-    @Override
-    public void onLeftPanelClose() {
+    private void rightPanelShow() {
         FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .hide(overlay)
-                .setCustomAnimations(R.anim.side_slide_hide, R.anim.side_slide_hide)
-                .hide(leftPanel)
-                .commit();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
+        if (o != null) {
+            ft.show(o);
+        } else {
+            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
+        }
+
+        ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
+        Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
+        if (rpanel != null) {
+            ft.show(rpanel);
+        } else {
+            ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
+        }
+        ft.commit();
+    }
+
+    @Override
+    public void onSidePanelClose(boolean left) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.hide(overlay);
+        if (left){
+            ft.setCustomAnimations(R.anim.slide_left_side_hide, R.anim.slide_left_side_hide).hide(leftPanel);
+        } else{
+            ft.setCustomAnimations(R.anim.slide_right_side_hide, R.anim.slide_right_side_hide).hide(rightPanel);
+        }
+        ft.commit();
     }
 
     @Override
@@ -1630,20 +1688,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onOverlayClick() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.side_slide_hide, R.anim.side_slide_hide);
-        int toClose = 1;
+        int toClose = 0;
         if (leftPanel.isVisible()) {
+            toClose++;
             if (leftPanel.selectionConfirmed()) {
+                ft.setCustomAnimations(R.anim.slide_left_side_hide, R.anim.slide_left_side_hide);
                 ft.hide(leftPanel);
                 toClose--;
             } else {
                 Toast.makeText(this, getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
             }
         }
+        if (rightPanel.isVisible()) {
+            toClose++;
+            if (rightPanel.selectionConfirmed()) {
+                ft.setCustomAnimations(R.anim.slide_right_side_hide, R.anim.slide_right_side_hide);
+                ft.hide(rightPanel);
+                toClose--;
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
+            }
+        }
         if (overlay.isVisible() && toClose == 0) {
+            ft.setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out);
             ft.hide(overlay);
         }
-//        if (rightPanel.isVisible()) { ft.hide(rightPanel); }
         ft.commit();
     }
 

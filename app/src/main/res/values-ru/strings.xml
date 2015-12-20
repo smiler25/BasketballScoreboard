@@ -47,8 +47,11 @@
     <string name="edit_player_dialog_title">Информация об игроке</string>
     <string name="edit_player_dialog_add">Сохранить</string>
     <string name="edit_player_dialog_add2">Сохранить и добавить ещё</string>
+    <string name="edit_player_dialog_cancel">Отмена</string>
+    <string name="edit_player_dialog_delete">Удалить</string>
     <string name="edit_player_dialog_name">Имя</string>
     <string name="edit_player_dialog_number">Номер</string>
+    <string name="edit_player_dialog_number_warning">Номер уже занят</string>
     <string name="edit_player_dialog_captain">Капитан</string>
     <string name="edit_player_dialog_captain_confirm">Капитан уже назначен. Изменить?</string>
 
@@ -72,17 +75,6 @@
     <string name="side_panel_select_off">Выбрать</string>
     <string name="side_panel_few">Слишком мало игроков (%1$d)</string>
     <string name="side_panel_many">Слишком много игроков (%1$d)</string>
-
-    <string name="edit_player_dialog_title">Информация об игроке</string>
-    <string name="edit_player_dialog_add">Сохранить</string>
-    <string name="edit_player_dialog_add2">Сохранить и добавить ещё</string>
-    <string name="edit_player_dialog_cancel">Отмена</string>
-    <string name="edit_player_dialog_delete">Удалить</string>
-    <string name="edit_player_dialog_name">Имя</string>
-    <string name="edit_player_dialog_number">Номер</string>
-    <string name="edit_player_dialog_captain">Капитан</string>
-    <string name="edit_player_dialog_captain_confirm">Капитан уже назначен. Заменить?</string>
-    <string name="edit_player_dialog_number_warning">Номер уже занят</string>
 
     <string name="help_text">Взаимодействие с интерфейсом\n
         \n

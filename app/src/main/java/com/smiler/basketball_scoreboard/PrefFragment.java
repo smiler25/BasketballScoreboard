@@ -7,7 +7,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
 public class PrefFragment extends PreferenceFragment {
-    OnSelectTimePreference selectTimePreferenceListener;
+    OnSelectNestedScreenPreference listener;
 
     @Override
     public  void onCreate(Bundle savedInstanceState) {
@@ -18,20 +18,23 @@ public class PrefFragment extends PreferenceFragment {
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference.getKey().equals("time_screen")) {
-            selectTimePreferenceListener.onSelectTimePreference();
+            listener.onSelectTimePreference();
+        } else if (preference.getKey().equals("side_panels_screen")) {
+            listener.onSelectSidePanelsPreference();
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
-    public interface OnSelectTimePreference {
+    public interface OnSelectNestedScreenPreference {
         void onSelectTimePreference();
+        void onSelectSidePanelsPreference();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            selectTimePreferenceListener = (OnSelectTimePreference) activity;
+            listener = (OnSelectNestedScreenPreference) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must selectNestedPreferenceListener");
         }

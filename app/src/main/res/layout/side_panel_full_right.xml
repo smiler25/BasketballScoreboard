@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.smiler.basketball_scoreboard.elements.SlidingRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="match_parent"
+    android:background="#7c7c7c"
+    android:orientation="vertical"
+    android:clickable="true"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:background="#ffffff"
+        android:layout_weight="3"
+        >
+
+        <TableLayout
+            android:id="@+id/right_panel_table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="5"
+            android:stretchMode="spacingWidth"
+            android:background="#ffffff"
+            >
+
+        </TableLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:layout_weight="1"
+        >
+        <ToggleButton
+            android:id="@+id/right_panel_select_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="@string/side_panel_select_off"
+            android:textOn="@string/side_panel_select_on"
+            />
+        <TextView
+            android:id="@+id/right_panel_add_auto"
+            style="@style/playersPanel"
+            android:text="++"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            />
+        <TextView
+            android:id="@+id/right_panel_add"
+            style="@style/playersPanel"
+            android:text="+"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            />
+        <TextView
+            android:id="@+id/right_panel_close"
+            style="@style/playersPanel"
+            android:text="&gt;&gt;"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            />
+
+    </LinearLayout>
+</com.smiler.basketball_scoreboard.elements.SlidingRelativeLayout>

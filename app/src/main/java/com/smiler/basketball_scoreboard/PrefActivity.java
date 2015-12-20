@@ -14,7 +14,7 @@ import com.smiler.basketball_scoreboard.elements.SetDefaultPreference;
 
 public class PrefActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
                                                       SetDefaultPreference.SetDefaultDialogListener,
-                                                      PrefFragment.OnSelectTimePreference {
+        PrefFragment.OnSelectNestedScreenPreference {
 
     static boolean prefChangedRestart = false;
     static boolean prefChangedNoRestart = false;
@@ -91,7 +91,9 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
                     onBackPressed();
                     toolbar.setTitle(R.string.title_activity_settings);
                     inNested = false;
-                } else { finish(); }
+                } else {
+                    finish();
+                }
             }
         });
     }
@@ -179,12 +181,26 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
         openTimeSettings();
     }
 
+    @Override
+    public void onSelectSidePanelsPreference() {
+        openSidePanelsSettings();
+    }
+
     private void openTimeSettings() {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PrefFragmentTime())
                 .addToBackStack(null)
                 .commit();
         toolbar.setTitle(R.string.time_screen);
+        inNested = true;
+    }
+
+    private void openSidePanelsSettings() {
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new PrefFragmentSidePanels())
+                .addToBackStack(null)
+                .commit();
+        toolbar.setTitle(R.string.side_panels_screen);
         inNested = true;
     }
 }

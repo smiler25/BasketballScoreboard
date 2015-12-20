@@ -4,6 +4,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="time_category">Time settings</string>
     <string name="default_category">Default values</string>
+    <string name="side_panels_category">Players panels</string>
     <string name="app_category">App behavior</string>
 
     <string name="main_time_length">Main period duration (minutes)</string>
@@ -107,5 +108,27 @@
 
     <string name="pref_choose_sound">Choose sound</string>
     <string name="time_screen">Time settings</string>
+    <string name="side_panels_screen">Players panels settings</string>
+    <string name="side_panels_interaction">Interaction with players butotns</string>
+    <string name="side_panels_connection">Connection between panels</string>
+    <string name="side_panels_connection_descr">Show/hide panels synchronously</string>
+    <string name="side_panels_fouls_rules">Personal fouls tracking</string>
+    <string name="side_panels_max_fouls">Maximum personal fouls</string>
+    <string name="side_panels_interaction_time">Waiting time for action (seconds)</string>
+    <string name="side_panels_interaction_time_value" translatable="false">5</string>
+    <string name="side_panels_activate">Use players panels</string>
+
+    <string-array name="side_panels_fouls_rules_titles">
+        <item>Do not track</item>
+        <item>Same as team</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array name="side_panels_interaction_titles">
+        <item>Apply during the time. Write to captian if late</item>
+        <item>Apply during the time. Write to invisible player if late</item>
+        <item>Accumulate actions until player\'s button not clicked</item>
+    </string-array>
+
 
 </resources>

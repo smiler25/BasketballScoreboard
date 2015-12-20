@@ -82,6 +82,24 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/default_category"
+        >
+
+        <CheckBoxPreference
+            android:key="side_panels_activate"
+            android:title="@string/side_panels_activate"
+            android:defaultValue="true" />
+
+        <PreferenceScreen
+            android:key="side_panels_screen"
+            android:dependency="side_panels_activate"
+            android:title="@string/side_panels_screen"
+            >
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/app_category">
 
         <ListPreference
@@ -120,6 +138,7 @@
             android:title="@string/pref_pause_on_sound"
             android:summary="@string/pref_pause_on_sound_descr"
             android:defaultValue="true" />
+
         <CheckBoxPreference
             android:key="auto_show_break"
             android:title="@string/pref_auto_break"

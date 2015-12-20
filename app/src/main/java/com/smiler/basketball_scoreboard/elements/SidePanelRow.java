@@ -20,22 +20,21 @@ public class SidePanelRow extends TableRow{
 
     public SidePanelRow(Context context) {
         super(context);
-        createView(context);
     }
 
-    public SidePanelRow(Context context, boolean header) {
+    public SidePanelRow(Context context, boolean header, boolean left) {
         super(context);
-        createHeaderRow(context);
+        createHeaderRow(context, left);
     }
 
-    public SidePanelRow(Context context, String number, String name, boolean captain) {
+    public SidePanelRow(Context context, String number, String name, boolean captain, boolean left) {
         super(context);
-        createView(context);
+        createView(context, left);
         edit(number, name, captain);
     }
 
-    private void createView(Context context) {
-        inflate(context, R.layout.side_panel_row, this);
+    private void createView(Context context, boolean left) {
+        inflate(context, (left) ? R.layout.side_panel_row_left : R.layout.side_panel_row_left, this);
         this.context = context;
         numberView = ((TextView) findViewById(R.id.left_panel_number));
         nameView = ((TextView) this.findViewById(R.id.left_panel_name));
@@ -52,8 +51,8 @@ public class SidePanelRow extends TableRow{
         id = count++;
     }
 
-    private void createHeaderRow(Context context) {
-        inflate(context, R.layout.side_panel_header, this);
+    private void createHeaderRow(Context context, boolean left) {
+        inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_left, this);
     }
 
     public void setNumber(String value) {
