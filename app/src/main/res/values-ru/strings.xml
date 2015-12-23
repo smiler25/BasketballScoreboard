@@ -38,6 +38,7 @@
     <string name="yes">Да</string>
     <string name="set_main_time">Установить время</string>
     <string name="toast_confirm_exit">Нажмите ещё раз, чтобы выйти</string>
+    <string name="toast_select_players">Выберите активных игроков</string>
 
     <string-array name="new_period_variants">
         <item>Регулярный период</item>

@@ -13,16 +13,20 @@ import android.widget.ToggleButton;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.SidePanelRow;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class SidePanelFragment extends Fragment implements View.OnClickListener {
 
     LeftPanelListener listener;
     private TableLayout table;
-    private HashMap<Integer, SidePanelRow> rows = new HashMap<>();
-    private ArrayList<String> playersNumbers = new ArrayList<>();
-    private ArrayList<SidePanelRow> activePlayers = new ArrayList<>();
+    private TreeMap<Integer, SidePanelRow> rows = new TreeMap<>();
+    private ArrayList<Integer> playersNumbers = new ArrayList<>();
+    private TreeSet<SidePanelRow> activePlayers = new TreeSet<>();
     private SidePanelRow captainPlayer;
     private ToggleButton panelSelect;
     private boolean left = true;
@@ -39,7 +43,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
 
     public interface LeftPanelListener {
         void onSidePanelClose(boolean left);
-        void onLeftPanelActiveSelected(ArrayList<SidePanelRow> rows);
+        void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left);
     }
     @Override
     public void onAttach(Activity activity) {
@@ -115,6 +119,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         } else {
             switch (v.getId()) {
                 case R.id.left_panel_select_active:
+                case R.id.right_panel_select_active:
                     handleSelection();
                     break;
             }
@@ -125,7 +130,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         if (panelSelect.isChecked() || activePlayers.size() == 5) {
             View.OnClickListener l = panelSelect.isChecked() ? this : null;
             for (SidePanelRow row : rows.values()) { row.setOnClickListener(l); }
-            if (!panelSelect.isChecked()) { listener.onLeftPanelActiveSelected(activePlayers);
+            if (!panelSelect.isChecked()) { listener.onSidePanelActiveSelected(activePlayers, left);
             }
         } else {
             panelSelect.setChecked(true);
@@ -141,11 +146,11 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         table.addView(new SidePanelRow(getActivity().getApplicationContext(), true, true));
     }
 
-    public void editRow(int id, String number, String name, boolean captain) {
+    public void editRow(int id, int number, String name, boolean captain) {
         SidePanelRow row = rows.get(id);
-        String old_number = row.getNumber();
+        int old_number = row.getNumber();
         row.edit(number, name, captain);
-        if (!old_number.equals(number)) {
+        if (old_number !=number) {
             playersNumbers.remove(old_number);
             playersNumbers.add(number);
         }
@@ -158,7 +163,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         activePlayers.remove(row);
     }
 
-    public void addRow(String number, String name, boolean captain) {
+    public void addRow(int number, String name, boolean captain) {
         SidePanelRow row = new SidePanelRow(getActivity(), number, name, captain, true);
         if (captain) {
             if (captainPlayer != null) { captainPlayer.cancelCaptain(); }
@@ -172,15 +177,15 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
 
     private void addRowsAuto() {
         for (int i=1; i <= 12; i++) {
-            SidePanelRow row = new SidePanelRow(getActivity(), Integer.toString(i), "Player" + i, false, true);
-            playersNumbers.add(Integer.toString(i));
+            SidePanelRow row = new SidePanelRow(getActivity(), i, "Player" + i, false, true);
+            playersNumbers.add(i);
             table.addView(row);
             rows.put(row.getId(), row);
 //            rows.add(row);
         }
     }
 
-    public int checkNewPlayer(String number, boolean captain) {
+    public int checkNewPlayer(int number, boolean captain) {
         int status = 0;
         if (!numberAvailable(number)) { status = 1; }
         if (!(!captain || captainNotAssigned())) { status |= 2; }
@@ -191,19 +196,41 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         return captainPlayer == null;
     }
 
-    public boolean numberAvailable(String number) {
+    public boolean numberAvailable(int number) {
         return !(playersNumbers.contains(number));
     }
 
-    public ArrayList<String> getActivePlayersNumbers() {
-        ArrayList<String> res = new ArrayList<>();
+    public ArrayList<Integer> getActivePlayersNumbers() {
+        ArrayList<Integer> res = new ArrayList<>();
         for (SidePanelRow row : activePlayers) {
             res.add(row.getNumber());
         }
         return res;
     }
 
+    public TreeMap<Integer, SidePanelRow> getAllPlayers() {
+//        получать только невыбранных
+        return rows;
+    }
+
     public boolean selectionConfirmed() {
         return !panelSelect.isChecked();
+    }
+
+    public String getFullInfoJsonString() {
+        JSONObject object = new JSONObject();
+        try {
+//            object.put("test2", activePlayers.get(1).getFullInfo());
+            System.out.println("object.get(\"test2\") = " + object.get("test2"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        System.out.println(object);
+//        System.out.println(object.toString());
+        return object.toString();
+    }
+
+    public void restoreFullInfo(String value) {
+//        String[] separated = value.split(delimeter);
     }
 }

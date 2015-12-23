@@ -42,14 +42,16 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
+import com.smiler.basketball_scoreboard.elements.ListDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
 import com.smiler.basketball_scoreboard.elements.SidePanelRow;
-import com.smiler.basketball_scoreboard.elements.StartTimeoutDialog;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         OverlayFragment.OverlayFragmentListener,
         SidePanelFragment.LeftPanelListener,
         SoundPool.OnLoadCompleteListener,
-        StartTimeoutDialog.NewTimeoutDialogListener,
+        ListDialog.NewTimeoutDialogListener,
         TimePickerFragment.OnChangeTimeListener {
 
     private SharedPreferences statePref, sharedPref;
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView gTimeoutsView, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
     private TextView shotTimeSwitchView;
-    private ViewGroup left_players_buttons;
+    private ViewGroup left_players_buttons, right_players_buttons;
     private Drawer.Result drawer;
 
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
@@ -267,6 +269,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     SidePanelRow row = ((SidePanelRow) v.getTag());
+                    if (row == null) {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if (hActionType != -1) {
                         if (hActionType == 0) {
                             row.changePoints(hActionValue);
@@ -280,10 +286,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
 
+        right_players_buttons = (ViewGroup) findViewById(R.id.right_panel);
+        for (int i = 0; i < right_players_buttons.getChildCount(); i++) {
+            View button = right_players_buttons.getChildAt(i);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SidePanelRow row = ((SidePanelRow) v.getTag());
+                    if (row == null) {
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (gActionType != -1) {
+                        if (gActionType == 0) {
+                            row.changePoints(gActionValue);
+                        } else if (gActionType == 1) {
+                            row.changeFouls(gActionValue);
+                        }
+                        gActionType = -1;
+                        gActionValue = 0;
+                    }
+                }
+            });
+            button.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    System.out.println("v.getId() = " + v.getId());
+                    System.out.println("JSON = " + rightPanel.getFullInfoJsonString());
+                    showListDialog(true);
+                    return false;
+                }
+            });
+        }
+
         leftPanel = SidePanelFragment.newInstance(true);
         rightPanel = SidePanelFragment.newInstance(false);
-//        leftPanel = new SidePanelFragment();
-//        rightPanel = new SidePanelFragment();
         overlay = new OverlayFragment();
         (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
         (findViewById(R.id.right_panel_toggle)).setOnClickListener(this);
@@ -1399,12 +1436,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showListDialog(String type) {
-        Fragment frag = getFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_LIST);
+        Fragment frag = getFragmentManager().findFragmentByTag(ListDialog.TAG);
         if (frag != null && frag.isAdded()) {
             return;
         }
-        StartTimeoutDialog dialog = StartTimeoutDialog.newInstance(type);
-        dialog.show(getFragmentManager(), Constants.TAG_FRAGMENT_LIST);
+        ListDialog dialog = ListDialog.newInstance(type);
+        dialog.show(getFragmentManager(), ListDialog.TAG);
+    }
+
+    private void showListDialog(boolean left) {
+        Fragment frag = getFragmentManager().findFragmentByTag(ListDialog.TAG);
+        if (frag != null && frag.isAdded()) {
+            return;
+        }
+
+        ArrayList<String> numberNameList= new ArrayList<>();
+        for (Map.Entry<Integer, SidePanelRow> entry : rightPanel.getAllPlayers().entrySet()) {
+            numberNameList.add(entry.getKey() + " - " + entry.getValue().getName());
+        }
+
+        ListDialog dialog = ListDialog.newInstance("substitute", numberNameList, left);
+        dialog.show(getFragmentManager(), ListDialog.TAG);
     }
 
     private void chooseTeamNameDialog(String team, String name) {
@@ -1453,6 +1505,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 newGame();
                 break;
         }
+    }
+
+    private void leftPanelShow() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
+        if (o != null) {
+            ft.show(o);
+        } else {
+            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
+        }
+
+        ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
+        Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
+        if (lpanel != null) {
+            ft.show(lpanel);
+        } else {
+            ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
+        }
+        ft.commit();
+    }
+
+    private void rightPanelShow() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
+        if (o != null) {
+            ft.show(o);
+        } else {
+            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
+        }
+
+        ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
+        Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
+        if (rpanel != null) {
+            ft.show(rpanel);
+        } else {
+            ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
+        }
+        ft.commit();
     }
 
     public void saveResult() {
@@ -1569,6 +1663,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onSubstituteListSelect(int which, boolean left) {
+        System.out.println("which = " + which + ", left = " + left);
+    }
+
+    @Override
     public void onNameChanged(String value, String team) {
         if (value.length() > 0) {
             switch (team) {
@@ -1620,49 +1719,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dontAskNewGame = (dontShow) ? 1 : 0;
     }
 
-
-    private void leftPanelShow() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
-        if (o != null) {
-            ft.show(o);
-        } else {
-            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
-        }
-
-        ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
-        Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
-        if (lpanel != null) {
-            ft.show(lpanel);
-        } else {
-            ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
-        }
-        ft.commit();
-    }
-
-    private void rightPanelShow() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
-        if (o != null) {
-            ft.show(o);
-        } else {
-            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
-        }
-
-        ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
-        Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
-        if (rpanel != null) {
-            ft.show(rpanel);
-        } else {
-            ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
-        }
-        ft.commit();
-    }
-
     @Override
     public void onSidePanelClose(boolean left) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -1676,13 +1732,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onLeftPanelActiveSelected(ArrayList<SidePanelRow> rows) {
-        for (int i = 0; i < rows.size(); i++) {
-            Button bu = (Button)left_players_buttons.getChildAt(i);
-            SidePanelRow row = rows.get(i);
-            bu.setText(row.getNumber());
+    public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
+        ViewGroup group = (left) ? left_players_buttons : right_players_buttons;
+        int pos = 0;
+        for (SidePanelRow row : rows) {
+            Button bu = (Button)group.getChildAt(pos++);
+            bu.setText(Integer.toString(row.getNumber()));
             bu.setTag(row);
         }
+//        for (int i = 0; i < rows.size(); i++) {
+//            Button bu = (Button)group.getChildAt(i);
+//            SidePanelRow row = (((ArrayList) rows).get(i));
+//            bu.setText(row.getNumber());
+//            bu.setTag(row);
+//        }
     }
 
     @Override
@@ -1717,12 +1780,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onEditPlayer(String number, String name, boolean captain) {
+    public void onEditPlayer(int number, String name, boolean captain) {
         leftPanel.addRow(number, name, captain);
     }
 
     @Override
-    public void onEditPlayer(int id, String number, String name, boolean captain) {
+    public void onEditPlayer(int id, int number, String name, boolean captain) {
         leftPanel.editRow(id, number, name, captain);
     }
 
@@ -1732,7 +1795,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public int onEditPlayerCheck(String number, boolean captain) {
+    public int onEditPlayerCheck(int number, boolean captain) {
         return leftPanel.checkNewPlayer(number, captain);
     }
 }

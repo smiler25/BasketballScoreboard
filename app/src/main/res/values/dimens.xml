@@ -65,5 +65,6 @@
 
     <!--side panel-->
     <dimen name="side_panel_font_size">15sp</dimen>
+    <dimen name="substitute_list_padding">2dp</dimen>
 
 </resources>

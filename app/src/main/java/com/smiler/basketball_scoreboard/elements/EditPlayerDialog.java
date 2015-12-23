@@ -22,14 +22,14 @@ public class EditPlayerDialog extends DialogFragment{
     private EditText numberView, nameView;
     private Switch captainView;
     private boolean edit;
-    private String editNumber;
+    private int editNumber;
     private int id;
 
-    public static EditPlayerDialog newInstance(int id, String number, String name, boolean captain) {
+    public static EditPlayerDialog newInstance(int id, int number, String name, boolean captain) {
         EditPlayerDialog f = new EditPlayerDialog();
         Bundle args = new Bundle();
         args.putInt("id", id);
-        args.putString("number", number);
+        args.putInt("number", number);
         args.putString("name", name);
         args.putBoolean("captain", captain);
         f.setArguments(args);
@@ -37,10 +37,10 @@ public class EditPlayerDialog extends DialogFragment{
     }
 
     public interface OnEditPlayerListener {
-        void onEditPlayer(String number, String name, boolean captain);
-        void onEditPlayer(int id, String number, String name, boolean captain);
+        void onEditPlayer(int number, String name, boolean captain);
+        void onEditPlayer(int id, int number, String name, boolean captain);
         void onEditPlayer(int id);
-        int onEditPlayerCheck(String number, boolean captain);
+        int onEditPlayerCheck(int number, boolean captain);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class EditPlayerDialog extends DialogFragment{
         Bundle args = getArguments();
         Button add_another_bu = (Button)v.findViewById(R.id.button_custom_action);
         if (args != null) {
-            editNumber = args.getString("number", "");
+            editNumber = args.getInt("number", -1);
             numberView.setText(editNumber);
             numberView.selectAll();
             nameView.setText(args.getString("name", ""));
@@ -122,15 +122,17 @@ public class EditPlayerDialog extends DialogFragment{
 
     private void apply() {
         if (edit) {
-            editPlayerListener.onEditPlayer(id, numberView.getText().toString(), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onEditPlayer(id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         } else {
-            editPlayerListener.onEditPlayer(numberView.getText().toString(), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onEditPlayer(Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         }
     }
 
     private boolean checkForm() {
-        int status = editPlayerListener.onEditPlayerCheck(numberView.getText().toString(), captainView.isChecked());
-        if (status != 0 && edit && editNumber.equals(numberView.getText().toString())) { status--; }
+        int status = editPlayerListener.onEditPlayerCheck(Integer.parseInt(numberView.getText().toString()), captainView.isChecked());
+        if (status != 0 && edit && editNumber == Integer.parseInt(numberView.getText().toString())) {
+            status--;
+        }
         if (status == 1 || status == 3) {
             Toast.makeText(getActivity(), getResources().getString(R.string.edit_player_dialog_number_warning), Toast.LENGTH_LONG).show();
         } else if (status == 2) {

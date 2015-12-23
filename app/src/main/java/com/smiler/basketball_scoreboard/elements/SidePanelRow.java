@@ -9,10 +9,14 @@ import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 
-public class SidePanelRow extends TableRow{
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     private TextView numberView, nameView, pointsView, foulsView;
+    private int number;
     private short points, fouls;
-    private String name, number;
+    private String name;
     private boolean captain = false, onCourt = false, selected = false;
     private Context context;
     private static int count = 0;
@@ -27,7 +31,7 @@ public class SidePanelRow extends TableRow{
         createHeaderRow(context, left);
     }
 
-    public SidePanelRow(Context context, String number, String name, boolean captain, boolean left) {
+    public SidePanelRow(Context context, int number, String name, boolean captain, boolean left) {
         super(context);
         createView(context, left);
         edit(number, name, captain);
@@ -55,13 +59,17 @@ public class SidePanelRow extends TableRow{
         inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_left, this);
     }
 
-    public void setNumber(String value) {
-        if (captain) {value += "*";}
-        numberView.setText(value);
+    public void setNumber(int value) {
+        this.number = value;
+        numberView.setText((captain) ? "" + value + "*" : "" + value);
     }
 
-    public String getNumber() {
+    public int getNumber() {
         return number;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getId() {
@@ -69,20 +77,13 @@ public class SidePanelRow extends TableRow{
     }
 
     public void setName(String value) {
+        this.name = value;
         nameView.setText(value);
-    }
-
-    public void setPoints(String value) {
-        pointsView.setText(value);
     }
 
     public void changePoints(int value) {
         points += value;
         pointsView.setText(String.valueOf(points));
-    }
-
-    public void setFouls(String value) {
-        foulsView.setText(value);
     }
 
     public void changeFouls(int value) {
@@ -95,7 +96,7 @@ public class SidePanelRow extends TableRow{
                 .show(((Activity) context).getFragmentManager(), EditPlayerDialog.TAG);
     }
 
-    public void edit(String number, String name, boolean captain) {
+    public void edit(int number, String name, boolean captain) {
         this.captain = captain;
         this.name = name;
         this.number = number;
@@ -123,5 +124,37 @@ public class SidePanelRow extends TableRow{
 
     public void setInactive() {
         this.onCourt = false;
+    }
+
+
+    public JSONObject getFullInfo() throws JSONException {
+        JSONObject object = new JSONObject();
+//        try {
+            object.put("name", name);
+            object.put("number", number);
+            object.put("points", points);
+            object.put("fouls", fouls);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(object);
+//        System.out.println(object.toString());
+
+//        return object.toString();
+        return object;
+    }
+
+//    public static
+    public SidePanelRow restoreFromJson(JSONObject object) throws JSONException {
+        this.name = (String) object.get("name");
+        this.number = (int) object.get("number");
+        this.points = (short) object.get("points");
+        this.fouls = (short) object.get("fouls");
+        return this;
+    }
+
+    @Override
+    public int compareTo(SidePanelRow another) {
+        return this.number - another.getNumber();
     }
 }
