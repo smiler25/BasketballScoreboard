@@ -15,32 +15,33 @@ import android.widget.Toast;
 import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
 
-public class EditPlayerDialog extends DialogFragment{
+public class EditPlayerDialog extends DialogFragment {
 
     public static String TAG = "EditPlayerDialog";
     OnEditPlayerListener editPlayerListener;
     private EditText numberView, nameView;
     private Switch captainView;
-    private boolean edit;
+    private boolean edit, left;
     private int editNumber;
     private int id;
 
-    public static EditPlayerDialog newInstance(int id, int number, String name, boolean captain) {
+    public static EditPlayerDialog newInstance(boolean left, int id, int number, String name, boolean captain) {
         EditPlayerDialog f = new EditPlayerDialog();
         Bundle args = new Bundle();
         args.putInt("id", id);
         args.putInt("number", number);
         args.putString("name", name);
         args.putBoolean("captain", captain);
+        args.putBoolean("left", left);
         f.setArguments(args);
         return f;
     }
 
     public interface OnEditPlayerListener {
-        void onEditPlayer(int number, String name, boolean captain);
-        void onEditPlayer(int id, int number, String name, boolean captain);
-        void onEditPlayer(int id);
-        int onEditPlayerCheck(int number, boolean captain);
+        void onEditPlayer(boolean left, int number, String name, boolean captain);
+        void onEditPlayer(boolean left, int id, int number, String name, boolean captain);
+        void onEditPlayer(boolean left, int id);
+        int onEditPlayerCheck(boolean left, int number, boolean captain);
     }
 
     @Override
@@ -84,8 +85,9 @@ public class EditPlayerDialog extends DialogFragment{
         Bundle args = getArguments();
         Button add_another_bu = (Button)v.findViewById(R.id.button_custom_action);
         if (args != null) {
+            left = args.getBoolean("left", true);
             editNumber = args.getInt("number", -1);
-            numberView.setText(editNumber);
+            numberView.setText(Integer.toString(editNumber));
             numberView.selectAll();
             nameView.setText(args.getString("name", ""));
             nameView.selectAll();
@@ -96,7 +98,7 @@ public class EditPlayerDialog extends DialogFragment{
             add_another_bu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    editPlayerListener.onEditPlayer(id);
+                    editPlayerListener.onEditPlayer(left, id);
                     dismiss();
                 }
             });
@@ -122,14 +124,14 @@ public class EditPlayerDialog extends DialogFragment{
 
     private void apply() {
         if (edit) {
-            editPlayerListener.onEditPlayer(id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onEditPlayer(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         } else {
-            editPlayerListener.onEditPlayer(Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onEditPlayer(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         }
     }
 
     private boolean checkForm() {
-        int status = editPlayerListener.onEditPlayerCheck(Integer.parseInt(numberView.getText().toString()), captainView.isChecked());
+        int status = editPlayerListener.onEditPlayerCheck(left, Integer.parseInt(numberView.getText().toString()), captainView.isChecked());
         if (status != 0 && edit && editNumber == Integer.parseInt(numberView.getText().toString())) {
             status--;
         }

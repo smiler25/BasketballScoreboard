@@ -11,12 +11,14 @@ import android.widget.ArrayAdapter;
 import com.smiler.basketball_scoreboard.R;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 
 public class ListDialog extends DialogFragment {
 
     public static final String TAG = "ListDialog";
     private boolean left = false;
+    private TreeMap<Integer, SidePanelRow> data;
 
     public static ListDialog newInstance(String type) {
         ListDialog f = new ListDialog();
@@ -63,7 +65,7 @@ public class ListDialog extends DialogFragment {
                 System.out.println("values = " + values);
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.substitute_dialog_list_item, values);
 //                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_item, values);
-                builder.setAdapter(adapter, myClickListener);
+                builder.setAdapter(adapter, listClickListener);
                 builder.setTitle("Select substitute for home player №9");
 //                ArrayAdapter titles = new ArrayAdapter();
 //                builder.setItems(titles, new DialogInterface.OnClickListener() {
@@ -77,9 +79,11 @@ public class ListDialog extends DialogFragment {
         return builder.create();
     }
 
-    DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
+    DialogInterface.OnClickListener listClickListener = new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
-            System.out.println("which = " + which);
+            mListener.onSubstituteListSelect(
+                    Integer.parseInt(((AlertDialog) dialog).getListView().getAdapter().getItem(which).toString().split(":")[0]),
+                    left);
         }
     };
 

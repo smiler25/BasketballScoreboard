@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EditPlayerDialog.OnEditPlayerListener,
         NameEditDialog.OnChangeNameListener,
         OverlayFragment.OverlayFragmentListener,
-        SidePanelFragment.LeftPanelListener,
+        SidePanelFragment.SidePanelListener,
         SoundPool.OnLoadCompleteListener,
         ListDialog.NewTimeoutDialogListener,
         TimePickerFragment.OnChangeTimeListener {
@@ -120,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SoundPool soundPool;
     private Vibrator vibrator;
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
+    private TreeMap<Integer, SidePanelRow> currentPanelData;
+    private Button longClickPlayerBu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,7 +268,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         left_players_buttons = (ViewGroup) findViewById(R.id.left_panel);
         for (int i = 0; i < left_players_buttons.getChildCount(); i++) {
-            left_players_buttons.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+            View button = left_players_buttons.getChildAt(i);
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     SidePanelRow row = ((SidePanelRow) v.getTag());
@@ -282,6 +286,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hActionType = -1;
                         hActionValue = 0;
                     }
+                }
+            });
+            button.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    System.out.println("v.getId() = " + v.getId());
+                    System.out.println("JSON = " + leftPanel.getFullInfoJsonString());
+                    longClickPlayerBu = (Button) v;
+                    showListDialog(true);
+                    return false;
                 }
             });
         }
@@ -313,7 +327,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public boolean onLongClick(View v) {
                     System.out.println("v.getId() = " + v.getId());
                     System.out.println("JSON = " + rightPanel.getFullInfoJsonString());
-                    showListDialog(true);
+                    longClickPlayerBu = (Button) v;
+                    showListDialog(false);
                     return false;
                 }
             });
@@ -1451,8 +1466,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         ArrayList<String> numberNameList= new ArrayList<>();
-        for (Map.Entry<Integer, SidePanelRow> entry : rightPanel.getAllPlayers().entrySet()) {
-            numberNameList.add(entry.getKey() + " - " + entry.getValue().getName());
+        currentPanelData = ((left) ? leftPanel : rightPanel).getAllPlayers();
+        for (Map.Entry<Integer, SidePanelRow> entry : currentPanelData.entrySet()) {
+            numberNameList.add(String.format("%d: %s", entry.getValue().getNumber(), entry.getValue().getName()));
         }
 
         ListDialog dialog = ListDialog.newInstance("substitute", numberNameList, left);
@@ -1665,6 +1681,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onSubstituteListSelect(int which, boolean left) {
         System.out.println("which = " + which + ", left = " + left);
+        System.out.println(currentPanelData.get(which));
+        longClickPlayerBu.setTag(currentPanelData.get(which));
+        longClickPlayerBu.setText(Integer.toString(which));
     }
 
     @Override
@@ -1740,12 +1759,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bu.setText(Integer.toString(row.getNumber()));
             bu.setTag(row);
         }
-//        for (int i = 0; i < rows.size(); i++) {
-//            Button bu = (Button)group.getChildAt(i);
-//            SidePanelRow row = (((ArrayList) rows).get(i));
-//            bu.setText(row.getNumber());
-//            bu.setTag(row);
-//        }
     }
 
     @Override
@@ -1780,22 +1793,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onEditPlayer(int number, String name, boolean captain) {
-        leftPanel.addRow(number, name, captain);
+    public void onEditPlayer(boolean left, int number, String name, boolean captain) {
+        ((left) ? leftPanel : rightPanel).addRow(number, name, captain);
     }
 
     @Override
-    public void onEditPlayer(int id, int number, String name, boolean captain) {
-        leftPanel.editRow(id, number, name, captain);
+    public void onEditPlayer(boolean left, int id, int number, String name, boolean captain) {
+        ((left) ? leftPanel : rightPanel).editRow(id, number, name, captain);
     }
 
     @Override
-    public void onEditPlayer(int id) {
-        leftPanel.deleteRow(id);
+    public void onEditPlayer(boolean left, int id) {
+        ((left) ? leftPanel : rightPanel).deleteRow(id);
     }
 
     @Override
-    public int onEditPlayerCheck(int number, boolean captain) {
-        return leftPanel.checkNewPlayer(number, captain);
+    public int onEditPlayerCheck(boolean left, int number, boolean captain) {
+        return ((left) ? leftPanel : rightPanel).checkNewPlayer(number, captain);
     }
 }

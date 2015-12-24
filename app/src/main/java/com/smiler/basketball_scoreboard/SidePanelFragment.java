@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 public class SidePanelFragment extends Fragment implements View.OnClickListener {
 
-    LeftPanelListener listener;
+    SidePanelListener listener;
     private TableLayout table;
     private TreeMap<Integer, SidePanelRow> rows = new TreeMap<>();
     private ArrayList<Integer> playersNumbers = new ArrayList<>();
@@ -41,7 +41,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
 
     public SidePanelFragment() {}
 
-    public interface LeftPanelListener {
+    public interface SidePanelListener {
         void onSidePanelClose(boolean left);
         void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left);
     }
@@ -49,9 +49,9 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            listener = (LeftPanelListener) activity;
+            listener = (SidePanelListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement LeftPanelListener");
+            throw new ClassCastException(activity.toString() + " must implement SidePanelListener");
         }
     }
 
@@ -164,7 +164,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     }
 
     public void addRow(int number, String name, boolean captain) {
-        SidePanelRow row = new SidePanelRow(getActivity(), number, name, captain, true);
+        SidePanelRow row = new SidePanelRow(getActivity(), number, name, captain, left);
         if (captain) {
             if (captainPlayer != null) { captainPlayer.cancelCaptain(); }
             captainPlayer = row;
@@ -177,7 +177,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
 
     private void addRowsAuto() {
         for (int i=1; i <= 12; i++) {
-            SidePanelRow row = new SidePanelRow(getActivity(), i, "Player" + i, false, true);
+            SidePanelRow row = new SidePanelRow(getActivity(), i, "Player" + i, false, left);
             playersNumbers.add(i);
             table.addView(row);
             rows.put(row.getId(), row);

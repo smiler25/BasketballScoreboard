@@ -17,7 +17,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     private int number;
     private short points, fouls;
     private String name;
-    private boolean captain = false, onCourt = false, selected = false;
+    private boolean left, captain = false, onCourt = false, selected = false;
     private Context context;
     private static int count = 0;
     private int id = 0;
@@ -28,18 +28,21 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
     public SidePanelRow(Context context, boolean header, boolean left) {
         super(context);
-        createHeaderRow(context, left);
+        this.left = left;
+        createHeaderRow(context);
     }
 
     public SidePanelRow(Context context, int number, String name, boolean captain, boolean left) {
         super(context);
-        createView(context, left);
+        this.left = left;
+        createView(context);
         edit(number, name, captain);
     }
 
-    private void createView(Context context, boolean left) {
+    private void createView(Context context) {
         inflate(context, (left) ? R.layout.side_panel_row_left : R.layout.side_panel_row_left, this);
         this.context = context;
+        this.left = left;
         numberView = ((TextView) findViewById(R.id.left_panel_number));
         nameView = ((TextView) this.findViewById(R.id.left_panel_name));
         pointsView = ((TextView) this.findViewById(R.id.left_panel_points));
@@ -55,7 +58,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         id = count++;
     }
 
-    private void createHeaderRow(Context context, boolean left) {
+    private void createHeaderRow(Context context) {
         inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_left, this);
     }
 
@@ -92,7 +95,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     public void edit() {
-        EditPlayerDialog.newInstance(id, number, name, captain)
+        EditPlayerDialog.newInstance(left, id, number, name, captain)
                 .show(((Activity) context).getFragmentManager(), EditPlayerDialog.TAG);
     }
 
