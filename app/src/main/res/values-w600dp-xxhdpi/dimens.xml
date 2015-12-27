@@ -25,4 +25,15 @@
     <dimen name="led_simple_font_size">185dp</dimen>
     <dimen name="simple_name_font_size">25sp</dimen>
 
+
+    <!--side panels-->
+    <dimen name="side_panel_width">220dp</dimen>
+    <dimen name="side_panel_edit_size">15dp</dimen>
+    <dimen name="side_panel_number_width">33dp</dimen>
+    <dimen name="side_panel_name_width">110dp</dimen>
+    <dimen name="side_panel_points_width">22dp</dimen>
+    <dimen name="side_panel_fouls_width">22dp</dimen>
+    <dimen name="side_panel_edit_width">33dp</dimen>
+    <dimen name="side_panel_toolbar_height">55dp</dimen>
+
 </resources>

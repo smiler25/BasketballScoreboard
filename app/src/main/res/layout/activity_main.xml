@@ -5,7 +5,6 @@
     >
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/board_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -276,26 +275,6 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-    <FrameLayout
-        android:id="@+id/left_panel_full"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:padding="2dp"
-        android:visibility="visible"
-        />
-    <FrameLayout
-        android:id="@+id/right_panel_full"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:padding="2dp"
-        android:visibility="visible"
-        android:layout_alignParentRight="true"
-        />
+    <include layout="@layout/side_panels_and_overlay"/>
+
 </RelativeLayout>

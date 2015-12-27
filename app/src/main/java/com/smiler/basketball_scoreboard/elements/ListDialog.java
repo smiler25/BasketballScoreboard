@@ -31,7 +31,6 @@ public class ListDialog extends DialogFragment {
     public static ListDialog newInstance(String type, ArrayList<String> values, boolean left) {
         ListDialog f = new ListDialog();
         Bundle args = new Bundle();
-        System.out.println("newInstance values = " + values);
         args.putString("type", type);
         args.putStringArrayList("values", values);
         args.putBoolean("left", left);
@@ -62,7 +61,6 @@ public class ListDialog extends DialogFragment {
             case "substitute":
                 left = args.getBoolean("left", true);
                 ArrayList<String> values = args.getStringArrayList("values");
-                System.out.println("values = " + values);
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.substitute_dialog_list_item, values);
 //                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_item, values);
                 builder.setAdapter(adapter, listClickListener);

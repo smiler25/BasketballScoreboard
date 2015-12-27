@@ -9,31 +9,31 @@
     >
     <TextView
         android:id="@+id/left_panel_number"
-        style="@style/playersPanel"
+        style="@style/sidePanelTableRowChild"
         android:text="№"
-        android:layout_width="30dp"
+        android:layout_width="@dimen/side_panel_number_width"
         />
     <TextView
         android:id="@+id/left_panel_name"
-        style="@style/playersPanel"
+        style="@style/sidePanelTableRowChild"
         android:text="NAME"
-        android:layout_width="100dp"
+        android:layout_width="@dimen/side_panel_name_width"
         />
     <TextView
         android:id="@+id/left_panel_points"
-        style="@style/playersPanel"
+        style="@style/sidePanelTableRowChild"
         android:text="P"
-        android:layout_width="20dp"
+        android:layout_width="@dimen/side_panel_points_width"
         />
     <TextView
         android:id="@+id/left_panel_fouls"
-        style="@style/playersPanel"
+        style="@style/sidePanelTableRowChild"
         android:text="F"
-        android:layout_width="20dp"
+        android:layout_width="@dimen/side_panel_fouls_width"
         />
     <TextView
         android:id="@+id/left_panel_edit"
-        style="@style/playersPanel"
-        android:layout_width="30dp"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_edit_width"
         />
 </TableRow>

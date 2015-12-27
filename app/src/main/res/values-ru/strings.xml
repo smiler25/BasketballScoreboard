@@ -17,6 +17,7 @@
     <string name="action_share">Поделиться</string>
     <string name="action_share_via">Поделиться</string>
     <string name="action_resluts">Результаты</string>
+    <string name="description_edit">Редактировать</string>
     <string name="description_horn">Сирена</string>
     <string name="description_new_period">Новый период</string>
     <string name="description_start_camera">Запустить камеру</string>
@@ -71,6 +72,7 @@
     <string name="action_save_result">Сохранить результат?</string>
     <string name="camera_take_picture">Сделать снимок</string>
 
+    <string name="side_panel_no_data">Игроки ещё не добавлены</string>
     <string name="side_panel_confirm">Подтвердите выбор</string>
     <string name="side_panel_select_on">Применить</string>
     <string name="side_panel_select_off">Выбрать</string>

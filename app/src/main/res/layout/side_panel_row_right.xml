@@ -11,35 +11,37 @@
     android:clickable="false"
     android:longClickable="false">
 
-    <TextView
+    <ImageView
         android:id="@+id/right_panel_edit"
-        style="@style/playersPanel"
-        android:text="E"
-        android:layout_width="30dp"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_edit_width"
+        android:adjustViewBounds="true"
+        android:maxHeight="@dimen/side_panel_edit_size"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/description_edit"
+        android:src="@drawable/ic_action_edit_right"
         />
     <TextView
         android:id="@+id/right_panel_fouls"
-        style="@style/playersPanel"
-        android:text="0"
-        android:layout_width="20dp"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_fouls_width"
+        android:text="@string/one_zero"
         />
     <TextView
         android:id="@+id/right_panel_points"
-        style="@style/playersPanel"
-        android:text="0"
-        android:layout_width="20dp"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_points_width"
+        android:text="@string/one_zero"
         />
     <TextView
         android:id="@+id/right_panel_name"
-        style="@style/playersPanel"
-        android:text="Player"
-        android:layout_width="100dp"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_name_width"
         />
     <TextView
         android:id="@+id/right_panel_number"
-        style="@style/playersPanel"
-        android:text="5"
-        android:layout_width="30dp"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_number_width"
         />
 
 </TableRow>

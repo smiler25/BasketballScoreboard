@@ -40,18 +40,27 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     private void createView(Context context) {
-        inflate(context, (left) ? R.layout.side_panel_row_left : R.layout.side_panel_row_left, this);
         this.context = context;
-        this.left = left;
-        numberView = ((TextView) findViewById(R.id.left_panel_number));
-        nameView = ((TextView) this.findViewById(R.id.left_panel_name));
-        pointsView = ((TextView) this.findViewById(R.id.left_panel_points));
-        foulsView = ((TextView) this.findViewById(R.id.left_panel_fouls));
-        TextView edit = ((TextView) this.findViewById(R.id.left_panel_edit));
+        View edit;
+        if (left) {
+            inflate(context, R.layout.side_panel_row_left, this);
+            numberView = (TextView) findViewById(R.id.left_panel_number);
+            nameView = (TextView) this.findViewById(R.id.left_panel_name);
+            pointsView = (TextView) this.findViewById(R.id.left_panel_points);
+            foulsView = (TextView) this.findViewById(R.id.left_panel_fouls);
+            edit = this.findViewById(R.id.left_panel_edit);
+
+        } else {
+            inflate(context, R.layout.side_panel_row_right, this);
+            numberView = (TextView) findViewById(R.id.right_panel_number);
+            nameView = (TextView) this.findViewById(R.id.right_panel_name);
+            pointsView = (TextView) this.findViewById(R.id.right_panel_points);
+            foulsView = (TextView) this.findViewById(R.id.right_panel_fouls);
+            edit = this.findViewById(R.id.right_panel_edit);
+        }
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changePoints(2);
                 edit();
             }
         });
@@ -59,7 +68,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     private void createHeaderRow(Context context) {
-        inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_left, this);
+        inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_right, this);
     }
 
     public void setNumber(int value) {
@@ -140,10 +149,6 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 //        } catch (JSONException e) {
 //            e.printStackTrace();
 //        }
-//        System.out.println(object);
-//        System.out.println(object.toString());
-
-//        return object.toString();
         return object;
     }
 

@@ -42,4 +42,20 @@
     <!--camera-->
     <dimen name="camera_text_size">25sp</dimen>
 
+
+    <!--side panels-->
+    <dimen name="player_button_size">100dp</dimen>
+    <dimen name="player_button_font_size">30sp</dimen>
+    <dimen name="side_panel_row_font_size">16sp</dimen>
+    <dimen name="side_panel_edit_size">30dp</dimen>
+    <dimen name="side_panel_width">300dp</dimen>
+    <dimen name="side_panel_padding_top">8dp</dimen>
+    <dimen name="side_panel_row_padding">3dp</dimen>
+    <dimen name="side_panel_number_width">45dp</dimen>
+    <dimen name="side_panel_name_width">150dp</dimen>
+    <dimen name="side_panel_points_width">30dp</dimen>
+    <dimen name="side_panel_fouls_width">30dp</dimen>
+    <dimen name="side_panel_edit_width">45dp</dimen>
+    <dimen name="side_panel_toolbar_height">55dp</dimen>
+
 </resources>

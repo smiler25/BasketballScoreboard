@@ -11,6 +11,9 @@ public class Constants {
     public static final int LAYOUT_FULL= 0;
     public static final int LAYOUT_SIMPLE= 1;
 
+    public static final int SIDE_PANELS_LEFT = 0;
+    public static final int SIDE_PANELS_RIGHT = 1;
+
     public static long mainTickInterval = SECOND;
     public static long shotTickInterval = SECOND;
 

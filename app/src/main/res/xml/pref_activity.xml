@@ -55,17 +55,6 @@
         android:maxLength="25"
         android:maxLines="1" />
 
-
-    <ListPreference
-        android:key="list_actual_time"
-        android:title="@string/pref_clear_time"
-        android:defaultValue="1"
-        android:summary="%s"
-        android:entries="@array/pref_clear_time_titles"
-        android:entryValues="@array/pref_values_0_3"
-        />
-
-
     <PreferenceCategory
         android:key="@string/default_category"
         android:title="@string/default_category"
@@ -82,13 +71,13 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/default_category"
+        android:title="@string/side_panels_category"
         >
 
         <CheckBoxPreference
             android:key="side_panels_activate"
             android:title="@string/side_panels_activate"
-            android:defaultValue="true" />
+            android:defaultValue="false" />
 
         <PreferenceScreen
             android:key="side_panels_screen"

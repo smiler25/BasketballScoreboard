@@ -25,14 +25,14 @@
         />
 
     <CheckBoxPreference
-        android:key="side_panels_connection"
+        android:key="side_panels_dependency"
         android:title="@string/side_panels_connection"
         android:summary="@string/side_panels_connection_descr"
         android:defaultValue="false"
         />
 
     <ListPreference
-        android:key="player_fouls_rules"
+        android:key="side_panels_player_fouls_rules"
         android:title="@string/side_panels_fouls_rules"
         android:defaultValue="1"
         android:summary="%s"
@@ -43,7 +43,7 @@
         />
 
     <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
-        android:key="player_max_fouls"
+        android:key="side_panels_player_max_fouls"
         android:title="@string/side_panels_max_fouls"
         android:defaultValue="@string/overtime_length_default"
         min="-1"

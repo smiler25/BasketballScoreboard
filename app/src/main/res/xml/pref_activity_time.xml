@@ -61,6 +61,15 @@
         android:title="@string/shot_time_restart"
         android:defaultValue="false" />
 
+    <ListPreference
+        android:key="list_actual_time"
+        android:title="@string/pref_clear_time"
+        android:defaultValue="1"
+        android:summary="%s"
+        android:entries="@array/pref_clear_time_titles"
+        android:entryValues="@array/pref_values_0_3"
+        />
+
     <CheckBoxPreference
         android:key="fraction_seconds_main"
         android:title="@string/fraction_seconds_main"

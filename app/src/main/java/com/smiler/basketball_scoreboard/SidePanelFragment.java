@@ -143,7 +143,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     }
 
     private void addHeader() {
-        table.addView(new SidePanelRow(getActivity().getApplicationContext(), true, true));
+        table.addView(new SidePanelRow(getActivity().getApplicationContext(), true, left));
     }
 
     public void editRow(int id, int number, String name, boolean captain) {
@@ -225,8 +225,6 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        System.out.println(object);
-//        System.out.println(object.toString());
         return object.toString();
     }
 

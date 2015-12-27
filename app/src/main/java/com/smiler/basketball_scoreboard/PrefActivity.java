@@ -18,23 +18,31 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
 
     static boolean prefChangedRestart = false;
     static boolean prefChangedNoRestart = false;
+
     static final String PREF_REGULAR_TIME = "regular_time_length";
-    static final String PREF_FRACTION_SECONDS_MAIN = "fraction_seconds_main";
-    static final String PREF_FRACTION_SECONDS_SHOT = "fraction_seconds_shot";
     static final String PREF_OVERTIME = "overtime_length";
     static final String PREF_DIRECT_TIMER = "direct_timer";
-    static final String PREF_SHOT_TIME = "shot_time_length";
     static final String PREF_ENABLE_SHOT_TIME = "enable_shot_time";
+    static final String PREF_SHOT_TIME = "shot_time_length";
     static final String PREF_ENABLE_SHORT_SHOT_TIME = "enable_short_shot_time";
     static final String PREF_SHORT_SHOT_TIME = "short_shot_time_length";
     static final String PREF_SHOT_TIME_RESTART = "shot_time_restart";
-    static final String PREF_MAX_FOULS = "max_fouls";
+    static final String PREF_ACTUAL_TIME = "list_actual_time";
+    static final String PREF_FRACTION_SECONDS_MAIN = "fraction_seconds_main";
+    static final String PREF_FRACTION_SECONDS_SHOT = "fraction_seconds_shot";
+
     static final String PREF_NUM_REGULAR = "number_of_regular_periods";
+    static final String PREF_MAX_FOULS = "max_fouls";
+    static final String PREF_TIMEOUTS_RULES = "list_timeout_rules";
     static final String PREF_HOME_NAME = "home_team_name";
     static final String PREF_GUEST_NAME = "guest_team_name";
-    static final String PREF_ACTUAL_TIME = "list_actual_time";
-    static final String PREF_TIMEOUTS_RULES = "list_timeout_rules";
     static final String PREF_OFFICIAL_RULES = "list_official_rules";
+
+    static final String PREF_ENABLE_SIDE_PANELS = "side_panels_activate";
+    static final String PREF_SIDE_PANELS_INTERACTION = "side_panels_interaction";
+    static final String PREF_SIDE_PANELS_CONNECTED = "side_panels_dependency";
+    static final String PREF_SIDE_PANELS_FOULS_RULES = "side_panels_player_fouls_rules";
+    static final String PREF_SIDE_PANELS_FOULS_MAX = "side_panels_player_max_fouls";
 
     static final String PREF_LAYOUT = "list_layout";
     static final String PREF_AUTO_SOUND = "list_auto_sounds";
@@ -109,6 +117,11 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
             case PREF_VIBRATION:
             case PREF_FRACTION_SECONDS_MAIN:
             case PREF_FRACTION_SECONDS_SHOT:
+            case PREF_ENABLE_SIDE_PANELS:
+            case PREF_SIDE_PANELS_INTERACTION:
+            case PREF_SIDE_PANELS_CONNECTED:
+            case PREF_SIDE_PANELS_FOULS_RULES:
+            case PREF_SIDE_PANELS_FOULS_MAX:
                 prefChangedNoRestart = true;
                 break;
             case PREF_OFFICIAL_RULES:

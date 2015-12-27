@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView gTimeoutsView, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
     private TextView shotTimeSwitchView;
-    private ViewGroup left_players_buttons, right_players_buttons;
+    private ViewGroup leftPlayersButtons, rightPlayersButtons;
     private Drawer.Result drawer;
 
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mainTimerOn, shotTimerOn, enableShotTime, restartShotTimer;
     private boolean useDirectTimer, directTimerStopped;
     private boolean fractionSecondsMain, fractionSecondsShot;
+    private boolean sidePanelsOn, sidePanelsStateChanged, sidePanelsConnected;
     private long mainTime, mainTimePref, shotTime, shotTimePref, shortShotTimePref, overTimePref;
     private long startTime, totalTime;
     private long timeoutFullDuration;
@@ -124,33 +125,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TreeMap<Integer, SidePanelRow> currentPanelData;
     private Button longClickPlayerBu;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        System.out.println(getResources().getString(R.string.res_type));
+        System.out.println(getResources().getString(R.string.res_type));
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
-//            appUpdatesFragment = new AppUpdatesFragment();
-//            appUpdatesFragment.setCancelable(true);
-//            appUpdatesFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
+            // appUpdatesFragment = new AppUpdatesFragment();
+            // appUpdatesFragment.setCancelable(true);
+            // appUpdatesFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
         }
 
-        if (layoutType == Constants.LAYOUT_FULL) {
-            initExtensiveLayout();
-        } else {
-            initSimpleLayout();
-        }
-        initCommonLayout();
-        if (true) {
-            initSidePanels();
-        }
-//        if (sidePanelsOn)
+        initLayout();
 
         if (sharedPref.getBoolean("first_launch", true)) {
             drawer.openDrawer();
@@ -190,6 +183,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         soundWhistleId = soundPool.load(this, R.raw.whistle, 1);
         soundHornId = soundPool.load(this, R.raw.airhorn_short, 1);
+    }
+
+    private void initLayout() {
+        if (layoutType == Constants.LAYOUT_FULL) {
+            initExtensiveLayout();
+        } else {
+            initSimpleLayout();
+        }
+        initCommonLayout();
+        if (sidePanelsOn) {
+            initSidePanels();
+            leftPlayersButtons.setVisibility(View.VISIBLE);
+            rightPlayersButtons.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initCommonLayout() {
@@ -259,16 +266,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initSidePanels() {
-        ViewStub left_players_stub = (ViewStub) findViewById(R.id.left_panel_stub);
-        ViewStub right_players_stub = (ViewStub) findViewById(R.id.right_panel_stub);
-        left_players_stub.setLayoutResource(R.layout.side_panel_left);
-        left_players_stub.inflate();
-        right_players_stub.setLayoutResource(R.layout.side_panel_right);
-        right_players_stub.inflate();
+        ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
+        ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
+        leftPlayersStub.setLayoutResource(R.layout.side_panel_left);
+        leftPlayersStub.inflate();
+        rightPlayersStub.setLayoutResource(R.layout.side_panel_right);
+        rightPlayersStub.inflate();
 
-        left_players_buttons = (ViewGroup) findViewById(R.id.left_panel);
-        for (int i = 0; i < left_players_buttons.getChildCount(); i++) {
-            View button = left_players_buttons.getChildAt(i);
+        leftPlayersButtons = (ViewGroup) findViewById(R.id.left_panel);
+        for (int i = 0; i < leftPlayersButtons.getChildCount(); i++) {
+            View button = leftPlayersButtons.getChildAt(i);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -291,8 +298,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             button.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    System.out.println("v.getId() = " + v.getId());
-                    System.out.println("JSON = " + leftPanel.getFullInfoJsonString());
+//                    System.out.println("v.getId() = " + v.getId());
+//                    System.out.println("JSON = " + leftPanel.getFullInfoJsonString());
                     longClickPlayerBu = (Button) v;
                     showListDialog(true);
                     return false;
@@ -300,9 +307,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
 
-        right_players_buttons = (ViewGroup) findViewById(R.id.right_panel);
-        for (int i = 0; i < right_players_buttons.getChildCount(); i++) {
-            View button = right_players_buttons.getChildAt(i);
+        rightPlayersButtons = (ViewGroup) findViewById(R.id.right_panel);
+        for (int i = 0; i < rightPlayersButtons.getChildCount(); i++) {
+            View button = rightPlayersButtons.getChildAt(i);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -325,8 +332,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             button.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    System.out.println("v.getId() = " + v.getId());
-                    System.out.println("JSON = " + rightPanel.getFullInfoJsonString());
                     longClickPlayerBu = (Button) v;
                     showListDialog(false);
                     return false;
@@ -339,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overlay = new OverlayFragment();
         (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
         (findViewById(R.id.right_panel_toggle)).setOnClickListener(this);
+        sidePanelsStateChanged = false;
     }
 
     private void initBottomLineTimeouts() {
@@ -383,6 +389,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             showConfirmDialog("new_game", false);
         } else if (PrefActivity.prefChangedNoRestart) {
             getSettingsNoRestart();
+            if (sidePanelsStateChanged) {
+                if (!sidePanelsOn) {
+                    leftPlayersButtons.setVisibility(View.GONE);
+                    rightPlayersButtons.setVisibility(View.GONE);
+                } else {
+                    if (leftPlayersButtons == null){
+                        initSidePanels();
+                    } else {
+                        leftPlayersButtons.setVisibility(View.VISIBLE);
+                        rightPlayersButtons.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
         }
     }
 
@@ -630,10 +649,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.left_panel_toggle:
-                leftPanelShow();
+                showSidePanels(Constants.SIDE_PANELS_LEFT);
                 break;
             case R.id.right_panel_toggle:
-                rightPanelShow();
+                showSidePanels(Constants.SIDE_PANELS_RIGHT);
                 break;
             default:
                 break;
@@ -804,6 +823,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fractionSecondsShot = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_SHOT, true);
 
         mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < Constants.SECONDS_60) ? Constants.timeFormatMillis : Constants.timeFormat;
+        boolean sidePanelsOn_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
+        if (sidePanelsOn_ != sidePanelsOn) {
+            sidePanelsOn = sidePanelsOn_;
+            sidePanelsStateChanged = true;
+        }
+
+        sidePanelsConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
 
         restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
         PrefActivity.prefChangedNoRestart = false;
@@ -976,12 +1002,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         if (layoutChanged || timeoutsRulesChanged) {
-            if (layoutType == Constants.LAYOUT_FULL) {
-                initExtensiveLayout();
-            } else if (layoutType == 1) {
-                initSimpleLayout();
-            }
-            initCommonLayout();
+            initLayout();
         }
         pauseGame();
         zeroState();
@@ -1467,6 +1488,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ArrayList<String> numberNameList= new ArrayList<>();
         currentPanelData = ((left) ? leftPanel : rightPanel).getAllPlayers();
+        if (currentPanelData.isEmpty()){
+            Toast.makeText(this, getResources().getString(R.string.side_panel_no_data), Toast.LENGTH_LONG).show();
+            return;
+        }
         for (Map.Entry<Integer, SidePanelRow> entry : currentPanelData.entrySet()) {
             numberNameList.add(String.format("%d: %s", entry.getValue().getNumber(), entry.getValue().getName()));
         }
@@ -1523,7 +1548,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void leftPanelShow() {
+    private void showSidePanels(int type) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
@@ -1534,33 +1559,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
         }
 
-        ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
-        Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
-        if (lpanel != null) {
-            ft.show(lpanel);
-        } else {
-            ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
-        }
-        ft.commit();
-    }
-
-    private void rightPanelShow() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
-        if (o != null) {
-            ft.show(o);
-        } else {
-            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
+        if (type == Constants.SIDE_PANELS_LEFT || sidePanelsConnected) {
+            ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
+            Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
+            if (lpanel != null) {
+                ft.show(lpanel);
+            } else {
+                ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
+            }
         }
 
-        ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
-        Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
-        if (rpanel != null) {
-            ft.show(rpanel);
-        } else {
-            ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
+        if (type == Constants.SIDE_PANELS_RIGHT || sidePanelsConnected) {
+            ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
+            Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
+            if (rpanel != null) {
+                ft.show(rpanel);
+            } else {
+                ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
+            }
         }
         ft.commit();
     }
@@ -1680,8 +1696,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSubstituteListSelect(int which, boolean left) {
-        System.out.println("which = " + which + ", left = " + left);
-        System.out.println(currentPanelData.get(which));
         longClickPlayerBu.setTag(currentPanelData.get(which));
         longClickPlayerBu.setText(Integer.toString(which));
     }
@@ -1752,7 +1766,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
-        ViewGroup group = (left) ? left_players_buttons : right_players_buttons;
+        ViewGroup group = (left) ? leftPlayersButtons : rightPlayersButtons;
         int pos = 0;
         for (SidePanelRow row : rows) {
             Button bu = (Button)group.getChildAt(pos++);

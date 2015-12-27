@@ -29,4 +29,9 @@
     <color name="camera_color4">#005cb4</color>
     <color name="camera_color5">#004587</color>
 
+
+    <color name="side_panel_background">#FAFAFA</color>
+    <color name="side_panel_toolbar">#9E9E9E</color>
+
+
 </resources>

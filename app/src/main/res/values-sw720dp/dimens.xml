@@ -7,7 +7,9 @@
     <dimen name="shot_clock_size">200dp</dimen>
     <dimen name="short_shot_clock_size">90dp</dimen>
     <dimen name="short_shot_clock_margin">4dp</dimen>
-    <dimen name="score_changer_size">25sp</dimen>
+    <dimen name="score_changer_size">30sp</dimen>
+    <dimen name="score_changer_margin">4dp</dimen>
+    <dimen name="score_changer_padding">7dp</dimen>
     <dimen name="bottom_line_size">190dp</dimen>
     <dimen name="led_nba_to_font_size">130dp</dimen>
 
@@ -18,6 +20,7 @@
     <dimen name="bottom_line_margin">5dp</dimen>
     <dimen name="bottom_line_margin2">30dp</dimen>
 
+
     <dimen name="led_simple_font_size">320dp</dimen>
     <dimen name="simple_name_font_size">25sp</dimen>
     <dimen name="simple_score_changer_size">35sp</dimen>
@@ -25,5 +28,21 @@
     <!-- results activity-->
     <dimen name="list_width">350dp</dimen>
     <dimen name="camera_bottom_margin">25dp</dimen>
+
+    <!--side panels-->
+    <dimen name="player_button_size">100dp</dimen>
+    <dimen name="player_button_font_size">30sp</dimen>
+    <dimen name="side_panel_row_font_size">18sp</dimen>
+    <dimen name="side_panel_edit_size">30dp</dimen>
+    <dimen name="side_panel_width">400dp</dimen>
+    <dimen name="side_panel_padding">3dp</dimen>
+    <dimen name="side_panel_padding_top">10dp</dimen>
+    <dimen name="side_panel_row_padding">5dp</dimen>
+    <dimen name="side_panel_number_width">60dp</dimen>
+    <dimen name="side_panel_name_width">200dp</dimen>
+    <dimen name="side_panel_points_width">40dp</dimen>
+    <dimen name="side_panel_fouls_width">40dp</dimen>
+    <dimen name="side_panel_edit_width">60dp</dimen>
+    <dimen name="side_panel_toolbar_height">75dp</dimen>
 
 </resources>

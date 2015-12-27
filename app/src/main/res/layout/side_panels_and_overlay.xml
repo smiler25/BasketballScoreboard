@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    <FrameLayout
+        android:id="@+id/left_panel_full"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="@dimen/side_panel_padding"
+        android:paddingTop="@dimen/side_panel_padding_top"
+        android:visibility="visible"
+        />
+    <FrameLayout
+        android:id="@+id/right_panel_full"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:padding="@dimen/side_panel_padding"
+        android:paddingTop="@dimen/side_panel_padding_top"
+        android:visibility="visible"
+        android:layout_alignParentRight="true"
+        />
+</merge>

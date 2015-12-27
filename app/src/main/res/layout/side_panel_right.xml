@@ -5,54 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    style="@style/matchParentCenter"
     android:layout_gravity="center"
     >
 
     <Button
         android:id="@+id/guest_player1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/playersButtons"
         android:text="@string/minus"
         />
 
 
     <Button
         android:id="@+id/guest_player2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/playersButtons"
         android:text="@string/minus"
         />
 
 
     <Button
         android:id="@+id/guest_player3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/playersButtons"
         android:text="@string/minus"
         />
 
 
     <Button
         android:id="@+id/guest_player4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/playersButtons"
         android:text="@string/minus"
         />
 
 
     <Button
         android:id="@+id/guest_player5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/playersButtons"
         android:text="@string/minus"
         />
 
 
     <Button
         android:id="@+id/right_panel_toggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/playersButtons"
         android:text="&lt;&lt;"
         />
 
