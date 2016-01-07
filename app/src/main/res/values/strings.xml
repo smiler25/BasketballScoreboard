@@ -29,6 +29,9 @@
     <string name="description_new_period">New period</string>
     <string name="description_start_camera">Start camera</string>
     <string name="description_whistle">Whistle</string>
+    <string name="description_add_multiple">Add several players</string>
+    <string name="description_add_one">Add player</string>
+    <string name="description_close_panel">Close panel</string>
 
     <string name="final_result">Final</string>
     <string name="team">Team</string>
@@ -75,6 +78,7 @@
         <item>Overtime</item>
     </string-array>
     <string name="title_activity_results">Results history</string>
+    <string name="title_activity_help">Help</string>
     <string name="choose_game">Choose game</string>
     <string name="save_picture">save picture</string>
     <string name="camera_take_picture">Take picture</string>
@@ -89,6 +93,10 @@
     <string name="side_panel_select_off">Select</string>
     <string name="side_panel_few">Too few players (%1$d)</string>
     <string name="side_panel_many">Too many players (%1$d)</string>
+    <string name="side_panel_player_name">Player №%1$d</string>
+    <string name="side_panel_players_limit">You can add only 12 players</string>
+    <string name="side_panel_fouls_limit_home">Home player №%1$d (%2$s) reached fouls limit</string>
+    <string name="side_panel_fouls_limit_guest">Guest player №%1$d (%2$s) reached fouls limit</string>
 
     <string name="edit_player_dialog_title">Player\'s info</string>
     <string name="edit_player_dialog_add">Save</string>
@@ -101,24 +109,9 @@
     <string name="edit_player_dialog_captain_confirm">Captain already assigned. Change?</string>
     <string name="edit_player_dialog_number_warning">Number already assigned</string>
 
-    <string name="help_text">Interface interaction.\n
-        \n
-        Single tap provides expected action:\n
-        - main clock: start/pause;\n
-        - shot clock: start new or switch to short possession (if enabled in settings);\n
-        - score: increase value by 2;\n
-        - period: set new period and set to default corresponding values.\n
-        \n
-        Long press on both main and shot clock allows to change value.\n
-        Long press on other elements will set default value or null it.\n
-        Actions on long press work only if the game does not go.</string>
-
-    <string name="appupdate_title">Update info</string>
-    <string name="appupdate_info">
-        v.2.0:\n
-            - players panels (see help).\n
-        v.1.2.3:\n
-            - choose fractions of seconds for main time and shot clock,\n
-    </string>
+    <string name="substitute_dialog_title_home">Select substitute for home team player №%1$d</string>
+    <string name="substitute_dialog_title_home0">Select home player</string>
+    <string name="substitute_dialog_title_guest">Select substitute for guest team player №%1$d</string>
+    <string name="substitute_dialog_title_guest0">Select guest player</string>
 
 </resources>

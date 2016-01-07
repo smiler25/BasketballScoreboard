@@ -1,0 +1,6 @@
+<resources>
+
+    <!--side panels-->
+    <dimen name="substitute_list_padding">1dp</dimen>
+
+</resources>

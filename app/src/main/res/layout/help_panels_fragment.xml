@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:id="@+id/help_panels_scroll_view" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/help_panels_text_intro"
+            android:textSize="@dimen/help_text_size"
+            />
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/help_panels_activate"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"
+            android:layout_margin="5dp"
+            card_view:cardCornerRadius="4dp">
+
+            <Switch
+                android:id="@+id/help_panels_switch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:text="@string/help_side_panels_enable"
+                />
+
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <ImageButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/description_open_panel"
+                android:src="@drawable/ic_action_forward_dark"
+                android:background="@drawable/side_panel_toolbar_button"
+                />
+            <ImageButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/description_close_panel"
+                android:src="@drawable/ic_action_back_dark"
+                android:background="@drawable/side_panel_toolbar_button"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:singleLine="false"
+                android:padding="@dimen/side_panel_toolbar_icon_padding"
+                android:text="@string/help_panels_text_open"
+                android:textSize="@dimen/help_text_size"
+                />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/help_panels_toolbar"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            card_view:cardCornerRadius="4dp"
+            >
+
+            <include
+                layout="@layout/side_panel_full_left_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/help_side_panel_toolbar_height"
+                android:layout_margin="@dimen/help_side_panels_toolbar_margin"
+                />
+
+        </android.support.v7.widget.CardView>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:gravity="center"
+            android:shrinkColumns="1"
+            >
+
+            <TableRow>
+                <ImageButton
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/description_add_one"
+                    android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                    android:src="@drawable/ic_action_add_person_dark"
+                    android:background="@drawable/side_panel_toolbar_button"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:padding="@dimen/side_panel_toolbar_icon_padding"
+                    android:text="@string/help_panels_text_add_one"
+                    android:textSize="@dimen/help_text_size"
+                    />
+            </TableRow>
+            <TableRow>
+                <ImageButton
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:scaleType="fitCenter"
+                    android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                    android:contentDescription="@string/description_add_multiple"
+                    android:src="@drawable/ic_action_add_group_dark"
+                    android:background="@drawable/side_panel_toolbar_button"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:padding="@dimen/side_panel_toolbar_icon_padding"
+                    android:text="@string/help_panels_text_add_multi"
+                    android:textSize="@dimen/help_text_size"
+                    />
+            </TableRow>
+            <TableRow>
+                <ToggleButton
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/side_panel_toolbar_icon_padding"
+                    android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                    android:textOff="@string/side_panel_select_off"
+                    android:textOn="@string/side_panel_select_on"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:padding="@dimen/side_panel_toolbar_icon_padding"
+                    android:text="@string/help_panels_text_select"
+                    android:textSize="@dimen/help_text_size"
+                    />
+            </TableRow>
+            <TableRow>
+                <ImageButton
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/description_close_panel"
+                    android:src="@drawable/ic_action_back_dark"
+                    android:background="@drawable/side_panel_toolbar_button"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:singleLine="false"
+                    android:padding="@dimen/side_panel_toolbar_icon_padding"
+                    android:text="@string/help_panels_text_close"
+                    android:textSize="@dimen/help_text_size"
+                    />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:singleLine="false"
+            android:padding="@dimen/side_panel_toolbar_icon_padding"
+            android:text="@string/help_panels_text_game"
+            android:textSize="@dimen/help_text_size"
+            />
+
+
+    </LinearLayout>
+
+</ScrollView>

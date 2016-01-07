@@ -37,10 +37,18 @@ public class EditPlayerDialog extends DialogFragment {
         return f;
     }
 
+    public static EditPlayerDialog newInstance(boolean left) {
+        EditPlayerDialog f = new EditPlayerDialog();
+        Bundle args = new Bundle();
+        args.putBoolean("left", left);
+        f.setArguments(args);
+        return f;
+    }
+
     public interface OnEditPlayerListener {
-        void onEditPlayer(boolean left, int number, String name, boolean captain);
-        void onEditPlayer(boolean left, int id, int number, String name, boolean captain);
-        void onEditPlayer(boolean left, int id);
+        void onEditPlayerAdd(boolean left, int number, String name, boolean captain);
+        void onEditPlayerEdit(boolean left, int id, int number, String name, boolean captain);
+        void onEditPlayerDelete(boolean left, int id);
         int onEditPlayerCheck(boolean left, int number, boolean captain);
     }
 
@@ -84,21 +92,24 @@ public class EditPlayerDialog extends DialogFragment {
         });
         Bundle args = getArguments();
         Button add_another_bu = (Button)v.findViewById(R.id.button_custom_action);
-        if (args != null) {
-            left = args.getBoolean("left", true);
+        if (args == null) {
+            return null;
+        }
+        left = args.getBoolean("left", true);
+        id = args.getInt("id", -1);
+        if (id != -1) {
             editNumber = args.getInt("number", -1);
             numberView.setText(Integer.toString(editNumber));
             numberView.selectAll();
             nameView.setText(args.getString("name", ""));
             nameView.selectAll();
             captainView.setChecked(args.getBoolean("captain", false));
-            add_another_bu.setText("Delete");
+            add_another_bu.setText(getResources().getText(R.string.action_delete));
             edit = true;
-            id = args.getInt("id", -1);
             add_another_bu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    editPlayerListener.onEditPlayer(left, id);
+                    editPlayerListener.onEditPlayerDelete(left, id);
                     dismiss();
                 }
             });
@@ -124,9 +135,9 @@ public class EditPlayerDialog extends DialogFragment {
 
     private void apply() {
         if (edit) {
-            editPlayerListener.onEditPlayer(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onEditPlayerEdit(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         } else {
-            editPlayerListener.onEditPlayer(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onEditPlayerAdd(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         }
     }
 

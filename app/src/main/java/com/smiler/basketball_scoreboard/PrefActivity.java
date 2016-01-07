@@ -1,6 +1,7 @@
 package com.smiler.basketball_scoreboard;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,8 +13,12 @@ import android.widget.LinearLayout;
 
 import com.smiler.basketball_scoreboard.elements.SetDefaultPreference;
 
-public class PrefActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
-                                                      SetDefaultPreference.SetDefaultDialogListener,
+import java.util.Arrays;
+import java.util.List;
+
+public class PrefActivity extends Activity implements
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        SetDefaultPreference.SetDefaultDialogListener,
         PrefFragment.OnSelectNestedScreenPreference {
 
     static boolean prefChangedRestart = false;
@@ -53,23 +58,24 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     static final String PREF_VIBRATION = "vibration";
     static final String PREF_SAVE_ON_EXIT = "save_on_exit";
 
-    private static final int DEFAULT_SHOT_TIME = 24;
-    private static final int DEFAULT_SHORT_SHOT_TIME = 14;
-    private static final int DEFAULT_NUM_REGULAR = 4;
-    private static final int DEFAULT_OVERTIME = 5;
     private static final boolean DEFAULT_ENABLE_SHOT_TIME = true;
     private static final boolean DEFAULT_ENABLE_SHORT_SHOT_TIME = true;
-    private static final int DEFAULT_MAX_FOULS = 5;
 
-    private static final int DEFAULT_FIBA_MAIN_TIME = 10;
     private static final String DEFAULT_FIBA_TIMEOUTS = "1";
-    private static final int DEFAULT_NBA_MAIN_TIME = 12;
     private static final String DEFAULT_NBA_TIMEOUTS = "2";
+
+    private static final String SIDE_PANEL_FOULS_RULES_STRICT = "1";
+    private static final String DEFAULT_SIDE_PANEL_FOULS_RULES = "2";
+    private static final String CUSTOM_SIDE_PANEL_FOULS_RULES = "3";
+    private boolean playerRulesDefault = false;
 
     SharedPreferences prefs;
     private Toolbar toolbar;
-    private boolean inNested;
-    static final String STATE_IN_NESTED = "inNested";
+    private final List<String> noRestartPrefs = Arrays.asList(PREF_AUTO_SOUND, PREF_AUTO_SAVE_RESULTS,
+            PREF_PAUSE_ON_SOUND, PREF_AUTO_BREAK, PREF_AUTO_TIMEOUT, PREF_SAVE_ON_EXIT, PREF_VIBRATION,
+            PREF_FRACTION_SECONDS_MAIN, PREF_FRACTION_SECONDS_SHOT, PREF_ENABLE_SIDE_PANELS,
+            PREF_SIDE_PANELS_INTERACTION, PREF_SIDE_PANELS_CONNECTED, PREF_SIDE_PANELS_FOULS_RULES,
+            PREF_SIDE_PANELS_FOULS_MAX);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +101,11 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (inNested) {
-                    onBackPressed();
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                    toolbar.setTitle(R.string.action_help);
+//                    onBackPressed();
                     toolbar.setTitle(R.string.title_activity_settings);
-                    inNested = false;
                 } else {
                     finish();
                 }
@@ -107,51 +114,56 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        switch (key) {
-            case PREF_AUTO_SOUND:
-            case PREF_AUTO_SAVE_RESULTS:
-            case PREF_PAUSE_ON_SOUND:
-            case PREF_AUTO_BREAK:
-            case PREF_AUTO_TIMEOUT:
-            case PREF_SAVE_ON_EXIT:
-            case PREF_VIBRATION:
-            case PREF_FRACTION_SECONDS_MAIN:
-            case PREF_FRACTION_SECONDS_SHOT:
-            case PREF_ENABLE_SIDE_PANELS:
-            case PREF_SIDE_PANELS_INTERACTION:
-            case PREF_SIDE_PANELS_CONNECTED:
-            case PREF_SIDE_PANELS_FOULS_RULES:
-            case PREF_SIDE_PANELS_FOULS_MAX:
-                prefChangedNoRestart = true;
-                break;
-            case PREF_OFFICIAL_RULES:
-                setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
-                break;
-            default:
-                prefChangedRestart = true;
-                break;
+        if (noRestartPrefs.contains(key)) {
+            prefChangedNoRestart = true;
+            if (key.equals(PREF_SIDE_PANELS_FOULS_MAX) && !playerRulesDefault) {
+                setPlayerCustomFoulsRules();
+            } else if (key.equals(PREF_SIDE_PANELS_FOULS_RULES)) {// && prefs.getString(PREF_SIDE_PANELS_FOULS_RULES, DEFAULT_SIDE_PANEL_FOULS_RULES).equals(DEFAULT_SIDE_PANEL_FOULS_RULES)) {
+                setPlayerDefaultFouls();
+            }
+        } else if (key.equals(PREF_OFFICIAL_RULES)){
+            setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
+        } else {
+            prefChangedRestart = true;
         }
     }
 
     public void setDefault(int type) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(PREF_NUM_REGULAR, DEFAULT_NUM_REGULAR);
-        editor.putInt(PREF_OVERTIME, DEFAULT_OVERTIME);
-        editor.putInt(PREF_SHOT_TIME, DEFAULT_SHOT_TIME);
-        editor.putInt(PREF_ENABLE_SHORT_SHOT_TIME, DEFAULT_SHORT_SHOT_TIME);
-        editor.putInt(PREF_MAX_FOULS, DEFAULT_MAX_FOULS);
+        editor.putInt(PREF_NUM_REGULAR, Constants.DEFAULT_NUM_REGULAR);
+        editor.putInt(PREF_OVERTIME, Constants.DEFAULT_OVERTIME);
+        editor.putInt(PREF_SHOT_TIME, Constants.DEFAULT_SHOT_TIME);
+        editor.putInt(PREF_ENABLE_SHORT_SHOT_TIME, Constants.DEFAULT_SHORT_SHOT_TIME);
+        editor.putInt(PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS);
         editor.putBoolean(PREF_ENABLE_SHOT_TIME, DEFAULT_ENABLE_SHOT_TIME);
         editor.putBoolean(PREF_ENABLE_SHORT_SHOT_TIME, DEFAULT_ENABLE_SHORT_SHOT_TIME);
+        editor.putString(PREF_SIDE_PANELS_FOULS_RULES, SIDE_PANEL_FOULS_RULES_STRICT);
         if (type == 0) {
-            editor.putInt(PREF_REGULAR_TIME, DEFAULT_FIBA_MAIN_TIME);
+            editor.putInt(PREF_REGULAR_TIME, Constants.DEFAULT_FIBA_MAIN_TIME);
+            editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_FIBA_PLAYER_FOULS);
             editor.putString(PREF_TIMEOUTS_RULES, DEFAULT_FIBA_TIMEOUTS);
         } else {
-            editor.putInt(PREF_REGULAR_TIME, DEFAULT_NBA_MAIN_TIME);
+            editor.putInt(PREF_REGULAR_TIME, Constants.DEFAULT_NBA_MAIN_TIME);
+            editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_NBA_PLAYER_FOULS);
             editor.putString(PREF_TIMEOUTS_RULES, DEFAULT_NBA_TIMEOUTS);
         }
         editor.apply();
         prefChangedRestart = true;
         restartActivity();
+    }
+
+    private void setPlayerCustomFoulsRules() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_SIDE_PANELS_FOULS_RULES, CUSTOM_SIDE_PANEL_FOULS_RULES);
+        playerRulesDefault = false;
+        editor.apply();
+    }
+
+    private void setPlayerDefaultFouls() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, (prefs.getInt(PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS)));
+        playerRulesDefault = true;
+        editor.apply();
     }
 
     @Override
@@ -164,7 +176,6 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
      protected void onResume() {
          super.onResume();
          prefs.registerOnSharedPreferenceChangeListener(this);
-         if (inNested) {openTimeSettings();}
      }
      @Override
      protected void onPause() {
@@ -172,16 +183,6 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
          prefs.unregisterOnSharedPreferenceChangeListener(this);
      }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean(STATE_IN_NESTED, inNested);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        inNested = savedInstanceState.getBoolean(STATE_IN_NESTED);
-    }
 
     private void restartActivity() {
         Intent intent = getIntent();
@@ -202,18 +203,18 @@ public class PrefActivity extends Activity implements SharedPreferences.OnShared
     private void openTimeSettings() {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PrefFragmentTime())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
         toolbar.setTitle(R.string.time_screen);
-        inNested = true;
     }
 
     private void openSidePanelsSettings() {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PrefFragmentSidePanels())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
         toolbar.setTitle(R.string.side_panels_screen);
-        inNested = true;
     }
 }

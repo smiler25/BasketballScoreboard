@@ -10,6 +10,7 @@
     <color name="colorPrimaryLight">#ffb74d</color>
     <color name="window_background">#ff653c41</color>
     <color name="white">#ffffff</color>
+    <color name="light_grey_background">#fafafa</color>
     <color name="red">#fffe1508</color>
     <color name="light_red">#ff5e54</color>
     <color name="orange">#fffea31d</color>
@@ -29,9 +30,10 @@
     <color name="camera_color4">#005cb4</color>
     <color name="camera_color5">#004587</color>
 
-
-    <color name="side_panel_background">#FAFAFA</color>
-    <color name="side_panel_toolbar">#9E9E9E</color>
+    <color name="side_panel_toolbar">#9e9e9e</color>
+    <color name="side_panel_player_button">#5b5a5c</color>
+    <color name="side_panel_selected">#ffd291</color>
+    <color name="side_panel_fouled_out">#ff776f</color>
 
 
 </resources>

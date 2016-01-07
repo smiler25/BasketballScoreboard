@@ -1,0 +1,34 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.smiler.basketball_scoreboard.HelpActivity"
+    >
+
+    <LinearLayout
+        android:id="@+id/detailed_view"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize"
+        >
+
+        <fragment
+            android:name="com.smiler.basketball_scoreboard.HelpListFragment"
+            android:id="@+id/help_list_frag"
+            android:layout_width="@dimen/list_width"
+            android:layout_height="match_parent"/>
+
+        <FrameLayout
+            android:id="@+id/help_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+</FrameLayout>

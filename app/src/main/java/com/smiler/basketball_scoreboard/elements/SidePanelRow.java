@@ -2,10 +2,10 @@ package com.smiler.basketball_scoreboard.elements;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
 
@@ -13,14 +13,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
+
+    private static int MAX_FOULS;
     private TextView numberView, nameView, pointsView, foulsView;
     private int number;
     private short points, fouls;
     private String name;
-    private boolean left, captain = false, onCourt = false, selected = false;
+    private boolean left, captain = false, selected = false;
     private Context context;
     private static int count = 0;
     private int id = 0;
+    private int colorSelected = getResources().getColor(R.color.side_panel_selected);
+    private int colorNotSelected = getResources().getColor(R.color.light_grey_background);
+    private int colorFouledOut = getResources().getColor(R.color.side_panel_fouled_out);
 
     public SidePanelRow(Context context) {
         super(context);
@@ -101,6 +106,14 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     public void changeFouls(int value) {
         fouls += value;
         foulsView.setText(String.valueOf(fouls));
+        if (fouls >= MAX_FOULS) {
+            Toast.makeText(
+                    getContext(),
+                    String.format(getResources().getString((left) ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), number, name),
+                    Toast.LENGTH_SHORT).show();
+            this.setBackgroundColor(colorFouledOut);
+
+        }
     }
 
     public void edit() {
@@ -120,24 +133,15 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         this.captain = false;
     }
 
-    public boolean select() {
+    public boolean toggleSelected() {
         selected = !selected;
         if (selected) {
-            this.setBackgroundColor(Color.DKGRAY);
+            this.setBackgroundColor(colorSelected);
         } else {
-            this.setBackgroundColor(Color.WHITE);
+            this.setBackgroundColor(colorNotSelected);
         }
         return selected;
     }
-
-    public void setActive() {
-        this.onCourt = true;
-    }
-
-    public void setInactive() {
-        this.onCourt = false;
-    }
-
 
     public JSONObject getFullInfo() throws JSONException {
         JSONObject object = new JSONObject();
@@ -164,5 +168,9 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     @Override
     public int compareTo(SidePanelRow another) {
         return this.number - another.getNumber();
+    }
+
+    public static void setMaxFouls(int value) {
+        MAX_FOULS = value;
     }
 }

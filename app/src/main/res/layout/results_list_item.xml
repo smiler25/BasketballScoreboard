@@ -14,4 +14,5 @@
     android:paddingRight="?android:attr/listPreferredItemPaddingRight"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:background="@drawable/list_selector"
+    android:autoLink="web"
     />

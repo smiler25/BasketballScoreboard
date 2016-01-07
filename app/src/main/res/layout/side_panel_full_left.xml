@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:background="@color/side_panel_background"
+        android:background="@color/light_grey_background"
         android:layout_weight="3"
         >
 
@@ -22,42 +22,6 @@
 
     </ScrollView>
 
-    <LinearLayout style="@style/sidePanelToolbar">
+    <include layout="@layout/side_panel_full_left_toolbar"/>
 
-        <TextView
-            android:id="@+id/left_panel_close"
-            android:text="&lt;&lt;"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            />
-
-        <TextView
-            android:id="@+id/left_panel_add"
-            android:text="@string/plus1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            />
-
-        <TextView
-            android:id="@+id/left_panel_add_auto"
-            android:text="++"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            />
-
-        <ToggleButton
-            android:id="@+id/left_panel_select_active"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textOff="@string/side_panel_select_off"
-            android:textOn="@string/side_panel_select_on"
-            />
-
-    </LinearLayout>
 </com.smiler.basketball_scoreboard.elements.SlidingRelativeLayout>

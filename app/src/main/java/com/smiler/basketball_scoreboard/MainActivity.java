@@ -105,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int dontAskNewGame;
     private boolean showTimeoutDialog = true;
     private FloatingCountdownTimerDialog floatingDialog;
-    private HelpFragment helpFragment;
-    private AppUpdatesFragment appUpdatesFragment;
     private SidePanelFragment leftPanel, rightPanel;
     private OverlayFragment overlay;
 
@@ -135,12 +133,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
-            // appUpdatesFragment = new AppUpdatesFragment();
-            // appUpdatesFragment.setCancelable(true);
-            // appUpdatesFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
+            new AppUpdatesFragment().show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
         }
 
         initLayout();
@@ -159,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gameResult = new Results(hName, gName);
         floatingDialog = new FloatingCountdownTimerDialog();
         floatingDialog.setCancelable(false);
-        helpFragment = new HelpFragment();
 
         if (saveOnExit) {
             getSavedState();
@@ -274,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rightPlayersStub.inflate();
 
         leftPlayersButtons = (ViewGroup) findViewById(R.id.left_panel);
-        for (int i = 0; i < leftPlayersButtons.getChildCount(); i++) {
+        for (int i = 0; i < leftPlayersButtons.getChildCount() - 1; i++) {
             View button = leftPlayersButtons.getChildAt(i);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -308,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         rightPlayersButtons = (ViewGroup) findViewById(R.id.right_panel);
-        for (int i = 0; i < rightPlayersButtons.getChildCount(); i++) {
+        for (int i = 0; i < rightPlayersButtons.getChildCount() - 1; i++) {
             View button = rightPlayersButtons.getChildAt(i);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -445,6 +440,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intent, 1);
     }
 
+    private void runHelpActivity() {
+        startActivity(new Intent(this, HelpActivity.class));
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null || resultCode != RESULT_OK) {
@@ -512,8 +511,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 shareResult();
                 break;
             case 4:
-                helpFragment.setCancelable(true);
-                helpFragment.show(getFragmentManager(), Constants.TAG_FRAGMENT_HELP);
+                runHelpActivity();
                 break;
             default:
                 break;
@@ -828,8 +826,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sidePanelsOn = sidePanelsOn_;
             sidePanelsStateChanged = true;
         }
-
         sidePanelsConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
+        SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_FIBA_PLAYER_FOULS));
 
         restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
         PrefActivity.prefChangedNoRestart = false;
@@ -842,17 +840,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             layoutType = temp_int;
         }
         useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
-        shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, 24) * 1000;
+        shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, Constants.DEFAULT_SHOT_TIME) * 1000;
         enableShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
-        shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, 14) * 1000 : shotTimePref;
-        mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, 10) * Constants.SECONDS_60;
-        overTimePref = sharedPref.getInt(PrefActivity.PREF_OVERTIME, 5) * Constants.SECONDS_60;
-        numRegularPeriods = (short) sharedPref.getInt(PrefActivity.PREF_NUM_REGULAR, 4);
+        shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, Constants.DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
+        mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, Constants.DEFAULT_FIBA_MAIN_TIME) * Constants.SECONDS_60;
+        overTimePref = sharedPref.getInt(PrefActivity.PREF_OVERTIME, Constants.DEFAULT_OVERTIME) * Constants.SECONDS_60;
+        numRegularPeriods = (short) sharedPref.getInt(PrefActivity.PREF_NUM_REGULAR, Constants.DEFAULT_NUM_REGULAR);
         hName = sharedPref.getString(PrefActivity.PREF_HOME_NAME, getResources().getString(R.string.home_team_name_default));
         gName = sharedPref.getString(PrefActivity.PREF_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
         actualTime = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_ACTUAL_TIME, "1"));
-        maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, 5);
+        maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS);
 
         temp_int = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_TIMEOUTS_RULES, "0"));
         if (temp_int != timeoutRules) {
@@ -1167,7 +1165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case 1:
-                gActionType = 0;
+                gActionType = 1;
                 gActionValue += 1;
                 if (gFouls < maxFouls) {
                     gFoulsView.setText(Short.toString(++gFouls));
@@ -1486,8 +1484,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        ArrayList<String> numberNameList= new ArrayList<>();
-        currentPanelData = ((left) ? leftPanel : rightPanel).getAllPlayers();
+        ArrayList<String> numberNameList = new ArrayList<>();
+        currentPanelData = ((left) ? leftPanel : rightPanel).getInactivePlayers();
         if (currentPanelData.isEmpty()){
             Toast.makeText(this, getResources().getString(R.string.side_panel_no_data), Toast.LENGTH_LONG).show();
             return;
@@ -1495,8 +1493,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (Map.Entry<Integer, SidePanelRow> entry : currentPanelData.entrySet()) {
             numberNameList.add(String.format("%d: %s", entry.getValue().getNumber(), entry.getValue().getName()));
         }
+        int number = (longClickPlayerBu.getTag() != null) ? ((SidePanelRow)longClickPlayerBu.getTag()).getNumber() : -1;
 
-        ListDialog dialog = ListDialog.newInstance("substitute", numberNameList, left);
+        ListDialog dialog = ListDialog.newInstance("substitute", numberNameList, left, number);
         dialog.show(getFragmentManager(), ListDialog.TAG);
     }
 
@@ -1695,9 +1694,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onSubstituteListSelect(int which, boolean left) {
-        longClickPlayerBu.setTag(currentPanelData.get(which));
-        longClickPlayerBu.setText(Integer.toString(which));
+    public void onSubstituteListSelect(boolean left, int newNumber) {
+        SidePanelRow row = currentPanelData.get(newNumber);
+        ((left) ? leftPanel : rightPanel).substitute(row, (SidePanelRow)longClickPlayerBu.getTag());
+        longClickPlayerBu.setTag(row);
+        longClickPlayerBu.setText(Integer.toString(newNumber));
     }
 
     @Override
@@ -1807,22 +1808,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onEditPlayer(boolean left, int number, String name, boolean captain) {
+    public void onEditPlayerAdd(boolean left, int number, String name, boolean captain) {
         ((left) ? leftPanel : rightPanel).addRow(number, name, captain);
     }
 
     @Override
-    public void onEditPlayer(boolean left, int id, int number, String name, boolean captain) {
-        ((left) ? leftPanel : rightPanel).editRow(id, number, name, captain);
+    public void onEditPlayerEdit(boolean left, int id, int number, String name, boolean captain) {
+        if (((left) ? leftPanel : rightPanel).editRow(id, number, name, captain)) {
+            ViewGroup playersButtons = (left) ? leftPlayersButtons : rightPlayersButtons;
+            for (int i=0; i < playersButtons.getChildCount() - 1; i++) {
+                Button bu = (Button) playersButtons.getChildAt(i);
+                SidePanelRow row = (SidePanelRow) bu.getTag();
+                if (row != null && row.getId() == id) {
+                    bu.setText(Integer.toString(number));
+                    break;
+                }
+            }
+        }
     }
 
     @Override
-    public void onEditPlayer(boolean left, int id) {
-        ((left) ? leftPanel : rightPanel).deleteRow(id);
+    public void onEditPlayerDelete(boolean left, int id) {
+        if (((left) ? leftPanel : rightPanel).deleteRow(id)) {
+            ViewGroup playersButtons = (left) ? leftPlayersButtons : rightPlayersButtons;
+            for (int i=0; i < playersButtons.getChildCount() - 1; i++) {
+                Button bu = (Button) playersButtons.getChildAt(i);
+                SidePanelRow row = (SidePanelRow) bu.getTag();
+                if (row != null && row.getId() == id) {
+                    bu.setText(getResources().getString(R.string.minus));
+                    bu.setTag(null);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
     public int onEditPlayerCheck(boolean left, int number, boolean captain) {
         return ((left) ? leftPanel : rightPanel).checkNewPlayer(number, captain);
     }
+
 }

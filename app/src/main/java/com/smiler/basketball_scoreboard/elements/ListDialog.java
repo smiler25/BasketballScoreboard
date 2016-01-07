@@ -11,14 +11,12 @@ import android.widget.ArrayAdapter;
 import com.smiler.basketball_scoreboard.R;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 
 public class ListDialog extends DialogFragment {
 
     public static final String TAG = "ListDialog";
     private boolean left = false;
-    private TreeMap<Integer, SidePanelRow> data;
 
     public static ListDialog newInstance(String type) {
         ListDialog f = new ListDialog();
@@ -28,12 +26,13 @@ public class ListDialog extends DialogFragment {
         return f;
     }
 
-    public static ListDialog newInstance(String type, ArrayList<String> values, boolean left) {
+    public static ListDialog newInstance(String type, ArrayList<String> values, boolean left, int number) {
         ListDialog f = new ListDialog();
         Bundle args = new Bundle();
         args.putString("type", type);
         args.putStringArrayList("values", values);
         args.putBoolean("left", left);
+        args.putInt("number", number);
         f.setArguments(args);
         return f;
     }
@@ -62,15 +61,19 @@ public class ListDialog extends DialogFragment {
                 left = args.getBoolean("left", true);
                 ArrayList<String> values = args.getStringArrayList("values");
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.substitute_dialog_list_item, values);
-//                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_item, values);
                 builder.setAdapter(adapter, listClickListener);
-                builder.setTitle("Select substitute for home player №9");
-//                ArrayAdapter titles = new ArrayAdapter();
-//                builder.setItems(titles, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        mListener.onSubstituteListSelect(which, left);
-//                    }
-//                });
+                int number = args.getInt("number", -1);
+                String title;
+                if (left) {
+                    title = (number == -1)
+                            ? getResources().getString(R.string.substitute_dialog_title_home0)
+                            : String.format(getResources().getString(R.string.substitute_dialog_title_home), number);
+                } else {
+                    title = (number == -1)
+                            ? getResources().getString(R.string.substitute_dialog_title_guest0)
+                            : String.format(getResources().getString(R.string.substitute_dialog_title_guest), number);
+                }
+                builder.setTitle(title);
                 break;
         }
         builder.setCancelable(true);
@@ -79,16 +82,15 @@ public class ListDialog extends DialogFragment {
 
     DialogInterface.OnClickListener listClickListener = new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
-            mListener.onSubstituteListSelect(
-                    Integer.parseInt(((AlertDialog) dialog).getListView().getAdapter().getItem(which).toString().split(":")[0]),
-                    left);
+            mListener.onSubstituteListSelect(left,
+                    Integer.parseInt(((AlertDialog) dialog).getListView().getAdapter().getItem(which).toString().split(":")[0]));
         }
     };
 
     public interface NewTimeoutDialogListener {
         void onTimeoutDialogItemClick(int which);
         void onNewPeriodDialogItemClick(int which);
-        void onSubstituteListSelect(int which, boolean left);
+        void onSubstituteListSelect(boolean left, int newNumber);
     }
 
     private NewTimeoutDialogListener mListener;

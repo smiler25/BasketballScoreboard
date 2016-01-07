@@ -1,0 +1,41 @@
+<resources>
+    <dimen name="led_weight1_font_size">190dp</dimen>
+    <dimen name="led_weight2_font_size">210dp</dimen>
+
+    <dimen name="main_time_size">120dp</dimen>
+    <dimen name="shot_clock_size">90dp</dimen>
+    <dimen name="short_shot_clock_size">45dp</dimen>
+    <dimen name="short_shot_clock_margin">3dp</dimen>
+    <dimen name="score_size">110dp</dimen>
+    <dimen name="score_changer_size">20sp</dimen>
+    <dimen name="bottom_line_size">90dp</dimen>
+
+    <dimen name="led_nba_to_font_size">85dp</dimen>
+    <dimen name="no_led_font_size">30sp</dimen>
+    <dimen name="period_view_padding">1dp</dimen>
+    <dimen name="dialog_title_font_size">25sp</dimen>
+    <dimen name="timeout_font_size">150dp</dimen>
+    <dimen name="bottom_line_margin">5dp</dimen>
+    <dimen name="bottom_line_margin2">30dp</dimen>
+
+    <dimen name="led_simple_font_size">150dp</dimen>
+    <dimen name="simple_name_font_size">30sp</dimen>
+    <dimen name="simple_score_changer_size">20sp</dimen>
+
+
+    <!--side panels-->
+    <dimen name="side_panel_width">220dp</dimen>
+    <dimen name="player_button_size">35dp</dimen>
+    <dimen name="side_panel_row_font_size">13sp</dimen>
+    <dimen name="side_panel_edit_size">20dp</dimen>
+    <dimen name="substitute_list_padding">2dp</dimen>
+    <dimen name="player_button_padding">2dp</dimen>
+    <dimen name="player_button_margin">4dp</dimen>
+    <dimen name="player_button_margin_side">2dp</dimen>
+    <dimen name="player_button_font_size">15sp</dimen>
+    <dimen name="side_panel_toolbar_height">50dp</dimen>
+    <dimen name="side_panel_toolbar_icon_padding">7dp</dimen>
+    <dimen name="help_side_panel_toolbar_height">40dp</dimen>
+    <dimen name="side_panel_open_icon_padding">7dp</dimen>
+
+</resources>

@@ -13,7 +13,9 @@
         android:padding="10dp"
         android:text="@string/appupdate_title"
         android:textSize="@dimen/appupdate_dialog_title_size"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:textColor="@color/white"
+        />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -28,6 +30,7 @@
             android:padding="10dp"
             android:text="@string/appupdate_info"
             android:textSize="@dimen/appupdate_dialog_text_size"
+            android:textColor="@color/white"
             />
 
     </ScrollView>

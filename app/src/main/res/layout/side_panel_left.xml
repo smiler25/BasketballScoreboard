@@ -7,40 +7,39 @@
     android:orientation="vertical"
     android:layout_gravity="center"
     >
-
     <Button
         android:id="@+id/home_player1"
-        style="@style/playersButtons"
+        style="@style/playersButtonsLeft"
         android:text="@string/minus"
         />
-
     <Button
         android:id="@+id/home_player2"
-        style="@style/playersButtons"
+        style="@style/playersButtonsLeft"
         android:text="@string/minus"
         />
-
     <Button
         android:id="@+id/home_player3"
-        style="@style/playersButtons"
+        style="@style/playersButtonsLeft"
         android:text="@string/minus"
         />
-
     <Button
         android:id="@+id/home_player4"
-        style="@style/playersButtons"
+        style="@style/playersButtonsLeft"
         android:text="@string/minus"
         />
-
     <Button
         android:id="@+id/home_player5"
-        style="@style/playersButtons"
+        style="@style/playersButtonsLeft"
         android:text="@string/minus"
         />
-    <Button
+    <ImageButton
         android:id="@+id/left_panel_toggle"
-        style="@style/playersButtons"
-        android:text="&gt;&gt;"
+        style="@style/playersButtonsLeft"
+        android:scaleType="centerInside"
+        android:contentDescription="@string/description_close_panel"
+        android:src="@drawable/ic_action_forward"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:padding="@dimen/side_panel_open_icon_padding"
         />
-
 </LinearLayout>

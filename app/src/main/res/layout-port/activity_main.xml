@@ -144,11 +144,6 @@
             android:layout_weight="1"
             android:text="@string/minus1"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
-        <!-- </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            style="@style/matchParentCenter"
-            android:layout_weight="1" > -->
 
         <TextView
             android:id="@+id/plus1GuestView"

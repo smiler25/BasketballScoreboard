@@ -27,7 +27,7 @@
 
 
     <!--side panels-->
-    <dimen name="side_panel_width">220dp</dimen>
+    <dimen name="side_panel_width">230dp</dimen>
     <dimen name="side_panel_edit_size">15dp</dimen>
     <dimen name="side_panel_number_width">33dp</dimen>
     <dimen name="side_panel_name_width">110dp</dimen>
@@ -35,5 +35,20 @@
     <dimen name="side_panel_fouls_width">22dp</dimen>
     <dimen name="side_panel_edit_width">33dp</dimen>
     <dimen name="side_panel_toolbar_height">55dp</dimen>
+
+    <dimen name="side_panel_padding">2dp</dimen>
+    <dimen name="side_panel_padding_top">5dp</dimen>
+    <dimen name="side_panel_row_padding">4dp</dimen>
+    <dimen name="side_panel_row_font_size">15sp</dimen>
+    <dimen name="help_side_panels_toolbar_margin">5dp</dimen>
+
+    <dimen name="substitute_list_padding">2dp</dimen>
+    <dimen name="player_button_padding">2dp</dimen>
+    <dimen name="player_button_margin">5dp</dimen>
+    <dimen name="player_button_size">40dp</dimen>
+    <dimen name="player_button_font_size">20sp</dimen>
+    <dimen name="side_panel_toolbar_icon_padding">6dp</dimen>
+    <dimen name="help_side_panel_toolbar_height">40dp</dimen>
+    <dimen name="side_panel_open_icon_padding">8dp</dimen>
 
 </resources>

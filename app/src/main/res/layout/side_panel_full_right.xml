@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:background="@color/side_panel_background"
+        android:background="@color/light_grey_background"
         android:layout_weight="3"
         >
 
@@ -23,37 +23,78 @@
     </ScrollView>
 
     <LinearLayout style="@style/sidePanelToolbar">
-
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            />
         <ToggleButton
             android:id="@+id/right_panel_select_active"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_weight="0.9"
+            android:padding="@dimen/side_panel_select_padding"
             android:textOff="@string/side_panel_select_off"
             android:textOn="@string/side_panel_select_on"
             />
-        <TextView
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            />
+        <ImageButton
             android:id="@+id/right_panel_add_auto"
-            android:text="++"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:maxHeight="@dimen/side_panel_edit_size"
+            android:scaleType="fitCenter"
+            android:padding="@dimen/side_panel_toolbar_icon_padding"
+            android:contentDescription="@string/description_add_multiple"
+            android:src="@drawable/ic_action_add_group"
+            android:background="@drawable/side_panel_toolbar_button"
             />
-        <TextView
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            />
+        <ImageButton
             android:id="@+id/right_panel_add"
-            android:text="@string/plus1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:maxHeight="@dimen/side_panel_edit_size"
+            android:scaleType="fitCenter"
+            android:padding="@dimen/side_panel_toolbar_icon_padding"
+            android:contentDescription="@string/description_add_one"
+            android:src="@drawable/ic_action_add_person"
+            android:background="@drawable/side_panel_toolbar_button"
             />
-        <TextView
-            android:id="@+id/right_panel_close"
-            android:text="&gt;&gt;"
-            android:layout_width="wrap_content"
+        <Space
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
+            android:layout_weight="1.2"
+            />
+        <ImageButton
+            android:id="@+id/right_panel_close"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:maxHeight="@dimen/side_panel_edit_size"
+            android:scaleType="fitCenter"
+            android:padding="@dimen/side_panel_toolbar_icon_padding"
+            android:contentDescription="@string/description_close_panel"
+            android:src="@drawable/ic_action_forward"
+            android:background="@drawable/side_panel_toolbar_button"
+            />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
             />
 
     </LinearLayout>

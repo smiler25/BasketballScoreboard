@@ -23,6 +23,10 @@
     <string name="description_start_camera">Запустить камеру</string>
     <string name="description_whistle">Свисток</string>
     <string name="dont_ask">Не спрашивать снова</string>
+    <string name="description_add_multiple">Добавить несколько игроков</string>
+    <string name="description_add_one">Добавить игрока</string>
+    <string name="description_close_panel">Закрыть панель</string>
+
 
     <string name="edit_name">Введите название</string>
     <string name="edit_home_name">Введите название команды хозяев</string>
@@ -62,6 +66,7 @@
     <string name="timeout_format_2">%2$d-секундный таймаут (%1$s)</string>
 
     <string name="title_activity_results">История результатов</string>
+    <string name="title_activity_help">Помощь</string>
     <string name="choose_game">Выберите игру</string>
     <string name="save_picture">Сохранить картинку</string>
     <string name="action_delete">Удалить</string>
@@ -78,26 +83,14 @@
     <string name="side_panel_select_off">Выбрать</string>
     <string name="side_panel_few">Слишком мало игроков (%1$d)</string>
     <string name="side_panel_many">Слишком много игроков (%1$d)</string>
+    <string name="side_panel_player_name">Игрок №%1$d</string>
+    <string name="side_panel_players_limit">Можно добавить только 12 игроков</string>
+    <string name="side_panel_fouls_limit_home">Игрок хозяев №%1$d (%2$s) достиг предела фолов</string>
+    <string name="side_panel_fouls_limit_guest">Игрок гостей №%1$d (%2$s) достиг предела фолов</string>
 
-    <string name="help_text">Взаимодействие с интерфейсом\n
-        \n
-        По одиночному нажатию выполняется ожидаемое действие:\n
-        - основное время: старт/пауза;\n
-        - счетчик времени на атаку: запуск нового отсчета или установка укороченного времени (если активировано в настройках);\n
-        - счет: увеличение значения на 2;\n
-        - период: установка соответствующих значений для нового периода.\n
-        \n
-        Длительное нажатие на основное время и счетчик времени на атаку позволяет изменить значение.\n
-        Длительное нажатие на остальные элементы обнулит их значение.\n
-        Действия по длительному нажатию доступны только при остановленном времени.</string>
-
-    <string name="appupdate_title">Информация об обновлении</string>
-    <string name="appupdate_info">
-        v.2.0\n
-            - панели игроков (смотрите справку).\n
-        v.1.2.3\n
-            - возможность выбора формата отображения времени по его подходу к концу,\n
-    </string>
-
+    <string name="substitute_dialog_title_home">Выберите замену для игрока №%1$d команды хозяев</string>
+    <string name="substitute_dialog_title_home0">Выберите игрока команды хозяев</string>
+    <string name="substitute_dialog_title_guest">Выберите замену для игрока №%1$d команды гостей</string>
+    <string name="substitute_dialog_title_guest0">Выберите игрока команды гостей</string>
 
 </resources>

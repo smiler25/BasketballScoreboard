@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="help_main_text">
+        All numbers are clickable.\n
+        \n
+        Single click provides expected action:\n
+        - main clock: start/pause;\n
+        - shot clock: start new or switch to short possession (if enabled in settings);\n
+        - score: increase value by 2;\n
+        - period: set new period and set to default corresponding values;\n
+        - fouls and timeouts: increase value by one.\n
+        \n
+        Long press:\n
+        - main and shot clock: allows to change current value;\n
+        - other number elements: will set zero state;\n
+        - team names: set new team name.\n
+        * Long click actions work only if main time on pause.
+    </string>
+
+    <string name="help_side_panels_enable">Enable side panels</string>
+    <string name="help_panels_text_intro">Use side panels to keep statistics of players</string>
+    <string name="help_panels_text_open">Click on bottom button of left or right side panel at the main screen to open it</string>
+    <string name="help_panels_text_add_one">Add one player</string>
+    <string name="help_panels_text_add_multi">Automatically add players</string>
+    <string name="help_panels_text_select">Select active players: click toggle button, choose players from table above and click again to apply</string>
+    <string name="help_panels_text_close">Close panel (also you can tap outside the panel)</string>
+    <string name="description_open_panel">Open panel</string>
+
+    <string name="help_panels_text_game">
+        After adding the players and choice of active players each button on the main screen will be assigned to the relevant player.\n
+        When changing score or foul click on player button to apply the action to the player.\n
+        Substitution active players can be either through the panel, or after long pressing on the button of the player.
+    </string>
+
+    <string name="appupdate_title">Update info</string>
+    <string name="appupdate_info">
+        v.2.0:\n
+            - new help;\n
+            - players panels (see help).\n
+    </string>
+
+    <string-array name="help_activity_values">
+        <item>Main interface</item>
+        <item>Side panels</item>
+        <item>Basketball rules in app</item>
+        <item>About update</item>
+    </string-array>
+
+</resources>

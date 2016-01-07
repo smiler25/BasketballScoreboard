@@ -40,12 +40,21 @@ public class Constants {
     public static final String STATE_PERIOD = "period";
 
     public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesFragment";
-    public static final String TAG_FRAGMENT_HELP = "HelpFragment";
     public static final String TAG_FRAGMENT_TIME = "TimeDialog";
-    public static final String TAG_FRAGMENT_LIST = "ListDialog";
     public static final String TAG_FRAGMENT_CONFIRM = "ConfirmDialog";
     public static final String TAG_FRAGMENT_NAME_EDIT = "NameEditDialog";
     public static final String TAG_FRAGMENT_MAIN_TIME_PICKER = "MainTimePicker";
     public static final String TAG_FRAGMENT_SHOT_TIME_PICKER = "ShotTimePicker";
+
+    public static final int MAX_PLAYERS = 12;
+    public static final int DEFAULT_SHOT_TIME = 24;
+    public static final int DEFAULT_SHORT_SHOT_TIME = 14;
+    public static final int DEFAULT_NUM_REGULAR = 4;
+    public static final int DEFAULT_OVERTIME = 5;
+    public static final int DEFAULT_MAX_FOULS = 5;
+    public static final int DEFAULT_FIBA_MAIN_TIME = 10;
+    public static final int DEFAULT_NBA_MAIN_TIME = 12;
+    public static final int DEFAULT_FIBA_PLAYER_FOULS = 5;
+    public static final int DEFAULT_NBA_PLAYER_FOULS = 6;
 
 }

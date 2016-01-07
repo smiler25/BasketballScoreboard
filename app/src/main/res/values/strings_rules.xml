@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="help_rules_titles">
+        <item>FIBA</item>
+        <item>NBA</item>
+    </string-array>
+
+    <string name="help_fiba_rules">
+        full version: https://www.fiba.com/downloads/Rules/2014/Official_Basketball_Rules_2014_Y.pdf\n
+        \n
+        Art. 4 Teams\n
+        4.2.1. Each team shall consist of no more than 12 team members entitled to play, including a captain.\n
+        \n
+        Art. 8 Playing time, tied score and extra periods\n
+        8.1. The game shall consist of 4 periods of 10 minutes each. begin.\n
+        8.3. There shall be intervals of play of 2 minutes between the first and second period (first half), between the third and fourth period (second half) and before each extra period.\n
+        8.4. There shall be a half-time interval of play of 15 minutes.\n
+        8.5. An interval of play begins when the game clock signal sounds for the end of the period.\n
+        8.7. If the score is tied at the end of playing time for the fourth period, the game shall continue with as many extra periods of 5 minutes as is necessary to break the tie.\n
+        \n
+        Art. 18 Time-out\n
+        18.2.1. Each time-out shall last 1 minute.\n
+        18.2.5. Each team may be granted:\n
+        - 2 time-outs during the first half,\n
+        - 3 time-outs during the second half with a maximum of 2 of these time-outs in the last 2 minutes of the second half,\n
+        - 1 time-out during each extra period.\n
+        18.2.6. Unused time-outs may not be carried over to the next half or extra period.\n
+        \n
+        Art. 29 24 seconds\n
+        29.1.1. Team must attempt a shot for a field goal within 24 seconds.\n
+        29.2.1. The shot clock shall be reset whenever the game is stopped by an official:\n
+                For a foul:\n
+        - If 14 seconds or more is displayed on the shot clock at the time when the game was stopped, the shot clock shall not be reset, but shall continue from the time it was stopped.\n
+        - If 13 seconds or less is displayed on the shot clock at the time when the game was stopped, the shot clock shall be reset to 14 seconds.\n
+        \n
+        Art. 41 Team fouls: Penalty\n
+        41.1.1. A team foul is a personal, technical, unsportsmanlike or disqualifying foul committed by a player. A team is in the team foul penalty situation when it has committed 4 team fouls in a period.
+    </string>
+
+    <string name="help_nba_rules">
+        full version: https://turnernbahangtime.files.wordpress.com/2015/11/official-nba-rule-book-2015-16.pdf\n
+        \n
+        RULE NO. 5—SCORING AND TIMING\n
+        \n
+        Section II—Timing\n
+        a. All periods of regulation play in the NBA will be twelve minutes.\n
+        b. All overtime periods of play will be five minutes.\n
+        c. Fifteen minutes will be permitted between halves of all games.\n
+        d. 130 seconds will be permitted between the first and second periods, the third and fourth periods and before any overtime period.\n
+        e. A team is permitted a total of 30 seconds to replace a disqualified player.\n
+        f. The game is considered to be in the two-minute part when the game clock shows 2:00 or less time remaining in the period.\n
+        h. The game clock shall be equipped to show tenths-of-a-second during the last minute of each period.\n
+        \n
+        Section VI—Timeouts\n
+        A—Regular Timeout—100/60 Seconds\n
+        a. Each team is entitled to six (6) charged timeouts during regulation play. Each team is limited to no more than three (3) timeouts in the fourth period. If a team has two (2) or three (3) full timeouts remaining when the fourth period reaches the 2:00 mark, one (1) of the timeouts will be changed to a 20-second timeout and it will retain one (1) full timeout.\n
+        b. In overtime periods, each team shall be allowed two (2) 60-second timeouts. If a team has two (2) full timeouts remaining when the overtime period reaches the 2:00 mark, one (1) of the timeouts will be changed to a 20-second timeout.\n
+        c. There must be two 100-second timeouts in the first and third periods and three 100- second timeouts in the second and fourth periods.\n
+        B—20-Second Timeout\n
+        a. Each team is entitled to one (1) 20-second timeout per half and each overtime period.\n
+        \n
+        \n
+        RULE NO. 7—24-SECOND CLOCK\n
+        Section II—Starting and Stopping of 24-Second Clock\n
+        a. The 24-second clock will start when a team gains new possession of a ball which is in play.\n
+        \n
+        Section IV—Resetting 24-Second Clock\n
+        c. The 24-second clock shall be reset to 24 seconds anytime the following occurs:\n
+        (3) Personal foul where ball is being inbounded in backcourt\n
+        (6) All flagrant and punching fouls\n
+        d. The 24-second clock shall remain the same as when play was interrupted or reset to 14 seconds, whichever is greater, anytime the following occurs:\n
+        (1) Personal foul by the defense where ball is being inbounded in frontcourt\n
+        (3) Technical fouls and/or delay-of-game warnings on the defensive team\n
+        \n
+        \n
+        RULE NO. 12—FOULS AND PENALTIES\n
+        B. Personal Foul\n
+        Section V-Free Throw Penalty Situations\n
+        a. Each team is limited to four team fouls per regulation period without addi-tional penalties. Common fouls charged as team fouls, in excess of four, will be penal-ized by one free throw attempt plus a penalty free throw attempt.
+    </string>
+
+</resources>

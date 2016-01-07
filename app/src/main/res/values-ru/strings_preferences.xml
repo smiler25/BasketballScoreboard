@@ -53,7 +53,8 @@
     <string name="side_panels_activate">Использовать панели игроков</string>
     <string-array name="side_panels_fouls_rules_titles">
         <item>Не отслеживать</item>
-        <item>Правило для команд</item>
+        <item>Согласно правилам</item>
+        <item>Совпадает с командными</item>
         <item>Настроить</item>
     </string-array>
     <string-array name="side_panels_interaction_titles">
