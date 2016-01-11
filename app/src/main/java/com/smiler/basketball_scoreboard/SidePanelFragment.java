@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -130,7 +131,6 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
 
     private void handleSelection() {
         if (panelSelect.isChecked() || activePlayers.size() <= 5) {
-//        if (panelSelect.isChecked() || activePlayers.size() == 5) {
             View.OnClickListener l = panelSelect.isChecked() ? this : null;
             for (SidePanelRow row : rows.values()) { row.setOnClickListener(l); }
             if (!panelSelect.isChecked()) { listener.onSidePanelActiveSelected(activePlayers, left);
@@ -146,7 +146,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     }
 
     private void addHeader() {
-        table.addView(new SidePanelRow(getActivity().getApplicationContext(), true, left));
+        table.addView(new SidePanelRow(getActivity().getApplicationContext(), left));
     }
 
     public boolean editRow(int id, int number, String name, boolean captain) {
@@ -213,12 +213,16 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
 
     public TreeMap<Integer, SidePanelRow> getInactivePlayers() {
         TreeMap<Integer, SidePanelRow> res = new TreeMap<>();
-        for (TreeMap.Entry<Integer, SidePanelRow> row : rows.entrySet()) {
-            if (!activePlayers.contains(row.getValue())) {
-                res.put(row.getKey(), row.getValue());
+        for (TreeMap.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
+            if (!activePlayers.contains(entry.getValue())) {
+                res.put(entry.getValue().getNumber(), entry.getValue());
             }
         }
         return res;
+    }
+
+    public TreeMap<Integer, SidePanelRow> getAllPlayers() {
+        return rows;
     }
 
     public boolean selectionConfirmed() {
@@ -240,6 +244,20 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         }
         in.toggleSelected();
         activePlayers.add(in);
+    }
+
+    public void clear(boolean delete) {
+        if (delete) {
+            rows.clear();
+            playersNumbers.clear();
+            activePlayers.clear();
+            table.removeAllViews();
+        } else {
+            for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
+                entry.getValue().clear();
+            }
+
+        }
     }
 
     public String getFullInfoJsonString() {

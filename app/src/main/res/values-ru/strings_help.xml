@@ -8,6 +8,7 @@
     <string name="help_panels_text_add_multi">Автоматически добавить игроков</string>
     <string name="help_panels_text_select">Выбрать активных игроков: нажать на переключатель, выбрать игроков из таблицы выше и снова нажать на переключатель, чтобы применить</string>
     <string name="help_panels_text_close">Закрыть панель (также можно нажать за пределами панели)</string>
+    <string name="help_panels_text_clear">Очистить панель (показывает диалог с двумя опциями: удалить всех игроков или обнулить очки и фолы)</string>
     <string name="description_open_panel">Открыть панель</string>
 
     <string name="help_panels_text_game">

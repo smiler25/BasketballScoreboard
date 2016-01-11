@@ -122,7 +122,7 @@ public class ResultsExpListFragment extends Fragment {
         DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sortOrder = DbScheme.ResultsTable.COLUMN_NAME_DATE + " DESC";
-        Cursor c = db.query(DbScheme.ResultsTable.TABLE_NAME,
+        Cursor c = db.query(DbScheme.ResultsTable.TABLE_NAME_GAME,
                             null, null, null, null, null, sortOrder);
         c.moveToFirst();
         if (c.getCount() == 0) { return new Object[]{posItems, idPositions}; }

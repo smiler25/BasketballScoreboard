@@ -44,7 +44,7 @@ public class PrefActivity extends Activity implements
     static final String PREF_OFFICIAL_RULES = "list_official_rules";
 
     static final String PREF_ENABLE_SIDE_PANELS = "side_panels_activate";
-    static final String PREF_SIDE_PANELS_INTERACTION = "side_panels_interaction";
+    static final String PREF_SIDE_PANELS_CLEAR = "side_panels_clear";
     static final String PREF_SIDE_PANELS_CONNECTED = "side_panels_dependency";
     static final String PREF_SIDE_PANELS_FOULS_RULES = "side_panels_player_fouls_rules";
     static final String PREF_SIDE_PANELS_FOULS_MAX = "side_panels_player_max_fouls";
@@ -71,11 +71,7 @@ public class PrefActivity extends Activity implements
 
     SharedPreferences prefs;
     private Toolbar toolbar;
-    private final List<String> noRestartPrefs = Arrays.asList(PREF_AUTO_SOUND, PREF_AUTO_SAVE_RESULTS,
-            PREF_PAUSE_ON_SOUND, PREF_AUTO_BREAK, PREF_AUTO_TIMEOUT, PREF_SAVE_ON_EXIT, PREF_VIBRATION,
-            PREF_FRACTION_SECONDS_MAIN, PREF_FRACTION_SECONDS_SHOT, PREF_ENABLE_SIDE_PANELS,
-            PREF_SIDE_PANELS_INTERACTION, PREF_SIDE_PANELS_CONNECTED, PREF_SIDE_PANELS_FOULS_RULES,
-            PREF_SIDE_PANELS_FOULS_MAX);
+    private final List<String> restartPrefs = Arrays.asList(PREF_TIMEOUTS_RULES, PREF_LAYOUT, PREF_DIRECT_TIMER);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,17 +110,17 @@ public class PrefActivity extends Activity implements
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (noRestartPrefs.contains(key)) {
+        if (restartPrefs.contains(key)) {
+            prefChangedRestart = true;
+        } else if (key.equals(PREF_OFFICIAL_RULES)){
+            setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
+        } else {
             prefChangedNoRestart = true;
             if (key.equals(PREF_SIDE_PANELS_FOULS_MAX) && !playerRulesDefault) {
                 setPlayerCustomFoulsRules();
             } else if (key.equals(PREF_SIDE_PANELS_FOULS_RULES)) {// && prefs.getString(PREF_SIDE_PANELS_FOULS_RULES, DEFAULT_SIDE_PANEL_FOULS_RULES).equals(DEFAULT_SIDE_PANEL_FOULS_RULES)) {
                 setPlayerDefaultFouls();
             }
-        } else if (key.equals(PREF_OFFICIAL_RULES)){
-            setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
-        } else {
-            prefChangedRestart = true;
         }
     }
 

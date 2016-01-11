@@ -142,7 +142,12 @@ public class EditPlayerDialog extends DialogFragment {
     }
 
     private boolean checkForm() {
-        int status = editPlayerListener.onEditPlayerCheck(left, Integer.parseInt(numberView.getText().toString()), captainView.isChecked());
+        String numberText = numberView.getText().toString().trim();
+        if(numberText.equals("")){
+            Toast.makeText(getActivity(), getResources().getString(R.string.edit_player_dialog_number_required), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        int status = editPlayerListener.onEditPlayerCheck(left, Integer.parseInt(numberText), captainView.isChecked());
         if (status != 0 && edit && editNumber == Integer.parseInt(numberView.getText().toString())) {
             status--;
         }

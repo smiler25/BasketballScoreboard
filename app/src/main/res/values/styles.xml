@@ -118,8 +118,6 @@
     </style>
 
     <style name="playersButtons">
-        <!--<item name="android:layout_width">wrap_content</item>-->
-        <!--<item name="android:layout_height">wrap_content</item>-->
         <item name="android:layout_width">@dimen/player_button_size</item>
         <item name="android:layout_height">@dimen/player_button_size</item>
         <item name="android:layout_marginTop">@dimen/player_button_margin</item>
@@ -176,5 +174,22 @@
         <item name="android:background">@color/side_panel_toolbar</item>
     </style>
 
+    <style name="resultScoreTableRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:paddingTop">@dimen/side_panel_row_padding</item>
+        <item name="android:paddingBottom">@dimen/side_panel_row_padding</item>
+    </style>
+
+    <style name="resultPlayersTableRowChild">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">@dimen/side_panel_row_font_size</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 
 </resources>

@@ -20,6 +20,7 @@ public class ResultViewFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public static ResultViewFragment newInstance() {
         return new ResultViewFragment();
     }

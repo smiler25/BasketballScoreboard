@@ -26,7 +26,7 @@
     <string name="description_add_multiple">Добавить несколько игроков</string>
     <string name="description_add_one">Добавить игрока</string>
     <string name="description_close_panel">Закрыть панель</string>
-
+    <string name="description_clear_panel">Очистить панель</string>
 
     <string name="edit_name">Введите название</string>
     <string name="edit_home_name">Введите название команды хозяев</string>
@@ -60,6 +60,7 @@
     <string name="edit_player_dialog_number_warning">Номер уже занят</string>
     <string name="edit_player_dialog_captain">Капитан</string>
     <string name="edit_player_dialog_captain_confirm">Капитан уже назначен. Изменить?</string>
+    <string name="edit_player_dialog_number_required">Номер обязателен</string>
 
     <string name="edit_team_name">Введите название команды</string>
     <string name="timeout_format_1">%1$d-минутный перерыв</string>
@@ -76,7 +77,13 @@
     <string name="no_results">Нет сохраненных игр</string>
     <string name="action_save_result">Сохранить результат?</string>
     <string name="camera_take_picture">Сделать снимок</string>
+    <string name="results_boxscore">Протокол:</string>
 
+    <string name="side_panel_name">Игрок</string>
+    <string name="side_panel_points">Очки</string>
+    <string name="side_panel_fouls">Фолы</string>
+    <string name="side_panel_points_short">О</string>
+    <string name="side_panel_fouls_short">Ф</string>
     <string name="side_panel_no_data">Игроки ещё не добавлены</string>
     <string name="side_panel_confirm">Подтвердите выбор</string>
     <string name="side_panel_select_on">Применить</string>

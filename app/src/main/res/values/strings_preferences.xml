@@ -113,6 +113,7 @@
     <string name="side_panels_connection">Connection between panels</string>
     <string name="side_panels_connection_descr">Show/hide panels synchronously</string>
     <string name="side_panels_fouls_rules">Personal fouls tracking</string>
+    <string name="side_panels_clear">New game behaveuor</string>
     <string name="side_panels_max_fouls">Maximum personal fouls</string>
     <string name="side_panels_interaction_time">Waiting time for action (seconds)</string>
     <string name="side_panels_interaction_time_value" translatable="false">5</string>
@@ -123,6 +124,11 @@
         <item>According to rules</item>
         <item>Same as team</item>
         <item>Custom</item>
+    </string-array>
+
+    <string-array name="side_panels_clear_titles">
+        <item>Delete all players</item>
+        <item>Clear points and fouls</item>
     </string-array>
 
     <string-array name="side_panels_interaction_titles">

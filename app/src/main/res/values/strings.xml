@@ -32,6 +32,7 @@
     <string name="description_add_multiple">Add several players</string>
     <string name="description_add_one">Add player</string>
     <string name="description_close_panel">Close panel</string>
+    <string name="description_clear_panel">Clear panel</string>
 
     <string name="final_result">Final</string>
     <string name="team">Team</string>
@@ -86,7 +87,14 @@
     <string name="cab_subtitle">Selected %1$d</string>
     <string name="cab_success">Results deleted</string>
     <string name="no_results">No saved games</string>
+    <string name="results_boxscore">Boxscore:</string>
 
+    <string name="side_panel_number" translatable="false">№</string>
+    <string name="side_panel_name">Player</string>
+    <string name="side_panel_points_short">P</string>
+    <string name="side_panel_points">PTS</string>
+    <string name="side_panel_fouls_short">F</string>
+    <string name="side_panel_fouls">PF</string>
     <string name="side_panel_no_data">Players are not yet added</string>
     <string name="side_panel_confirm">Confirm selection</string>
     <string name="side_panel_select_on">Apply</string>
@@ -108,6 +116,7 @@
     <string name="edit_player_dialog_captain">Captain</string>
     <string name="edit_player_dialog_captain_confirm">Captain already assigned. Change?</string>
     <string name="edit_player_dialog_number_warning">Number already assigned</string>
+    <string name="edit_player_dialog_number_required">Number required</string>
 
     <string name="substitute_dialog_title_home">Select substitute for home team player №%1$d</string>
     <string name="substitute_dialog_title_home0">Select home player</string>

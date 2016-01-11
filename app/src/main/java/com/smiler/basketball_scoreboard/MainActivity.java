@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -81,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
     private boolean doubleBackPressedFirst, layoutChanged, timeoutsRulesChanged;
     private boolean saveOnExit, autoShowTimeout, autoShowBreak, pauseOnSound, vibrationOn;
-    private boolean mainTimerOn, shotTimerOn, enableShotTime, restartShotTimer;
+    private boolean mainTimerOn, shotTimerOn, enableShotTime, enableShotTimeChanged, restartShotTimer;
     private boolean useDirectTimer, directTimerStopped;
     private boolean fractionSecondsMain, fractionSecondsShot;
-    private boolean sidePanelsOn, sidePanelsStateChanged, sidePanelsConnected;
+    private boolean sidePanelsOn, sidePanelsStateChanged, sidePanelsConnected, sidePanelsClearDelete;
     private long mainTime, mainTimePref, shotTime, shotTimePref, shortShotTimePref, overTimePref;
     private long startTime, totalTime;
     private long timeoutFullDuration;
@@ -116,11 +117,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private int soundWhistleId, soundHornId;
-    private Results gameResult;
+    private Result gameResult;
     private SoundPool soundPool;
     private Vibrator vibrator;
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
-    private TreeMap<Integer, SidePanelRow> currentPanelData;
+    private TreeMap<Integer, SidePanelRow> inactivePlayers;
     private Button longClickPlayerBu;
 
 
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         shotTimeBlinkAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_out);
-        gameResult = new Results(hName, gName);
+        gameResult = new Result(hName, gName);
         floatingDialog = new FloatingCountdownTimerDialog();
         floatingDialog.setCancelable(false);
 
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initSimpleLayout();
         }
         initCommonLayout();
-        if (sidePanelsOn) {
+        if (sidePanelsOn && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             initSidePanels();
             leftPlayersButtons.setVisibility(View.VISIBLE);
             rightPlayersButtons.setVisibility(View.VISIBLE);
@@ -394,6 +395,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         leftPlayersButtons.setVisibility(View.VISIBLE);
                         rightPlayersButtons.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+            if (enableShotTimeChanged) {
+                if (!enableShotTime) {
+                    shotTimeView.setVisibility(View.GONE);
+                    shotTimeSwitchView.setVisibility(View.GONE);
+                } else {
+                    shotTimeView.setVisibility(View.VISIBLE);
+                    if (shortShotTimePref != shotTimePref) {
+                        shotTimeSwitchView.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -806,7 +818,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSettings() {
         getSettingsNoRestart();
-        getGameSettings();
+        getSettingsRestart();
     }
 
     private void getSettingsNoRestart() {
@@ -820,28 +832,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fractionSecondsMain = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_MAIN, true);
         fractionSecondsShot = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_SHOT, true);
 
-        mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < Constants.SECONDS_60) ? Constants.timeFormatMillis : Constants.timeFormat;
-        boolean sidePanelsOn_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
-        if (sidePanelsOn_ != sidePanelsOn) {
-            sidePanelsOn = sidePanelsOn_;
-            sidePanelsStateChanged = true;
-        }
-        sidePanelsConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
-        SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_FIBA_PLAYER_FOULS));
-
-        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
-        PrefActivity.prefChangedNoRestart = false;
-    }
-
-    private void getGameSettings() {
-        int temp_int = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_LAYOUT, "0"));
-        if (temp_int != layoutType) {
-            layoutChanged = true;
-            layoutType = temp_int;
-        }
-        useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, Constants.DEFAULT_SHOT_TIME) * 1000;
-        enableShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
+        boolean enableShotTime_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
+        enableShotTimeChanged = enableShotTime != enableShotTime_;
+        enableShotTime = enableShotTime_;
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
         shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, Constants.DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
         mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, Constants.DEFAULT_FIBA_MAIN_TIME) * Constants.SECONDS_60;
@@ -851,7 +845,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gName = sharedPref.getString(PrefActivity.PREF_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
         actualTime = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_ACTUAL_TIME, "1"));
         maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS);
+        mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < Constants.SECONDS_60) ? Constants.timeFormatMillis : Constants.timeFormat;
+        boolean sidePanelsOn_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
+        if (sidePanelsOn_ != sidePanelsOn) {
+            sidePanelsOn = sidePanelsOn_;
+            sidePanelsStateChanged = true;
+        }
+        sidePanelsClearDelete = sharedPref.getString(PrefActivity.PREF_SIDE_PANELS_CLEAR, "0").equals("0");
+        sidePanelsConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
+        SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_FIBA_PLAYER_FOULS));
 
+        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
+        PrefActivity.prefChangedNoRestart = false;
+    }
+
+    private void getSettingsRestart() {
+        int temp_int = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_LAYOUT, "0"));
+        if (temp_int != layoutType) {
+            layoutChanged = true;
+            layoutType = temp_int;
+        }
+        useDirectTimer = sharedPref.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         temp_int = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_TIMEOUTS_RULES, "0"));
         if (temp_int != timeoutRules) {
             timeoutsRulesChanged = true;
@@ -981,6 +995,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 nullTimeouts20(2);
             }
         }
+        if (sidePanelsOn) {
+            leftPanel.clear(sidePanelsClearDelete);
+            rightPanel.clear(sidePanelsClearDelete);
+        }
     }
 
     private void newGame(boolean save) {
@@ -1007,7 +1025,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (layoutType == Constants.LAYOUT_FULL) {
             setTimeouts();
         }
-        gameResult = new Results(hName, gName);
+        gameResult = new Result(hName, gName);
     }
 
     private void newPeriod(boolean next) {
@@ -1485,12 +1503,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         ArrayList<String> numberNameList = new ArrayList<>();
-        currentPanelData = ((left) ? leftPanel : rightPanel).getInactivePlayers();
-        if (currentPanelData.isEmpty()){
+        inactivePlayers = ((left) ? leftPanel : rightPanel).getInactivePlayers();
+        if (inactivePlayers.isEmpty()){
             Toast.makeText(this, getResources().getString(R.string.side_panel_no_data), Toast.LENGTH_LONG).show();
             return;
         }
-        for (Map.Entry<Integer, SidePanelRow> entry : currentPanelData.entrySet()) {
+        for (Map.Entry<Integer, SidePanelRow> entry : inactivePlayers.entrySet()) {
             numberNameList.add(String.format("%d: %s", entry.getValue().getNumber(), entry.getValue().getName()));
         }
         int number = (longClickPlayerBu.getTag() != null) ? ((SidePanelRow)longClickPlayerBu.getTag()).getNumber() : -1;
@@ -1616,7 +1634,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             cv.put(DbScheme.ResultsTable.COLUMN_NAME_GUEST_PERIODS, gameResult.getGuestScoreByPeriodString());
             cv.put(DbScheme.ResultsTable.COLUMN_NAME_REGULAR_PERIODS, numRegularPeriods);
             cv.put(DbScheme.ResultsTable.COLUMN_NAME_COMPLETE, gameResult.isComplete());
-            db.insert(DbScheme.ResultsTable.TABLE_NAME, null, cv);
+            long gameId = db.insert(DbScheme.ResultsTable.TABLE_NAME_GAME, null, cv);
+
+            if (sidePanelsOn) {
+                ContentValues cv2;
+                TreeMap<Integer, SidePanelRow> allHomePlayers = leftPanel.getAllPlayers();
+                TreeMap<Integer, SidePanelRow> allGuestPlayers = rightPanel.getAllPlayers();
+                for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
+                    cv2 = new ContentValues();
+                    SidePanelRow row = entry.getValue();
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID, gameId);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM, hName);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER, row.getNumber());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME, row.getName());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS, row.getPoints());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS, row.getFouls());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS, null, cv2);
+                }
+                for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
+                    cv2 = new ContentValues();
+                    SidePanelRow row = entry.getValue();
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID, gameId);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM, gName);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER, row.getNumber());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME, row.getName());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS, row.getPoints());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS, row.getFouls());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS, null, cv2);
+                }
+            }
+
         } finally {
             dbHelper.close();
         }
@@ -1695,8 +1744,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSubstituteListSelect(boolean left, int newNumber) {
-        SidePanelRow row = currentPanelData.get(newNumber);
-        ((left) ? leftPanel : rightPanel).substitute(row, (SidePanelRow)longClickPlayerBu.getTag());
+        SidePanelRow row = inactivePlayers.get(newNumber);
+        ((left) ? leftPanel : rightPanel).substitute(row, (SidePanelRow) longClickPlayerBu.getTag());
         longClickPlayerBu.setTag(row);
         longClickPlayerBu.setText(Integer.toString(newNumber));
     }

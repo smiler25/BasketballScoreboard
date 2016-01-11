@@ -25,6 +25,7 @@
     <string name="help_panels_text_add_multi">Automatically add players</string>
     <string name="help_panels_text_select">Select active players: click toggle button, choose players from table above and click again to apply</string>
     <string name="help_panels_text_close">Close panel (also you can tap outside the panel)</string>
+    <string name="help_panels_text_clear">Clear panel (shows dialog with two options: delete all players or clear points and fouls)</string>
     <string name="description_open_panel">Open panel</string>
 
     <string name="help_panels_text_game">

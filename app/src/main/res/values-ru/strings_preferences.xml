@@ -47,6 +47,7 @@
     <string name="side_panels_interaction">Взаимодействие с кнопками игроков</string>
     <string name="side_panels_connection">Связь между панелями</string>
     <string name="side_panels_connection_descr">Показывать/скрывать панели синхронно</string>
+    <string name="side_panels_clear">Поведение при новой игре</string>
     <string name="side_panels_fouls_rules">Отслеживание персональных фолов</string>
     <string name="side_panels_max_fouls">Количество персональных фолов</string>
     <string name="side_panels_interaction_time">Время ожидания действия (секунды)</string>
@@ -56,6 +57,10 @@
         <item>Согласно правилам</item>
         <item>Совпадает с командными</item>
         <item>Настроить</item>
+    </string-array>
+    <string-array name="side_panels_clear_titles">
+        <item>Удалять всех игроков</item>
+        <item>Обнулять значния очков и фолов</item>
     </string-array>
     <string-array name="side_panels_interaction_titles">
         <item>Применить в течение времени. Приписать капитану по истечению</item>

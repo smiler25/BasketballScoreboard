@@ -18,7 +18,7 @@ public class Game {
     private String hName, gName;
     private CountDownTimer mainTimer, shotTimer;
 
-    private Results gameResult;
+    private Result gameResult;
 
     public Game() {
     }
@@ -157,7 +157,7 @@ public class Game {
         pauseGame();
         zeroState();
         setTimeouts();
-        gameResult = new Results(hName, gName);
+        gameResult = new Result(hName, gName);
     }
 
     private void newPeriod(boolean next) {

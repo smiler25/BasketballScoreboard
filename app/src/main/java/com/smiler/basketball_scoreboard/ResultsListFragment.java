@@ -76,7 +76,7 @@ public class ResultsListFragment extends ListFragment {
         DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sortOrder = DbScheme.ResultsTable.COLUMN_NAME_DATE + " DESC";
-        return db.query(DbScheme.ResultsTable.TABLE_NAME,
+        return db.query(DbScheme.ResultsTable.TABLE_NAME_GAME,
                             null, null, null, null, null, sortOrder);
     }
 }

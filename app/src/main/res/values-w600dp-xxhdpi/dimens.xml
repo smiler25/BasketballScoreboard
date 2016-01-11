@@ -42,13 +42,13 @@
     <dimen name="side_panel_row_font_size">15sp</dimen>
     <dimen name="help_side_panels_toolbar_margin">5dp</dimen>
 
-    <dimen name="substitute_list_padding">2dp</dimen>
+    <dimen name="substitute_list_padding">1dp</dimen>
     <dimen name="player_button_padding">2dp</dimen>
-    <dimen name="player_button_margin">5dp</dimen>
-    <dimen name="player_button_size">40dp</dimen>
-    <dimen name="player_button_font_size">20sp</dimen>
-    <dimen name="side_panel_toolbar_icon_padding">6dp</dimen>
+    <dimen name="player_button_margin">4dp</dimen>
+    <dimen name="player_button_size">35dp</dimen>
+    <dimen name="player_button_font_size">18sp</dimen>
+    <dimen name="side_panel_toolbar_icon_padding">7dp</dimen>
     <dimen name="help_side_panel_toolbar_height">40dp</dimen>
-    <dimen name="side_panel_open_icon_padding">8dp</dimen>
+    <dimen name="side_panel_open_icon_padding">9dp</dimen>
 
 </resources>

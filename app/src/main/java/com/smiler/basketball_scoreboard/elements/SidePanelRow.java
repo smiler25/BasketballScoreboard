@@ -2,6 +2,7 @@ package com.smiler.basketball_scoreboard.elements;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import org.json.JSONObject;
 
 public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
-    private static int MAX_FOULS;
+    private static int maxFouls;
     private TextView numberView, nameView, pointsView, foulsView;
     private int number;
     private short points, fouls;
@@ -31,7 +32,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         super(context);
     }
 
-    public SidePanelRow(Context context, boolean header, boolean left) {
+    public SidePanelRow(Context context, boolean left) {
         super(context);
         this.left = left;
         createHeaderRow(context);
@@ -81,6 +82,10 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         numberView.setText((captain) ? "" + value + "*" : "" + value);
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getNumber() {
         return number;
     }
@@ -89,8 +94,16 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         return name;
     }
 
-    public int getId() {
-        return id;
+    public int getPoints() {
+        return points;
+    }
+
+    public int getFouls() {
+        return fouls;
+    }
+
+    public boolean getCaptain() {
+        return captain;
     }
 
     public void setName(String value) {
@@ -106,7 +119,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     public void changeFouls(int value) {
         fouls += value;
         foulsView.setText(String.valueOf(fouls));
-        if (fouls >= MAX_FOULS) {
+        if (fouls >= maxFouls) {
             Toast.makeText(
                     getContext(),
                     String.format(getResources().getString((left) ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), number, name),
@@ -123,10 +136,10 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
     public void edit(int number, String name, boolean captain) {
         this.captain = captain;
-        this.name = name;
+        this.name = (!name.trim().equals("")) ? name.trim() : String.format(getResources().getString(R.string.side_panel_player_name), number);
         this.number = number;
         setNumber(number);
-        setName(name);
+        setName(this.name);
     }
 
     public void cancelCaptain() {
@@ -166,11 +179,18 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     @Override
-    public int compareTo(SidePanelRow another) {
+    public int compareTo(@NonNull SidePanelRow another) {
         return this.number - another.getNumber();
     }
 
     public static void setMaxFouls(int value) {
-        MAX_FOULS = value;
+        maxFouls = value;
+    }
+
+    public void clear() {
+        points = 0;
+        pointsView.setText("0");
+        fouls = 0;
+        foulsView.setText("0");
     }
 }

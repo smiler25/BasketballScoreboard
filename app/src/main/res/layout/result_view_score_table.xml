@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    android:id="@+id/result_score_table"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    android:stretchColumns="*"
+    android:background="@drawable/result_table_shape"
+    >
+    <TableRow
+        android:id="@+id/res_score_table_title_row"
+        android:gravity="left"
+        android:clickable="false"
+        android:longClickable="false"
+        android:layout_width="match_parent"
+        android:background="@drawable/res_score_header_shape"
+        >
+        <include  layout="@layout/result_view_table_item" />
+        <include
+            layout="@layout/result_view_table_item"
+            android:id="@+id/res_score_table_title_final"
+            />
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/res_score_table_home_row"
+        style="@style/resultScoreTableRow"
+        android:gravity="left"
+        android:clickable="false"
+        android:longClickable="false"
+        android:layout_width="match_parent"
+        >
+        <include
+            layout="@layout/result_view_table_item"
+            android:id="@+id/res_score_table_home_name"
+            />
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/res_score_table_guest_row"
+        style="@style/resultScoreTableRow"
+        >
+        <include
+            layout="@layout/result_view_table_item"
+            android:id="@+id/res_score_table_guest_name"
+            />
+
+    </TableRow>
+</TableLayout>

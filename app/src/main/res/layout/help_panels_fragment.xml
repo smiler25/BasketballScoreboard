@@ -2,11 +2,12 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/help_panels_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:id="@+id/help_panels_scroll_view" >
+    android:background="@color/light_grey_background"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -179,6 +180,26 @@
                     android:singleLine="false"
                     android:padding="@dimen/side_panel_toolbar_icon_padding"
                     android:text="@string/help_panels_text_close"
+                    android:textSize="@dimen/help_text_size"
+                    />
+            </TableRow>
+            <TableRow>
+                <ImageButton
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/description_clear_panel"
+                    android:src="@drawable/ic_action_discard"
+                    android:background="@drawable/side_panel_toolbar_button"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:singleLine="false"
+                    android:padding="@dimen/side_panel_toolbar_icon_padding"
+                    android:text="@string/help_panels_text_clear"
                     android:textSize="@dimen/help_text_size"
                     />
             </TableRow>

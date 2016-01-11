@@ -5,30 +5,22 @@
     android:layout_width="match_parent"
     >
 
-    <ListPreference
-        android:key="side_panels_interaction"
-        android:title="@string/side_panels_interaction"
-        android:defaultValue="0"
-        android:summary="%s"
-        android:entries="@array/side_panels_interaction_titles"
-        android:entryValues="@array/pref_values_0_2"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        />
-
-    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
-        android:key="side_panels_interaction_time"
-        android:title="@string/side_panels_interaction_time"
-        android:defaultValue="@string/side_panels_interaction_time_value"
-        min="-1"
-        max="10"
-        />
-
     <CheckBoxPreference
         android:key="side_panels_dependency"
         android:title="@string/side_panels_connection"
         android:summary="@string/side_panels_connection_descr"
         android:defaultValue="false"
+        />
+
+    <ListPreference
+        android:key="side_panels_clear"
+        android:title="@string/side_panels_clear"
+        android:defaultValue="0"
+        android:summary="%s"
+        android:entries="@array/side_panels_clear_titles"
+        android:entryValues="@array/pref_values_0_1"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
         />
 
     <ListPreference

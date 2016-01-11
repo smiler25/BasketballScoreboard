@@ -24,6 +24,23 @@
         android:layout_weight="1.2"
         />
     <ImageButton
+        android:id="@+id/left_panel_clear"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:padding="@dimen/side_panel_toolbar_icon_padding"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/description_close_panel"
+        android:src="@drawable/ic_action_discard_light"
+        android:background="@drawable/side_panel_toolbar_button"
+        />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        />
+    <ImageButton
         android:id="@+id/left_panel_add"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
