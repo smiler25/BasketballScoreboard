@@ -123,15 +123,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
     private TreeMap<Integer, SidePanelRow> inactivePlayers;
     private Button longClickPlayerBu;
-
+    private static Context mainActivityContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println(getResources().getString(R.string.res_type));
-
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mainActivityContext = getApplicationContext();
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -181,6 +180,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         soundHornId = soundPool.load(this, R.raw.airhorn_short, 1);
     }
 
+    public static Context getContext() {
+        return mainActivityContext;
+    }
     private void initLayout() {
         if (layoutType == Constants.LAYOUT_FULL) {
             initExtensiveLayout();
@@ -294,8 +296,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             button.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-//                    System.out.println("v.getId() = " + v.getId());
-//                    System.out.println("JSON = " + leftPanel.getFullInfoJsonString());
                     longClickPlayerBu = (Button) v;
                     showListDialog(true);
                     return false;
@@ -448,7 +448,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("mainTime", mainTime);
         intent.putExtra("shotTime", shotTime);
         intent.putExtra("period", period);
-        // startActivity(intent);
         startActivityForResult(intent, 1);
     }
 
@@ -767,6 +766,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putInt(Constants.STATE_GUEST_TIMEOUTS20, gTimeouts20);
         }
         editor.apply();
+        if (sidePanelsOn) {
+            if (leftPanel != null) {
+                leftPanel.saveCurrentData(statePref);
+            }
+            if (rightPanel != null) {
+                rightPanel.saveCurrentData(statePref);
+            }
+        }
     }
 
     private void getSavedState() {
@@ -1024,6 +1031,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         zeroState();
         if (layoutType == Constants.LAYOUT_FULL) {
             setTimeouts();
+        }
+        if (sidePanelsOn) {
+            SidePanelFragment.clearCurrentData();
         }
         gameResult = new Result(hName, gName);
     }
@@ -1492,8 +1502,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (frag != null && frag.isAdded()) {
             return;
         }
-        ListDialog dialog = ListDialog.newInstance(type);
-        dialog.show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance(type).show(getFragmentManager(), ListDialog.TAG);
     }
 
     private void showListDialog(boolean left) {
@@ -1513,8 +1522,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         int number = (longClickPlayerBu.getTag() != null) ? ((SidePanelRow)longClickPlayerBu.getTag()).getNumber() : -1;
 
-        ListDialog dialog = ListDialog.newInstance("substitute", numberNameList, left, number);
-        dialog.show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance("substitute", numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
     }
 
     private void chooseTeamNameDialog(String team, String name) {
@@ -1743,6 +1751,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onClearPanelDialogItemClick(int which, boolean left) {
+        ((left) ? leftPanel : rightPanel).clear(which == 0);
+    }
+
+    @Override
     public void onSubstituteListSelect(boolean left, int newNumber) {
         SidePanelRow row = inactivePlayers.get(newNumber);
         ((left) ? leftPanel : rightPanel).substitute(row, (SidePanelRow) longClickPlayerBu.getTag());
@@ -1822,6 +1835,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Button bu = (Button)group.getChildAt(pos++);
             bu.setText(Integer.toString(row.getNumber()));
             bu.setTag(row);
+        }
+    }
+
+    @Override
+    public void onSidePanelNoActive(boolean left) {
+        ViewGroup group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        for (int i = 0; i < group.getChildCount() - 1; i++) {
+            Button button = (Button) leftPlayersButtons.getChildAt(i);
+            button.setTag(null);
+            button.setText(R.string.minus);
         }
     }
 

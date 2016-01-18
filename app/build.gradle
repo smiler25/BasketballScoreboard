@@ -15,8 +15,8 @@ android {
         applicationId "com.smiler.scoreboard"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 8
-        versionName "1.2.4.1"
+        versionCode 9
+        versionName "2.0"
     }
     buildTypes {
         release {

@@ -94,6 +94,7 @@
     <string name="side_panel_players_limit">Можно добавить только 12 игроков</string>
     <string name="side_panel_fouls_limit_home">Игрок хозяев №%1$d (%2$s) достиг предела фолов</string>
     <string name="side_panel_fouls_limit_guest">Игрок гостей №%1$d (%2$s) достиг предела фолов</string>
+    <string name="side_panel_no_save_data">Нет сохранённых данных</string>
 
     <string name="substitute_dialog_title_home">Выберите замену для игрока №%1$d команды хозяев</string>
     <string name="substitute_dialog_title_home0">Выберите игрока команды хозяев</string>

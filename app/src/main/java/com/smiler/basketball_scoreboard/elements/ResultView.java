@@ -109,15 +109,19 @@ public class ResultView extends LinearLayout {
 
             if (c.getCount() == 1) {
                 c.moveToFirst();
-                String[] hPeriodsString = c.getString(5).split("-");
-                String[] gPeriodsString = c.getString(6).split("-");
                 ArrayList<Integer> hPeriods = new ArrayList<>();
                 ArrayList<Integer> gPeriods = new ArrayList<>();
-                for (String periodString : hPeriodsString) {
-                    hPeriods.add(Integer.parseInt(periodString));
+                String hPeriodsString = c.getString(5);
+                String gPeriodsString = c.getString(6);
+                if (!hPeriodsString.equals("")) {
+                    for (String periodString : hPeriodsString.split("-")) {
+                        hPeriods.add(Integer.parseInt(periodString));
+                    }
                 }
-                for (String periodString : gPeriodsString) {
-                    gPeriods.add(Integer.parseInt(periodString));
+                if (!gPeriodsString.equals("")) {
+                    for (String periodString : gPeriodsString.split("-")) {
+                        gPeriods.add(Integer.parseInt(periodString));
+                    }
                 }
                 res = new Result(c.getString(1), c.getString(2), c.getInt(3), c.getInt(4),
                         hPeriods, gPeriods, (c.getInt(8) > 0), c.getLong(0), c.getInt(7));

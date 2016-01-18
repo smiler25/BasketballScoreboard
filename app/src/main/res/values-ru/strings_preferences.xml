@@ -59,8 +59,8 @@
         <item>Настроить</item>
     </string-array>
     <string-array name="side_panels_clear_titles">
-        <item>Удалять всех игроков</item>
-        <item>Обнулять значния очков и фолов</item>
+        <item>Удалить всех игроков</item>
+        <item>Обнулить значния очков и фолов</item>
     </string-array>
     <string-array name="side_panels_interaction_titles">
         <item>Применить в течение времени. Приписать капитану по истечению</item>

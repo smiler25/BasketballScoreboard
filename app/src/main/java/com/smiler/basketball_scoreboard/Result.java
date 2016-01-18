@@ -57,11 +57,11 @@ public class Result {
     }
 
     public ArrayList<Integer> getHomeScoreByPeriod() {
-        return this.hScorePeriods;
+        return hScorePeriods;
     }
 
     public ArrayList<Integer> getGuestScoreByPeriod() {
-        return this.gScorePeriods;
+        return gScorePeriods;
     }
 
     public boolean isComplete() {
@@ -115,11 +115,11 @@ public class Result {
     }
 
     public String getHomeScoreByPeriodString() {
-        return TextUtils.join("-", getHomeScoreByPeriod());
+        return TextUtils.join("-", hScorePeriods);
     }
 
     public String getGuestScoreByPeriodString() {
-        return TextUtils.join("-", getGuestScoreByPeriod());
+        return TextUtils.join("-", gScorePeriods);
     }
 
     public String getResultString(boolean ot) {

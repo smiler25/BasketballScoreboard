@@ -68,7 +68,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // DATABASE_VERSION;
         switch (oldVersion) {
             case 1:
                 db.execSQL(TABLE_CREATE_GAME_PLAYERS);

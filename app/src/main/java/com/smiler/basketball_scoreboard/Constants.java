@@ -38,6 +38,8 @@ public class Constants {
     public static final String STATE_GUEST_TIMEOUTS_NBA = "guestTimeoutsNBA";
     public static final String STATE_GUEST_TIMEOUTS20 = "guestTimeouts20";
     public static final String STATE_PERIOD = "period";
+    public static final String STATE_HOME_ACTIVE_PLAYERS = "home_active_players";
+    public static final String STATE_GUEST_ACTIVE_PLAYERS = "guest_active_players";
 
     public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesFragment";
     public static final String TAG_FRAGMENT_TIME = "TimeDialog";
