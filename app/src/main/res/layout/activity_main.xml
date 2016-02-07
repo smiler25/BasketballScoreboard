@@ -275,6 +275,9 @@
 
     </LinearLayout>
 
-    <include layout="@layout/side_panels_and_overlay"/>
+    <include
+        android:id="@+id/side_panels_and_overlay"
+        layout="@layout/side_panels_and_overlay"
+        />
 
 </RelativeLayout>

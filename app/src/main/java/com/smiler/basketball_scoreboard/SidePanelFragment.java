@@ -271,6 +271,9 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     }
 
     public void clear() {
+        if (rows.size() == 0) {
+            return;
+        }
         Fragment frag = getFragmentManager().findFragmentByTag(ListDialog.TAG);
         if (frag != null && frag.isAdded()) {
             return;
@@ -286,8 +289,8 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
             if (table != null) {
                 table.removeAllViews();
                 addHeader();
+                listener.onSidePanelNoActive(left);
             }
-            listener.onSidePanelNoActive(left);
         } else {
             for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
                 entry.getValue().clear();
@@ -339,13 +342,12 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     }
 
     public void restoreCurrentData() {
-        clear(true);
         Set<String> activePlayersNumbers = new TreeSet<>();
         SharedPreferences statePref = getActivity().getPreferences(Context.MODE_PRIVATE);
         activePlayersNumbers = statePref.getStringSet((left) ? Constants.STATE_HOME_ACTIVE_PLAYERS
                                                              : Constants.STATE_GUEST_ACTIVE_PLAYERS, activePlayersNumbers);
         activePlayers = new TreeSet<>();
-        DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
+        DbHelper dbHelper = DbHelper.getInstance(MainActivity.getContext());
         SQLiteDatabase db = dbHelper.open();
         try {
             String[] columns = new String[] {
@@ -365,6 +367,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
                     null, null, null
             );
             if (c.getCount() > 0) {
+                clear(true);
                 c.moveToFirst();
                 do {
                     SidePanelRow row = addRow(c.getInt(0), c.getString(1), c.getInt(2) == 1);

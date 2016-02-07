@@ -10,11 +10,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
-import java.io.IOException;
-
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
-    public String TAG = "MYLOG-CameraView";
+    public String TAG = "BS-CameraView";
     private SurfaceHolder holder;
     private Camera camera;
 
@@ -22,6 +20,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
         this.camera = camera;
         this.holder = getHolder();
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         holder.addCallback(this);
     }
 
@@ -38,11 +37,12 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-          try {
+        try {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
-        } catch (IOException e) {
-            Log.d(TAG, "Error setting camera view: " + e.getMessage());
+//        } catch (IOException e) {
+        } catch (Exception e) {
+              Log.d(TAG, "Error setting camera view: " + e.getMessage());
         }
     }
 
@@ -90,17 +90,22 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         result = (360 - result) % 360; //Compensate the mirror
         //camera.setDisplayOrientation(result);
         //parameters.setRotation(result);
-        camera.setParameters(parameters);
-
+        try {
+            camera.setParameters(parameters);
+        } catch (RuntimeException e) {
+            Log.d(TAG, "Error setParameters for camera: " + e.getMessage());
+        }
         try {
             camera.stopPreview();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            Log.d(TAG, "Error camera surfaceChanged: " + e.getMessage());
+        }
 
         try {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
         } catch (Exception e) {
-            Log.d(TAG, "Error starting camera view: " + e.getMessage());
+            Log.d(TAG, "Error starting camera view after surfaceChanged: " + e.getMessage());
         }
     }
 

@@ -168,17 +168,17 @@ public class PrefActivity extends Activity implements
     @Override
     public void onSetNegative() { setDefault(0); }
 
-     @Override
-     protected void onResume() {
+    @Override
+    protected void onResume() {
          super.onResume();
          prefs.registerOnSharedPreferenceChangeListener(this);
      }
-     @Override
-     protected void onPause() {
+
+    @Override
+    protected void onPause() {
          super.onPause();
          prefs.unregisterOnSharedPreferenceChangeListener(this);
      }
-
 
     private void restartActivity() {
         Intent intent = getIntent();

@@ -22,6 +22,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ListDialog.NewTimeoutDialogListener,
         TimePickerFragment.OnChangeTimeListener {
 
+    public static final String TAG = "TAG-MainActivity";
     private SharedPreferences statePref, sharedPref;
     private TextView shotTimeView, mainTimeView, hNameView, gNameView, periodView;
     private TextView hScoreView, gScoreView;
@@ -132,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mainActivityContext = getApplicationContext();
         getSettings();
-        if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
+//        if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
+        if (sharedPref.getInt("app_version", 1) < 9) {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
@@ -183,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static Context getContext() {
         return mainActivityContext;
     }
+
     private void initLayout() {
         if (layoutType == Constants.LAYOUT_FULL) {
             initExtensiveLayout();
@@ -399,14 +403,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             if (enableShotTimeChanged) {
-                if (!enableShotTime) {
-                    shotTimeView.setVisibility(View.GONE);
-                    shotTimeSwitchView.setVisibility(View.GONE);
-                } else {
-                    shotTimeView.setVisibility(View.VISIBLE);
-                    if (shortShotTimePref != shotTimePref) {
-                        shotTimeSwitchView.setVisibility(View.VISIBLE);
+                try {
+                    if (!enableShotTime) {
+                        shotTimeView.setVisibility(View.GONE);
+                        shotTimeSwitchView.setVisibility(View.GONE);
+                    } else {
+                        shotTimeView.setVisibility(View.VISIBLE);
+                        if (shortShotTimePref != shotTimePref) {
+                            shotTimeSwitchView.setVisibility(View.VISIBLE);
+                        }
                     }
+                } catch (NullPointerException e) {
+                    Log.d(TAG, shotTimeView.toString() + e.getMessage());
                 }
             }
         }
@@ -1003,8 +1011,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         if (sidePanelsOn) {
-            leftPanel.clear(sidePanelsClearDelete);
-            rightPanel.clear(sidePanelsClearDelete);
+            try {
+                leftPanel.clear(sidePanelsClearDelete);
+                rightPanel.clear(sidePanelsClearDelete);
+            } catch (NullPointerException e) {
+                Log.d(TAG, "Left or right panel is null");
+            }
         }
     }
 
@@ -1818,11 +1830,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onSidePanelClose(boolean left) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.hide(overlay);
         if (left){
             ft.setCustomAnimations(R.anim.slide_left_side_hide, R.anim.slide_left_side_hide).hide(leftPanel);
         } else{
             ft.setCustomAnimations(R.anim.slide_right_side_hide, R.anim.slide_right_side_hide).hide(rightPanel);
+        }
+        if (!(leftPanel.isVisible() && rightPanel.isVisible())) {
+            ft.setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out);
+            ft.hide(overlay);
         }
         ft.commit();
     }

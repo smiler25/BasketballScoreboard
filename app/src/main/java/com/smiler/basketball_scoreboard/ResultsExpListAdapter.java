@@ -17,7 +17,7 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
 
     private LayoutInflater inflater;
     private HashMap<Integer, ResultsExpListParent> posObjects;
-    private HashMap idPositions;
+    private HashMap<Integer, Integer> idPositions;
     private SparseBooleanArray selectedIds;
 
     public ResultsExpListAdapter(Context context, HashMap<Integer, ResultsExpListParent> posObjects, HashMap<Integer, Integer> idPositions) {
@@ -59,7 +59,11 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
     }
 
     public long getGroupId(int parentPosition) {
-        return posObjects.get(parentPosition).getSqlId();
+        try {
+            return posObjects.get(parentPosition).getSqlId();
+        } catch (NullPointerException e) {
+            return -1;
+        }
     }
 
     public long getChildId(int i, int childPosition) {

@@ -91,5 +91,4 @@
     <dimen name="side_panel_open_icon_padding">4dp</dimen>
     <dimen name="help_side_panels_toolbar_margin">5dp</dimen>
     <dimen name="side_panel_select_padding">4dp</dimen>
-
 </resources>

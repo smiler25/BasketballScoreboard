@@ -81,7 +81,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 DbScheme.ResultsTable._ID + " IN (" + stringIds + "?)",
                 ids);
         db.delete(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS,
-                DbScheme.ResultsPlayersTable._ID + " IN (" + stringIds + "?)",
+                DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID + " IN (" + stringIds + "?)",
                 ids);
         return deleted;
     }
