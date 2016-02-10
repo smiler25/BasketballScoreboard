@@ -21,11 +21,23 @@ public class OverlayFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.overlay, container, false);
-//        TextView leftPanelClose = (TextView) v.findViewById(R.id.left_panel_close);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onOverlayClick();
+            }
+        });
+        (v.findViewById(R.id.left_panel_overlay_open)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onOverlayOpenPanel(Constants.SIDE_PANELS_LEFT);
+            }
+        });
+
+        (v.findViewById(R.id.right_panel_overlay_open)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onOverlayOpenPanel(Constants.SIDE_PANELS_RIGHT);
             }
         });
         return v;
@@ -33,6 +45,7 @@ public class OverlayFragment extends Fragment{
 
     public interface OverlayFragmentListener {
         void onOverlayClick();
+        void onOverlayOpenPanel(int type);
     }
 
     @Override

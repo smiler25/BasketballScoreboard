@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mainActivityContext = getApplicationContext();
         getSettings();
-//        if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
+        // if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
         if (sharedPref.getInt("app_version", 1) < 9) {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
@@ -1591,7 +1591,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
         Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
         if (o != null) {
-            ft.show(o);
+            if (!o.isVisible()) {
+                ft.show(o);
+            }
         } else {
             ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
         }
@@ -1892,6 +1894,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ft.hide(overlay);
         }
         ft.commit();
+    }
+
+    @Override
+    public void onOverlayOpenPanel(int type) {
+        showSidePanels(type);        
     }
 
     @Override
