@@ -260,8 +260,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             shotTimeSwitchView.setOnClickListener(this);
             shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
         } else {
-            shotTimeView.setVisibility(View.INVISIBLE);
-            shotTimeSwitchView.setVisibility(View.INVISIBLE);
+            try {
+                shotTimeView.setVisibility(View.INVISIBLE);
+                shotTimeSwitchView.setVisibility(View.INVISIBLE);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "shotTimeView or shotTimeSwitchView is null");
+            }
         }
 
         initBottomLineTimeouts();
@@ -1703,7 +1707,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mainTimeFormat = Constants.timeFormat;
         }
 
-        if (mainTime > shotTime) {
+        if (enableShotTime && mainTime > shotTime) {
             shotTimeView.setVisibility(View.VISIBLE);
             shotTimeSwitchView.setVisibility(View.VISIBLE);
         }
