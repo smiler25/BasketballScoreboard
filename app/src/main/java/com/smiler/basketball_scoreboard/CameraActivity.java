@@ -38,6 +38,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private short hScore, gScore, period = 1, numRegular;
     private long mainTime, shotTime, mainTimePref, shotTimePref, shortShotTimePref, overTimePref;
     private long startTime, totalTime;
+    private int layoutType;
     private boolean useDirectTimer, directTimerStopped, enableShotTime;
     private boolean mainTimerOn, shotTimerOn;
     private boolean created;
@@ -71,16 +72,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         if (!created) {
             intent = getIntent();
         }
-        setContentView(R.layout.camera_layout);
+        layoutType = intent.getIntExtra("layoutType", Constants.LAYOUT_FULL);
+        setContentView((layoutType == Constants.LAYOUT_FULL) ? R.layout.camera_layout_full : R.layout.camera_layout_simple);
         CameraView cameraView = new CameraView(this, camera);
         FrameLayout view = (FrameLayout) findViewById(R.id.camera_preview);
         view.addView(cameraView);
 
         hScoreView = (TextView) findViewById(R.id.camera_home_score);
         gScoreView = (TextView) findViewById(R.id.camera_guest_score);
-        periodView = (TextView) findViewById(R.id.camera_period);
         mainTimeView = (TextView) findViewById(R.id.camera_time);
-        shotTimeView = (TextView) findViewById(R.id.camera_shot_clock);
         ImageView takePictureBu = (ImageView) findViewById(R.id.camera_take_picture);
 
         TextView hNameView = (TextView) findViewById(R.id.camera_home_name);
@@ -90,25 +90,34 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         gName = intent.getStringExtra("gName");
         hScore = intent.getShortExtra("hScore", hScore);
         gScore = intent.getShortExtra("gScore", gScore);
-        period = intent.getShortExtra("period", period);
         getSettings();
-        setPeriod(period);
 
         hScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, hScore));
         gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
 
         mainTime = intent.getLongExtra("mainTime", 0);
-        shotTime = intent.getLongExtra("shotTime", 0);
         setMainTimeText(mainTime);
-        setShotTimeText(shotTime);
         hNameView.setText(hName);
         gNameView.setText(gName);
 
+        if (layoutType == Constants.LAYOUT_FULL) {
+            periodView = (TextView) findViewById(R.id.camera_period);
+            shotTimeView = (TextView) findViewById(R.id.camera_shot_clock);
+            period = intent.getShortExtra("period", period);
+            shotTime = intent.getLongExtra("shotTime", 0);
+            setPeriod(period);
+            setShotTimeText(shotTime);
+            periodView.setOnClickListener(this);
+            periodView.setOnLongClickListener(this);
+            shotTimeView.setOnClickListener(this);
+            shotTimeView.setOnLongClickListener(this);
+        } else {
+            enableShotTime = false;
+        }
+
         hScoreView.setOnClickListener(this);
         gScoreView.setOnClickListener(this);
-        periodView.setOnClickListener(this);
         mainTimeView.setOnClickListener(this);
-        shotTimeView.setOnClickListener(this);
         hNameView.setOnClickListener(this);
         gNameView.setOnClickListener(this);
         takePictureBu.setOnClickListener(this);
@@ -117,9 +126,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         gScoreView.setOnLongClickListener(this);
         hNameView.setOnLongClickListener(this);
         gNameView.setOnLongClickListener(this);
-        periodView.setOnLongClickListener(this);
         mainTimeView.setOnLongClickListener(this);
-        shotTimeView.setOnLongClickListener(this);
     }
 
     @Override
@@ -141,8 +148,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         intent.putExtra("hScore", hScore);
         intent.putExtra("gScore", gScore);
         intent.putExtra("mainTime", mainTime);
-        intent.putExtra("shotTime", shotTime);
-        intent.putExtra("period", period);
+        if (layoutType == Constants.LAYOUT_FULL){
+            intent.putExtra("shotTime", shotTime);
+            intent.putExtra("period", period);
+        }
         setResult(RESULT_OK, intent);
     }
 

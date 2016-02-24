@@ -44,7 +44,7 @@
         <TextView
             android:id="@+id/camera_period"
             style="@style/cameraLineView"
-            android:text="@string/quoter_one" />
+            android:text="@string/quarter_one" />
 
         <TextView
             android:id="@+id/camera_time"

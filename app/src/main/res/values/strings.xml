@@ -42,7 +42,7 @@
     <string name="main_time" translatable="false">10:00</string>
     <string name="one_zero" translatable="false">0</string>
     <string name="number_one" translatable="false">1</string>
-    <string name="quoter_one" translatable="false">Q1</string>
+    <string name="quarter_one" translatable="false">Q1</string>
     <string name="two_zeros" translatable="false">00</string>
     <string name="minus" translatable="false">-</string>
     <string name="plus1" translatable="false">+1</string>

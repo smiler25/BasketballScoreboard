@@ -453,13 +453,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void runCameraActivity() {
         Intent intent = new Intent(this, CameraActivity.class);
+        intent.putExtra("layoutType", layoutType);
         intent.putExtra("hName", hName);
         intent.putExtra("gName", gName);
         intent.putExtra("hScore", hScore);
         intent.putExtra("gScore", gScore);
         intent.putExtra("mainTime", mainTime);
-        intent.putExtra("shotTime", shotTime);
-        intent.putExtra("period", period);
+        if (layoutType == Constants.LAYOUT_FULL) {
+            intent.putExtra("shotTime", shotTime);
+            intent.putExtra("period", period);
+        }
         startActivityForResult(intent, 1);
     }
 
@@ -474,16 +477,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         hScore = data.getShortExtra("hScore", hScore);
         gScore = data.getShortExtra("gScore", gScore);
-        period = data.getShortExtra("period", period);
-        setPeriod();
         mainTime = data.getLongExtra("mainTime", mainTime);
-        shotTime = data.getLongExtra("shotTime", shotTime);
-
         hScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, hScore));
         gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
         setMainTimeText(mainTime);
-        setShotTimeText(shotTime);
 
+        if (layoutType == Constants.LAYOUT_FULL) {
+            period = data.getShortExtra("period", period);
+            shotTime = data.getLongExtra("shotTime", shotTime);
+            setPeriod();
+            setShotTimeText(shotTime);
+        }
     }
 
     private void initDrawer() {

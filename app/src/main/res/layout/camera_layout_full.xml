@@ -19,7 +19,7 @@
         android:layout_gravity="bottom|center_horizontal"
         >
 
-        <include layout="@layout/camera_line"/>
+        <include layout="@layout/camera_line_full"/>
 
         <ImageView
             android:id="@+id/camera_take_picture"
