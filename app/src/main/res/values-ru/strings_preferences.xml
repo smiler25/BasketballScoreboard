@@ -3,13 +3,12 @@
     <string name="title_activity_settings">Настройки</string>
     <string name="time_category">Настройки времени</string>
     <string name="time_screen">Настройки времени</string>
+    <string name="sounds_screen">Настройки звука</string>
     <string name="side_panels_category">Панели игроков</string>
     <string name="side_panels_screen">Настройки панелей игроков</string>
-    <string name="pref_pause_on_sound">Пауза при звуке</string>
-    <string name="pref_pause_on_sound_descr">Останавливать время, если прозвучал свисток или сирена</string>
+
     <string name="pref_auto_break">Показывать перерывы</string>
     <string name="pref_auto_break_descr">Начинать отсчет времени перерыва по окончании периода</string>
-    <string name="pref_auto_sounds">Проигрывать звуки</string>
     <string name="pref_auto_timeout">Показывать таймаут</string>
     <string name="pref_timeouts_rules">Правила таймаутов</string>
     <string name="pref_auto_save_save_results">Сохранять результат перед запуском новой игры</string>
@@ -52,6 +51,7 @@
     <string name="side_panels_max_fouls">Количество персональных фолов</string>
     <string name="side_panels_interaction_time">Время ожидания действия (секунды)</string>
     <string name="side_panels_activate">Использовать панели игроков</string>
+
     <string-array name="side_panels_fouls_rules_titles">
         <item>Не отслеживать</item>
         <item>Согласно правилам</item>
@@ -67,7 +67,6 @@
         <item>Применить в течение времени. Приписать невидимому игроку по истечению</item>
         <item>Запоминать действия пока кнопка игрока не будет нажата</item>
     </string-array>
-
 
     <string-array name="pref_layout_titles">
         <item>Полный, с временем на атаку, периодом, фолами и таймаутами</item>
@@ -96,6 +95,13 @@
         <item>Пауза при фоле или изменении счёта</item>
         <item>Пауза при фоле или изменении счёта за минуту до конца периода</item>
     </string-array>
+
+    <!-- настройки звука -->
+    <string name="pref_pause_on_sound">Пауза при звуке</string>
+    <string name="pref_pause_on_sound_descr">Останавливать время, если прозвучал свисток или сирена</string>
+    <string name="pref_auto_sounds">Проигрывать звуки</string>
+    <string name="pref_horn_length">Длительность сирены</string>
+    <string name="pref_horn_length_descr">Секунд: %1$d</string>
     <string-array name="pref_auto_sounds_titles">
         <item>Выключено</item>
         <item>По истечении времени на атаку</item>

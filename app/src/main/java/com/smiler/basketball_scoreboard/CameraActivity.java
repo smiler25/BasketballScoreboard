@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smiler.basketball_scoreboard.preferences.PrefActivity;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,7 +33,7 @@ import java.text.SimpleDateFormat;
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-    public static String TAG = "MYLOG-CameraActivity";
+    public static String TAG = "BS-CameraActivity";
 
     private Camera camera;
     private TextView hScoreView, gScoreView, periodView, mainTimeView, shotTimeView, userTextView;
@@ -145,14 +147,23 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void sendDataIntent() {
-        intent.putExtra("hScore", hScore);
-        intent.putExtra("gScore", gScore);
-        intent.putExtra("mainTime", mainTime);
-        if (layoutType == Constants.LAYOUT_FULL){
-            intent.putExtra("shotTime", shotTime);
-            intent.putExtra("period", period);
+        int resCode = RESULT_OK;
+        if (intent == null) {
+            intent = getIntent();
+            if (intent == null) {
+                resCode = RESULT_CANCELED;
+            }
         }
-        setResult(RESULT_OK, intent);
+        if (resCode == RESULT_OK) {
+            intent.putExtra("hScore", hScore);
+            intent.putExtra("gScore", gScore);
+            intent.putExtra("mainTime", mainTime);
+            if (layoutType == Constants.LAYOUT_FULL){
+                intent.putExtra("shotTime", shotTime);
+                intent.putExtra("period", period);
+            }
+        }
+        setResult(resCode, intent);
     }
 
     @Override

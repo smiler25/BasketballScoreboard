@@ -1,10 +1,12 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.preferences;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+
+import com.smiler.basketball_scoreboard.R;
 
 public class PrefFragment extends PreferenceFragment {
     OnSelectNestedScreenPreference listener;
@@ -17,10 +19,16 @@ public class PrefFragment extends PreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if (preference.getKey().equals("time_screen")) {
-            listener.onSelectTimePreference();
-        } else if (preference.getKey().equals("side_panels_screen")) {
-            listener.onSelectSidePanelsPreference();
+        switch (preference.getKey()) {
+            case "time_screen":
+                listener.onSelectTimePreference();
+                break;
+            case "side_panels_screen":
+                listener.onSelectSidePanelsPreference();
+                break;
+            case "sounds_screen":
+                listener.onSelectSoundsPreference();
+                break;
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -28,6 +36,7 @@ public class PrefFragment extends PreferenceFragment {
     public interface OnSelectNestedScreenPreference {
         void onSelectTimePreference();
         void onSelectSidePanelsPreference();
+        void onSelectSoundsPreference();
     }
 
     @Override

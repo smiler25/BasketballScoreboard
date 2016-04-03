@@ -1,7 +1,9 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.preferences;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import com.smiler.basketball_scoreboard.R;
 
 public class PrefFragmentSidePanels extends PreferenceFragment {
     @Override

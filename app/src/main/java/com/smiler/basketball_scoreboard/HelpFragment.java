@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.smiler.basketball_scoreboard.preferences.PrefActivity;
+
 public class HelpFragment extends Fragment {
 
     private Switch panelsOn;

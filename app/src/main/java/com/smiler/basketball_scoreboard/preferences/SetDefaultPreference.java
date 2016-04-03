@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard.elements;
+package com.smiler.basketball_scoreboard.preferences;
 
 import android.app.Dialog;
 import android.content.Context;

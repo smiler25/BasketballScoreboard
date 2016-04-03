@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+
+    <ListPreference
+        android:key="list_auto_sounds"
+        android:title="@string/pref_auto_sounds"
+        android:defaultValue="0"
+        android:summary="%s"
+        android:entries="@array/pref_auto_sounds_titles"
+        android:entryValues="@array/pref_values_0_3"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+
+    <CheckBoxPreference
+        android:key="pause_on_sound"
+        android:title="@string/pref_pause_on_sound"
+        android:summary="@string/pref_pause_on_sound_descr"
+        android:defaultValue="true" />
+
+    <com.smiler.basketball_scoreboard.preferences.SeekBarPreference
+        android:key="horn_length"
+        android:title="@string/pref_horn_length"
+        android:summary="10"
+        max="10"
+        min="1"
+        />
+
+
+</PreferenceScreen>

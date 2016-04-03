@@ -34,7 +34,7 @@
         android:positiveButtonText="@null"
         />
 
-    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+    <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
         android:key="side_panels_player_max_fouls"
         android:title="@string/side_panels_max_fouls"
         android:defaultValue="@string/overtime_length_default"

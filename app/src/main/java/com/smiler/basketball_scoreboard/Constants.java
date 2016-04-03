@@ -13,6 +13,7 @@ public class Constants {
 
     public static final int SIDE_PANELS_LEFT = 0;
     public static final int SIDE_PANELS_RIGHT = 1;
+    public static final int DEFAULT_HORN_LENGTH = 3;
 
     public static long mainTickInterval = SECOND;
     public static long shotTickInterval = SECOND;

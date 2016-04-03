@@ -6,6 +6,7 @@
     <string name="default_category">Default values</string>
     <string name="side_panels_category">Players panels</string>
     <string name="app_category">App behavior</string>
+    <string name="sounds_screen">Sound settings</string>
 
     <string name="main_time_length">Main period duration (minutes)</string>
     <string name="main_time_length_default" translatable="false">10</string>
@@ -29,8 +30,7 @@
     <string name="home_team_name_default">HOME</string>
     <string name="guest_team_name">Default guest team name</string>
     <string name="guest_team_name_default">GUEST</string>
-    <string name="pref_pause_on_sound">Pause on sound</string>
-    <string name="pref_pause_on_sound_descr">Stop times if whistle or horn sounded</string>
+
     <string name="pref_auto_break">Show break time</string>
     <string name="pref_auto_break_descr">Automatically show break interval timer when period is over</string>
     <string name="pref_auto_timeout">Show timeout</string>
@@ -54,7 +54,12 @@
         <item>Pause if foul or score changed in 1 minute before end</item>
     </string-array>
 
+    <!-- sound preferences -->
     <string name="pref_auto_sounds">Play sounds</string>
+    <string name="pref_pause_on_sound">Pause on sound</string>
+    <string name="pref_pause_on_sound_descr">Stop times if whistle or horn sounded</string>
+    <string name="pref_horn_length">Horn sound length</string>
+    <string name="pref_horn_length_descr">Seconds: %1$d</string>
     <string-array name="pref_auto_sounds_titles">
         <item>Off</item>
         <item>On shot clock expire</item>

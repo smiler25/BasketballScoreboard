@@ -11,14 +11,14 @@
         >
     </PreferenceScreen>
 
-    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+    <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
         android:key="number_of_regular_periods"
         android:title="@string/number_of_regular_periods"
         android:defaultValue="@string/number_of_regular_periods_default"
         max="10"
         min="1" />
 
-    <com.smiler.basketball_scoreboard.elements.NumberPickerPreference
+    <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
         android:key="pref_max_fouls"
         android:title="@string/max_fouls"
         android:defaultValue="@string/max_fouls_default"
@@ -35,7 +35,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
-    <com.smiler.basketball_scoreboard.elements.EditTextPreference
+    <com.smiler.basketball_scoreboard.preferences.EditTextPreference
         android:key="home_team_name"
         android:title="@string/home_team_name"
         android:defaultValue="@string/home_team_name_default"
@@ -45,7 +45,7 @@
         android:maxLength="25"
         android:maxLines="1" />
 
-    <com.smiler.basketball_scoreboard.elements.EditTextPreference
+    <com.smiler.basketball_scoreboard.preferences.EditTextPreference
         android:key="guest_team_name"
         android:title="@string/guest_team_name"
         android:defaultValue="@string/guest_team_name_default"
@@ -60,7 +60,7 @@
         android:title="@string/default_category"
         >
 
-        <com.smiler.basketball_scoreboard.elements.SetDefaultPreference
+        <com.smiler.basketball_scoreboard.preferences.SetDefaultPreference
             android:key="set_official_rules"
             android:title="@string/pref_default_prefs"
             android:dialogMessage="@string/set_default_dialog_message"
@@ -101,16 +101,11 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
 
-        <ListPreference
-            android:key="list_auto_sounds"
-            android:title="@string/pref_auto_sounds"
-            android:defaultValue="0"
-            android:summary="%s"
-            android:entries="@array/pref_auto_sounds_titles"
-            android:entryValues="@array/pref_values_0_3"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
-
+        <PreferenceScreen
+            android:key="sounds_screen"
+            android:title="@string/sounds_screen"
+            >
+        </PreferenceScreen>
 
         <ListPreference
             android:key="auto_save_results"
@@ -121,12 +116,6 @@
             android:entryValues="@array/pref_values_0_2"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-
-        <CheckBoxPreference
-            android:key="pause_on_sound"
-            android:title="@string/pref_pause_on_sound"
-            android:summary="@string/pref_pause_on_sound_descr"
-            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="auto_show_break"

@@ -25,6 +25,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -48,6 +49,7 @@ import com.smiler.basketball_scoreboard.elements.ListDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
 import com.smiler.basketball_scoreboard.elements.SidePanelRow;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
+import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ListDialog.NewTimeoutDialogListener,
         TimePickerFragment.OnChangeTimeListener {
 
-    public static final String TAG = "TAG-MainActivity";
+    public static final String TAG = "BS-MainActivity";
     private SharedPreferences statePref, sharedPref;
     private TextView shotTimeView, mainTimeView, hNameView, gNameView, periodView;
     private TextView hScoreView, gScoreView;
@@ -118,7 +120,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean scoreSaved = false;
 
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
-    private int soundWhistleId, soundHornId;
+    private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
+    private int whistleRepeats, hornRepeats, whistleLength, hornLength, hornUserRepeats;
+    private boolean whistlePressed, hornPressed;
     private Result gameResult;
     private SoundPool soundPool;
     private Vibrator vibrator;
@@ -130,9 +134,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mainActivityContext = getApplicationContext();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        initSounds();
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         // if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
         if (sharedPref.getInt("app_version", 1) < 9) {
@@ -151,9 +159,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
         }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         shotTimeBlinkAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_out);
         gameResult = new Result(hName, gName);
         floatingDialog = new FloatingCountdownTimerDialog();
@@ -165,22 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             newGame();
         }
-
-        int MAX_STREAMS = 5;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AudioAttributes aa = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .build();
-            soundPool = new SoundPool.Builder()
-                    .setMaxStreams(MAX_STREAMS)
-                    .setAudioAttributes(aa)
-                    .build();
-        } else {
-            soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 1);
-        }
-        soundWhistleId = soundPool.load(this, R.raw.whistle, 1);
-        soundHornId = soundPool.load(this, R.raw.airhorn_short, 1);
     }
 
     public static Context getContext() {
@@ -224,10 +213,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         (findViewById(R.id.plus3HomeView)).setOnClickListener(this);
         (findViewById(R.id.plus3GuestView)).setOnClickListener(this);
 
-        (findViewById(R.id.whistleView)).setOnClickListener(this);
-        (findViewById(R.id.hornView)).setOnClickListener(this);
+        View whislteView = findViewById(R.id.whistleView);
+        View hornView = findViewById(R.id.hornView);
+        hornView.setOnClickListener(this);
         (findViewById(R.id.rightIconView)).setOnClickListener(this);
         (findViewById(R.id.cameraView)).setOnClickListener(this);
+
+        hornView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        stopHorn();
+                        hornPressed = false;
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        playHorn();
+                        hornPressed = true;
+                        break;
+                }
+                return true;
+            }
+        });
+
+        whislteView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        stopWhistle();
+                        whistlePressed = false;
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        playWhistle();
+                        whistlePressed = true;
+                        break;
+                }
+                return true;
+            }
+        });
 
         layoutChanged = timeoutsRulesChanged = false;
 
@@ -376,6 +400,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView startNewPeriodView = (ImageView) findViewById(R.id.newPeriodIconView);
         startNewPeriodView.setOnClickListener(this);
         enableShotTime = false;
+    }
+
+    private void initSounds() {
+        int MAX_STREAMS = 5;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes aa = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(MAX_STREAMS)
+                    .setAudioAttributes(aa)
+                    .build();
+        } else {
+            soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_NOTIFICATION, 1);
+        }
+        soundWhistleId = soundPool.load(this, R.raw.whistle, 1);
+        whistleLength = 190;
+        soundHornId = soundPool.load(this, R.raw.airhorn, 1);
+        hornLength = 850;
     }
 
     @Override
@@ -638,12 +682,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.periodView:
                 newPeriod(true);
                 break;
-            case R.id.whistleView:
-                playWhistle();
-                break;
-            case R.id.hornView:
-                playHorn();
-                break;
             case R.id.rightIconView:
                 showListDialog("timeout");
                 break;
@@ -846,6 +884,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSettingsNoRestart() {
         autoSound = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
+        hornUserRepeats = (sharedPref.getInt(PrefActivity.PREF_HORN_LENGTH, Constants.DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f));
         autoSaveResults = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0"));
         autoShowTimeout = sharedPref.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = sharedPref.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
@@ -1476,17 +1515,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void playWhistle() {
+        playWhistle(2);
+    }
+
+    private void playWhistle(int repeats) {
         if (pauseOnSound) {
             pauseGame();
         }
-        soundPool.play(soundWhistleId, 1, 1, 0, 0, 1);
+        soundWhistleStreamId = soundPool.play(soundWhistleId, 1, 1, 0, repeats, 1);
+        whistleRepeats = repeats;
+        if (repeats != -1) {
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            if (whistlePressed) {
+                                stopWhistle();
+                                playWhistle(-1);
+                            }
+                        }
+                    },
+                    whistleLength * repeats);
+        }
     }
 
     private void playHorn() {
+        playHorn(hornUserRepeats);
+    }
+
+    private void playHorn(int repeats) {
         if (pauseOnSound) {
             pauseGame();
         }
-        soundPool.play(soundHornId, 1, 1, 0, 0, 1);
+        soundHornStreamId = soundPool.play(soundHornId, 1, 1, 0, repeats, 1);
+        hornRepeats = repeats;
+        if (repeats != -1) {
+            new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        if (hornPressed) {
+                            stopHorn();
+                            playHorn(-1);
+                        }
+                    }
+                },
+                    hornLength * repeats);
+        }
+    }
+
+    private void stopWhistle() {
+        if (soundWhistleStreamId > 0 && whistleRepeats == -1) {
+            soundPool.stop(soundWhistleStreamId);
+        }
+    }
+
+    private void stopHorn() {
+        if (soundHornStreamId > 0 && hornRepeats == -1) {
+            soundPool.stop(soundHornStreamId);
+        }
     }
 
     public void shareResult() {

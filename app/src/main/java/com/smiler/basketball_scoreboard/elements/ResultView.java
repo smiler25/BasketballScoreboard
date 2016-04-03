@@ -3,6 +3,7 @@ package com.smiler.basketball_scoreboard.elements;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -20,8 +21,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ResultView extends LinearLayout {
+    public static String TAG = "BS-ResultView";
     private TextView title;
-    private TableLayout playersTable;
     private int sqlId;
 
     public ResultView(Context context, int sqlId) {
@@ -115,12 +116,20 @@ public class ResultView extends LinearLayout {
                 String gPeriodsString = c.getString(6);
                 if (!hPeriodsString.equals("")) {
                     for (String periodString : hPeriodsString.split("-")) {
-                        hPeriods.add(Integer.parseInt(periodString));
+                        try {
+                            hPeriods.add(Integer.parseInt(periodString));
+                        } catch (NumberFormatException e) {
+                            Log.d(TAG, "getResult (h): " + hPeriodsString + " - " + periodString);
+                        }
                     }
                 }
                 if (!gPeriodsString.equals("")) {
                     for (String periodString : gPeriodsString.split("-")) {
-                        gPeriods.add(Integer.parseInt(periodString));
+                        try {
+                            gPeriods.add(Integer.parseInt(periodString));
+                        } catch (NumberFormatException e) {
+                            Log.d(TAG, "getResult (g): " + gPeriodsString + " - " + periodString);
+                        }
                     }
                 }
                 res = new Result(c.getString(1), c.getString(2), c.getInt(3), c.getInt(4),
