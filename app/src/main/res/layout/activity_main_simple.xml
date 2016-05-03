@@ -15,18 +15,21 @@
         <ViewStub
             android:id="@+id/left_panel_stub"
             android:inflatedId="@+id/left_panel"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_weight="1"
+            android:gravity="center"
             android:layout_gravity="center"
             />
 
         <LinearLayout
+            android:id="@+id/board_central"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/mainBackground"
-            android:orientation="vertical">
+            android:layout_weight="0.12"
+            android:orientation="vertical"
+            >
 
             <!-- first line -->
             <LinearLayout
@@ -41,6 +44,16 @@
                     android:orientation="vertical"
                     style="@style/matchParentCenter"
                     android:layout_weight="1" >
+
+                    <ImageView
+                        android:id="@+id/switchSidesView"
+                        style="@style/matchParentCenter"
+                        android:contentDescription="@string/description_switch_sides"
+                        android:padding="@dimen/icons_padding"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_action_repeat"
+                        />
 
                     <ImageView
                         android:id="@+id/hornView"
@@ -95,7 +108,7 @@
                         android:src="@drawable/ic_new_period" />
 
                     <ImageView
-                        android:id="@+id/rightIconView"
+                        android:id="@+id/timeoutIconView"
                         style="@style/matchParentCenter"
                         android:contentDescription="@string/label_timeouts"
                         android:layout_weight="1"
@@ -107,7 +120,6 @@
 
 
             </LinearLayout>
-            <!-- end of first line -->
 
             <!-- second line -->
             <TableLayout
@@ -133,7 +145,7 @@
 
 
                     <TextView
-                        android:id="@+id/homeNameView"
+                        android:id="@+id/leftNameView"
                         style="@style/label"
                         android:textSize="@dimen/simple_name_font_size"
                         android:text="@string/home_team_name_default"
@@ -146,7 +158,7 @@
                         />
 
                     <TextView
-                        android:id="@+id/guestNameView"
+                        android:id="@+id/rightNameView"
                         style="@style/label"
                         android:textSize="@dimen/simple_name_font_size"
                         android:text="@string/guest_team_name_default"
@@ -169,7 +181,7 @@
                 <TableRow
                     android:gravity="center"
                     android:layout_marginBottom="@dimen/bottom_line_margin"
-                >
+                    >
 
                     <Space
                         android:layout_width="wrap_content"
@@ -183,7 +195,7 @@
                         >
 
                         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                            android:id="@+id/plus1HomeView"
+                            android:id="@+id/leftPlus1View"
                             style="@style/scoreChangers"
                             android:textSize="@dimen/simple_score_changer_size"
                             android:padding="@dimen/simple_score_changer_padding"
@@ -192,7 +204,7 @@
                             />
 
                         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                            android:id="@+id/plus3HomeView"
+                            android:id="@+id/leftPlus3View"
                             style="@style/scoreChangers"
                             android:textSize="@dimen/simple_score_changer_size"
                             android:padding="@dimen/simple_score_changer_padding"
@@ -201,7 +213,7 @@
                             />
 
                         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                            android:id="@+id/minus1HomeView"
+                            android:id="@+id/leftMinus1View"
                             style="@style/scoreChangers"
                             android:textSize="@dimen/simple_score_changer_size"
                             android:padding="@dimen/simple_score_changer_padding"
@@ -211,7 +223,7 @@
                     </LinearLayout>
 
                      <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                         android:id="@+id/homeScoreView"
+                         android:id="@+id/leftScoreView"
                          style="@style/scoreStyleSimple"
                          android:text="@string/two_zeros"
                          android:textSize="@dimen/led_simple_font_size"
@@ -224,7 +236,7 @@
                         />
 
                     <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                        android:id="@+id/guestScoreView"
+                        android:id="@+id/rightScoreView"
                         style="@style/scoreStyleSimple"
                         android:text="@string/two_zeros"
                         android:textSize="@dimen/led_simple_font_size"
@@ -237,7 +249,7 @@
                         >
 
                         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                            android:id="@+id/plus1GuestView"
+                            android:id="@+id/rightPlus1View"
                             style="@style/scoreChangers"
                             android:textSize="@dimen/simple_score_changer_size"
                             android:padding="@dimen/simple_score_changer_padding"
@@ -246,7 +258,7 @@
                             />
 
                         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                            android:id="@+id/plus3GuestView"
+                            android:id="@+id/rightPlus3View"
                             style="@style/scoreChangers"
                             android:textSize="@dimen/simple_score_changer_size"
                             android:padding="@dimen/simple_score_changer_padding"
@@ -255,7 +267,7 @@
                             />
 
                         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                            android:id="@+id/minus1GuestView"
+                            android:id="@+id/rightMinus1View"
                             style="@style/scoreChangers"
                             android:textSize="@dimen/simple_score_changer_size"
                             android:padding="@dimen/simple_score_changer_padding"
@@ -278,11 +290,11 @@
         <ViewStub
             android:id="@+id/right_panel_stub"
             android:inflatedId="@+id/right_panel"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_weight="1"
             />
 
     </LinearLayout>

@@ -18,6 +18,7 @@
     <string name="action_share_via">Поделиться</string>
     <string name="action_resluts">Результаты</string>
     <string name="description_edit">Редактировать</string>
+    <string name="description_switch_sides">Поменять стороны</string>
     <string name="description_horn">Сирена</string>
     <string name="description_new_period">Новый период</string>
     <string name="description_start_camera">Запустить камеру</string>

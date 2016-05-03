@@ -372,7 +372,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void setMainTimeText(long millis) {
-        mainTimeView.setText(Constants.timeFormat.format(millis));
+        mainTimeView.setText(Constants.TIME_FORMAT.format(millis));
     }
 
     private void setShotTimeText(long millis) {

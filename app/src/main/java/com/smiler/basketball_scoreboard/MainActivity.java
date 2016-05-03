@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -59,6 +60,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
+import static com.smiler.basketball_scoreboard.Constants.*;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         View.OnLongClickListener,
@@ -74,12 +77,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static final String TAG = "BS-MainActivity";
     private SharedPreferences statePref, sharedPref;
-    private TextView shotTimeView, mainTimeView, hNameView, gNameView, periodView;
+    private TextView mainTimeView, shotTimeView, shotTimeSwitchView, periodView;
+    private TextView hNameView, gNameView;
     private TextView hScoreView, gScoreView;
-    private TextView hTimeoutsView, hTimeouts20View;
-    private TextView gTimeoutsView, gTimeouts20View;
+    private TextView hTimeoutsView, gTimeoutsView;
+    private TextView hTimeouts20View, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
-    private TextView shotTimeSwitchView;
     private ViewGroup leftPlayersButtons, rightPlayersButtons;
     private Drawer.Result drawer;
 
@@ -95,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private long timeoutFullDuration;
     private short hScore, gScore;
     private short hFouls, gFouls;
-    private short hTimeouts, hTimeouts20;
-    private short gTimeouts, gTimeouts20;
+    private short hTimeouts, gTimeouts;
+    private short hTimeouts20, gTimeouts20;
     private short takenTimeoutsFull;
     private short maxTimeouts, maxTimeouts20, maxTimeouts100;
     private short maxFouls, numRegularPeriods;
@@ -106,16 +109,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CountDownTimer mainTimer, shotTimer;
     private short hActionType = -1, gActionType = -1;
     private int hActionValue = 0, gActionValue = 0;
+    private float periodViewSize;
+    private boolean leftIsHome = true;
 
     private int dontAskNewGame;
     private boolean showTimeoutDialog = true;
     private FloatingCountdownTimerDialog floatingDialog;
     private SidePanelFragment leftPanel, rightPanel;
-    private OverlayFragment overlay;
+    private OverlayFragment overlayPanels, overlaySwitch;
 
-    private SimpleDateFormat mainTimeFormat = Constants.timeFormat;
-    private long mainTickInterval = Constants.SECOND;
-    private long shotTickInterval = Constants.SECOND;
+    private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
+    private long mainTickInterval = SECOND;
+    private long shotTickInterval = SECOND;
     public boolean changedUnder2Minutes = false;
     public boolean scoreSaved = false;
 
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
-            new AppUpdatesFragment().show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
+            new AppUpdatesFragment().show(getFragmentManager(), TAG_FRAGMENT_APP_UPDATES);
         }
 
         initLayout();
@@ -177,7 +182,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initLayout() {
-        if (layoutType == Constants.LAYOUT_FULL) {
+        leftIsHome = true;
+        overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
+        if (layoutType == LAYOUT_FULL) {
             initExtensiveLayout();
         } else {
             initSimpleLayout();
@@ -192,10 +199,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initCommonLayout() {
         mainTimeView = (TextView) findViewById(R.id.mainTimeView);
-        hScoreView = (TextView) findViewById(R.id.homeScoreView);
-        gScoreView = (TextView) findViewById(R.id.guestScoreView);
-        hNameView = (TextView) findViewById(R.id.homeNameView);
-        gNameView = (TextView) findViewById(R.id.guestNameView);
+        hScoreView = (TextView) findViewById(R.id.leftScoreView);
+        gScoreView = (TextView) findViewById(R.id.rightScoreView);
+        hNameView = (TextView) findViewById(R.id.leftNameView);
+        gNameView = (TextView) findViewById(R.id.rightNameView);
 
         mainTimeView.setOnClickListener(this);
         mainTimeView.setOnLongClickListener(this);
@@ -206,18 +213,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hNameView.setOnLongClickListener(this);
         gNameView.setOnLongClickListener(this);
 
-        (findViewById(R.id.minus1HomeView)).setOnClickListener(this);
-        (findViewById(R.id.minus1GuestView)).setOnClickListener(this);
-        (findViewById(R.id.plus1HomeView)).setOnClickListener(this);
-        (findViewById(R.id.plus1GuestView)).setOnClickListener(this);
-        (findViewById(R.id.plus3HomeView)).setOnClickListener(this);
-        (findViewById(R.id.plus3GuestView)).setOnClickListener(this);
+        (findViewById(R.id.leftMinus1View)).setOnClickListener(this);
+        (findViewById(R.id.rightMinus1View)).setOnClickListener(this);
+        (findViewById(R.id.leftPlus1View)).setOnClickListener(this);
+        (findViewById(R.id.rightPlus1View)).setOnClickListener(this);
+        (findViewById(R.id.leftPlus3View)).setOnClickListener(this);
+        (findViewById(R.id.rightPlus3View)).setOnClickListener(this);
 
         View whislteView = findViewById(R.id.whistleView);
         View hornView = findViewById(R.id.hornView);
         hornView.setOnClickListener(this);
-        (findViewById(R.id.rightIconView)).setOnClickListener(this);
+        (findViewById(R.id.timeoutIconView)).setOnClickListener(this);
         (findViewById(R.id.cameraView)).setOnClickListener(this);
+        (findViewById(R.id.switchSidesView)).setOnClickListener(this);
 
         hornView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -261,12 +269,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initExtensiveLayout() {
         setContentView(R.layout.activity_main);
         ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
-        stub.setLayoutResource((timeoutRules == 2) ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
+        stub.setLayoutResource((timeoutRules == TO_RULES_NBA) ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
         stub.inflate();
 
         periodView = (TextView) findViewById(R.id.periodView);
-        hFoulsView = (TextView) findViewById(R.id.homeFoulsView);
-        gFoulsView = (TextView) findViewById(R.id.guestFoulsView);
+        hFoulsView = (TextView) findViewById(R.id.leftFoulsView);
+        gFoulsView = (TextView) findViewById(R.id.rightFoulsView);
         shotTimeView = (TextView) findViewById(R.id.shotTimeView);
         shotTimeSwitchView = (TextView) findViewById(R.id.shotTimeSwitch);
 
@@ -291,7 +299,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.e(TAG, "shotTimeView or shotTimeSwitchView is null");
             }
         }
-
         initBottomLineTimeouts();
     }
 
@@ -369,25 +376,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         leftPanel = SidePanelFragment.newInstance(true);
         rightPanel = SidePanelFragment.newInstance(false);
-        overlay = new OverlayFragment();
+        overlayPanels = OverlayFragment.newInstance(OVERLAY_PANELS);
         (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
         (findViewById(R.id.right_panel_toggle)).setOnClickListener(this);
         sidePanelsStateChanged = false;
     }
 
     private void initBottomLineTimeouts() {
-        hTimeoutsView = (TextView) findViewById(R.id.homeTimeoutsView);
-        gTimeoutsView = (TextView) findViewById(R.id.guestTimeoutsView);
+        hTimeoutsView = (TextView) findViewById(R.id.leftTimeoutsView);
+        gTimeoutsView = (TextView) findViewById(R.id.rightTimeoutsView);
         hTimeoutsView.setOnClickListener(this);
         gTimeoutsView.setOnClickListener(this);
         hTimeoutsView.setOnLongClickListener(this);
         gTimeoutsView.setOnLongClickListener(this);
-        if (timeoutRules == 0) {
-            ((TextView) findViewById(R.id.homeTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
-            ((TextView) findViewById(R.id.guestTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
-        } else if (timeoutRules == 2) {
-            hTimeouts20View = (TextView) findViewById(R.id.homeTimeouts20View);
-            gTimeouts20View = (TextView) findViewById(R.id.guestTimeouts20View);
+        if (timeoutRules == TO_RULES_NONE) {
+            ((TextView) findViewById(R.id.leftTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
+            ((TextView) findViewById(R.id.rightTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
+        } else if (timeoutRules == TO_RULES_NBA) {
+            hTimeouts20View = (TextView) findViewById(R.id.leftTimeouts20View);
+            gTimeouts20View = (TextView) findViewById(R.id.rightTimeouts20View);
             hTimeouts20View.setOnClickListener(this);
             hTimeouts20View.setOnLongClickListener(this);
             gTimeouts20View.setOnClickListener(this);
@@ -450,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             }
-            if (enableShotTimeChanged) {
+            if (enableShotTimeChanged && layoutType == LAYOUT_FULL) {
                 try {
                     if (!enableShotTime) {
                         shotTimeView.setVisibility(View.GONE);
@@ -462,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 } catch (NullPointerException e) {
-                    Log.d(TAG, shotTimeView.toString() + e.getMessage());
+                    Log.d(TAG, e.getMessage() + ((shotTimeView != null) ? shotTimeView.toString() : "shotTimeView == null"));
                 }
             }
         }
@@ -503,7 +510,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("hScore", hScore);
         intent.putExtra("gScore", gScore);
         intent.putExtra("mainTime", mainTime);
-        if (layoutType == Constants.LAYOUT_FULL) {
+        if (layoutType == LAYOUT_FULL) {
             intent.putExtra("shotTime", shotTime);
             intent.putExtra("period", period);
         }
@@ -516,17 +523,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null || resultCode != RESULT_OK) {
-            return;
-        }
+        if (data == null || resultCode != RESULT_OK) { return; }
         hScore = data.getShortExtra("hScore", hScore);
         gScore = data.getShortExtra("gScore", gScore);
         mainTime = data.getLongExtra("mainTime", mainTime);
-        hScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, hScore));
-        gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
+        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
+        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
         setMainTimeText(mainTime);
 
-        if (layoutType == Constants.LAYOUT_FULL) {
+        if (layoutType == LAYOUT_FULL) {
             period = data.getShortExtra("period", period);
             shotTime = data.getLongExtra("shotTime", shotTime);
             setPeriod();
@@ -619,103 +624,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             vibrator.vibrate(100);
         }
         switch (v.getId()) {
-            case R.id.homeScoreView:
-                changeHomeScore(2);
+            case R.id.leftScoreView:
+                changeScore(LEFT, 2);
                 break;
-            case R.id.guestScoreView:
-                changeGuestScore(2);
+            case R.id.rightScoreView:
+                changeScore(RIGHT, 2);
                 break;
             case R.id.mainTimeView:
                 mainTimeClick();
                 break;
             case R.id.shotTimeView:
-                shotTickInterval = Constants.SECOND;
-                if (mainTimerOn) {
-                    shotTimer.cancel();
-                    startShotCountDownTimer(shotTimePref);
-                } else {
-                    if (shotTime == shotTimePref) {
-                        shotTime = shortShotTimePref;
-                    } else {
-                        shotTime = shotTimePref;
-                    }
-                    setShotTimeText(shotTime);
-                }
+                shotTimeClick();
                 break;
             case R.id.shotTimeSwitch:
-                shotTickInterval = Constants.SECOND;
-                if (shotTimer != null && enableShotTime && shotTimerOn) {
-                    shotTimer.cancel();
-                }
-                shotTime = shortShotTimePref;
-                if (mainTimerOn) {
-                    startShotCountDownTimer(shortShotTimePref);
-                } else {
-                    setShotTimeText(shotTime);
-                }
-                if (shortShotTimePref < mainTime) {
-                    shotTimeView.setVisibility(View.VISIBLE);
-                }
+                shotTimeSwitchClick();
                 break;
-            case R.id.plus1HomeView:
-                changeHomeScore(1);
+            case R.id.leftPlus1View:
+                changeScore(LEFT, 1);
                 break;
-            case R.id.plus1GuestView:
-                changeGuestScore(1);
+            case R.id.rightPlus1View:
+                changeScore(RIGHT, 1);
                 break;
-            case R.id.plus3HomeView:
-                changeHomeScore(3);
+            case R.id.leftPlus3View:
+                changeScore(LEFT, 3);
                 break;
-            case R.id.plus3GuestView:
-                changeGuestScore(3);
+            case R.id.rightPlus3View:
+                changeScore(RIGHT, 3);
                 break;
-            case R.id.minus1HomeView:
-                if (hScore > 0) {
-                    changeHomeScore(-1);
-                }
+            case R.id.leftMinus1View:
+                if (hScore > 0) { changeScore(LEFT, -1); }
                 break;
-            case R.id.minus1GuestView:
-                if (gScore > 0) {
-                    changeGuestScore(-1);
-                }
+            case R.id.rightMinus1View:
+                if (gScore > 0) { changeScore(RIGHT, -1); }
                 break;
             case R.id.periodView:
                 newPeriod(true);
                 break;
-            case R.id.rightIconView:
+            case R.id.timeoutIconView:
                 showListDialog("timeout");
                 break;
             case R.id.newPeriodIconView:
                 showListDialog("new_period");
                 break;
-            case R.id.homeFoulsView:
-                foul(0);
+            case R.id.leftFoulsView:
+                foul(LEFT);
                 break;
-            case R.id.guestFoulsView:
-                foul(1);
+            case R.id.rightFoulsView:
+                foul(RIGHT);
                 break;
-            case R.id.homeTimeoutsView:
-                timeout(0);
+            case R.id.leftTimeoutsView:
+                timeout(LEFT);
                 break;
-            case R.id.guestTimeoutsView:
-                timeout(1);
+            case R.id.rightTimeoutsView:
+                timeout(RIGHT);
                 break;
-            case R.id.homeTimeouts20View:
-                timeout20(0);
+            case R.id.leftTimeouts20View:
+                timeout20(LEFT);
                 break;
-            case R.id.guestTimeouts20View:
-                timeout20(1);
+            case R.id.rightTimeouts20View:
+                timeout20(RIGHT);
                 break;
             case R.id.cameraView:
-                if (checkCameraHardware(this)) {
-                    runCameraActivity();
-                }
+                if (checkCameraHardware(this)) { runCameraActivity(); }
+                break;
+            case R.id.switchSidesView:
+                switchSides();
                 break;
             case R.id.left_panel_toggle:
-                showSidePanels(Constants.SIDE_PANELS_LEFT);
+                showSidePanels(SIDE_PANELS_LEFT);
                 break;
             case R.id.right_panel_toggle:
-                showSidePanels(Constants.SIDE_PANELS_RIGHT);
+                showSidePanels(SIDE_PANELS_RIGHT);
                 break;
             default:
                 break;
@@ -724,19 +703,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        if (vibrationOn) {
-            vibrator.vibrate(longClickVibrationPattern, -1);
-        }
+        if (vibrationOn) { vibrator.vibrate(longClickVibrationPattern, -1); }
 
         if (!mainTimerOn) {
             switch (v.getId()) {
-                case R.id.homeScoreView:
-                    hScore = 0;
-                    hScoreView.setText("00");
+                case R.id.leftScoreView:
+                    nullScore(LEFT);
                     return true;
-                case R.id.guestScoreView:
-                    gScore = 0;
-                    gScoreView.setText("00");
+                case R.id.rightScoreView:
+                    nullScore(RIGHT);
                     return true;
                 case R.id.mainTimeView:
                     showMainTimePicker();
@@ -747,32 +722,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.periodView:
                     newPeriod(false);
                     return true;
-                case R.id.homeFoulsView:
-                    hFouls = 0;
-                    hFoulsView.setText("0");
-                    setColorGreen(hFoulsView);
+                case R.id.leftFoulsView:
+                    nullFouls(LEFT);
                     return true;
-                case R.id.guestFoulsView:
-                    gFouls = 0;
-                    gFoulsView.setText("0");
-                    setColorGreen(gFoulsView);
+                case R.id.rightFoulsView:
+                    nullFouls(RIGHT);
                     return true;
-                case R.id.homeTimeoutsView:
-                    nullTimeouts(0);
+                case R.id.leftTimeoutsView:
+                    nullTimeouts(LEFT);
                     return true;
-                case R.id.guestTimeoutsView:
-                    nullTimeouts(1);
+                case R.id.rightTimeoutsView:
+                    nullTimeouts(RIGHT);
                     return true;
-                case R.id.homeTimeouts20View:
-                    nullTimeouts20(0);
+                case R.id.leftTimeouts20View:
+                    nullTimeouts20(LEFT);
                     return true;
-                case R.id.guestTimeouts20View:
-                    nullTimeouts20(1);
+                case R.id.rightTimeouts20View:
+                    nullTimeouts20(RIGHT);
                     return true;
-                case R.id.homeNameView:
+                case R.id.leftNameView:
                     chooseTeamNameDialog("home", hName);
                     return true;
-                case R.id.guestNameView:
+                case R.id.rightNameView:
                     chooseTeamNameDialog("guest", gName);
                     return true;
                 default:
@@ -794,6 +765,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void shotTimeClick() {
+        shotTickInterval = SECOND;
+        if (mainTimerOn) {
+            shotTimer.cancel();
+            startShotCountDownTimer(shotTimePref);
+        } else {
+            if (shotTime == shotTimePref) {
+                shotTime = shortShotTimePref;
+            } else {
+                shotTime = shotTimePref;
+            }
+            setShotTimeText(shotTime);
+        }
+    }
+
+    public void shotTimeSwitchClick() {
+        shotTickInterval = SECOND;
+        if (shotTimer != null && enableShotTime && shotTimerOn) {
+            shotTimer.cancel();
+        }
+        shotTime = shortShotTimePref;
+        if (mainTimerOn) {
+            startShotCountDownTimer(shortShotTimePref);
+        } else {
+            setShotTimeText(shotTime);
+        }
+        if (shortShotTimePref < mainTime) {
+            shotTimeView.setVisibility(View.VISIBLE);
+        }
+    }
+
     public boolean checkCameraHardware(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
@@ -801,23 +803,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void saveCurrentState() {
         statePref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = statePref.edit();
-        editor.putString(Constants.STATE_HOME_NAME, hName);
-        editor.putString(Constants.STATE_GUEST_NAME, gName);
-        editor.putLong(Constants.STATE_SHOT_TIME, shotTime);
-        editor.putLong(Constants.STATE_MAIN_TIME, mainTime);
-        editor.putInt(Constants.STATE_PERIOD, period);
-        editor.putInt(Constants.STATE_HOME_SCORE, hScore);
-        editor.putInt(Constants.STATE_GUEST_SCORE, gScore);
-        editor.putInt(Constants.STATE_HOME_FOULS, hFouls);
-        editor.putInt(Constants.STATE_GUEST_FOULS, gFouls);
-        if (timeoutRules == 1) {
-            editor.putInt(Constants.STATE_HOME_TIMEOUTS, hTimeouts);
-            editor.putInt(Constants.STATE_GUEST_TIMEOUTS, gTimeouts);
-        } else if (timeoutRules == 2) {
-            editor.putInt(Constants.STATE_HOME_TIMEOUTS_NBA, hTimeouts);
-            editor.putInt(Constants.STATE_GUEST_TIMEOUTS_NBA, gTimeouts);
-            editor.putInt(Constants.STATE_HOME_TIMEOUTS20, hTimeouts20);
-            editor.putInt(Constants.STATE_GUEST_TIMEOUTS20, gTimeouts20);
+        editor.putString(STATE_HOME_NAME, hName);
+        editor.putString(STATE_GUEST_NAME, gName);
+        editor.putLong(STATE_SHOT_TIME, shotTime);
+        editor.putLong(STATE_MAIN_TIME, mainTime);
+        editor.putInt(STATE_PERIOD, period);
+        editor.putInt(STATE_HOME_SCORE, hScore);
+        editor.putInt(STATE_GUEST_SCORE, gScore);
+        editor.putInt(STATE_HOME_FOULS, hFouls);
+        editor.putInt(STATE_GUEST_FOULS, gFouls);
+        if (timeoutRules == TO_RULES_FIBA) {
+            editor.putInt(STATE_HOME_TIMEOUTS, hTimeouts);
+            editor.putInt(STATE_GUEST_TIMEOUTS, gTimeouts);
+        } else if (timeoutRules == TO_RULES_NBA) {
+            editor.putInt(STATE_HOME_TIMEOUTS_NBA, hTimeouts);
+            editor.putInt(STATE_GUEST_TIMEOUTS_NBA, gTimeouts);
+            editor.putInt(STATE_HOME_TIMEOUTS20, hTimeouts20);
+            editor.putInt(STATE_GUEST_TIMEOUTS20, gTimeouts20);
         }
         editor.apply();
         if (sidePanelsOn) {
@@ -832,33 +834,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSavedState() {
         statePref = getPreferences(MODE_PRIVATE);
-        shotTime = statePref.getLong(Constants.STATE_SHOT_TIME, 24 * Constants.SECOND);
-        mainTime = totalTime = statePref.getLong(Constants.STATE_MAIN_TIME, 600 * Constants.SECOND);
-        period = (short) statePref.getInt(Constants.STATE_PERIOD, 1);
-        hScore = (short) statePref.getInt(Constants.STATE_HOME_SCORE, 0);
-        gScore = (short) statePref.getInt(Constants.STATE_GUEST_SCORE, 0);
-        hName = statePref.getString(Constants.STATE_HOME_NAME, getResources().getString(R.string.home_team_name_default));
-        gName = statePref.getString(Constants.STATE_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
-        hFouls = (short) statePref.getInt(Constants.STATE_HOME_FOULS, 0);
-        gFouls = (short) statePref.getInt(Constants.STATE_GUEST_FOULS, 0);
-        if (timeoutRules == 1) {
-            hTimeouts = (short) statePref.getInt(Constants.STATE_HOME_TIMEOUTS, 0);
-            gTimeouts = (short) statePref.getInt(Constants.STATE_GUEST_TIMEOUTS, 0);
-        } else if (timeoutRules == 2) {
-            hTimeouts = (short) statePref.getInt(Constants.STATE_HOME_TIMEOUTS_NBA, 0);
-            gTimeouts = (short) statePref.getInt(Constants.STATE_GUEST_TIMEOUTS_NBA, 0);
-            hTimeouts20 = (short) statePref.getInt(Constants.STATE_HOME_TIMEOUTS20, 0);
-            gTimeouts20 = (short) statePref.getInt(Constants.STATE_GUEST_TIMEOUTS20, 0);
+        shotTime = statePref.getLong(STATE_SHOT_TIME, 24 * SECOND);
+        mainTime = totalTime = statePref.getLong(STATE_MAIN_TIME, 600 * SECOND);
+        period = (short) statePref.getInt(STATE_PERIOD, 1);
+        hScore = (short) statePref.getInt(STATE_HOME_SCORE, 0);
+        gScore = (short) statePref.getInt(STATE_GUEST_SCORE, 0);
+        hName = statePref.getString(STATE_HOME_NAME, getResources().getString(R.string.home_team_name_default));
+        gName = statePref.getString(STATE_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
+        hFouls = (short) statePref.getInt(STATE_HOME_FOULS, 0);
+        gFouls = (short) statePref.getInt(STATE_GUEST_FOULS, 0);
+        if (timeoutRules == TO_RULES_FIBA) {
+            hTimeouts = (short) statePref.getInt(STATE_HOME_TIMEOUTS, 0);
+            gTimeouts = (short) statePref.getInt(STATE_GUEST_TIMEOUTS, 0);
+        } else if (timeoutRules == TO_RULES_NBA) {
+            hTimeouts = (short) statePref.getInt(STATE_HOME_TIMEOUTS_NBA, 0);
+            gTimeouts = (short) statePref.getInt(STATE_GUEST_TIMEOUTS_NBA, 0);
+            hTimeouts20 = (short) statePref.getInt(STATE_HOME_TIMEOUTS20, 0);
+            gTimeouts20 = (short) statePref.getInt(STATE_GUEST_TIMEOUTS20, 0);
         }
     }
 
     private void setSavedState() {
         setMainTimeText(mainTime);
-        hScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, hScore));
-        gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
+        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
+        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
         setTeamNames();
 
-        if (layoutType == Constants.LAYOUT_FULL) {
+        if (layoutType == LAYOUT_FULL) {
             if (enableShotTime) {
                 setShotTimeText(shotTime);
             }
@@ -870,7 +872,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setTimeouts();
             hTimeoutsView.setText(Short.toString(hTimeouts));
             gTimeoutsView.setText(Short.toString(gTimeouts));
-            if (timeoutRules == 2) {
+            if (timeoutRules == TO_RULES_NBA) {
                 hTimeouts20View.setText(Short.toString(hTimeouts20));
                 gTimeouts20View.setText(Short.toString(gTimeouts20));
             }
@@ -884,7 +886,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSettingsNoRestart() {
         autoSound = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
-        hornUserRepeats = (sharedPref.getInt(PrefActivity.PREF_HORN_LENGTH, Constants.DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f));
+        hornUserRepeats = (sharedPref.getInt(PrefActivity.PREF_HORN_LENGTH, DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f));
         autoSaveResults = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0"));
         autoShowTimeout = sharedPref.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = sharedPref.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
@@ -894,20 +896,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fractionSecondsMain = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_MAIN, true);
         fractionSecondsShot = sharedPref.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_SHOT, true);
 
-        shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, Constants.DEFAULT_SHOT_TIME) * 1000;
+        shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, DEFAULT_SHOT_TIME) * 1000;
         boolean enableShotTime_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
         enableShotTimeChanged = enableShotTime != enableShotTime_;
         enableShotTime = enableShotTime_;
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
-        shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, Constants.DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
-        mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, Constants.DEFAULT_FIBA_MAIN_TIME) * Constants.SECONDS_60;
-        overTimePref = sharedPref.getInt(PrefActivity.PREF_OVERTIME, Constants.DEFAULT_OVERTIME) * Constants.SECONDS_60;
-        numRegularPeriods = (short) sharedPref.getInt(PrefActivity.PREF_NUM_REGULAR, Constants.DEFAULT_NUM_REGULAR);
+        shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
+        mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, DEFAULT_FIBA_MAIN_TIME) * SECONDS_60;
+        overTimePref = sharedPref.getInt(PrefActivity.PREF_OVERTIME, DEFAULT_OVERTIME) * SECONDS_60;
+        numRegularPeriods = (short) sharedPref.getInt(PrefActivity.PREF_NUM_REGULAR, DEFAULT_NUM_REGULAR);
         hName = sharedPref.getString(PrefActivity.PREF_HOME_NAME, getResources().getString(R.string.home_team_name_default));
         gName = sharedPref.getString(PrefActivity.PREF_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
         actualTime = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_ACTUAL_TIME, "1"));
-        maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS);
-        mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < Constants.SECONDS_60) ? Constants.timeFormatMillis : Constants.timeFormat;
+        maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, DEFAULT_MAX_FOULS);
+        mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < SECONDS_60) ? TIME_FORMAT_MILLIS : TIME_FORMAT;
         boolean sidePanelsOn_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
         if (sidePanelsOn_ != sidePanelsOn) {
             sidePanelsOn = sidePanelsOn_;
@@ -915,7 +917,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         sidePanelsClearDelete = sharedPref.getString(PrefActivity.PREF_SIDE_PANELS_CLEAR, "0").equals("0");
         sidePanelsConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
-        SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_FIBA_PLAYER_FOULS));
+        SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, DEFAULT_FIBA_PLAYER_FOULS));
 
         restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
         PrefActivity.prefChangedNoRestart = false;
@@ -936,8 +938,193 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PrefActivity.prefChangedRestart = false;
     }
 
+    private void zeroState() {
+        mainTimerOn = false;
+        mainTimeFormat = TIME_FORMAT;
+        mainTickInterval = SECOND;
+        if (useDirectTimer) {
+            mainTime = 0;
+        } else {
+            mainTime = mainTimePref;
+        }
+        changedUnder2Minutes = false;
+        setMainTimeText(mainTime);
+        hScore = gScore = 0;
+        changeGuestScore(0);
+        changeHomeScore(0);
+        setTeamNames();
+        if (layoutType == LAYOUT_FULL) {
+            if (enableShotTime) {
+                shotTimerOn = false;
+                shotTime = shotTimePref;
+                shotTickInterval = SECOND;
+                setShotTimeText(shotTime);
+                shotTimeView.setVisibility(View.VISIBLE);
+                shotTimeSwitchView.setVisibility(View.VISIBLE);
+            }
+            nullTimeouts(2);
+            nullFouls();
+            period = 1;
+            periodView.setText("1");
+            if (timeoutRules == TO_RULES_NBA) {
+                nullTimeouts20(2);
+            }
+        }
+        if (sidePanelsOn) {
+            try {
+                leftPanel.clear(sidePanelsClearDelete);
+                rightPanel.clear(sidePanelsClearDelete);
+            } catch (NullPointerException e) {
+                Log.d(TAG, "Left or right panel is null");
+            }
+        }
+    }
+
+    private void newGame(boolean save) {
+        if (autoSaveResults == 0) {
+            saveResultDb();
+        } else if (autoSaveResults == 2) {
+            showConfirmDialog("save_result", false);
+        }
+        newGame();
+    }
+
+    private void newGame() {
+        if (PrefActivity.prefChangedRestart || PrefActivity.prefChangedNoRestart) {
+            getSettings();
+            if (enableShotTime && layoutType == LAYOUT_FULL && !layoutChanged) {
+                shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
+            }
+        }
+        if (layoutChanged || timeoutsRulesChanged) {
+            initLayout();
+        }
+        pauseGame();
+        zeroState();
+        if (layoutType == LAYOUT_FULL) {
+            setTimeouts();
+        }
+        if (sidePanelsOn) {
+            SidePanelFragment.clearCurrentData();
+        }
+        gameResult = new Result(hName, gName);
+    }
+
+    private void newPeriod(boolean next) {
+        pauseGame();
+        changedUnder2Minutes = false;
+        if (next) {
+            period++;
+        } else {
+            period = 1;
+        }
+        setPeriod();
+        if (enableShotTime) {
+            shotTime = shotTimePref;
+            setShotTimeText(shotTime);
+            shotTimeView.setVisibility(View.VISIBLE);
+            shotTimeSwitchView.setVisibility(View.VISIBLE);
+            shotTickInterval = SECOND;
+        }
+        mainTickInterval = SECOND;
+        mainTimeFormat = TIME_FORMAT;
+        setMainTimeText(mainTime);
+        if (period <= numRegularPeriods) {
+            nullFouls();
+        }
+        setTimeouts();
+        saveResult();
+        scoreSaved = false;
+    }
+
+    private void switchSides() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.SWITCH);
+        if (o != null) {
+            if (!o.isVisible()) {
+                ft.show(o);
+            }
+        } else {
+            ft.add(R.id.overlay, overlaySwitch, OverlayFragment.SWITCH);
+        }
+        ft.commit();
+
+        TextView _NameView = hNameView;
+        hNameView = gNameView;
+        gNameView = _NameView;
+        setTeamNames(hName, gName);
+
+        TextView _ScoreView = hScoreView;
+        hScoreView = gScoreView;
+        gScoreView = _ScoreView;
+        setScoresText(hScore, gScore);
+
+        if (layoutType == LAYOUT_FULL) {
+            TextView _FoulsView = hFoulsView;
+            hFoulsView = gFoulsView;
+            gFoulsView = _FoulsView;
+            setFoulsText(hFouls, gFouls, gFoulsView.getCurrentTextColor(), hFoulsView.getCurrentTextColor());
+
+            TextView _TimeoutsView = hTimeoutsView;
+            hTimeoutsView = gTimeoutsView;
+            gTimeoutsView = _TimeoutsView;
+            setTimeoutsText(hTimeouts, gTimeouts, gTimeoutsView.getCurrentTextColor(), hTimeoutsView.getCurrentTextColor());
+
+            if (timeoutRules == TO_RULES_NBA) {
+                TextView _Timeouts20View = hTimeouts20View;
+                hTimeouts20View = gTimeouts20View;
+                gTimeouts20View = _Timeouts20View;
+                setTimeouts20Text(hTimeouts20, gTimeouts20, gTimeouts20View.getCurrentTextColor(), hTimeouts20View.getCurrentTextColor());
+            }
+        }
+
+        if (sidePanelsOn && leftPanel != null) {
+            try {
+                switchSidePanels();
+            } catch (NullPointerException e) {
+                Log.d(TAG, "Left or right panel is null");
+            }
+        }
+
+        leftIsHome = !leftIsHome;
+
+        fm.beginTransaction()
+                .setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out)
+                .hide(overlaySwitch)
+                .commit();
+
+    }
+
+    private void switchSidePanels() {
+        leftPanel.changeRowsSide();
+        rightPanel.changeRowsSide();
+        leftPanel.clearTable();
+        rightPanel.clearTable();
+        TreeMap<Integer, SidePanelRow> leftRows = leftPanel.getAllPlayers();
+        TreeSet<SidePanelRow> leftActivePlayers = leftPanel.getActivePlayers();
+        SidePanelRow leftCaptainPlayer = leftPanel.getCaptainPlayer();
+        leftPanel.replaceRows(rightPanel.getAllPlayers(), rightPanel.getActivePlayers(), rightPanel.getCaptainPlayer());
+        rightPanel.replaceRows(leftRows, leftActivePlayers, leftCaptainPlayer);
+    }
+
+    private void setTimeoutsText(short hValue, short gValue, int hColor, int gColor) {
+        hTimeoutsView.setText(Short.toString(hValue));
+        gTimeoutsView.setText(Short.toString(gValue));
+        hTimeoutsView.setTextColor(hColor);
+        gTimeoutsView.setTextColor(gColor);
+    }
+
+    private void setTimeouts20Text(short hValue, short gValue, int hColor, int gColor) {
+        hTimeouts20View.setText(Short.toString(hValue));
+        gTimeouts20View.setText(Short.toString(gValue));
+        hTimeouts20View.setTextColor(hColor);
+        gTimeouts20View.setTextColor(gColor);
+    }
+
     private void setTimeouts() {
-        if (timeoutRules == 1) {
+        if (timeoutRules == TO_RULES_FIBA) {
             timeoutFullDuration = 60;
             if (period == 1) {
                 maxTimeouts = 2;
@@ -949,7 +1136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 maxTimeouts = 1;
                 nullTimeouts(2);
             }
-        } else if (timeoutRules == 2) {
+        } else if (timeoutRules == TO_RULES_NBA) {
             takenTimeoutsFull = 0;
             maxTimeouts20 = 1;
             nullTimeouts20(2);
@@ -979,11 +1166,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void nullTimeouts(int team) {
-        if (timeoutRules == 0) {
-            nullTimeoutsNoRules(team);
+    private void nullTimeouts(boolean left) {
+        if (timeoutRules == TO_RULES_NONE) {
+            nullTimeoutsNoRules(left);
             return;
         }
+        if (left == leftIsHome) {
+            nullTimeouts(HOME);
+        } else {
+            nullTimeouts(GUEST);
+        }
+    }
+
+    private void nullTimeoutsNoRules(boolean left) {
+        if (left == leftIsHome) {
+            nullTimeoutsNoRules(HOME);
+        } else {
+            nullTimeoutsNoRules(GUEST);
+        }
+    }
+
+    private void nullTimeouts20(boolean left) {
+        if (left == leftIsHome) {
+            nullTimeouts20(HOME);
+        } else {
+            nullTimeouts20(GUEST);
+        }
+    }
+
+    private void nullTimeouts(int team) {
         if (team > 0) {
             gTimeouts = maxTimeouts;
             setColorGreen(gTimeoutsView);
@@ -1025,117 +1236,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setColorGreen(hTimeouts20View);
     }
 
-    private void zeroState() {
-        mainTimerOn = false;
-        mainTimeFormat = Constants.timeFormat;
-        mainTickInterval = Constants.SECOND;
-        if (useDirectTimer) {
-            mainTime = 0;
+    private void timeout20(boolean left) {
+        if (left == leftIsHome) {
+            timeout20(HOME);
         } else {
-            mainTime = mainTimePref;
-        }
-        changedUnder2Minutes = false;
-        setMainTimeText(mainTime);
-        hScore = gScore = 0;
-        changeGuestScore(0);
-        changeHomeScore(0);
-        setTeamNames();
-        if (layoutType == Constants.LAYOUT_FULL) {
-            if (enableShotTime) {
-                shotTimerOn = false;
-                shotTime = shotTimePref;
-                shotTickInterval = Constants.SECOND;
-                setShotTimeText(shotTime);
-                shotTimeView.setVisibility(View.VISIBLE);
-                shotTimeSwitchView.setVisibility(View.VISIBLE);
-            }
-            nullTimeouts(2);
-            clearFouls();
-            period = 1;
-            periodView.setText("1");
-            if (timeoutRules == 2) {
-                nullTimeouts20(2);
-            }
-        }
-        if (sidePanelsOn) {
-            try {
-                leftPanel.clear(sidePanelsClearDelete);
-                rightPanel.clear(sidePanelsClearDelete);
-            } catch (NullPointerException e) {
-                Log.d(TAG, "Left or right panel is null");
-            }
+            timeout20(GUEST);
         }
     }
 
-    private void newGame(boolean save) {
-        if (autoSaveResults == 0) {
-            saveResultDb();
-        } else if (autoSaveResults == 2) {
-            showConfirmDialog("save_result", false);
-        }
-        newGame();
-    }
-
-    private void newGame() {
-        if (PrefActivity.prefChangedRestart || PrefActivity.prefChangedNoRestart) {
-            getSettings();
-            if (enableShotTime && layoutType == Constants.LAYOUT_FULL && !layoutChanged) {
-                shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
-            }
-        }
-        if (layoutChanged || timeoutsRulesChanged) {
-            initLayout();
-        }
-        pauseGame();
-        zeroState();
-        if (layoutType == Constants.LAYOUT_FULL) {
-            setTimeouts();
-        }
-        if (sidePanelsOn) {
-            SidePanelFragment.clearCurrentData();
-        }
-        gameResult = new Result(hName, gName);
-    }
-
-    private void newPeriod(boolean next) {
-        pauseGame();
-        changedUnder2Minutes = false;
-        if (next) {
-            period++;
+    private void timeout(boolean left) {
+        if (left == leftIsHome) {
+            timeout(0);
         } else {
-            period = 1;
+            timeout(1);
         }
-        setPeriod();
-        if (enableShotTime) {
-            shotTime = shotTimePref;
-            setShotTimeText(shotTime);
-            shotTimeView.setVisibility(View.VISIBLE);
-            shotTimeSwitchView.setVisibility(View.VISIBLE);
-            shotTickInterval = Constants.SECOND;
-        }
-        mainTickInterval = Constants.SECOND;
-        mainTimeFormat = Constants.timeFormat;
-        setMainTimeText(mainTime);
-        if (period <= numRegularPeriods) {
-            clearFouls();
-        }
-        setTimeouts();
-        saveResult();
-        scoreSaved = false;
-    }
-
-    private void clearFouls() {
-        hFouls = gFouls = 0;
-        hFoulsView.setText("0");
-        gFoulsView.setText("0");
-        setColorGreen(hFoulsView);
-        setColorGreen(gFoulsView);
     }
 
     private void timeout20(int team) {
         pauseGame();
         switch (team) {
-            case 0:
+            case HOME:
                 if (hTimeouts20 > 0) {
                     hTimeouts20View.setText(Short.toString(--hTimeouts20));
                     if (hTimeouts20 == 0) {
@@ -1146,7 +1266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
-            case 1:
+            case GUEST:
                 if (gTimeouts20 > 0) {
                     gTimeouts20View.setText(Short.toString(--gTimeouts20));
                     if (gTimeouts20 == 0) {
@@ -1163,24 +1283,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void timeout(int team) {
         pauseGame();
         takenTimeoutsFull++;
-        if (timeoutRules == 0) {
+        if (timeoutRules == TO_RULES_NONE) {
             switch (team) {
-                case 0:
+                case HOME:
                     hTimeoutsView.setText(Short.toString(++hTimeouts));
                     if (autoShowTimeout) {
                         showTimeout(timeoutFullDuration, hName);
                     }
                     break;
-                case 1:
+                case GUEST:
                     gTimeoutsView.setText(Short.toString(++gTimeouts));
                     if (autoShowTimeout) {
                         showTimeout(timeoutFullDuration, gName);
                     }
                     break;
             }
-        } else if (timeoutRules == 1) {
+        } else if (timeoutRules == TO_RULES_FIBA) {
             switch (team) {
-                case 0:
+                case HOME:
                     if (hTimeouts > 0) {
                         hTimeoutsView.setText(Short.toString(--hTimeouts));
                         if (hTimeouts == 0) {
@@ -1191,7 +1311,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     break;
-                case 1:
+                case GUEST:
                     if (gTimeouts > 0) {
                         gTimeoutsView.setText(Short.toString(--gTimeouts));
                         if (gTimeouts == 0) {
@@ -1206,7 +1326,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             timeoutFullDuration = (takenTimeoutsFull <= maxTimeouts100) ? 100 : 60;
             switch (team) {
-                case 0:
+                case HOME:
                     if (hTimeouts > 0) {
                         hTimeoutsView.setText(Short.toString(--hTimeouts));
                         if (hTimeouts == 0) {
@@ -1217,7 +1337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     break;
-                case 1:
+                case GUEST:
                     if (gTimeouts > 0) {
                         gTimeoutsView.setText(Short.toString(--gTimeouts));
                         if (gTimeouts == 0) {
@@ -1232,6 +1352,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void setFoulsText(short hValue, short gValue, int hColor, int gColor) {
+        hFoulsView.setText(Short.toString(hValue));
+        gFoulsView.setText(Short.toString(gValue));
+        hFoulsView.setTextColor(hColor);
+        gFoulsView.setTextColor(gColor);
+    }
+
+    private void nullFouls() {
+        hFouls = gFouls = 0;
+        hFoulsView.setText("0");
+        gFoulsView.setText("0");
+        setColorGreen(hFoulsView);
+        setColorGreen(gFoulsView);
+    }
+
+    private void nullFouls(boolean left) {
+        if (left == leftIsHome) {
+            hFouls = 0;
+            hFoulsView.setText("0");
+            setColorGreen(hFoulsView);
+        } else {
+            gFouls = 0;
+            gFoulsView.setText("0");
+            setColorGreen(gFoulsView);
+        }
+    }
+
+    private void foul(boolean left) {
+        if (left == leftIsHome) {
+            foul(HOME);
+        } else {
+            foul(GUEST);
+        }
+    }
+
     private void foul(int team) {
         if (actualTime > 0) {
             pauseGame();
@@ -1241,7 +1396,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setShotTimeText(shotTime);
         }
         switch (team) {
-            case 0:
+            case HOME:
                 hActionType = 1;
                 hActionValue += 1;
                 if (hFouls < maxFouls) {
@@ -1251,7 +1406,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
-            case 1:
+            case GUEST:
                 gActionType = 1;
                 gActionValue += 1;
                 if (gFouls < maxFouls) {
@@ -1264,8 +1419,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void changeScore() {
-        if (enableShotTime && layoutType == Constants.LAYOUT_FULL && restartShotTimer) {
+    private void setScoresText(short hValue, short gValue) {
+        hScore = hValue;
+        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
+        gScore = gValue;
+        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
+    }
+
+    private void nullScore(boolean left) {
+        if (left == leftIsHome) {
+            hScore = 0;
+            hScoreView.setText("00");
+        } else {
+            gScore = 0;
+            gScoreView.setText("00");
+        }
+    }
+
+    private void changeScore(boolean left, int value) {
+        if (left == leftIsHome) {
+            changeHomeScore(value);
+        } else {
+            changeGuestScore(value);
+        }
+    }
+
+    private void handleScoreChange() {
+        if (enableShotTime && layoutType == LAYOUT_FULL && restartShotTimer) {
             if (mainTimerOn) {
                 startShotCountDownTimer(shotTimePref);
             } else {
@@ -1273,7 +1453,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setShotTimeText(shotTimePref);
             }
         }
-        if (actualTime == 2 || (actualTime == 3 && mainTime < Constants.SECONDS_60)) {
+        if (actualTime == 2 || (actualTime == 3 && mainTime < SECONDS_60)) {
             pauseGame();
         }
         scoreSaved = false;
@@ -1283,9 +1463,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gActionType = 0;
         gActionValue += value;
         gScore += value;
-        gScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, gScore));
+        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
         if (value != 0) {
-            changeScore();
+            handleScoreChange();
         }
     }
 
@@ -1293,21 +1473,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hActionType = 0;
         hActionValue += value;
         hScore += value;
-        hScoreView.setText(String.format(Constants.FORMAT_TWO_DIGITS, hScore));
+        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
         if (value != 0) {
-            changeScore();
+            handleScoreChange();
         }
     }
 
     private void setMainTimeText(long millis) {
-        mainTimeView.setText(mainTimeFormat.format(millis).replaceAll(Constants.API16_TIME_REGEX, "$1"));
+        mainTimeView.setText(mainTimeFormat.format(millis).replaceAll(API16_TIME_REGEX, "$1"));
     }
 
     private void setShotTimeText(long millis) {
         if (millis < 5000 && fractionSecondsShot) {
-            shotTimeView.setText(String.format(Constants.TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
+            shotTimeView.setText(String.format(TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
         } else {
-            shotTimeView.setText(String.format(Constants.FORMAT_TWO_DIGITS, (short) Math.ceil(millis / 1000.0)));
+            shotTimeView.setText(String.format(FORMAT_TWO_DIGITS, (short) Math.ceil(millis / 1000.0)));
         }
     }
 
@@ -1315,9 +1495,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (period <= numRegularPeriods) {
             mainTime = totalTime = mainTimePref;
             periodView.setText(Short.toString(period));
+            if (periodViewSize != 0) {
+                periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize);
+            }
         } else {
             mainTime = totalTime = overTimePref;
             periodView.setText(String.format("OT%d", period - numRegularPeriods));
+            if (periodViewSize == 0) {
+                periodViewSize = getResources().getDimension(R.dimen.bottom_line_size);
+            }
+            periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize * 0.75f);
         }
         if (useDirectTimer) {
             mainTime = 0;
@@ -1346,7 +1533,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void under2Minutes() {
-        if (timeoutRules == 2) {
+        if (timeoutRules == TO_RULES_NBA) {
             if (period == 4) {
                 if (hTimeouts == 2 || hTimeouts == 3) {
                     hTimeouts = 1;
@@ -1372,14 +1559,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (enableShotTime && mainTime < shotTime && shotTimerOn) {
                     shotTimer.cancel();
                 }
-                if (mainTime < Constants.MINUTES_2 && !changedUnder2Minutes) {
+                if (mainTime < MINUTES_2 && !changedUnder2Minutes) {
                     changedUnder2Minutes = true;
                     under2Minutes();
                 }
-                if (fractionSecondsMain && mainTime < Constants.SECONDS_60 && mainTickInterval == Constants.SECOND) {
+                if (fractionSecondsMain && mainTime < SECONDS_60 && mainTickInterval == SECOND) {
                     this.cancel();
                     mainTickInterval = 100;
-                    mainTimeFormat = Constants.timeFormatMillis;
+                    mainTimeFormat = TIME_FORMAT_MILLIS;
                     startMainCountDownTimer();
                 }
                 if (enableShotTime && mainTime < shotTime && shotTimeView.getVisibility() == View.VISIBLE) {
@@ -1394,7 +1581,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (autoSound >= 2) {
                     playHorn();
                 }
-                mainTickInterval = Constants.SECOND;
+                mainTickInterval = SECOND;
                 setMainTimeText(0);
                 if (enableShotTime && shotTimerOn) {
                     shotTimer.cancel();
@@ -1437,7 +1624,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onTick(long millisUntilFinished) {
                 shotTime = millisUntilFinished;
                 setShotTimeText(shotTime);
-                if (shotTime < 5 * Constants.SECOND && shotTickInterval == Constants.SECOND) {
+                if (shotTime < 5 * SECOND && shotTickInterval == SECOND) {
                     shotTickInterval = 100;
                     shotTimer.cancel();
                     startShotCountDownTimer();
@@ -1452,7 +1639,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setShotTimeText(0);
                 shotTimeView.startAnimation(shotTimeBlinkAnimation);
                 shotTime = shotTimePref;
-                shotTickInterval = Constants.SECOND;
+                shotTickInterval = SECOND;
             }
         }.start();
         shotTimerOn = true;
@@ -1463,7 +1650,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (directTimerStopped) {
             stopDirectTimer();
         }
-        mainTimeFormat = Constants.timeFormat;
+        mainTimeFormat = TIME_FORMAT;
         mainTimerOn = true;
         customHandler.postDelayed(directTimerThread, 0);
         if (enableShotTime) {
@@ -1599,7 +1786,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             dialog = ConfirmDialog.newInstance(type);
         }
-        dialog.show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
+        dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
     }
 
     private void showListDialog(String type) {
@@ -1632,7 +1819,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void chooseTeamNameDialog(String team, String name) {
         DialogFragment nameEdit = NameEditDialog.newInstance(team, name);
-        nameEdit.show(getFragmentManager(), Constants.TAG_FRAGMENT_NAME_EDIT);
+        nameEdit.show(getFragmentManager(), TAG_FRAGMENT_NAME_EDIT);
     }
 
     private void showMainTimePicker() {
@@ -1640,20 +1827,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 (int) (TimeUnit.MILLISECONDS.toMinutes(mainTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(mainTime))),
                 (int) (TimeUnit.MILLISECONDS.toSeconds(mainTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mainTime))),
                 (int) (mainTime % 1000) / 100);
-        mainTimePicker.show(getFragmentManager(), Constants.TAG_FRAGMENT_MAIN_TIME_PICKER);
+        mainTimePicker.show(getFragmentManager(), TAG_FRAGMENT_MAIN_TIME_PICKER);
     }
 
     private void showShotTimePicker() {
         DialogFragment mainTimePicker = TimePickerFragment.newInstance((int) shotTime / 1000, (int) (shotTime % 1000) / 100);
-        mainTimePicker.show(getFragmentManager(), Constants.TAG_FRAGMENT_SHOT_TIME_PICKER);
+        mainTimePicker.show(getFragmentManager(), TAG_FRAGMENT_SHOT_TIME_PICKER);
     }
 
     private void showTimeout(long durSeconds, String team) {
-        Fragment frag = getFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_TIME);
+        Fragment frag = getFragmentManager().findFragmentByTag(TAG_FRAGMENT_TIME);
         if (frag != null && frag.isAdded()) {
             return;
         }
-        floatingDialog.show(getFragmentManager(), Constants.TAG_FRAGMENT_TIME);
+        floatingDialog.show(getFragmentManager(), TAG_FRAGMENT_TIME);
         floatingDialog.duration = durSeconds;
         floatingDialog.duration = durSeconds * 1000;
         if (durSeconds > 100) {
@@ -1662,6 +1849,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             floatingDialog.title = String.format(getResources().getString(R.string.timeout_format_2), team, durSeconds).replace(" ()", "").trim();
         }
         floatingDialog.startCountDownTimer();
+    }
+
+    private void showSidePanels(int type) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.PANELS);
+        if (o != null) {
+            if (!o.isVisible()) {
+                ft.show(o);
+            }
+        } else {
+            ft.add(R.id.overlay, overlayPanels, OverlayFragment.PANELS);
+        }
+
+        if (type == SIDE_PANELS_LEFT || sidePanelsConnected) {
+            ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
+            Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
+            if (lpanel != null) {
+                ft.show(lpanel);
+            } else {
+                ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
+            }
+        }
+
+        if (type == SIDE_PANELS_RIGHT || sidePanelsConnected) {
+            ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
+            Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
+            if (rpanel != null) {
+                ft.show(rpanel);
+            } else {
+                ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
+            }
+        }
+        ft.commit();
     }
 
     public void endOfGameActions(int dontAskNewGame) {
@@ -1676,41 +1898,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 newGame();
                 break;
         }
-    }
-
-    private void showSidePanels(int type) {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG);
-        if (o != null) {
-            if (!o.isVisible()) {
-                ft.show(o);
-            }
-        } else {
-            ft.add(R.id.overlay, overlay, OverlayFragment.TAG);
-        }
-
-        if (type == Constants.SIDE_PANELS_LEFT || sidePanelsConnected) {
-            ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
-            Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
-            if (lpanel != null) {
-                ft.show(lpanel);
-            } else {
-                ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
-            }
-        }
-
-        if (type == Constants.SIDE_PANELS_RIGHT || sidePanelsConnected) {
-            ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
-            Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
-            if (rpanel != null) {
-                ft.show(rpanel);
-            } else {
-                ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
-            }
-        }
-        ft.commit();
     }
 
     public void saveResult() {
@@ -1788,12 +1975,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onTimeChanged(int minutes, int seconds, int millis) {
-        mainTime = minutes * Constants.SECONDS_60 + seconds * 1000 + millis * 100;
-        if (fractionSecondsMain && mainTime < Constants.SECONDS_60) {
+        mainTime = minutes * SECONDS_60 + seconds * 1000 + millis * 100;
+        if (fractionSecondsMain && mainTime < SECONDS_60) {
             mainTickInterval = 100;
-            mainTimeFormat = Constants.timeFormatMillis;
+            mainTimeFormat = TIME_FORMAT_MILLIS;
         } else {
-            mainTimeFormat = Constants.timeFormat;
+            mainTimeFormat = TIME_FORMAT;
         }
 
         if (enableShotTime && mainTime > shotTime) {
@@ -1807,7 +1994,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onTimeChanged(int seconds, int millis) {
         shotTime = seconds * 1000 + millis * 100;
-        if (shotTime < 5 * Constants.SECOND) {
+        if (shotTime < 5 * SECOND) {
             shotTickInterval = 100;
         }
 
@@ -1844,7 +2031,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onNewPeriodDialogItemClick(int which) {
         pauseGame();
-        mainTickInterval = Constants.SECOND;
+        mainTickInterval = SECOND;
         switch (which) {
             case 0:
                 mainTime = mainTimePref;
@@ -1853,7 +2040,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mainTime = overTimePref;
                 break;
         }
-        mainTimeFormat = Constants.timeFormat;
+        mainTimeFormat = TIME_FORMAT;
         setMainTimeText(mainTime);
     }
 
@@ -1932,7 +2119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (!(leftPanel.isVisible() && rightPanel.isVisible())) {
             ft.setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out);
-            ft.hide(overlay);
+            ft.hide(overlayPanels);
         }
         ft.commit();
     }
@@ -1942,7 +2129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ViewGroup group = (left) ? leftPlayersButtons : rightPlayersButtons;
         int pos = 0;
         for (SidePanelRow row : rows) {
-            Button bu = (Button)group.getChildAt(pos++);
+            Button bu = (Button) group.getChildAt(pos++);
             bu.setText(Integer.toString(row.getNumber()));
             bu.setTag(row);
         }
@@ -1952,7 +2139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onSidePanelNoActive(boolean left) {
         ViewGroup group = (left) ? leftPlayersButtons : rightPlayersButtons;
         for (int i = 0; i < group.getChildCount() - 1; i++) {
-            Button button = (Button) leftPlayersButtons.getChildAt(i);
+            Button button = (Button) group.getChildAt(i);
             button.setTag(null);
             button.setText(R.string.minus);
         }
@@ -1982,9 +2169,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
             }
         }
-        if (overlay.isVisible() && toClose == 0) {
+        if (overlayPanels.isVisible() && toClose == 0) {
             ft.setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out);
-            ft.hide(overlay);
+            ft.hide(overlayPanels);
         }
         ft.commit();
     }

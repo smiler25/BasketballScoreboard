@@ -14,7 +14,7 @@
     <dimen name="bottom_line_margin2">16dp</dimen>
     <dimen name="label_margin">0.5dp</dimen>
     <dimen name="help_text_size">16sp</dimen>
-    <dimen name="bottom_line_size">100dp</dimen>
+    <dimen name="bottom_line_size">95dp</dimen>
 
     <dimen name="main_time_size">150dp</dimen>
     <dimen name="short_shot_clock_size">60dp</dimen>

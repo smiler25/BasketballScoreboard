@@ -3,25 +3,33 @@ package com.smiler.basketball_scoreboard;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class Constants {
+public final class Constants {
+    public static final boolean LEFT = true;
+    public static final boolean RIGHT = false;
+    public static final int HOME = 0;
+    public static final int GUEST = 1;
 
     public static final long SECOND = 1000;
     public static final long SECONDS_60 = 60 * SECOND;
     public static final long MINUTES_2 = 120 * SECOND;
-    public static final int LAYOUT_FULL= 0;
-    public static final int LAYOUT_SIMPLE= 1;
+    public static final int LAYOUT_FULL = 0;
+    public static final int LAYOUT_SIMPLE = 1;
+
+    public static final int OVERLAY_PANELS = 0;
+    public static final int OVERLAY_SWITCH = 1;
+
+    public static final int TO_RULES_NONE = 0;
+    public static final int TO_RULES_FIBA = 1;
+    public static final int TO_RULES_NBA = 2;
 
     public static final int SIDE_PANELS_LEFT = 0;
     public static final int SIDE_PANELS_RIGHT = 1;
     public static final int DEFAULT_HORN_LENGTH = 3;
 
-    public static long mainTickInterval = SECOND;
-    public static long shotTickInterval = SECOND;
-
     public static final String FORMAT_TWO_DIGITS = "%02d";
     public static final String TIME_FORMAT_SHORT = "%d.%d";
-    public static final SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss");
-    public static final SimpleDateFormat timeFormatMillis = new SimpleDateFormat("ss.S", Locale.ENGLISH);
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("mm:ss");
+    public static final SimpleDateFormat TIME_FORMAT_MILLIS = new SimpleDateFormat("ss.S", Locale.ENGLISH);
     public static String API16_TIME_REGEX = "(\\d{2}\\.\\d)(\\d{1,3})";
 
     public static final String STATE_MAIN_TIME = "mainTime";

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,11 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
         left = args.getBoolean("left", true);
+        return initView(inflater, container);
+    }
+
+    @NonNull
+    private View initView(LayoutInflater inflater, ViewGroup container) {
         int layout_id, table_layout_id, close_bu_id, clear_bu_id, add_bu_id, add_auto_bu_id, toggle_bu_id;
         if (left) {
             layout_id = R.layout.side_panel_full_left;
@@ -245,8 +251,16 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         return res;
     }
 
+    public TreeSet<SidePanelRow> getActivePlayers() {
+        return activePlayers;
+    }
+
     public TreeMap<Integer, SidePanelRow> getAllPlayers() {
         return rows;
+    }
+
+    public SidePanelRow getCaptainPlayer() {
+        return captainPlayer;
     }
 
     public boolean selectionConfirmed() {
@@ -287,8 +301,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
             playersNumbers.clear();
             activePlayers.clear();
             if (table != null) {
-                table.removeAllViews();
-                addHeader();
+                clearTable();
                 listener.onSidePanelNoActive(left);
             }
         } else {
@@ -388,4 +401,36 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    public void changeRowsSide() {
+        for (SidePanelRow row : rows.values()) {
+            row.changeSide();
+        }
+    }
+
+    public void replaceRows(TreeMap<Integer, SidePanelRow> rows, TreeSet<SidePanelRow> activePlayers, SidePanelRow captainPlayer) {
+        this.rows = rows;
+        this.activePlayers = activePlayers;
+        this.captainPlayer = captainPlayer;
+        if (table != null) {
+            playersNumbers.clear();
+            clearTable();
+            for (SidePanelRow row : rows.values()) {
+                table.addView(row);
+                playersNumbers.add(row.getNumber());
+            }
+        }
+
+        if (activePlayers.isEmpty()) {
+            listener.onSidePanelNoActive(left);
+        } else {
+            listener.onSidePanelActiveSelected(activePlayers, left);
+        }
+    }
+
+    public void clearTable() {
+        if (table != null) {
+            table.removeAllViews();
+            addHeader();
+        }
+    }
 }

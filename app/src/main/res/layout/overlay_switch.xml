@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:alpha="0.5"
+    >
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <ImageView
+        android:id="@+id/left_panel_overlay_open"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:contentDescription="@string/description_switch_sides"
+        android:src="@drawable/ic_action_repeat"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:padding="@dimen/side_panel_open_icon_padding"
+        android:layout_gravity="center"
+        />
+
+</FrameLayout>

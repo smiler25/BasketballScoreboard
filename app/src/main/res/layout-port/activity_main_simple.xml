@@ -15,6 +15,14 @@
         android:layout_weight="1">
 
         <ImageView
+            android:id="@+id/switchSidesView"
+            style="@style/matchParentCenter"
+            android:scaleType="center"
+            android:contentDescription="@string/description_switch_sides"
+            android:layout_weight="1"
+            android:src="@drawable/ic_action_repeat" />
+
+        <ImageView
             android:id="@+id/hornView"
             style="@style/matchParentCenter"
             android:contentDescription="@string/description_horn"
@@ -47,7 +55,7 @@
             android:src="@drawable/ic_new_period" />
 
         <ImageView
-            android:id="@+id/rightIconView"
+            android:id="@+id/timeoutIconView"
             style="@style/matchParentCenter"
             android:contentDescription="@string/label_timeouts"
             android:scaleType="center"
@@ -74,7 +82,7 @@
         android:layout_weight="1" >
 
         <TextView
-            android:id="@+id/homeNameView"
+            android:id="@+id/leftNameView"
             style="@style/label"
             android:textSize="@dimen/simple_name_font_size"
             android:text="@string/home_team_name_default"
@@ -83,7 +91,7 @@
             />
 
         <TextView
-            android:id="@+id/guestNameView"
+            android:id="@+id/rightNameView"
             style="@style/label"
             android:textSize="@dimen/simple_name_font_size"
             android:text="@string/guest_team_name_default"
@@ -101,21 +109,21 @@
         android:layout_weight="1" >
 
         <TextView
-            android:id="@+id/plus1HomeView"
+            android:id="@+id/leftPlus1View"
             style="@style/scoreChangers"
             android:layout_weight="1"
             android:text="@string/plus1"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
         <TextView
-            android:id="@+id/plus3HomeView"
+            android:id="@+id/leftPlus3View"
             style="@style/scoreChangers"
             android:layout_weight="1"
             android:text="@string/plus3"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
         <TextView
-            android:id="@+id/minus1HomeView"
+            android:id="@+id/leftMinus1View"
             style="@style/scoreChangers"
             android:layout_weight="1"
             android:text="@string/minus1"
@@ -127,21 +135,21 @@
         android:layout_weight="1" > -->
         
         <TextView
-            android:id="@+id/plus1GuestView"
+            android:id="@+id/rightPlus1View"
             style="@style/scoreChangers"
             android:layout_weight="1"
             android:text="@string/plus1"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
         <TextView
-            android:id="@+id/plus3GuestView"
+            android:id="@+id/rightPlus3View"
             style="@style/scoreChangers"
             android:layout_weight="1"
             android:text="@string/plus3"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
         <TextView
-            android:id="@+id/minus1GuestView"
+            android:id="@+id/rightMinus1View"
             style="@style/scoreChangers"
             android:layout_weight="1"
             android:text="@string/minus1"
@@ -156,7 +164,7 @@
         android:layout_weight="2" >
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            android:id="@+id/homeScoreView"
+            android:id="@+id/leftScoreView"
             style="@style/scoreStyleSimple"
             android:layout_weight="1"
             android:text="@string/two_zeros"
@@ -164,7 +172,7 @@
             />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            android:id="@+id/guestScoreView"
+            android:id="@+id/rightScoreView"
             style="@style/scoreStyleSimple"
             android:layout_weight="1"
             android:text="@string/two_zeros"

@@ -24,6 +24,7 @@
     <string name="confirm_new_neutral_option">Yes (Save result)</string>
     <string name="confirm_new_game_message_win">Team %1$s won %2$d-%3$d.</string>
     <string name="confirm_new_game_message_settings">Settings changed. Changes will take effect at the start of a new game.</string>
+    <string name="description_switch_sides">Switch sides</string>
     <string name="description_edit">Edit</string>
     <string name="description_horn">Horn</string>
     <string name="description_new_period">New period</string>

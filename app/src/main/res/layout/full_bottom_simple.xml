@@ -19,7 +19,7 @@
             android:layout_weight="1"
             />
         <TextView
-            android:id="@+id/homeTimeoutsLabel"
+            android:id="@+id/leftTimeoutsLabel"
             style="@style/label"
             android:text="@string/label_timeouts_left"
             />
@@ -29,7 +29,7 @@
             android:layout_weight="1"
             />
         <TextView
-            android:id="@+id/homeFoulsLabel"
+            android:id="@+id/leftFoulsLabel"
             style="@style/label"
             android:text="@string/label_fouls"
             />
@@ -49,7 +49,7 @@
             android:layout_weight="1"
             />
         <TextView
-            android:id="@+id/guestFoulsLabel"
+            android:id="@+id/rightFoulsLabel"
             style="@style/label"
             android:text="@string/label_fouls"
             />
@@ -59,7 +59,7 @@
             android:layout_weight="1"
             />
         <TextView
-            android:id="@+id/guestTimeoutsLabel"
+            android:id="@+id/rightTimeoutsLabel"
             style="@style/label"
             android:text="@string/label_timeouts_left"
             />
@@ -79,7 +79,7 @@
             android:layout_weight="1"
             />
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            android:id="@+id/homeTimeoutsView"
+            android:id="@+id/leftTimeoutsView"
             style="@style/bottomLineStyle"
             android:text="@string/one_zero"
             />
@@ -91,7 +91,7 @@
             />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            android:id="@+id/homeFoulsView"
+            android:id="@+id/leftFoulsView"
             style="@style/bottomLineStyle"
             android:text="@string/one_zero"
             />
@@ -115,7 +115,7 @@
             />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            android:id="@+id/guestFoulsView"
+            android:id="@+id/rightFoulsView"
             style="@style/bottomLineStyle"
             android:text="@string/one_zero"
             />
@@ -127,7 +127,7 @@
             />
 
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-            android:id="@+id/guestTimeoutsView"
+            android:id="@+id/rightTimeoutsView"
             style="@style/bottomLineStyle"
             android:text="@string/one_zero"
            />

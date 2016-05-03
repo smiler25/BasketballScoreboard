@@ -125,7 +125,6 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
                     String.format(getResources().getString((left) ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), number, name),
                     Toast.LENGTH_SHORT).show();
             this.setBackgroundColor(colorFouledOut);
-
         }
     }
 
@@ -169,7 +168,6 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         return object;
     }
 
-//    public static
     public SidePanelRow restoreFromJson(JSONObject object) throws JSONException {
         this.name = (String) object.get("name");
         this.number = (int) object.get("number");
@@ -193,4 +191,22 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         fouls = 0;
         foulsView.setText("0");
     }
+
+    public void changeSide() {
+        left = !left;
+        recreateView();
+    }
+
+    private void recreateView() {
+        this.removeAllViews();
+        createView(context);
+        foulsView.setText(String.valueOf(fouls));
+        nameView.setText(name);
+        numberView.setText((captain) ? "" + number + "*" : "" + number);
+        pointsView.setText(String.valueOf(points));
+        if (fouls >= maxFouls) {
+            this.setBackgroundColor(colorFouledOut);
+        }
+    }
+
 }

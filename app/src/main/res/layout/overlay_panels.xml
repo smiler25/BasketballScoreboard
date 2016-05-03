@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:alpha="0.5"
     >
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +23,7 @@
         android:baselineAlignBottom="false"
         android:padding="@dimen/side_panel_open_icon_padding"
         android:foregroundGravity="left|bottom"
-        />
+        android:layout_gravity="left|bottom"/>
 
     <ImageButton
         android:id="@+id/right_panel_overlay_open"
@@ -34,6 +35,6 @@
         android:baselineAlignBottom="false"
         android:padding="@dimen/side_panel_open_icon_padding"
         android:foregroundGravity="right|bottom"
-        />
+        android:layout_gravity="bottom|right"/>
 
 </FrameLayout>
