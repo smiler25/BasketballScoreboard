@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.smiler.basketball_scoreboard.HelpActivity"
+    tools:context="com.smiler.basketball_scoreboard.help.HelpActivity"
     >
 
     <FrameLayout
@@ -13,7 +13,7 @@
         android:paddingTop="?attr/actionBarSize" >
 
         <fragment
-            class="com.smiler.basketball_scoreboard.HelpListFragment"
+            class="com.smiler.basketball_scoreboard.help.HelpListFragment"
             android:id="@+id/help_list_frag"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

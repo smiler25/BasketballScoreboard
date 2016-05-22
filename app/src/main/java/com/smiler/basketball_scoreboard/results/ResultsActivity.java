@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.results;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.smiler.basketball_scoreboard.DbHelper;
+import com.smiler.basketball_scoreboard.R;
 
 public class ResultsActivity extends ActionBarActivity  implements ResultsListFragment.ResultsListListener,
         ResultsExpListFragment.ExpListListener {

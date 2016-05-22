@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.view.ActionMode;
 import android.widget.AbsListView;
 
+import com.smiler.basketball_scoreboard.results.ResultsCursorAdapter;
+
 public class ListMultiChoice extends BaseMultiChoice {
 
     private ResultsCursorAdapter adapter;

@@ -13,8 +13,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:versionCode="13"
-        android:versionName="2.0.4" >
+        android:versionCode="15"
+        android:versionName="2.2" >
 
         <uses-library android:required="false" android:name="com.sec.android.app.multiwindow" />
         <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
@@ -26,7 +26,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="sensorLandscape" >
+            >
+            <!--android:configChanges="orientation|screenSize|keyboard|keyboardHidden"-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,19 +40,19 @@
             android:theme="@style/SecondaryTheme" >
         </activity>
         <activity
-            android:name=".ResultsActivity"
+            android:name=".results.ResultsActivity"
             android:label="@string/title_activity_results"
             android:theme="@style/SecondaryTheme" >
         </activity>
         <activity
-            android:name=".HelpActivity"
+            android:name=".help.HelpActivity"
             android:label="@string/title_activity_help"
             android:configChanges="screenSize|orientation"
             android:theme="@style/SecondaryTheme" >
         </activity>
 
         <activity
-            android:name=".CameraActivity"
+            android:name=".camera.CameraActivity"
             android:label="CameraActivity"
             >
         </activity>

@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.results;
 
 import android.content.Context;
 import android.util.SparseBooleanArray;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import com.smiler.basketball_scoreboard.elements.ResultView;
+import com.smiler.basketball_scoreboard.R;
 
 import java.util.HashMap;
 import java.util.List;

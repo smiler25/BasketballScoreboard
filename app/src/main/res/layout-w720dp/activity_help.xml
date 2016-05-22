@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.smiler.basketball_scoreboard.HelpActivity"
+    tools:context="com.smiler.basketball_scoreboard.help.HelpActivity"
     >
 
     <LinearLayout
@@ -15,7 +15,7 @@
         >
 
         <fragment
-            android:name="com.smiler.basketball_scoreboard.HelpListFragment"
+            android:name="com.smiler.basketball_scoreboard.help.HelpListFragment"
             android:id="@+id/help_list_frag"
             android:layout_width="@dimen/list_width"
             android:layout_height="match_parent"/>

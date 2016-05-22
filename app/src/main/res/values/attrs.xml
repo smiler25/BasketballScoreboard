@@ -3,4 +3,15 @@
     <attr name="max" format="integer"/>
     <attr name="min" format="integer"/>
 
+    <declare-styleable name="Triangle">
+        <attr name="direction" format="enum">
+            <enum name="top" value="0"/>
+            <enum name="bottom" value="1"/>
+            <enum name="right" value="2"/>
+            <enum name="left" value="3"/>
+        </attr>
+        <attr name="border_width" format="dimension"/>
+
+    </declare-styleable>
+
 </resources>

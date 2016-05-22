@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.help;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.smiler.basketball_scoreboard.R;
 
 public class HelpListFragment extends ListFragment {
 

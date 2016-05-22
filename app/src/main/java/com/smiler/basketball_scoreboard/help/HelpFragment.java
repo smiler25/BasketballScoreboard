@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.help;
 
 import android.app.Fragment;
 import android.content.SharedPreferences;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 
 public class HelpFragment extends Fragment {

@@ -1,5 +1,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -45,7 +46,6 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     >
-
                     <ImageView
                         android:id="@+id/switchSidesView"
                         style="@style/matchParentCenter"
@@ -78,14 +78,25 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/leftNameView"
+                <LinearLayout
+                    android:orientation="vertical"
                     style="@style/matchParentCenter"
                     android:layout_weight="2"
-                    android:maxWidth="@dimen/team_name_max_width"
-                    android:text="@string/home_team_name_default"
-                    android:textSize="@dimen/team_name_font_size"
-                    />
+                    android:gravity="center"
+                    >
+                    <com.smiler.basketball_scoreboard.elements.TriangleView
+                        android:id="@+id/leftArrowView"
+                        style="@style/arrowStyle"
+                        app:direction="left"
+                        />
+                    <TextView
+                        android:id="@+id/leftNameView"
+                        style="@style/matchParentCenter"
+                        android:maxWidth="@dimen/team_name_max_width"
+                        android:text="@string/home_team_name_default"
+                        android:textSize="@dimen/team_name_font_size"
+                        />
+                </LinearLayout>
 
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/mainTimeView"
@@ -94,15 +105,26 @@
                     android:text="@string/main_time"
                     />
 
-                <TextView
-                    android:id="@+id/rightNameView"
+                <LinearLayout
+                    android:orientation="vertical"
                     style="@style/matchParentCenter"
                     android:layout_weight="2"
-                    android:maxWidth="@dimen/team_name_max_width"
-                    android:text="@string/guest_team_name_default"
-                    android:textSize="@dimen/team_name_font_size"
-                    />
+                    android:gravity="center"
+                    >
+                    <com.smiler.basketball_scoreboard.elements.TriangleView
+                        android:id="@+id/rightArrowView"
+                        style="@style/arrowStyle"
+                        app:direction="right"
+                        />
+                    <TextView
+                        android:id="@+id/rightNameView"
+                        style="@style/matchParentCenter"
+                        android:maxWidth="@dimen/team_name_max_width"
+                        android:text="@string/guest_team_name_default"
+                        android:textSize="@dimen/team_name_font_size"
+                        />
 
+                </LinearLayout>
                 <LinearLayout
                     android:orientation="vertical"
                     style="@style/matchParentCenter"

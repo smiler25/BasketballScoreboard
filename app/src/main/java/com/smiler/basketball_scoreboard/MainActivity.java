@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
@@ -44,13 +45,19 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.smiler.basketball_scoreboard.camera.CameraActivity;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.ListDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
-import com.smiler.basketball_scoreboard.elements.SidePanelRow;
+import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
+import com.smiler.basketball_scoreboard.elements.TriangleView;
+import com.smiler.basketball_scoreboard.help.HelpActivity;
+import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
+import com.smiler.basketball_scoreboard.results.Result;
+import com.smiler.basketball_scoreboard.results.ResultsActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,16 +90,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView hTimeoutsView, gTimeoutsView;
     private TextView hTimeouts20View, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
-    private ViewGroup leftPlayersButtons, rightPlayersButtons;
+    private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
+    private TriangleView leftArrow, rightArrow;
     private Drawer.Result drawer;
 
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
+    private boolean fixLandscape, fixLandscapeChanged;
     private boolean doubleBackPressedFirst, layoutChanged, timeoutsRulesChanged;
-    private boolean saveOnExit, autoShowTimeout, autoShowBreak, pauseOnSound, vibrationOn;
-    private boolean mainTimerOn, shotTimerOn, enableShotTime, enableShotTimeChanged, restartShotTimer;
+    private boolean autoShowTimeout, autoShowBreak, autoSwitchSides;
+    private boolean saveOnExit, pauseOnSound, vibrationOn;
+    private boolean mainTimerOn, shotTimerOn;
+    private boolean enableShotTime, enableShotTimeChanged, restartShotTimer;
     private boolean useDirectTimer, directTimerStopped;
     private boolean fractionSecondsMain, fractionSecondsShot;
-    private boolean sidePanelsOn, sidePanelsStateChanged, sidePanelsConnected, sidePanelsClearDelete;
+    private boolean spOn, spStateChanged, spConnected, spClearDelete;
+    private boolean arrowsOn, arrowsStateChanged;
+    private int possession = NO_TEAM;
     private long mainTime, mainTimePref, shotTime, shotTimePref, shortShotTimePref, overTimePref;
     private long startTime, totalTime;
     private long timeoutFullDuration;
@@ -107,9 +120,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String hName, gName;
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
-    private short hActionType = -1, gActionType = -1;
-    private int hActionValue = 0, gActionValue = 0;
-    private float periodViewSize;
+    private short leftActionType = ACTION_NONE, rightActionType = ACTION_NONE;
+    private int leftActionValue = 0, rightActionValue = 0;
+    private float periodViewSize, scoreViewSize;
     private boolean leftIsHome = true;
 
     private int dontAskNewGame;
@@ -117,12 +130,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingCountdownTimerDialog floatingDialog;
     private SidePanelFragment leftPanel, rightPanel;
     private OverlayFragment overlayPanels, overlaySwitch;
+    private ArrayList<View> leftPlayersButtons = new ArrayList<>();
+    private ArrayList<View> rightPlayersButtons = new ArrayList<>();
 
     private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
     private long mainTickInterval = SECOND;
     private long shotTickInterval = SECOND;
-    public boolean changedUnder2Minutes = false;
-    public boolean scoreSaved = false;
+    private boolean changedUnder2Minutes = false;
+    private boolean scoreSaved = false;
 
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
@@ -136,6 +151,67 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button longClickPlayerBu;
     private static Context mainActivityContext;
 
+    public static Context getContext() {
+        return mainActivityContext;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (saveOnExit) {
+            saveCurrentState();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        handleScoreViewSize();
+//        System.out.println("res_type = " + getResources().getString(R.string.res_type));
+
+        if (PrefActivity.prefChangedRestart) {
+            showConfirmDialog("new_game", false);
+        } else if (PrefActivity.prefChangedNoRestart) {
+            getSettingsNoRestart();
+            if (fixLandscapeChanged) {
+                handleOrientation();
+                fixLandscapeChanged = false;
+            }
+
+            if (spStateChanged) {
+                if (!spOn) {
+                    leftPlayersButtonsGroup.setVisibility(View.GONE);
+                    rightPlayersButtonsGroup.setVisibility(View.GONE);
+                } else {
+                    if (leftPlayersButtonsGroup == null){
+                        initSidePanels();
+                    } else {
+                        leftPlayersButtonsGroup.setVisibility(View.VISIBLE);
+                        rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+            if (enableShotTimeChanged && layoutType == LAYOUT_FULL) {
+                try {
+                    if (!enableShotTime) {
+                        shotTimeView.setVisibility(View.GONE);
+                        shotTimeSwitchView.setVisibility(View.GONE);
+                    } else {
+                        shotTimeView.setVisibility(View.VISIBLE);
+                        if (shortShotTimePref != shotTimePref) {
+                            shotTimeSwitchView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    Log.d(TAG, e.getMessage() + ((shotTimeView != null) ? shotTimeView.toString() : "shotTimeView == null"));
+                }
+            }
+            if (arrowsStateChanged) {
+                handleArrowsVisibility();
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,13 +224,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         // if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
-        if (sharedPref.getInt("app_version", 1) < 9) {
+        if (sharedPref.getInt("app_version", 1) < 13) {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
             new AppUpdatesFragment().show(getFragmentManager(), TAG_FRAGMENT_APP_UPDATES);
         }
 
+        handleOrientation();
         initLayout();
 
         if (sharedPref.getBoolean("first_launch", true)) {
@@ -177,24 +254,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static Context getContext() {
-        return mainActivityContext;
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        if (overlaySwitch != null && overlaySwitch.isAdded()) {
+            getFragmentManager().putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
+        }
+        if (overlayPanels != null && overlayPanels.isAdded()) {
+            getFragmentManager().putFragment(outState, OverlayFragment.TAG_PANELS, overlayPanels);
+        }
+        if (leftPanel != null && leftPanel.isAdded()) {
+            getFragmentManager().putFragment(outState, SidePanelFragment.TAG_LEFT_PANEL, leftPanel);
+        }
+        if (rightPanel != null && rightPanel.isAdded()) {
+            getFragmentManager().putFragment(outState, SidePanelFragment.TAG_RIGHT_PANEL, rightPanel);
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle inState){
+        if (inState != null) {
+            FragmentManager fm = getFragmentManager();
+            Fragment overlaySwitch_ = fm.getFragment(inState, OverlayFragment.TAG_SWITCH);
+            if (overlaySwitch_ != null) {
+                overlaySwitch = (OverlayFragment) overlaySwitch_;
+            }
+
+            if (spOn) {
+                Fragment overlayPanels_ = fm.getFragment(inState, OverlayFragment.TAG_PANELS);
+                if (overlayPanels_ != null) {
+                    overlayPanels = (OverlayFragment) overlayPanels_;
+                }
+                Fragment leftPanel_ = fm.getFragment(inState, SidePanelFragment.TAG_LEFT_PANEL);
+                if (leftPanel_ != null) {
+                    leftPanel = (SidePanelFragment) leftPanel_;
+                }
+                Fragment rightPanel_ = fm.getFragment(inState, SidePanelFragment.TAG_RIGHT_PANEL);
+                if (rightPanel_ != null) {
+                    rightPanel = (SidePanelFragment) rightPanel_;
+                }
+                fm.popBackStack();
+            }
+        }
+    }
+
+    private void handleOrientation() {
+        if (fixLandscape) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
     }
 
     private void initLayout() {
         leftIsHome = true;
         overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
+        overlaySwitch.setRetainInstance(true);
         if (layoutType == LAYOUT_FULL) {
             initExtensiveLayout();
         } else {
             initSimpleLayout();
         }
         initCommonLayout();
-        if (sidePanelsOn && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (spOn) {
             initSidePanels();
-            leftPlayersButtons.setVisibility(View.VISIBLE);
-            rightPlayersButtons.setVisibility(View.VISIBLE);
+            leftPlayersButtonsGroup.setVisibility(View.VISIBLE);
+            rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
         }
+        initArrows();
     }
 
     private void initCommonLayout() {
@@ -210,7 +337,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hScoreView.setOnLongClickListener(this);
         gScoreView.setOnClickListener(this);
         gScoreView.setOnLongClickListener(this);
+        hNameView.setOnClickListener(this);
         hNameView.setOnLongClickListener(this);
+        gNameView.setOnClickListener(this);
         gNameView.setOnLongClickListener(this);
 
         (findViewById(R.id.leftMinus1View)).setOnClickListener(this);
@@ -305,81 +434,114 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initSidePanels() {
         ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
         ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
-        leftPlayersStub.setLayoutResource(R.layout.side_panel_left);
+        leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons);
         leftPlayersStub.inflate();
-        rightPlayersStub.setLayoutResource(R.layout.side_panel_right);
+        rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons);
         rightPlayersStub.inflate();
 
-        leftPlayersButtons = (ViewGroup) findViewById(R.id.left_panel);
-        for (int i = 0; i < leftPlayersButtons.getChildCount() - 1; i++) {
-            View button = leftPlayersButtons.getChildAt(i);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SidePanelRow row = ((SidePanelRow) v.getTag());
-                    if (row == null) {
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (hActionType != -1) {
-                        if (hActionType == 0) {
-                            row.changePoints(hActionValue);
-                        } else if (hActionType == 1) {
-                            row.changeFouls(hActionValue);
-                        }
-                        hActionType = -1;
-                        hActionValue = 0;
-                    }
-                }
-            });
-            button.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    longClickPlayerBu = (Button) v;
-                    showListDialog(true);
-                    return false;
-                }
-            });
+        leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
+        leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
+        for (View bu : leftPlayersButtons) {
+            attachLeftButton(bu);
         }
 
-        rightPlayersButtons = (ViewGroup) findViewById(R.id.right_panel);
-        for (int i = 0; i < rightPlayersButtons.getChildCount() - 1; i++) {
-            View button = rightPlayersButtons.getChildAt(i);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SidePanelRow row = ((SidePanelRow) v.getTag());
-                    if (row == null) {
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (gActionType != -1) {
-                        if (gActionType == 0) {
-                            row.changePoints(gActionValue);
-                        } else if (gActionType == 1) {
-                            row.changeFouls(gActionValue);
-                        }
-                        gActionType = -1;
-                        gActionValue = 0;
-                    }
-                }
-            });
-            button.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    longClickPlayerBu = (Button) v;
-                    showListDialog(false);
-                    return false;
-                }
-            });
+        rightPlayersButtonsGroup = (ViewGroup) findViewById(R.id.right_panel);
+        rightPlayersButtons = getAllButtons(rightPlayersButtonsGroup);
+        for (View bu : rightPlayersButtons) {
+            attachRightButton(bu);
         }
 
         leftPanel = SidePanelFragment.newInstance(true);
         rightPanel = SidePanelFragment.newInstance(false);
         overlayPanels = OverlayFragment.newInstance(OVERLAY_PANELS);
+        leftPanel.setRetainInstance(true);
+        rightPanel.setRetainInstance(true);
+        overlayPanels.setRetainInstance(true);
+
         (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
         (findViewById(R.id.right_panel_toggle)).setOnClickListener(this);
-        sidePanelsStateChanged = false;
+        spStateChanged = false;
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.left_panel_full, leftPanel, SidePanelFragment.TAG_LEFT_PANEL);
+        ft.add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL);
+        ft.hide(leftPanel).hide(rightPanel);
+        ft.addToBackStack(null).commit();
+
+    }
+
+    private ArrayList<View> getAllButtons(ViewGroup group) {
+        ArrayList<View> res = new ArrayList<>();
+        View button;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            button = group.getChildAt(i);
+            if (button instanceof Button) {
+                res.add(button);
+            } else if (button instanceof ViewGroup) {
+                res.addAll(getAllButtons((ViewGroup) button));
+            }
+        }
+        return res;
+    }
+
+    private void attachLeftButton(View button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SidePanelRow row = ((SidePanelRow) v.getTag());
+                if (row == null) {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (leftActionType != ACTION_NONE) {
+                    if (leftActionType == ACTION_PTS) {
+                        row.changePoints(leftActionValue);
+                    } else if (leftActionType == ACTION_FLS) {
+                        row.changeFouls(leftActionValue);
+                    }
+                    leftActionType = ACTION_NONE;
+                    leftActionValue = 0;
+                }
+            }
+        });
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longClickPlayerBu = (Button) v;
+                showListDialog(true);
+                return false;
+            }
+        });
+    }
+
+    private void attachRightButton(View button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SidePanelRow row = ((SidePanelRow) v.getTag());
+                if (row == null) {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (rightActionType != ACTION_NONE) {
+                    if (rightActionType == ACTION_PTS) {
+                        row.changePoints(rightActionValue);
+                    } else if (rightActionType == ACTION_FLS) {
+                        row.changeFouls(rightActionValue);
+                    }
+                    rightActionType = ACTION_NONE;
+                    rightActionValue = 0;
+                }
+            }
+        });
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longClickPlayerBu = (Button) v;
+                showListDialog(false);
+                return false;
+            }
+        });
     }
 
     private void initBottomLineTimeouts() {
@@ -429,50 +591,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hornLength = 850;
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (saveOnExit) {
-            saveCurrentState();
+    private void initArrows() {
+        try {
+            leftArrow = (TriangleView) findViewById(R.id.leftArrowView);
+            rightArrow = (TriangleView) findViewById(R.id.rightArrowView);
+            leftArrow.setOnClickListener(this);
+            rightArrow.setOnClickListener(this);
+            leftArrow.setOnLongClickListener(this);
+            rightArrow.setOnLongClickListener(this);
+        } catch (NullPointerException e) {
+            Log.d(TAG, "initArrows: " + e.getMessage());
+        }
+        handleArrowsVisibility();
+    }
+
+    private void initDrawer() {
+        AccountHeader.Result drawerHeader = createDrawerHeader();
+        drawer = new Drawer()
+                .withActivity(this)
+                .withTranslucentStatusBar(true)
+                .withFullscreen(true)
+                .withDrawerWidthPx(getResources().getDimensionPixelSize(R.dimen.drawer_width))
+                .withAccountHeader(drawerHeader)
+                .withActionBarDrawerToggleAnimated(true)
+                .addDrawerItems(initDrawerItems())
+                .withOnDrawerItemClickListener(this)
+                .build();
+    }
+
+    private AccountHeader.Result createDrawerHeader() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return new AccountHeader()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.drawer_header)
+                .build();
+    }
+
+    private IDrawerItem[] initDrawerItems() {
+        return new IDrawerItem[]{
+                new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(getResources().getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_resluts).withIcon(getResources().getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
+        };
+    }
+
+    private void handleArrowsVisibility() {
+        if (arrowsOn) {
+            showArrows();
+        } else {
+            hideArrows();
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (PrefActivity.prefChangedRestart) {
-            showConfirmDialog("new_game", false);
-        } else if (PrefActivity.prefChangedNoRestart) {
-            getSettingsNoRestart();
-            if (sidePanelsStateChanged) {
-                if (!sidePanelsOn) {
-                    leftPlayersButtons.setVisibility(View.GONE);
-                    rightPlayersButtons.setVisibility(View.GONE);
-                } else {
-                    if (leftPlayersButtons == null){
-                        initSidePanels();
-                    } else {
-                        leftPlayersButtons.setVisibility(View.VISIBLE);
-                        rightPlayersButtons.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-            if (enableShotTimeChanged && layoutType == LAYOUT_FULL) {
-                try {
-                    if (!enableShotTime) {
-                        shotTimeView.setVisibility(View.GONE);
-                        shotTimeSwitchView.setVisibility(View.GONE);
-                    } else {
-                        shotTimeView.setVisibility(View.VISIBLE);
-                        if (shortShotTimePref != shotTimePref) {
-                            shotTimeSwitchView.setVisibility(View.VISIBLE);
-                        }
-                    }
-                } catch (NullPointerException e) {
-                    Log.d(TAG, e.getMessage() + ((shotTimeView != null) ? shotTimeView.toString() : "shotTimeView == null"));
-                }
-            }
-        }
+    private void hideArrows() {
+        leftArrow.setVisibility(View.GONE);
+        rightArrow.setVisibility(View.GONE);
+    }
+
+    private void showArrows() {
+        leftArrow.setVisibility(View.VISIBLE);
+        rightArrow.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -539,61 +720,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void initDrawer() {
-        AccountHeader.Result drawerHeader = createDrawerHeader();
-        drawer = new Drawer()
-                .withActivity(this)
-                .withTranslucentStatusBar(true)
-                .withFullscreen(true)
-                .withDrawerWidthPx(getResources().getDimensionPixelSize(R.dimen.drawer_width))
-                .withAccountHeader(drawerHeader)
-                .withActionBarDrawerToggleAnimated(true)
-                .addDrawerItems(initDrawerItems())
-                .withOnDrawerItemClickListener(this)
-                .build();
-    }
-
-    private AccountHeader.Result createDrawerHeader() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return new AccountHeader()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.drawer_header)
-                .build();
-    }
-
-    private IDrawerItem[] initDrawerItems() {
-        return new IDrawerItem[]{
-                new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(getResources().getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_resluts).withIcon(getResources().getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
-        };
-    }
-
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
-        switch (i) {
-            case 0:
-                newGame(true);
-                break;
-            case 1:
-                runResultsActivity();
-                break;
-            case 2:
-                runSettingsActivity();
-                break;
-            case 3:
-                shareResult();
-                break;
-            case 4:
-                runHelpActivity();
-                break;
-            default:
-                break;
-        }
-    }
-
     @Override
     public void onBackPressed() {
         if (drawer != null && drawer.isDrawerOpen()) {
@@ -616,6 +742,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+    }
+
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+        switch (i) {
+            case 0:
+                newGame(true);
+                break;
+            case 1:
+                runResultsActivity();
+                break;
+            case 2:
+                runSettingsActivity();
+                break;
+            case 3:
+                shareResult();
+                break;
+            case 4:
+                runHelpActivity();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -696,6 +844,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.right_panel_toggle:
                 showSidePanels(SIDE_PANELS_RIGHT);
                 break;
+            case R.id.leftNameView:
+            case R.id.leftArrowView:
+                if (arrowsOn) { setPossession(HOME); }
+                break;
+            case R.id.rightNameView:
+            case R.id.rightArrowView:
+                if (arrowsOn) { setPossession(GUEST); }
+                break;
             default:
                 break;
         }
@@ -746,6 +902,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.rightNameView:
                     chooseTeamNameDialog("guest", gName);
                     return true;
+                case R.id.leftArrowView:
+                case R.id.rightArrowView:
+                    clearPossession();
+                    return true;
                 default:
                     return true;
             }
@@ -753,7 +913,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
-    public void mainTimeClick() {
+    private void mainTimeClick() {
         if (!mainTimerOn) {
             if (useDirectTimer) {
                 startDirectTimer();
@@ -765,7 +925,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void shotTimeClick() {
+    private void shotTimeClick() {
         shotTickInterval = SECOND;
         if (mainTimerOn) {
             shotTimer.cancel();
@@ -780,7 +940,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void shotTimeSwitchClick() {
+    private void shotTimeSwitchClick() {
         shotTickInterval = SECOND;
         if (shotTimer != null && enableShotTime && shotTimerOn) {
             shotTimer.cancel();
@@ -796,7 +956,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public boolean checkCameraHardware(Context context) {
+    private boolean checkCameraHardware(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
@@ -821,8 +981,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putInt(STATE_HOME_TIMEOUTS20, hTimeouts20);
             editor.putInt(STATE_GUEST_TIMEOUTS20, gTimeouts20);
         }
+        if (arrowsOn) {
+            editor.putInt(STATE_POSSESSION, possession);
+        }
         editor.apply();
-        if (sidePanelsOn) {
+        if (spOn) {
             if (leftPanel != null) {
                 leftPanel.saveCurrentData(statePref);
             }
@@ -877,6 +1040,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 gTimeouts20View.setText(Short.toString(gTimeouts20));
             }
         }
+        if (arrowsOn) { setPossession(possession); }
     }
 
     private void getSettings() {
@@ -885,11 +1049,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getSettingsNoRestart() {
+        boolean fixLandscape_ = sharedPref.getBoolean(PrefActivity.PREF_FIX_LANDSCAPE, true);
+        fixLandscapeChanged = fixLandscape != fixLandscape_;
+        fixLandscape = fixLandscape_;
         autoSound = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
         hornUserRepeats = (sharedPref.getInt(PrefActivity.PREF_HORN_LENGTH, DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f));
         autoSaveResults = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0"));
         autoShowTimeout = sharedPref.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = sharedPref.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
+        autoSwitchSides = sharedPref.getBoolean(PrefActivity.PREF_AUTO_SWITCH_SIDES, false);
         pauseOnSound = sharedPref.getBoolean(PrefActivity.PREF_PAUSE_ON_SOUND, true);
         vibrationOn = vibrator.hasVibrator() && sharedPref.getBoolean(PrefActivity.PREF_VIBRATION, false);
         saveOnExit = sharedPref.getBoolean(PrefActivity.PREF_SAVE_ON_EXIT, true);
@@ -911,15 +1079,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, DEFAULT_MAX_FOULS);
         mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < SECONDS_60) ? TIME_FORMAT_MILLIS : TIME_FORMAT;
         boolean sidePanelsOn_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
-        if (sidePanelsOn_ != sidePanelsOn) {
-            sidePanelsOn = sidePanelsOn_;
-            sidePanelsStateChanged = true;
+        if (sidePanelsOn_ != spOn) {
+            spOn = sidePanelsOn_;
+            spStateChanged = true;
         }
-        sidePanelsClearDelete = sharedPref.getString(PrefActivity.PREF_SIDE_PANELS_CLEAR, "0").equals("0");
-        sidePanelsConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
+        spClearDelete = sharedPref.getString(PrefActivity.PREF_SIDE_PANELS_CLEAR, "0").equals("0");
+        spConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
         SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, DEFAULT_FIBA_PLAYER_FOULS));
 
         restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
+
+        boolean arrowsOn_ = sharedPref.getBoolean(PrefActivity.PREF_POSSESSION_ARROWS, false);
+        if (arrowsOn != arrowsOn_) {
+            arrowsStateChanged = true;
+            arrowsOn = arrowsOn_;
+        }
+
         PrefActivity.prefChangedNoRestart = false;
     }
 
@@ -950,8 +1125,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         changedUnder2Minutes = false;
         setMainTimeText(mainTime);
         hScore = gScore = 0;
-        changeGuestScore(0);
-        changeHomeScore(0);
+        leftActionType = rightActionType = ACTION_NONE;
+        leftActionValue = rightActionValue = 0;
+        nullScore(LEFT);
+        nullScore(RIGHT);
         setTeamNames();
         if (layoutType == LAYOUT_FULL) {
             if (enableShotTime) {
@@ -970,14 +1147,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 nullTimeouts20(2);
             }
         }
-        if (sidePanelsOn) {
+        if (spOn) {
             try {
-                leftPanel.clear(sidePanelsClearDelete);
-                rightPanel.clear(sidePanelsClearDelete);
+                leftPanel.clear(spClearDelete);
+                rightPanel.clear(spClearDelete);
             } catch (NullPointerException e) {
                 Log.d(TAG, "Left or right panel is null");
             }
         }
+        if (arrowsOn) { clearPossession(); }
+        if (fixLandscapeChanged) {
+            handleOrientation();
+            fixLandscapeChanged = false;
+        }
+
     }
 
     private void newGame(boolean save) {
@@ -996,17 +1179,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 shotTimeSwitchView.setText(Long.toString(shortShotTimePref / 1000));
             }
         }
-        if (layoutChanged || timeoutsRulesChanged) {
-            initLayout();
-        }
+        if (layoutChanged || timeoutsRulesChanged) { initLayout(); }
         pauseGame();
         zeroState();
-        if (layoutType == LAYOUT_FULL) {
-            setTimeouts();
-        }
-        if (sidePanelsOn) {
-            SidePanelFragment.clearCurrentData();
-        }
+        if (layoutType == LAYOUT_FULL) { setTimeouts(); }
+        if (spOn) { SidePanelFragment.clearCurrentData(); }
+        if (arrowsOn) { clearPossession(); }
         gameResult = new Result(hName, gName);
     }
 
@@ -1035,21 +1213,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setTimeouts();
         saveResult();
         scoreSaved = false;
+        if (period == 3 && autoSwitchSides) {
+            switchSides();
+        }
     }
 
     private void switchSides() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.SWITCH);
+        ft.setCustomAnimations(R.animator.fragment_fade_in, R.animator.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG_SWITCH);
         if (o != null) {
             if (!o.isVisible()) {
                 ft.show(o);
             }
         } else {
-            ft.add(R.id.overlay, overlaySwitch, OverlayFragment.SWITCH);
+            ft.add(R.id.overlay, overlaySwitch, OverlayFragment.TAG_SWITCH);
         }
-        ft.commit();
+        ft.addToBackStack(null).commit();
 
         TextView _NameView = hNameView;
         hNameView = gNameView;
@@ -1080,7 +1261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-        if (sidePanelsOn && leftPanel != null) {
+        if (spOn && leftPanel != null) {
             try {
                 switchSidePanels();
             } catch (NullPointerException e) {
@@ -1088,13 +1269,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        if (arrowsOn) {
+            switchPossession();
+        }
+
         leftIsHome = !leftIsHome;
 
         fm.beginTransaction()
-                .setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out)
+                .setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out)
                 .hide(overlaySwitch)
                 .commit();
-
     }
 
     private void switchSidePanels() {
@@ -1107,6 +1291,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SidePanelRow leftCaptainPlayer = leftPanel.getCaptainPlayer();
         leftPanel.replaceRows(rightPanel.getAllPlayers(), rightPanel.getActivePlayers(), rightPanel.getCaptainPlayer());
         rightPanel.replaceRows(leftRows, leftActivePlayers, leftCaptainPlayer);
+    }
+
+    private void switchPossession() {
+        if (leftArrow != null && rightArrow != null) {
+            if (possession == NO_TEAM) { return; }
+            possession = 1 - possession;
+                if (possession == HOME) {
+                    leftArrow.setFill();
+                    rightArrow.setStroke();
+                } else if (possession == GUEST) {
+                    rightArrow.setFill();
+                    leftArrow.setStroke();
+            }
+        }
     }
 
     private void setTimeoutsText(short hValue, short gValue, int hColor, int gColor) {
@@ -1385,6 +1583,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             foul(GUEST);
         }
+        if (left) {
+            leftActionType = ACTION_FLS;
+            leftActionValue += 1;
+        } else {
+            rightActionType = ACTION_FLS;
+            rightActionValue += 1;
+        }
     }
 
     private void foul(int team) {
@@ -1397,8 +1602,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         switch (team) {
             case HOME:
-                hActionType = 1;
-                hActionValue += 1;
                 if (hFouls < maxFouls) {
                     hFoulsView.setText(Short.toString(++hFouls));
                     if (hFouls == maxFouls) {
@@ -1407,8 +1610,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case GUEST:
-                gActionType = 1;
-                gActionValue += 1;
                 if (gFouls < maxFouls) {
                     gFoulsView.setText(Short.toString(++gFouls));
                     if (gFouls == maxFouls) {
@@ -1416,6 +1617,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
+        }
+    }
+
+    private void setPossession(int team) {
+        if (leftArrow != null && rightArrow != null) {
+            switch (team) {
+                case HOME:
+                    leftArrow.setFill();
+                    rightArrow.setStroke();
+                    break;
+                case GUEST:
+                    rightArrow.setFill();
+                    leftArrow.setStroke();
+                    break;
+                case NO_TEAM:
+                    leftArrow.setStroke();
+                    rightArrow.setStroke();
+                    break;
+            }
+        possession = team;
+        }
+    }
+
+    private void clearPossession() {
+        if (leftArrow != null && rightArrow != null) {
+            leftArrow.setStroke();
+            rightArrow.setStroke();
+            possession = NO_TEAM;
         }
     }
 
@@ -1434,6 +1663,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             gScore = 0;
             gScoreView.setText("00");
         }
+        handleScoreViewSize();
     }
 
     private void changeScore(boolean left, int value) {
@@ -1441,6 +1671,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             changeHomeScore(value);
         } else {
             changeGuestScore(value);
+        }
+        if (left) {
+            leftActionType = ACTION_PTS;
+            leftActionValue += value;
+        } else {
+            rightActionType = ACTION_PTS;
+            rightActionValue += value;
+        }
+
+    }
+
+    private void handleScoreViewSize() {
+        if (gScore >= 100 || hScore >= 100) {
+            if (scoreViewSize == 0) {
+                scoreViewSize = getResources().getDimension(R.dimen.score_size);
+            }
+            hScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize * 0.75f);
+            gScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize * 0.75f);
+        } else {
+            if (scoreViewSize != 0) {
+                hScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize);
+                gScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize);
+            }
         }
     }
 
@@ -1460,23 +1713,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeGuestScore(int value) {
-        gActionType = 0;
-        gActionValue += value;
         gScore += value;
         gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
         if (value != 0) {
             handleScoreChange();
         }
+        handleScoreViewSize();
     }
 
     private void changeHomeScore(int value) {
-        hActionType = 0;
-        hActionValue += value;
         hScore += value;
         hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
         if (value != 0) {
             handleScoreChange();
         }
+        handleScoreViewSize();
     }
 
     private void setMainTimeText(long millis) {
@@ -1761,7 +2012,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void shareResult() {
+    private void shareResult() {
         String mime_type = "text/plain";
         Intent sendIntent = new Intent();
         saveResult();
@@ -1854,39 +2105,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showSidePanels(int type) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.PANELS);
+        ft.setCustomAnimations(R.animator.fragment_fade_in, R.animator.fragment_fade_in);
+        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG_PANELS);
         if (o != null) {
             if (!o.isVisible()) {
                 ft.show(o);
             }
         } else {
-            ft.add(R.id.overlay, overlayPanels, OverlayFragment.PANELS);
+            ft.add(R.id.overlay, overlayPanels, OverlayFragment.TAG_PANELS);
         }
 
-        if (type == SIDE_PANELS_LEFT || sidePanelsConnected) {
-            ft.setCustomAnimations(R.anim.slide_left_side_show, R.anim.slide_left_side_show);
-            Fragment lpanel = fm.findFragmentByTag("LEFT_SIDE_PANEL");
+        boolean connected = spConnected && getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT;
+
+        if (type == SIDE_PANELS_LEFT || connected) {
+            ft.setCustomAnimations(R.animator.slide_left_side_show, R.animator.slide_left_side_show);
+            Fragment lpanel = fm.findFragmentByTag(SidePanelFragment.TAG_LEFT_PANEL);
             if (lpanel != null) {
                 ft.show(lpanel);
             } else {
-                ft.add(R.id.left_panel_full, leftPanel, "LEFT_SIDE_PANEL");
+                ft.add(R.id.left_panel_full, leftPanel, SidePanelFragment.TAG_LEFT_PANEL);
             }
         }
 
-        if (type == SIDE_PANELS_RIGHT || sidePanelsConnected) {
-            ft.setCustomAnimations(R.anim.slide_right_side_show, R.anim.slide_right_side_show);
-            Fragment rpanel = fm.findFragmentByTag("RIGHT_SIDE_PANEL");
+        if (type == SIDE_PANELS_RIGHT || connected) {
+            ft.setCustomAnimations(R.animator.slide_right_side_show, R.animator.slide_right_side_show);
+            Fragment rpanel = fm.findFragmentByTag(SidePanelFragment.TAG_RIGHT_PANEL);
             if (rpanel != null) {
                 ft.show(rpanel);
             } else {
-                ft.add(R.id.right_panel_full, rightPanel, "RIGHT_SIDE_PANEL");
+                ft.add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL);
             }
         }
-        ft.commit();
+        ft.addToBackStack(null).commit();
     }
 
-    public void endOfGameActions(int dontAskNewGame) {
+    private void endOfGameActions(int dontAskNewGame) {
         switch (dontAskNewGame) {
             case 1:
                 break;
@@ -1900,7 +2153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void saveResult() {
+    private void saveResult() {
         if (!scoreSaved) {
             // возможно, надо учитывать сброс периода
             if (gameResult.getHomeScoreByPeriod().size() == period) {
@@ -1912,7 +2165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void saveResultDb() {
+    private void saveResultDb() {
         if (hScore == 0 && gScore == 0) {
             return;
         }
@@ -1938,7 +2191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             cv.put(DbScheme.ResultsTable.COLUMN_NAME_COMPLETE, gameResult.isComplete());
             long gameId = db.insert(DbScheme.ResultsTable.TABLE_NAME_GAME, null, cv);
 
-            if (sidePanelsOn) {
+            if (spOn) {
                 ContentValues cv2;
                 TreeMap<Integer, SidePanelRow> allHomePlayers = leftPanel.getAllPlayers();
                 TreeMap<Integer, SidePanelRow> allGuestPlayers = rightPanel.getAllPlayers();
@@ -2111,14 +2364,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSidePanelClose(boolean left) {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        if (left){
-            ft.setCustomAnimations(R.anim.slide_left_side_hide, R.anim.slide_left_side_hide).hide(leftPanel);
-        } else{
-            ft.setCustomAnimations(R.anim.slide_right_side_hide, R.anim.slide_right_side_hide).hide(rightPanel);
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        if (left) {
+            ft.setCustomAnimations(R.animator.slide_left_side_hide, R.animator.slide_left_side_hide).hide(leftPanel);
+        } else {
+            ft.setCustomAnimations(R.animator.slide_right_side_hide, R.animator.slide_right_side_hide).hide(rightPanel);
         }
         if (!(leftPanel.isVisible() && rightPanel.isVisible())) {
-            ft.setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out);
+            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out);
             ft.hide(overlayPanels);
         }
         ft.commit();
@@ -2126,33 +2380,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
-        ViewGroup group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
         int pos = 0;
         for (SidePanelRow row : rows) {
-            Button bu = (Button) group.getChildAt(pos++);
-            bu.setText(Integer.toString(row.getNumber()));
+            View bu = group.get(pos++);
+            ((Button) bu).setText(Integer.toString(row.getNumber()));
             bu.setTag(row);
         }
     }
 
     @Override
     public void onSidePanelNoActive(boolean left) {
-        ViewGroup group = (left) ? leftPlayersButtons : rightPlayersButtons;
-        for (int i = 0; i < group.getChildCount() - 1; i++) {
-            Button button = (Button) group.getChildAt(i);
-            button.setTag(null);
-            button.setText(R.string.minus);
+        ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        for (View bu : group) {
+            ((Button) bu).setText(R.string.minus);
+            bu.setTag(null);
         }
     }
 
     @Override
     public void onOverlayClick() {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
         int toClose = 0;
         if (leftPanel.isVisible()) {
             toClose++;
             if (leftPanel.selectionConfirmed()) {
-                ft.setCustomAnimations(R.anim.slide_left_side_hide, R.anim.slide_left_side_hide);
+                ft.setCustomAnimations(R.animator.slide_left_side_hide, R.animator.slide_left_side_hide);
                 ft.hide(leftPanel);
                 toClose--;
             } else {
@@ -2162,7 +2416,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (rightPanel.isVisible()) {
             toClose++;
             if (rightPanel.selectionConfirmed()) {
-                ft.setCustomAnimations(R.anim.slide_right_side_hide, R.anim.slide_right_side_hide);
+                ft.setCustomAnimations(R.animator.slide_right_side_hide, R.animator.slide_right_side_hide);
                 ft.hide(rightPanel);
                 toClose--;
             } else {
@@ -2170,7 +2424,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         if (overlayPanels.isVisible() && toClose == 0) {
-            ft.setCustomAnimations(R.anim.fragment_fade_out, R.anim.fragment_fade_out);
+            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out);
             ft.hide(overlayPanels);
         }
         ft.commit();
@@ -2189,12 +2443,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onEditPlayerEdit(boolean left, int id, int number, String name, boolean captain) {
         if (((left) ? leftPanel : rightPanel).editRow(id, number, name, captain)) {
-            ViewGroup playersButtons = (left) ? leftPlayersButtons : rightPlayersButtons;
-            for (int i=0; i < playersButtons.getChildCount() - 1; i++) {
-                Button bu = (Button) playersButtons.getChildAt(i);
+            ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+            for (View bu : group) {
                 SidePanelRow row = (SidePanelRow) bu.getTag();
                 if (row != null && row.getId() == id) {
-                    bu.setText(Integer.toString(number));
+                    ((Button) bu).setText(Integer.toString(number));
                     break;
                 }
             }
@@ -2204,12 +2457,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onEditPlayerDelete(boolean left, int id) {
         if (((left) ? leftPanel : rightPanel).deleteRow(id)) {
-            ViewGroup playersButtons = (left) ? leftPlayersButtons : rightPlayersButtons;
-            for (int i=0; i < playersButtons.getChildCount() - 1; i++) {
-                Button bu = (Button) playersButtons.getChildAt(i);
+            ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+            for (View bu : group) {
                 SidePanelRow row = (SidePanelRow) bu.getTag();
                 if (row != null && row.getId() == id) {
-                    bu.setText(getResources().getString(R.string.minus));
+                    ((Button) bu).setText(getResources().getString(R.string.minus));
                     bu.setTag(null);
                     break;
                 }

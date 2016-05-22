@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.results;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.smiler.basketball_scoreboard.elements.ResultView;
+import com.smiler.basketball_scoreboard.R;
 
 public class ResultViewFragment extends Fragment {
     private static final String SQL_ARG = "sqlId";

@@ -5,6 +5,8 @@ import android.view.ActionMode;
 import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 
+import com.smiler.basketball_scoreboard.results.ResultsExpListAdapter;
+
 public class ExpListMultiChoice extends BaseMultiChoice {
 
     private ResultsExpListAdapter adapter;

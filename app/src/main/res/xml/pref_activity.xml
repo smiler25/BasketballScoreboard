@@ -101,6 +101,11 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
 
+        <CheckBoxPreference
+            android:key="possession_arrows"
+            android:title="@string/pref_possession_arrows"
+            android:defaultValue="false" />
+
         <PreferenceScreen
             android:key="sounds_screen"
             android:title="@string/sounds_screen"
@@ -124,10 +129,20 @@
             android:defaultValue="true" />
 
         <CheckBoxPreference
+            android:key="fix_landscape"
+            android:title="@string/pref_fix_landscape"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
             android:key="auto_show_timeout"
             android:title="@string/pref_auto_timeout"
             android:summary="@string/pref_auto_timeout_descr"
             android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="auto_switch_sides"
+            android:title="@string/pref_auto_switch_sides"
+            android:defaultValue="false" />
 
         <CheckBoxPreference
             android:key="vibration"

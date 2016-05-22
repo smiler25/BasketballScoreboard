@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight=".8"
+    style="@style/matchParentCenter"
+    >
+
+    <TextView
+        android:id="@+id/leftPlus1View"
+        style="@style/scoreChangers"
+        android:layout_weight="1"
+        android:text="@string/plus1"
+        />
+
+    <TextView
+        android:id="@+id/leftPlus3View"
+        style="@style/scoreChangers"
+        android:layout_weight="1"
+        android:text="@string/plus3"
+        />
+
+    <TextView
+        android:id="@+id/leftMinus1View"
+        style="@style/scoreChangers"
+        android:layout_weight="1"
+        android:text="@string/minus1"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/rightPlus1View"
+        style="@style/scoreChangers"
+        android:layout_weight="1"
+        android:text="@string/plus1"
+        />
+
+    <TextView
+        android:id="@+id/rightPlus3View"
+        style="@style/scoreChangers"
+        android:layout_weight="1"
+        android:text="@string/plus3"
+        />
+
+    <TextView
+        android:id="@+id/rightMinus1View"
+        style="@style/scoreChangers"
+        android:layout_weight="1"
+        android:text="@string/minus1"
+        />
+</LinearLayout>

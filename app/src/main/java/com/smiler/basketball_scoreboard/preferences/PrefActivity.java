@@ -55,12 +55,15 @@ public class PrefActivity extends Activity implements
     public static final String PREF_AUTO_SAVE_RESULTS = "auto_save_results";
     public static final String PREF_AUTO_BREAK = "auto_show_break";
     public static final String PREF_AUTO_TIMEOUT = "auto_show_timeout";
+    public static final String PREF_AUTO_SWITCH_SIDES = "auto_switch_sides";
     public static final String PREF_VIBRATION = "vibration";
     public static final String PREF_SAVE_ON_EXIT = "save_on_exit";
+    public static final String PREF_POSSESSION_ARROWS = "possession_arrows";
 
     public static final String PREF_AUTO_SOUND = "list_auto_sounds";
     public static final String PREF_PAUSE_ON_SOUND = "pause_on_sound";
     public static final String PREF_HORN_LENGTH = "horn_length";
+    public static final String PREF_FIX_LANDSCAPE = "fix_landscape";
 
     private static final boolean DEFAULT_ENABLE_SHOT_TIME = true;
     private static final boolean DEFAULT_ENABLE_SHORT_SHOT_TIME = true;

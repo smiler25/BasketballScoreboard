@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.camera;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +24,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smiler.basketball_scoreboard.Constants;
+import com.smiler.basketball_scoreboard.CountDownTimer;
+import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 
 import java.io.File;

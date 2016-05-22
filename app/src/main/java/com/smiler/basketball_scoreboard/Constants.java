@@ -8,6 +8,10 @@ public final class Constants {
     public static final boolean RIGHT = false;
     public static final int HOME = 0;
     public static final int GUEST = 1;
+    public static final int NO_TEAM = 2;
+    public static final int ACTION_PTS = 0;
+    public static final int ACTION_FLS = 1;
+    public static final int ACTION_NONE = -1;
 
     public static final long SECOND = 1000;
     public static final long SECONDS_60 = 60 * SECOND;
@@ -49,6 +53,7 @@ public final class Constants {
     public static final String STATE_PERIOD = "period";
     public static final String STATE_HOME_ACTIVE_PLAYERS = "home_active_players";
     public static final String STATE_GUEST_ACTIVE_PLAYERS = "guest_active_players";
+    public static final String STATE_POSSESSION = "possession";
 
     public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesFragment";
     public static final String TAG_FRAGMENT_TIME = "TimeDialog";

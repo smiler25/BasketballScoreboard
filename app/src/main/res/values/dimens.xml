@@ -10,7 +10,7 @@
     <dimen name="led_weight2_font_size">100dp</dimen>
 
     <dimen name="main_time_size">100dp</dimen>
-
+    <dimen name="arrow_border_width">3px</dimen>
     <dimen name="score_size">100dp</dimen>
     <dimen name="score_padding">10dp</dimen>
     <dimen name="score_margin">10dp</dimen>

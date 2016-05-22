@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="timeout_font_size">120dp</dimen>
+
+</resources>

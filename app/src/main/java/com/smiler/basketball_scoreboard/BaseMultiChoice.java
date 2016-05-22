@@ -12,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
+public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
 
     private AbsListView listView;
     private Activity activity;

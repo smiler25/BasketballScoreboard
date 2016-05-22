@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.camera;
 
 import android.content.Context;
 import android.hardware.Camera;

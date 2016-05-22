@@ -1,6 +1,7 @@
 <resources>
     <dimen name="led_weight1_font_size">190dp</dimen>
     <dimen name="led_weight2_font_size">210dp</dimen>
+    <dimen name="arrow_border_width">5px</dimen>
 
     <dimen name="main_time_size">120dp</dimen>
     <dimen name="shot_clock_size">90dp</dimen>

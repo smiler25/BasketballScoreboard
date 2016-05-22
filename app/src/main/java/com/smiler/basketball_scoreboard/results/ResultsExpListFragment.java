@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.results;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -12,7 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
-import com.smiler.basketball_scoreboard.elements.ResultView;
+import com.smiler.basketball_scoreboard.BaseMultiChoice;
+import com.smiler.basketball_scoreboard.DbHelper;
+import com.smiler.basketball_scoreboard.DbScheme;
+import com.smiler.basketball_scoreboard.ExpListMultiChoice;
+import com.smiler.basketball_scoreboard.R;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -21,8 +25,8 @@ import java.util.List;
 
 public class ResultsExpListFragment extends Fragment {
 
-    ResultsExpListAdapter adapter;
-    ExpandableListView expListView;
+    private ResultsExpListAdapter adapter;
+    private ExpandableListView expListView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,7 +93,7 @@ public class ResultsExpListFragment extends Fragment {
         return rootView;
     }
 
-    public boolean updateList(List<String> selectedIds) {
+    private boolean updateList(List<String> selectedIds) {
         adapter.deleteItems(selectedIds);
         adapter.notifyDataSetChanged();
         adapter.notifyDataSetInvalidated();
@@ -102,7 +106,7 @@ public class ResultsExpListFragment extends Fragment {
         void onListEmpty();
     }
 
-    ExpListListener listener;
+    private ExpListListener listener;
 
     @Override
     public void onAttach(Activity activity) {
@@ -114,7 +118,7 @@ public class ResultsExpListFragment extends Fragment {
         }
     }
 
-    public Object[] getListEntries() {
+    private Object[] getListEntries() {
         HashMap<Integer, ResultsExpListParent> posItems = new HashMap<>();
         HashMap<Integer, Integer> idPositions = new HashMap<>();
         int pos = 0;

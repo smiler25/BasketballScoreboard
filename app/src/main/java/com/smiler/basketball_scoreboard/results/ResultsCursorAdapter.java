@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.results;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+
+import com.smiler.basketball_scoreboard.DbScheme;
+import com.smiler.basketball_scoreboard.R;
 
 import java.text.DateFormat;
 import java.util.Date;

@@ -13,8 +13,8 @@ import com.smiler.basketball_scoreboard.R;
 
 public class ConfirmDialog extends DialogFragment implements DialogInterface.OnClickListener {
 
-    String type;
-    CheckBox checkbox;
+    private String type;
+    private CheckBox checkbox;
 
     public static ConfirmDialog newInstance(String type) {
         ConfirmDialog f = new ConfirmDialog();
@@ -84,7 +84,7 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         void onConfirmDialogNeutral(boolean dontShow);
         void onConfirmDialogNegative(boolean dontShow);
     }
-    ConfirmDialogListener listener;
+    private ConfirmDialogListener listener;
 
     @Override
     public void onAttach(Activity activity) {

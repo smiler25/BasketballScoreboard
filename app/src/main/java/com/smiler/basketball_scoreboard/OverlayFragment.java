@@ -14,8 +14,8 @@ public class OverlayFragment extends Fragment{
 
     OverlayFragmentListener listener;
     public static String TAG = "OverlayFragment";
-    public static String PANELS = "OverlayPANELS";
-    public static String SWITCH = "OverlaySWITCH";
+    public static String TAG_PANELS = "OverlayPANELS";
+    public static String TAG_SWITCH = "OverlaySWITCH";
 
     public static OverlayFragment newInstance() {
         return new OverlayFragment();
@@ -67,7 +67,7 @@ public class OverlayFragment extends Fragment{
         return v;
     }
 
-    public interface OverlayFragmentListener {
+    interface OverlayFragmentListener {
         void onOverlayClick();
         void onOverlayOpenPanel(int type);
     }

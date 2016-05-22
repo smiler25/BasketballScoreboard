@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.smiler.basketball_scoreboard.ResultsActivity"
+    tools:context="com.smiler.basketball_scoreboard.results.ResultsActivity"
     >
 
     <FrameLayout
@@ -14,7 +14,7 @@
         >
 
         <fragment
-            class="com.smiler.basketball_scoreboard.ResultsExpListFragment"
+            class="com.smiler.basketball_scoreboard.results.ResultsExpListFragment"
             android:id="@+id/expandable_list_frag"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

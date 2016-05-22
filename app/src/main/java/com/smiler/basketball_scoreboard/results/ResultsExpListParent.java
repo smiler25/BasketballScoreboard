@@ -1,6 +1,4 @@
-package com.smiler.basketball_scoreboard;
-
-import com.smiler.basketball_scoreboard.elements.ResultView;
+package com.smiler.basketball_scoreboard.results;
 
 public class ResultsExpListParent {
 

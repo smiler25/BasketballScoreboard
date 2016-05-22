@@ -3,7 +3,6 @@ package com.smiler.basketball_scoreboard;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -13,6 +12,8 @@ import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import com.smiler.basketball_scoreboard.help.HelpActivity;
 
 public class AppUpdatesFragment extends DialogFragment{
 

@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard.elements;
+package com.smiler.basketball_scoreboard.panels;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,7 +129,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         }
     }
 
-    public void edit() {
+    private void edit() {
         EditPlayerDialog.newInstance(left, id, number, name, captain)
                 .show(((Activity) context).getFragmentManager(), EditPlayerDialog.TAG);
     }

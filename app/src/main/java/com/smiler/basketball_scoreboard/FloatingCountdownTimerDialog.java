@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
+
 
 public class FloatingCountdownTimerDialog extends DialogFragment {
 
@@ -17,8 +19,24 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
     private long timeLeft;
     private TextView clockView, titleView;
     private CountDownTimer timer;
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("ss.S");
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            duration = savedInstanceState.getLong("timeLeft", duration);
+            title = savedInstanceState.getString("title", title);
+            titleView.setText(title);
+            startCountDownTimer();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("timeLeft", timeLeft);
+        outState.putCharSequence("title", titleView.getText());
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -32,7 +50,9 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
         v.findViewById(R.id.buttonClose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timer.cancel();
+                if (timer != null) {
+                    timer.cancel();
+                }
                 dismiss();
             }
         });
@@ -58,9 +78,9 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
 
     private void setTimeText(long millis) {
         if (millis >= 60000) {
-            clockView.setText(Constants.TIME_FORMAT.format(millis));
+            clockView.setText(TIME_FORMAT.format(millis));
         } else {
-            clockView.setText(String.format(Constants.TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
+            clockView.setText(String.format(TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
         }
     }
 }

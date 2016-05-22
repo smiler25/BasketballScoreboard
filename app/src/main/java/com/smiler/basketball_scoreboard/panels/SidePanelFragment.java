@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.panels;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -12,13 +12,18 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TableLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.smiler.basketball_scoreboard.Constants;
+import com.smiler.basketball_scoreboard.DbHelper;
+import com.smiler.basketball_scoreboard.DbScheme;
+import com.smiler.basketball_scoreboard.MainActivity;
+import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.ListDialog;
-import com.smiler.basketball_scoreboard.elements.SidePanelRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +32,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class SidePanelFragment extends Fragment implements View.OnClickListener {
+public class SidePanelFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
-    SidePanelListener listener;
+    public static final String TAG_LEFT_PANEL = "LeftSidePanel";
+    public static final String TAG_RIGHT_PANEL = "RightSidePanel";
+
+    private SidePanelListener listener;
     private TableLayout table;
     private TreeMap<Integer, SidePanelRow> rows = new TreeMap<>();
     private List<Integer> playersNumbers = new ArrayList<>();
@@ -39,14 +47,27 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
     private boolean left = true;
 
     public static SidePanelFragment newInstance(boolean left) {
-        SidePanelFragment f = new SidePanelFragment();
         Bundle args = new Bundle();
         args.putBoolean("left", left);
+        SidePanelFragment f = new SidePanelFragment();
         f.setArguments(args);
         return f;
     }
 
     public SidePanelFragment() {}
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (rows.size() > 0 && playersNumbers.size() > 0) {
+            updateView();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
     public interface SidePanelListener {
         void onSidePanelClose(boolean left);
@@ -95,45 +116,12 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         View v = inflater.inflate(layout_id, container, false);
         table = (TableLayout) v.findViewById(table_layout_id);
         addHeader();
-        v.findViewById(close_bu_id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!panelSelect.isChecked()) {
-                    listener.onSidePanelClose(left);
-                } else {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        v.findViewById(add_bu_id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkAddAvailable()) {
-                    return;
-                }
-                EditPlayerDialog.newInstance(left).show(getFragmentManager(), EditPlayerDialog.TAG);
-            }
-        });
+        v.findViewById(close_bu_id).setOnClickListener(this);
+        v.findViewById(add_bu_id).setOnClickListener(this);
+        v.findViewById(clear_bu_id).setOnClickListener(this);
         View addAutoView = v.findViewById(add_auto_bu_id);
-        addAutoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addRowsAuto();
-            }
-        });
-        v.findViewById(clear_bu_id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clear();
-            }
-        });
-        addAutoView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                restoreCurrentData();
-                return true;
-            }
-        });
+        addAutoView.setOnClickListener(this);
+        addAutoView.setOnLongClickListener(this);
         panelSelect = (ToggleButton) v.findViewById(toggle_bu_id);
         panelSelect.setOnClickListener(this);
         return v;
@@ -153,9 +141,42 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
                 case R.id.right_panel_select_active:
                     handleSelection();
                     break;
+                case R.id.left_panel_close:
+                case R.id.right_panel_close:
+                    if (!panelSelect.isChecked()) {
+                        listener.onSidePanelClose(left);
+                    } else {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case R.id.left_panel_add:
+                case R.id.right_panel_add:
+                    if (!checkAddAvailable()) { return; }
+                    EditPlayerDialog.newInstance(left).show(getFragmentManager(), EditPlayerDialog.TAG);
+                    break;
+                case R.id.left_panel_clear:
+                case R.id.right_panel_clear:
+                    clear();
+                    break;
+                case R.id.left_panel_add_auto:
+                case R.id.right_panel_add_auto:
+                    addRowsAuto();
+                    break;
             }
         }
     }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.left_panel_add_auto:
+            case R.id.right_panel_add_auto:
+                restoreCurrentData();
+                return true;
+        }
+        return false;
+    }
+
 
     private void handleSelection() {
         if (panelSelect.isChecked() || activePlayers.size() <= 5) {
@@ -231,6 +252,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         if (!numberAvailable(number)) { status = 1; }
         if (!(!captain || captainNotAssigned())) { status |= 2; }
         return status;
+    }
+
+    public int count() {
+        return rows.size();
     }
 
     public boolean captainNotAssigned() {
@@ -411,10 +436,19 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener 
         this.rows = rows;
         this.activePlayers = activePlayers;
         this.captainPlayer = captainPlayer;
+        updateView();
+    }
+
+    public void updateView() {
         if (table != null) {
             playersNumbers.clear();
             clearTable();
+            ViewParent parent;
             for (SidePanelRow row : rows.values()) {
+                parent = row.getParent();
+                if (parent != null) {
+                    ((TableLayout) parent).removeView(row);
+                }
                 table.addView(row);
                 playersNumbers.add(row.getNumber());
             }

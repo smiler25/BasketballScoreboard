@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.results;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -7,6 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+
+import com.smiler.basketball_scoreboard.BaseMultiChoice;
+import com.smiler.basketball_scoreboard.DbHelper;
+import com.smiler.basketball_scoreboard.DbScheme;
+import com.smiler.basketball_scoreboard.ListMultiChoice;
+import com.smiler.basketball_scoreboard.results.ResultsCursorAdapter;
 
 import java.util.List;
 

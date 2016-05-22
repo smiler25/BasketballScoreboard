@@ -1,11 +1,11 @@
-package com.smiler.basketball_scoreboard.elements;
+package com.smiler.basketball_scoreboard.results;
 
 import android.content.Context;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.Result;
+import com.smiler.basketball_scoreboard.results.Result;
 
 public class ResultViewScoreTable extends TableRow {
     private Result result;

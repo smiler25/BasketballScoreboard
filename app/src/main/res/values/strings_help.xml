@@ -38,6 +38,12 @@
 
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info">
+        v.2.2:\n
+            - portrait orientation;\n
+            - possession arrows;\n
+            - fix the bug of non-closing panels.\n
+        v.2.1:\n
+            - switch sides.\n
         v.2.0:\n
             - new help;\n
             - players panels (see help).\n

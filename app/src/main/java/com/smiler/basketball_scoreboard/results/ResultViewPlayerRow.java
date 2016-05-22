@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard.elements;
+package com.smiler.basketball_scoreboard.results;
 
 import android.content.Context;
 import android.widget.TableRow;

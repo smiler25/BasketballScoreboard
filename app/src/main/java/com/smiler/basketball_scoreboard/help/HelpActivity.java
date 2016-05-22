@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard;
+package com.smiler.basketball_scoreboard.help;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -7,6 +7,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.smiler.basketball_scoreboard.AppUpdatesFragment;
+import com.smiler.basketball_scoreboard.Constants;
+import com.smiler.basketball_scoreboard.R;
 
 public class HelpActivity extends AppCompatActivity implements HelpListFragment.HelpListListener {
 
