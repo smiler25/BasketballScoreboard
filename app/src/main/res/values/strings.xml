@@ -88,7 +88,23 @@
     <string name="cab_subtitle">Selected %1$d</string>
     <string name="cab_success">Results deleted</string>
     <string name="no_results">No saved games</string>
+    <string name="results_detail">Detail:</string>
     <string name="results_boxscore">Boxscore:</string>
+    <string name="results_play_by_play">Play-by-play:</string>
+    <string name="tie">Score tie</string>
+    <string name="lead_changed">Lead changed</string>
+    <string name="home_max_lead">Home max lead</string>
+    <string name="guest_max_lead">Guest max lead</string>
+    <string name="foul">foul</string>
+    <string name="quarter">quarter</string>
+    <string name="timeout">timeout</string>
+    <string name="timeout20">timeout (20 seс)</string>
+
+    <plurals name="points">
+        <item quantity="one">%d point</item>
+        <item quantity="other">%d points</item>
+    </plurals>
+
 
     <string name="side_panel_number" translatable="false">№</string>
     <string name="side_panel_name">Player</string>

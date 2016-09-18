@@ -2,7 +2,10 @@ package com.smiler.basketball_scoreboard.results;
 
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Result {
 
@@ -10,6 +13,9 @@ public class Result {
     private String hName, gName;
     private ArrayList<Integer> hScorePeriods = new ArrayList<>();
     private ArrayList<Integer> gScorePeriods = new ArrayList<>();
+    private Stack<ActionRecord> play_by_play = new Stack<>();
+    private JSONArray play_by_play_by_period= new JSONArray();
+
     private boolean complete;
     private long date;
     private int numRegular;
@@ -19,16 +25,9 @@ public class Result {
         this.gName = gName;
     }
 
-    public Result(String hName, String gName, int hScore, int gScore) {
-        this.hName = hName;
-        this.gName = gName;
-        this.hScore = hScore;
-        this.gScore = gScore;
-    }
-
-    public Result(String hName, String gName, int hScore, int gScore,
-                  ArrayList<Integer> hScorePeriods, ArrayList<Integer> gScorePeriods,
-                  boolean complete, long date, int numRegular) {
+    Result(String hName, String gName, int hScore, int gScore,
+           ArrayList<Integer> hScorePeriods, ArrayList<Integer> gScorePeriods,
+           boolean complete, long date, int numRegular) {
         this.hName = hName;
         this.gName = gName;
         this.hScore = hScore;
@@ -40,19 +39,19 @@ public class Result {
         this.numRegular = numRegular;
     }
 
-    public int getHomeScore() {
+    int getHomeScore() {
         return this.hScore;
     }
 
-    public int getGuestScore() {
+    int getGuestScore() {
         return this.gScore;
     }
 
-    public String getHomeName() {
+    String getHomeName() {
         return this.hName;
     }
 
-    public String getGuestName() {
+    String getGuestName() {
         return this.gName;
     }
 
@@ -60,7 +59,7 @@ public class Result {
         return hScorePeriods;
     }
 
-    public ArrayList<Integer> getGuestScoreByPeriod() {
+    ArrayList<Integer> getGuestScoreByPeriod() {
         return gScorePeriods;
     }
 
@@ -76,18 +75,8 @@ public class Result {
         this.gName = name;
     }
 
-    public void setScores(int hScore, int gScore) {
-        this.hScore = hScore;
-        this.gScore = gScore;
-    }
-
     public void setComplete(boolean complete) {
         this.complete = complete;
-    }
-
-    public void setPeriodScores(ArrayList<Integer>hScorePeriods, ArrayList<Integer>gScorePeriods) {
-        this.hScorePeriods = hScorePeriods;
-        this.gScorePeriods = gScorePeriods;
     }
 
     public void addPeriodScores(int home, int guest) {
@@ -100,6 +89,7 @@ public class Result {
         }
         hScore = home;
         gScore = guest;
+        completePlayByPlayPeriod();
     }
 
     public void replacePeriodScores(int period, int home, int guest) {
@@ -111,7 +101,7 @@ public class Result {
         }
         hScore = home;
         gScore = guest;
-
+        completePlayByPlayPeriod();
     }
 
     public String getHomeScoreByPeriodString() {
@@ -120,6 +110,10 @@ public class Result {
 
     public String getGuestScoreByPeriodString() {
         return TextUtils.join("-", gScorePeriods);
+    }
+
+    public String getPlayByPlayString() {
+        return TextUtils.join("-", play_by_play);
     }
 
     public String getResultString(boolean ot) {
@@ -134,11 +128,49 @@ public class Result {
         return String.format("%s (%s)", result, TextUtils.join(", ", periodResult));
     }
 
-    public long getDate() {
+    long getDate() {
         return date;
     }
 
-    public int getNumRegular() {
+    int getNumRegular() {
         return numRegular;
+    }
+
+    public ActionRecord addAction(long time, int type, int team, int number, int value) {
+        ActionRecord record = new ActionRecord(time, type, team, number, value);
+        play_by_play.push(record);
+        return record;
+    }
+
+    public ActionRecord addAction(long time, int type, int team, int value) {
+        ActionRecord record = new ActionRecord(time, type, team, value);
+        play_by_play.push(record);
+        return record;
+    }
+
+    public ActionRecord getLastAction() {
+        return (!play_by_play.isEmpty()) ? play_by_play.pop() : null;
+    }
+
+    @Override
+    public String toString() {
+        JSONArray data = getJson();
+        return (data != null) ? data.toString() : "";
+    }
+
+    private JSONArray getJson() {
+        return play_by_play_by_period;
+    }
+
+    private void completePlayByPlayPeriod() {
+        if (play_by_play.isEmpty()) {
+            return;
+        }
+        JSONArray array = new JSONArray();
+        for (ActionRecord record : play_by_play) {
+            array.put(record.getJson());
+        }
+        play_by_play_by_period.put(array);
+        play_by_play.clear();
     }
 }

@@ -9,7 +9,7 @@ import android.preference.PreferenceScreen;
 import com.smiler.basketball_scoreboard.R;
 
 public class PrefFragment extends PreferenceFragment {
-    OnSelectNestedScreenPreference listener;
+    private OnSelectNestedScreenPreference listener;
 
     @Override
     public  void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class PrefFragment extends PreferenceFragment {
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
-    public interface OnSelectNestedScreenPreference {
+    interface OnSelectNestedScreenPreference {
         void onSelectTimePreference();
         void onSelectSidePanelsPreference();
         void onSelectSoundsPreference();

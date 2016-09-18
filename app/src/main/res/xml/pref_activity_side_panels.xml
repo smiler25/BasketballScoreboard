@@ -9,7 +9,7 @@
         android:key="side_panels_dependency"
         android:title="@string/side_panels_connection"
         android:summary="@string/side_panels_connection_descr"
-        android:defaultValue="true"
+        android:defaultValue="false"
         />
 
     <ListPreference

@@ -7,51 +7,52 @@
     <string name="side_panels_category">Панели игроков</string>
     <string name="side_panels_screen">Настройки панелей игроков</string>
 
-    <string name="pref_fix_landscape">Только ландшафтная ориентация</string>
     <string name="pref_auto_break">Показывать перерывы</string>
     <string name="pref_auto_break_descr">Начинать отсчет времени перерыва по окончании периода</string>
-    <string name="pref_auto_timeout">Показывать таймаут</string>
-    <string name="pref_timeouts_rules">Правила таймаутов</string>
     <string name="pref_auto_save_save_results">Сохранять результат перед запуском новой игры</string>
-    <string name="pref_save_on_exit">Сохранять текущее состояние при выходе</string>
-    <string name="pref_layout">Макет</string>
-    <string name="pref_clear_time">Чистое время</string>
-    <string name="pref_choose_sound">Выбрать звук</string>
-    <string name="pref_default_prefs">Настройки согласно правилам</string>
+    <string name="pref_auto_timeout">Показывать таймаут</string>
     <string name="pref_auto_timeout_descr">Показывать обратный отсчёт, если был взят таймаут</string>
-    <string name="set_default_dialog_message">Установить значения согласно официальным правилам.</string>
-    <string name="shot_time_restart">Перезапуск времени на атаку при изменении счёта</string>
-    <string name="home_team_name">Название команды хозяев</string>
-    <string name="home_team_name_default">ХОЗЯЕВА</string>
+    <string name="pref_choose_sound">Выбрать звук</string>
+    <string name="pref_clear_time">Чистое время</string>
+    <string name="pref_default_prefs">Настройки согласно правилам</string>
+    <string name="pref_fix_landscape">Только ландшафтная ориентация</string>
+    <string name="pref_layout">Макет</string>
+    <string name="pref_save_on_exit">Сохранять текущее состояние при выходе</string>
+    <string name="pref_timeouts_rules">Правила таймаутов</string>
+
+    <string name="app_category">Настройки приложения</string>
+    <string name="default_category">Значения по умолчанию</string>
+    <string name="direct_timer">Использовать прямой осчёт времени</string>
+    <string name="enable_short_shot_time">Использовать укороченное время на атаку</string>
+    <string name="enable_shot_time">Использовать время на атаку</string>
     <string name="guest_team_name">Название команды гостей</string>
     <string name="guest_team_name_default">ГОСТИ</string>
+    <string name="home_team_name">Название команды хозяев</string>
+    <string name="home_team_name_default">ХОЗЯЕВА</string>
     <string name="main_time_length">Основное время (минуты)</string>
     <string name="max_fouls">Количество командных фолов</string>
     <string name="max_timeouts">Количество таймаутов</string>
-    <string name="default_category">Значения по умолчанию</string>
-    <string name="app_category">Настройки приложения</string>
-    <string name="vibration">Вибрация при нажатии</string>
-    <string name="shot_time_length">Время на атаку (секунды)</string>
-    <string name="short_shot_time_length">Укороченное время на атаку (секунды)</string>
     <string name="number_of_regular_periods">Количество периодов</string>
     <string name="overtime_length">Продолжительность овертайма (минуты)</string>
-    <string name="enable_shot_time">Использовать время на атаку</string>
-    <string name="enable_short_shot_time">Использовать укороченное время на атаку</string>
-    <string name="direct_timer">Использовать прямой осчёт времени</string>
+    <string name="set_default_dialog_message">Установить значения согласно официальным правилам.</string>
+    <string name="short_shot_time_length">Укороченное время на атаку (секунды)</string>
+    <string name="shot_time_length">Время на атаку (секунды)</string>
+    <string name="shot_time_restart">Перезапуск времени на атаку при изменении счёта</string>
+    <string name="vibration">Вибрация при нажатии</string>
 
     <string name="fraction_seconds_main">Доли секунд в основном времени</string>
     <string name="fraction_seconds_main_descr">Если время меньше 1 минуты, показывать доли секунды</string>
     <string name="fraction_seconds_shot">Доли секунд в времени на атаку</string>
     <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд, показывать доли секунды</string>
 
-    <string name="side_panels_interaction">Взаимодействие с кнопками игроков</string>
+    <string name="side_panels_activate">Использовать панели игроков</string>
+    <string name="side_panels_clear">Поведение при новой игре</string>
     <string name="side_panels_connection">Связь между панелями</string>
     <string name="side_panels_connection_descr">Показывать/скрывать панели синхронно</string>
-    <string name="side_panels_clear">Поведение при новой игре</string>
     <string name="side_panels_fouls_rules">Отслеживание персональных фолов</string>
-    <string name="side_panels_max_fouls">Количество персональных фолов</string>
+    <string name="side_panels_interaction">Взаимодействие с кнопками игроков</string>
     <string name="side_panels_interaction_time">Время ожидания действия (секунды)</string>
-    <string name="side_panels_activate">Использовать панели игроков</string>
+    <string name="side_panels_max_fouls">Количество персональных фолов</string>
 
     <string-array name="side_panels_fouls_rules_titles">
         <item>Не отслеживать</item>
@@ -67,6 +68,13 @@
         <item>Применить в течение времени. Приписать капитану по истечению</item>
         <item>Применить в течение времени. Приписать невидимому игроку по истечению</item>
         <item>Запоминать действия пока кнопка игрока не будет нажата</item>
+    </string-array>
+
+    <string name="pref_play_by_play">Ход игры</string>
+    <string-array name="pref_play_by_play_titles">
+        <item>Не запоминать</item>
+        <item>Запоминать только во время игры (для отмены действий)</item>
+        <item>Запоминать и сохранять в результатах</item>
     </string-array>
 
     <string-array name="pref_layout_titles">

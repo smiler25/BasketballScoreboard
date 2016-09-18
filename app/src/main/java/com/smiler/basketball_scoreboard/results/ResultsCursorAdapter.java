@@ -31,9 +31,9 @@ public class ResultsCursorAdapter extends CursorAdapter {
 
     public void bindView(View view, Context context, Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndex(DbScheme.ResultsTable._ID));
-        long date = cursor.getLong(cursor.getColumnIndex(DbScheme.ResultsTable.COLUMN_NAME_DATE));
-        String home_name = cursor.getString(cursor.getColumnIndex(DbScheme.ResultsTable.COLUMN_NAME_HOME_TEAM));
-        String guest_name = cursor.getString(cursor.getColumnIndex(DbScheme.ResultsTable.COLUMN_NAME_GUEST_TEAM));
+        long date = cursor.getLong(cursor.getColumnIndex(DbScheme.ResultsTable.COLUMN_DATE));
+        String home_name = cursor.getString(cursor.getColumnIndex(DbScheme.ResultsTable.COLUMN_HOME_TEAM));
+        String guest_name = cursor.getString(cursor.getColumnIndex(DbScheme.ResultsTable.COLUMN_GUEST_TEAM));
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
         ((TextView)view).setText(dateFormat.format(new Date(date)) + "\n" + home_name + " - " + guest_name);
         view.setTag(id);

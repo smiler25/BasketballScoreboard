@@ -12,7 +12,6 @@ import com.smiler.basketball_scoreboard.BaseMultiChoice;
 import com.smiler.basketball_scoreboard.DbHelper;
 import com.smiler.basketball_scoreboard.DbScheme;
 import com.smiler.basketball_scoreboard.ListMultiChoice;
-import com.smiler.basketball_scoreboard.results.ResultsCursorAdapter;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class ResultsListFragment extends ListFragment {
         });
     }
 
-    public boolean updateList() {
+    boolean updateList() {
         adapter.notifyDataSetChanged();
         adapter.notifyDataSetInvalidated();
         adapter.swapCursor(getDataCursor());
@@ -60,13 +59,13 @@ public class ResultsListFragment extends ListFragment {
         }
     }
 
-    public interface ResultsListListener {
+    interface ResultsListListener {
         void onListItemSelected(int sqlId);
         void onListItemDeleted(boolean empty);
         void onListEmpty();
 
     }
-    ResultsListListener listener;
+    private ResultsListListener listener;
 
     @Override
     public void onAttach(Activity activity) {
@@ -78,11 +77,11 @@ public class ResultsListFragment extends ListFragment {
         }
     }
 
-    public Cursor getDataCursor() {
+    private Cursor getDataCursor() {
         DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sortOrder = DbScheme.ResultsTable.COLUMN_NAME_DATE + " DESC";
-        return db.query(DbScheme.ResultsTable.TABLE_NAME_GAME,
+        String sortOrder = DbScheme.ResultsTable.COLUMN_DATE + " DESC";
+        return db.query(DbScheme.ResultsTable.TABLE_NAME,
                             null, null, null, null, null, sortOrder);
     }
 }

@@ -100,7 +100,7 @@ public class ResultsExpListFragment extends Fragment {
         return adapter.getGroupCount() == 0;
     }
 
-    public interface ExpListListener {
+    interface ExpListListener {
         void onExpListItemSelected();
         void onExpListItemDeleted(boolean empty);
         void onListEmpty();
@@ -125,18 +125,18 @@ public class ResultsExpListFragment extends Fragment {
 
         DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sortOrder = DbScheme.ResultsTable.COLUMN_NAME_DATE + " DESC";
-        Cursor c = db.query(DbScheme.ResultsTable.TABLE_NAME_GAME,
+        String sortOrder = DbScheme.ResultsTable.COLUMN_DATE + " DESC";
+        Cursor c = db.query(DbScheme.ResultsTable.TABLE_NAME,
                             null, null, null, null, null, sortOrder);
         c.moveToFirst();
         if (c.getCount() == 0) { return new Object[]{posItems, idPositions}; }
         String str;
         do {
             int id = c.getInt(c.getColumnIndex(DbScheme.ResultsTable._ID));
-            long date = c.getLong(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_NAME_DATE));
+            long date = c.getLong(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_DATE));
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
-            String hName = c.getString(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_NAME_HOME_TEAM));
-            String gName = c.getString(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_NAME_GUEST_TEAM));
+            String hName = c.getString(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_HOME_TEAM));
+            String gName = c.getString(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_GUEST_TEAM));
             str = dateFormat.format(new Date(date)) + "\n" + hName + " - " + gName;
             posItems.put(pos, new ResultsExpListParent(str, id));
             idPositions.put(id, pos++);

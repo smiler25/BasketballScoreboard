@@ -254,15 +254,15 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         return status;
     }
 
-    public int count() {
-        return rows.size();
-    }
+//    public int count() {
+//        return rows.size();
+//    }
 
-    public boolean captainNotAssigned() {
+    private boolean captainNotAssigned() {
         return captainPlayer == null;
     }
 
-    public boolean numberAvailable(int number) {
+    private boolean numberAvailable(int number) {
         return !(playersNumbers.contains(number));
     }
 
@@ -286,6 +286,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
 
     public SidePanelRow getCaptainPlayer() {
         return captainPlayer;
+    }
+
+    public SidePanelRow getPlayer(int number) {
+        return rows.get(number);
     }
 
     public boolean selectionConfirmed() {
@@ -352,14 +356,14 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
             for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
                 cv = new ContentValues();
                 SidePanelRow row = entry.getValue();
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID, -1);
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM, team);
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER, row.getNumber());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME, row.getName());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS, row.getPoints());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS, row.getFouls());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
-                db.insertWithOnConflict(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, -1);
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, team);
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
+                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+                db.insertWithOnConflict(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
             }
         } finally {
             dbHelper.close();
@@ -371,15 +375,15 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         DbHelper dbHelper = DbHelper.getInstance(MainActivity.getContext());
         SQLiteDatabase db = dbHelper.open();
         try {
-            db.delete(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID + " = ?",
+            db.delete(DbScheme.ResultsPlayersTable.TABLE_NAME,
+                    DbScheme.ResultsPlayersTable.COLUMN_GAME_ID + " = ?",
                     new String[]{Integer.toString(-1)});
         } finally {
             dbHelper.close();
         }
     }
 
-    public void restoreCurrentData() {
+    private void restoreCurrentData() {
         Set<String> activePlayersNumbers = new TreeSet<>();
         SharedPreferences statePref = getActivity().getPreferences(Context.MODE_PRIVATE);
         activePlayersNumbers = statePref.getStringSet((left) ? Constants.STATE_HOME_ACTIVE_PLAYERS
@@ -389,16 +393,16 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         SQLiteDatabase db = dbHelper.open();
         try {
             String[] columns = new String[] {
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS,
             };
-            String query = DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID + " = ? AND " +
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM + " = ?";
+            String query = DbScheme.ResultsPlayersTable.COLUMN_GAME_ID + " = ? AND " +
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM + " = ?";
             Cursor c = db.query(
-                    DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS,
+                    DbScheme.ResultsPlayersTable.TABLE_NAME,
                     columns,
                     query,
                     new String[]{Integer.toString(-1), Boolean.toString(left)},
@@ -439,7 +443,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         updateView();
     }
 
-    public void updateView() {
+    private void updateView() {
         if (table != null) {
             playersNumbers.clear();
             clearTable();

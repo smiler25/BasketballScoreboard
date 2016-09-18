@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.help.HelpActivity;
+import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 
 public class AppUpdatesFragment extends DialogFragment{
 
@@ -30,6 +31,8 @@ public class AppUpdatesFragment extends DialogFragment{
         });
 
         String text = getResources().getString(R.string.appupdate_info);
+        String help_text = getResources().getString(R.string.appupdate_info_link_help).toLowerCase();
+        String settings_text = getResources().getString(R.string.action_settings).toLowerCase();
         TextView textView = (TextView) v.findViewById(R.id.dialog_text);
         SpannableString spannable = new SpannableString(text);
         ClickableSpan openHelpSpan = new ClickableSpan() {
@@ -39,9 +42,21 @@ public class AppUpdatesFragment extends DialogFragment{
                 startActivity(new Intent(getActivity(), HelpActivity.class));
             }
         };
-        int i1 = text.indexOf("(") + 1;
-        int i2 = text.indexOf(")") - 1;
-        spannable.setSpan(openHelpSpan, i1, i2 + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        ClickableSpan openSettingsSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                dismiss();
+                startActivity(new Intent(getActivity(), PrefActivity.class));
+            }
+        };
+        int help_i1 = text.indexOf(help_text + ")");
+        int help_i2 = help_i1 + help_text.length();
+        int settings_i1 = text.indexOf(settings_text);
+        int settings_i2 = settings_i1 + settings_text.length();
+
+        spannable.setSpan(openHelpSpan, help_i1, help_i2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(openSettingsSpan, settings_i1, settings_i2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(spannable);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         builder.setView(v).setCancelable(true);

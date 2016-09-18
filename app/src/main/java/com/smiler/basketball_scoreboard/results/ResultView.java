@@ -4,14 +4,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.View;
+import android.util.SparseArray;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.DbHelper;
 import com.smiler.basketball_scoreboard.DbScheme;
 import com.smiler.basketball_scoreboard.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -19,12 +21,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ResultView extends LinearLayout {
+class ResultView extends LinearLayout {
     public static String TAG = "BS-ResultView";
     private TextView title;
     private int sqlId;
 
-    public ResultView(Context context, int sqlId) {
+    ResultView(Context context, int sqlId) {
         super(context);
         if(!isInEditMode()) {
             this.sqlId = sqlId;
@@ -34,10 +36,12 @@ public class ResultView extends LinearLayout {
 
     private void init() {
         inflate(getContext(), R.layout.result_view, this);
-        title = (TextView)findViewById(R.id.resultViewTitle);
+        title = (TextView)findViewById(R.id.result_view_title);
 
         Result result = getResult();
-        TreeMap<String, ArrayList<Object[]>> playersData = getPlayersContent();
+        TreeMap<String, ArrayList<Player>> playersData = getPlayersContent();
+        TreeMap<String, String> detailData = getDetailContent();
+        JSONArray playByPlay = getPlayByPlay();
         long date = result.getDate();
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
         String dateStr = dateFormat.format(new Date(date));
@@ -46,41 +50,31 @@ public class ResultView extends LinearLayout {
         LinearLayout layout = (LinearLayout) findViewById(R.id.result_view);
         layout.addView(new ResultViewScoreTable(getContext(), result));
 
+        if (!detailData.isEmpty()) {
+            layout.addView(new ResultViewDetail(getContext(), detailData));
+        }
+
         if (!playersData.isEmpty()) {
-            TextView boxScoreTextView = new TextView(getContext());
-            boxScoreTextView.setText(R.string.results_boxscore);
-            int padding = getResources().getDimensionPixelSize(R.dimen.results_boxscore_padding);
-            boxScoreTextView.setPadding(padding, padding, padding, padding);
-            layout.addView(boxScoreTextView);
-            for (Map.Entry<String, ArrayList<Object[]>> entry : playersData.entrySet()) {
-                layout.addView(createPlayersTable(entry.getKey(), entry.getValue()));
+            layout.addView(new ResultViewBoxscore(getContext(), playersData));
+        }
+
+        if (playByPlay != null && playByPlay.length() > 0) {
+            SparseArray<Player> hPlayers = new SparseArray<>();
+            SparseArray<Player> gPlayers = new SparseArray<>();
+            if (!playersData.isEmpty()) {
+                for (Map.Entry<String, ArrayList<Player>> entry : playersData.entrySet()) {
+                    SparseArray<Player> players = (entry.getKey().equals(result.getHomeName())) ? hPlayers : gPlayers;
+                    for (Player player : entry.getValue()) {
+                        players.put(player.getNumber(), player);
+                    }
+                }
             }
+            layout.addView(new ResultViewPlayByPlay(getContext(), playByPlay, hPlayers, gPlayers, result.getHomeName(), result.getGuestName()));
         }
     }
 
     public void setTitle(String value) {
         title.setText(value);
-    }
-
-    private View createPlayersTable(String team, ArrayList<Object[]> data) {
-        Context context = getContext();
-        View tableWithHeader = inflate(context, R.layout.result_view_players_table, null);
-        TextView title = (TextView) tableWithHeader.findViewById(R.id.result_view_players_table_title);
-        final TableLayout table = (TableLayout) tableWithHeader.findViewById(R.id.result_view_players_table);
-        title.setText(team);
-        title.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                table.setVisibility((table.getVisibility() == VISIBLE) ? GONE : VISIBLE);
-            }
-        });
-
-        table.addView(new ResultViewPlayerRow(context));
-        table.setVisibility(View.GONE);
-        for (Object[] value : data) {
-            table.addView(new ResultViewPlayerRow(context, value));
-        }
-        return tableWithHeader;
     }
 
     private Result getResult() {
@@ -89,19 +83,19 @@ public class ResultView extends LinearLayout {
         Result res = null;
         try {
             String[] columns = new String[] {
-                    DbScheme.ResultsTable.COLUMN_NAME_DATE,
-                    DbScheme.ResultsTable.COLUMN_NAME_HOME_TEAM,
-                    DbScheme.ResultsTable.COLUMN_NAME_GUEST_TEAM,
-                    DbScheme.ResultsTable.COLUMN_NAME_HOME_SCORE,
-                    DbScheme.ResultsTable.COLUMN_NAME_GUEST_SCORE,
-                    DbScheme.ResultsTable.COLUMN_NAME_HOME_PERIODS,
-                    DbScheme.ResultsTable.COLUMN_NAME_GUEST_PERIODS,
-                    DbScheme.ResultsTable.COLUMN_NAME_REGULAR_PERIODS,
-                    DbScheme.ResultsTable.COLUMN_NAME_COMPLETE
+                    DbScheme.ResultsTable.COLUMN_DATE,
+                    DbScheme.ResultsTable.COLUMN_HOME_TEAM,
+                    DbScheme.ResultsTable.COLUMN_GUEST_TEAM,
+                    DbScheme.ResultsTable.COLUMN_HOME_SCORE,
+                    DbScheme.ResultsTable.COLUMN_GUEST_SCORE,
+                    DbScheme.ResultsTable.COLUMN_HOME_PERIODS,
+                    DbScheme.ResultsTable.COLUMN_GUEST_PERIODS,
+                    DbScheme.ResultsTable.COLUMN_REGULAR_PERIODS,
+                    DbScheme.ResultsTable.COLUMN_COMPLETE
             };
             String query = "_id = ?";
             Cursor c = db.query(
-                    DbScheme.ResultsTable.TABLE_NAME_GAME,
+                    DbScheme.ResultsTable.TABLE_NAME,
                     columns, query,
                     new String[]{Integer.toString(sqlId)},
                     null, null, null
@@ -141,22 +135,22 @@ public class ResultView extends LinearLayout {
         return res;
     }
 
-    private TreeMap<String, ArrayList<Object[]>> getPlayersContent() {
+    private TreeMap<String, ArrayList<Player>> getPlayersContent() {
         DbHelper dbHelper = DbHelper.getInstance(getContext());
         SQLiteDatabase db = dbHelper.open();
-        TreeMap<String, ArrayList<Object[]>> result = new TreeMap<>();
+        TreeMap<String, ArrayList<Player>> result = new TreeMap<>();
         try {
             String[] columns = new String[] {
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS,
-                    DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS,
+                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN,
             };
-            String query = DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID + " = ?";
+            String query = DbScheme.ResultsPlayersTable.COLUMN_GAME_ID + " = ?";
             Cursor c = db.query(
-                    DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS,
+                    DbScheme.ResultsPlayersTable.TABLE_NAME,
                     columns,
                     query,
                     new String[]{Integer.toString(sqlId)},
@@ -166,11 +160,80 @@ public class ResultView extends LinearLayout {
                 c.moveToFirst();
                 do {
                     String team = c.getString(0);
-                    if (result.get(team) == null) { result.put(team, new ArrayList<Object[]>()); }
-                    result.get(team).add(new Object[] {c.getInt(1), c.getString(2), c.getInt(3), c.getInt(4), c.getInt(5)});
+                    if (result.get(team) == null) { result.put(team, new ArrayList<Player>()); }
+                    result.get(team).add(new Player(c.getInt(1), c.getString(2), c.getInt(3), c.getInt(4), c.getInt(5) == 1));
                 } while (c.moveToNext());
             }
             c.close();
+        } finally {
+            dbHelper.close();
+        }
+        return result;
+    }
+
+    private TreeMap<String, String> getDetailContent() {
+        DbHelper dbHelper = DbHelper.getInstance(getContext());
+        SQLiteDatabase db = dbHelper.open();
+        TreeMap<String, String> result = new TreeMap<>();
+        try {
+            String[] columns = new String[] {
+                    DbScheme.GameDetailsTable.COLUMN_LEADER_CHANGED,
+                    DbScheme.GameDetailsTable.COLUMN_TIE,
+                    DbScheme.GameDetailsTable.COLUMN_HOME_MAX_LEAD,
+                    DbScheme.GameDetailsTable.COLUMN_GUEST_MAX_LEAD,
+            };
+            String query = DbScheme.GameDetailsTable.COLUMN_GAME_ID + " = ?";
+            Cursor c = db.query(
+                    DbScheme.GameDetailsTable.TABLE_NAME,
+                    columns,
+                    query,
+                    new String[]{Integer.toString(sqlId)},
+                    null, null, null
+            );
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                do {
+                    result.put(DbScheme.GameDetailsTable.COLUMN_LEADER_CHANGED, c.getString(0));
+                    result.put(DbScheme.GameDetailsTable.COLUMN_TIE, c.getString(1));
+                    result.put(DbScheme.GameDetailsTable.COLUMN_HOME_MAX_LEAD, c.getString(2));
+                    result.put(DbScheme.GameDetailsTable.COLUMN_GUEST_MAX_LEAD, c.getString(3));
+                } while (c.moveToNext());
+            }
+            c.close();
+        } finally {
+            dbHelper.close();
+        }
+        return result;
+    }
+
+    private JSONArray getPlayByPlay() {
+        DbHelper dbHelper = DbHelper.getInstance(getContext());
+        SQLiteDatabase db = dbHelper.open();
+        JSONArray result = null;
+        try {
+            String[] columns = new String[] {
+                    DbScheme.GameDetailsTable.COLUMN_PLAY_BY_PLAY,
+            };
+            String query = DbScheme.GameDetailsTable.COLUMN_GAME_ID + " = ?";
+            Cursor c = db.query(
+                    DbScheme.GameDetailsTable.TABLE_NAME,
+                    columns,
+                    query,
+                    new String[]{Integer.toString(sqlId)},
+                    null, null, null
+            );
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                do {
+                    String val = c.getString(0);
+                    if (val != null) {
+                        result = new JSONArray(val);
+                    }
+                } while (c.moveToNext());
+            }
+            c.close();
+        } catch (JSONException e) {
+            e.printStackTrace();
         } finally {
             dbHelper.close();
         }

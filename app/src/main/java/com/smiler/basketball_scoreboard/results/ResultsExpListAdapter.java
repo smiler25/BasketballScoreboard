@@ -20,19 +20,19 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
     private HashMap<Integer, Integer> idPositions;
     private SparseBooleanArray selectedIds;
 
-    public ResultsExpListAdapter(Context context, HashMap<Integer, ResultsExpListParent> posObjects, HashMap<Integer, Integer> idPositions) {
+    ResultsExpListAdapter(Context context, HashMap<Integer, ResultsExpListParent> posObjects, HashMap<Integer, Integer> idPositions) {
         this.posObjects = posObjects;
         this.idPositions = idPositions;
         this.inflater = LayoutInflater.from(context);
         selectedIds = new SparseBooleanArray();
     }
 
-    public void deleteItem(int id) {
+    private void deleteItem(int id) {
         posObjects.remove(idPositions.get(id));
         idPositions.remove(id);
     }
 
-    public void deleteItems(List<String> selectedIds) {
+    void deleteItems(List<String> selectedIds) {
         for (String id:selectedIds) {
             deleteItem(Integer.valueOf(id));
         }

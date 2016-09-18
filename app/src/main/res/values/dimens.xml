@@ -60,6 +60,7 @@
     <dimen name="results_player_points_width">30dp</dimen>
     <dimen name="results_player_fouls_width">20dp</dimen>
     <dimen name="results_boxscore_padding">3dp</dimen>
+    <dimen name="results_boxscore_margin">5dp</dimen>
 
     <!--camera-->
     <dimen name="camera_text_size">15sp</dimen>

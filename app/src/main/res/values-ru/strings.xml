@@ -79,6 +79,22 @@
     <string name="action_save_result">Сохранить результат?</string>
     <string name="camera_take_picture">Сделать снимок</string>
     <string name="results_boxscore">Протокол:</string>
+    <string name="results_detail">Подробно:</string>
+    <string name="results_play_by_play">Ход игры:</string>
+    <string name="tie">Равный счёт</string>
+    <string name="lead_changed">Смена лидера</string>
+    <string name="home_max_lead">Максимальное преимущество хозяев</string>
+    <string name="guest_max_lead">Максимальное преимущество гостей</string>
+    <string name="foul">foul</string>
+    <string name="quarter">четверть</string>
+    <string name="timeout">таймаут</string>
+    <string name="timeout20">таймаут (20 сек)</string>
+
+    <plurals name="points">
+        <item quantity="one">%d очко</item>
+        <item quantity="few">%d очка</item>
+        <item quantity="many">%d очков</item>
+    </plurals>
 
     <string name="side_panel_name">Игрок</string>
     <string name="side_panel_points">Очки</string>

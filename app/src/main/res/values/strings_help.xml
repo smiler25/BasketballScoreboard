@@ -15,7 +15,10 @@
         - main and shot clock: allows to change current value;\n
         - other number elements: will set zero state;\n
         - team names: set new team name.\n
-        * Long click actions work only if main time on pause.
+        * Long click actions work only if main time on pause.\n
+        \n
+        Back button:\n
+        if \"Play-by-play history\" setting is selected to keep, then canceled one last action of the press (excluding the time), otherwise, after double-clicking the application closing occurs.
     </string>
 
     <string name="help_side_panels_enable">Enable side panels</string>
@@ -37,7 +40,10 @@
     </string>
 
     <string name="appupdate_title">Update info</string>
+    <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.2.3:\n
+            - Undo last actions and save play-by-play history (open settings).\n
         v.2.2:\n
             - portrait orientation;\n
             - possession arrows;\n

@@ -4,24 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:layout_marginBottom="@dimen/results_boxscore_margin"
+    android:layout_marginTop="@dimen/results_boxscore_margin"
     >
     <TextView
-        android:id="@+id/result_view_players_table_title"
+        android:id="@+id/result_view_detail_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/res_players_table_title_underline"
         />
 
-    <TableLayout
-        android:id="@+id/result_view_players_table"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/result_view_detail_data"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:stretchColumns="*"
-        android:background="@drawable/result_table_shape"
-        >
-    </TableLayout>
+        />
 </LinearLayout>

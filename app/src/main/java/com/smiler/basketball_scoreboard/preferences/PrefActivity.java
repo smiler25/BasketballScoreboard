@@ -43,12 +43,12 @@ public class PrefActivity extends Activity implements
     public static final String PREF_TIMEOUTS_RULES = "list_timeout_rules";
     public static final String PREF_HOME_NAME = "home_team_name";
     public static final String PREF_GUEST_NAME = "guest_team_name";
-    public static final String PREF_OFFICIAL_RULES = "list_official_rules";
+    private static final String PREF_OFFICIAL_RULES = "list_official_rules";
 
     public static final String PREF_ENABLE_SIDE_PANELS = "side_panels_activate";
     public static final String PREF_SIDE_PANELS_CLEAR = "side_panels_clear";
     public static final String PREF_SIDE_PANELS_CONNECTED = "side_panels_dependency";
-    public static final String PREF_SIDE_PANELS_FOULS_RULES = "side_panels_player_fouls_rules";
+    private static final String PREF_SIDE_PANELS_FOULS_RULES = "side_panels_player_fouls_rules";
     public static final String PREF_SIDE_PANELS_FOULS_MAX = "side_panels_player_max_fouls";
 
     public static final String PREF_LAYOUT = "list_layout";
@@ -64,6 +64,7 @@ public class PrefActivity extends Activity implements
     public static final String PREF_PAUSE_ON_SOUND = "pause_on_sound";
     public static final String PREF_HORN_LENGTH = "horn_length";
     public static final String PREF_FIX_LANDSCAPE = "fix_landscape";
+    public static final String PREF_PLAY_BY_PLAY = "play_by_play";
 
     private static final boolean DEFAULT_ENABLE_SHOT_TIME = true;
     private static final boolean DEFAULT_ENABLE_SHORT_SHOT_TIME = true;
@@ -72,11 +73,11 @@ public class PrefActivity extends Activity implements
     private static final String DEFAULT_NBA_TIMEOUTS = "2";
 
     private static final String SIDE_PANEL_FOULS_RULES_STRICT = "1";
-    private static final String DEFAULT_SIDE_PANEL_FOULS_RULES = "2";
+//    private static final String DEFAULT_SIDE_PANEL_FOULS_RULES = "2";
     private static final String CUSTOM_SIDE_PANEL_FOULS_RULES = "3";
     private boolean playerRulesDefault = false;
 
-    SharedPreferences prefs;
+    private SharedPreferences prefs;
     private Toolbar toolbar;
     private final List<String> restartPrefs = Arrays.asList(PREF_TIMEOUTS_RULES, PREF_LAYOUT, PREF_DIRECT_TIMER);
 
@@ -130,7 +131,7 @@ public class PrefActivity extends Activity implements
         }
     }
 
-    public void setDefault(int type) {
+    private void setDefault(int type) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(PREF_NUM_REGULAR, Constants.DEFAULT_NUM_REGULAR);
         editor.putInt(PREF_OVERTIME, Constants.DEFAULT_OVERTIME);

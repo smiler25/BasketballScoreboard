@@ -1,13 +1,13 @@
 package com.smiler.basketball_scoreboard.results;
 
 import android.content.Context;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.results.Result;
 
-public class ResultViewScoreTable extends TableRow {
+class ResultViewScoreTable extends TableLayout {
     private Result result;
     private int cellLayoutId = R.layout.result_view_table_item;
 
@@ -15,7 +15,7 @@ public class ResultViewScoreTable extends TableRow {
         super(context);
     }
 
-    public ResultViewScoreTable(Context context, Result result) {
+    ResultViewScoreTable(Context context, Result result) {
         super(context);
         this.result = result;
         inflate(context, R.layout.result_view_score_table, this);

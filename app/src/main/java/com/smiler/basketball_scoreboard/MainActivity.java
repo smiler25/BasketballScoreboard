@@ -50,12 +50,13 @@ import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.ListDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
-import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 import com.smiler.basketball_scoreboard.elements.TriangleView;
 import com.smiler.basketball_scoreboard.help.HelpActivity;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
+import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
+import com.smiler.basketball_scoreboard.results.ActionRecord;
 import com.smiler.basketball_scoreboard.results.Result;
 import com.smiler.basketball_scoreboard.results.ResultsActivity;
 
@@ -67,7 +68,62 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
-import static com.smiler.basketball_scoreboard.Constants.*;
+import static com.smiler.basketball_scoreboard.Constants.ACTION_FLS;
+import static com.smiler.basketball_scoreboard.Constants.ACTION_NONE;
+import static com.smiler.basketball_scoreboard.Constants.ACTION_PTS;
+import static com.smiler.basketball_scoreboard.Constants.ACTION_TO;
+import static com.smiler.basketball_scoreboard.Constants.ACTION_TO20;
+import static com.smiler.basketball_scoreboard.Constants.API16_TIME_REGEX;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_FIBA_MAIN_TIME;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_FIBA_PLAYER_FOULS;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_HORN_LENGTH;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_MAX_FOULS;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_NUM_REGULAR;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_OVERTIME;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_SHORT_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Constants.DEFAULT_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Constants.FORMAT_TWO_DIGITS;
+import static com.smiler.basketball_scoreboard.Constants.GUEST;
+import static com.smiler.basketball_scoreboard.Constants.HOME;
+import static com.smiler.basketball_scoreboard.Constants.LAYOUT_FULL;
+import static com.smiler.basketball_scoreboard.Constants.LEFT;
+import static com.smiler.basketball_scoreboard.Constants.MINUTES_2;
+import static com.smiler.basketball_scoreboard.Constants.NO_TEAM;
+import static com.smiler.basketball_scoreboard.Constants.OVERLAY_PANELS;
+import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
+import static com.smiler.basketball_scoreboard.Constants.RIGHT;
+import static com.smiler.basketball_scoreboard.Constants.SECOND;
+import static com.smiler.basketball_scoreboard.Constants.SECONDS_60;
+import static com.smiler.basketball_scoreboard.Constants.SIDE_PANELS_LEFT;
+import static com.smiler.basketball_scoreboard.Constants.SIDE_PANELS_RIGHT;
+import static com.smiler.basketball_scoreboard.Constants.STATE_GUEST_FOULS;
+import static com.smiler.basketball_scoreboard.Constants.STATE_GUEST_NAME;
+import static com.smiler.basketball_scoreboard.Constants.STATE_GUEST_SCORE;
+import static com.smiler.basketball_scoreboard.Constants.STATE_GUEST_TIMEOUTS;
+import static com.smiler.basketball_scoreboard.Constants.STATE_GUEST_TIMEOUTS20;
+import static com.smiler.basketball_scoreboard.Constants.STATE_GUEST_TIMEOUTS_NBA;
+import static com.smiler.basketball_scoreboard.Constants.STATE_HOME_FOULS;
+import static com.smiler.basketball_scoreboard.Constants.STATE_HOME_NAME;
+import static com.smiler.basketball_scoreboard.Constants.STATE_HOME_SCORE;
+import static com.smiler.basketball_scoreboard.Constants.STATE_HOME_TIMEOUTS;
+import static com.smiler.basketball_scoreboard.Constants.STATE_HOME_TIMEOUTS20;
+import static com.smiler.basketball_scoreboard.Constants.STATE_HOME_TIMEOUTS_NBA;
+import static com.smiler.basketball_scoreboard.Constants.STATE_MAIN_TIME;
+import static com.smiler.basketball_scoreboard.Constants.STATE_PERIOD;
+import static com.smiler.basketball_scoreboard.Constants.STATE_POSSESSION;
+import static com.smiler.basketball_scoreboard.Constants.STATE_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_APP_UPDATES;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_CONFIRM;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_MAIN_TIME_PICKER;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_NAME_EDIT;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_SHOT_TIME_PICKER;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_TIME;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_MILLIS;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
+import static com.smiler.basketball_scoreboard.Constants.TO_RULES_FIBA;
+import static com.smiler.basketball_scoreboard.Constants.TO_RULES_NBA;
+import static com.smiler.basketball_scoreboard.Constants.TO_RULES_NONE;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
@@ -92,9 +148,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView hFoulsView, gFoulsView;
     private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
     private TriangleView leftArrow, rightArrow;
+    private Button longClickPlayerBu;
     private Drawer.Result drawer;
 
     private int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
+    private int playByPlay;
     private boolean fixLandscape, fixLandscapeChanged;
     private boolean doubleBackPressedFirst, layoutChanged, timeoutsRulesChanged;
     private boolean autoShowTimeout, autoShowBreak, autoSwitchSides;
@@ -106,17 +164,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean spOn, spStateChanged, spConnected, spClearDelete;
     private boolean arrowsOn, arrowsStateChanged;
     private int possession = NO_TEAM;
-    private long mainTime, mainTimePref, shotTime, shotTimePref, shortShotTimePref, overTimePref;
+    private long mainTime, shotTime;
+    private long mainTimePref, shotTimePref, shortShotTimePref, overTimePref;
     private long startTime, totalTime;
     private long timeoutFullDuration;
     private short hScore, gScore;
+    private short hScore_prev, gScore_prev;
     private short hFouls, gFouls;
     private short hTimeouts, gTimeouts;
     private short hTimeouts20, gTimeouts20;
     private short takenTimeoutsFull;
     private short maxTimeouts, maxTimeouts20, maxTimeouts100;
-    private short maxFouls, numRegularPeriods;
-    private short period;
+    private short maxFouls;
+    private short period, numRegularPeriods;
     private String hName, gName;
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
@@ -138,6 +198,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private long shotTickInterval = SECOND;
     private boolean changedUnder2Minutes = false;
     private boolean scoreSaved = false;
+//    private String actionString;
+    private ActionRecord lastAction;
+    private int timesTie = 1, timesLeadChanged = 0;
+    private int hMaxLead = 0, gMaxLead = 0;
 
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
@@ -148,7 +212,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Vibrator vibrator;
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
     private TreeMap<Integer, SidePanelRow> inactivePlayers;
-    private Button longClickPlayerBu;
     private static Context mainActivityContext;
 
     public static Context getContext() {
@@ -167,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         handleScoreViewSize();
-//        System.out.println("res_type = " + getResources().getString(R.string.res_type));
+        // System.out.println("res_type = " + getResources().getString(R.string.res_type));
 
         if (PrefActivity.prefChangedRestart) {
             showConfirmDialog("new_game", false);
@@ -223,8 +286,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initSounds();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
-        // if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
-        if (sharedPref.getInt("app_version", 1) < 13) {
+        if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
+        // if (sharedPref.getInt("app_version", 1) < 13) {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
@@ -467,7 +530,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ft.add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL);
         ft.hide(leftPanel).hide(rightPanel);
         ft.addToBackStack(null).commit();
-
     }
 
     private ArrayList<View> getAllButtons(ViewGroup group) {
@@ -502,6 +564,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     leftActionType = ACTION_NONE;
                     leftActionValue = 0;
                 }
+                if (lastAction != null) {
+                    lastAction.setNumber(row.getNumber());
+                }
             }
         });
         button.setOnLongClickListener(new View.OnLongClickListener() {
@@ -531,6 +596,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     rightActionType = ACTION_NONE;
                     rightActionValue = 0;
+                }
+                if (lastAction != null) {
+                    lastAction.setNumber(row.getNumber());
                 }
             }
         });
@@ -724,20 +792,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         if (drawer != null && drawer.isDrawerOpen()) {
             drawer.closeDrawer();
-        } else {
-            if (doubleBackPressedFirst) {
-                super.onBackPressed();
-                return;
-            }
-            this.doubleBackPressedFirst = true;
-            Toast.makeText(this, getResources().getString(R.string.toast_confirm_exit), Toast.LENGTH_LONG).show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackPressedFirst = false;
-                }
-            }, 3000);
+            return;
         }
+
+        if (playByPlay != 0 && cancelLastAction()) {
+            return;
+        }
+
+        if (doubleBackPressedFirst) {
+            super.onBackPressed();
+            return;
+        }
+        this.doubleBackPressedFirst = true;
+        Toast.makeText(this, getResources().getString(R.string.toast_confirm_exit), Toast.LENGTH_LONG).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackPressedFirst = false;
+            }
+        }, 3000);
     }
 
     @Override
@@ -747,7 +820,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
         switch (i) {
             case 0:
-                newGame(true);
+                newGameSave();
                 break;
             case 1:
                 runResultsActivity();
@@ -1087,7 +1160,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         spConnected = sharedPref.getBoolean(PrefActivity.PREF_SIDE_PANELS_CONNECTED, false);
         SidePanelRow.setMaxFouls(sharedPref.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, DEFAULT_FIBA_PLAYER_FOULS));
 
-        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, false);
+        restartShotTimer = sharedPref.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, true);
+        playByPlay = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_PLAY_BY_PLAY, "0"));
 
         boolean arrowsOn_ = sharedPref.getBoolean(PrefActivity.PREF_POSSESSION_ARROWS, false);
         if (arrowsOn != arrowsOn_) {
@@ -1160,11 +1234,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             handleOrientation();
             fixLandscapeChanged = false;
         }
-
     }
 
-    private void newGame(boolean save) {
+    private void newGameSave() {
         if (autoSaveResults == 0) {
+            saveResult();
             saveResultDb();
         } else if (autoSaveResults == 2) {
             showConfirmDialog("save_result", false);
@@ -1434,47 +1508,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setColorGreen(hTimeouts20View);
     }
 
-    private void timeout20(boolean left) {
-        if (left == leftIsHome) {
-            timeout20(HOME);
-        } else {
-            timeout20(GUEST);
-        }
-    }
-
     private void timeout(boolean left) {
         if (left == leftIsHome) {
-            timeout(0);
+            timeout(HOME);
         } else {
-            timeout(1);
-        }
-    }
-
-    private void timeout20(int team) {
-        pauseGame();
-        switch (team) {
-            case HOME:
-                if (hTimeouts20 > 0) {
-                    hTimeouts20View.setText(Short.toString(--hTimeouts20));
-                    if (hTimeouts20 == 0) {
-                        setColorRed(hTimeouts20View);
-                    }
-                    if (autoShowTimeout) {
-                        showTimeout(20, hName);
-                    }
-                }
-                break;
-            case GUEST:
-                if (gTimeouts20 > 0) {
-                    gTimeouts20View.setText(Short.toString(--gTimeouts20));
-                    if (gTimeouts20 == 0) {
-                        setColorRed(gTimeouts20View);
-                    }
-                    if (autoShowTimeout) {
-                        showTimeout(20, gName);
-                    }
-                }
-                break;
+            timeout(GUEST);
         }
     }
 
@@ -1548,32 +1586,109 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         }
+        addAction(ACTION_TO, team, 1);
     }
 
-    private void setFoulsText(short hValue, short gValue, int hColor, int gColor) {
-        hFoulsView.setText(Short.toString(hValue));
-        gFoulsView.setText(Short.toString(gValue));
-        hFoulsView.setTextColor(hColor);
-        gFoulsView.setTextColor(gColor);
-    }
-
-    private void nullFouls() {
-        hFouls = gFouls = 0;
-        hFoulsView.setText("0");
-        gFoulsView.setText("0");
-        setColorGreen(hFoulsView);
-        setColorGreen(gFoulsView);
-    }
-
-    private void nullFouls(boolean left) {
-        if (left == leftIsHome) {
-            hFouls = 0;
-            hFoulsView.setText("0");
-            setColorGreen(hFoulsView);
+    private void revertTimeout(int team) {
+        takenTimeoutsFull--;
+        if (timeoutRules == TO_RULES_NONE) {
+            switch (team) {
+                case HOME:
+                    hTimeoutsView.setText(Short.toString(--hTimeouts));
+                    break;
+                case GUEST:
+                    gTimeoutsView.setText(Short.toString(--gTimeouts));
+                    break;
+            }
+        } else if (timeoutRules == TO_RULES_FIBA) {
+            switch (team) {
+                case HOME:
+                    hTimeoutsView.setText(Short.toString(++hTimeouts));
+                    if (hTimeouts > 0) {
+                        setColorGreen(hTimeoutsView);
+                    }
+                    break;
+                case GUEST:
+                    gTimeoutsView.setText(Short.toString(++gTimeouts));
+                    if (gTimeouts > 0) {
+                        setColorGreen(gTimeoutsView);
+                    }
+                    break;
+            }
         } else {
-            gFouls = 0;
-            gFoulsView.setText("0");
-            setColorGreen(gFoulsView);
+            timeoutFullDuration = (takenTimeoutsFull <= maxTimeouts100) ? 100 : 60;
+            switch (team) {
+                case HOME:
+                    hTimeoutsView.setText(Short.toString(++hTimeouts));
+                    if (hTimeouts > 0) {
+                        setColorGreen(hTimeoutsView);
+                    }
+                    break;
+                case GUEST:
+                    gTimeoutsView.setText(Short.toString(++gTimeouts));
+                    if (gTimeouts > 0) {
+                        setColorGreen(gTimeoutsView);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void timeout20(boolean left) {
+        if (left == leftIsHome) {
+            timeout20(HOME);
+        } else {
+            timeout20(GUEST);
+        }
+    }
+
+    private void timeout20(int team) {
+        pauseGame();
+        switch (team) {
+            case HOME:
+                if (hTimeouts20 > 0) {
+                    hTimeouts20View.setText(Short.toString(--hTimeouts20));
+                    if (hTimeouts20 == 0) {
+                        setColorRed(hTimeouts20View);
+                    }
+                    if (autoShowTimeout) {
+                        showTimeout(20, hName);
+                    }
+                }
+                break;
+            case GUEST:
+                if (gTimeouts20 > 0) {
+                    gTimeouts20View.setText(Short.toString(--gTimeouts20));
+                    if (gTimeouts20 == 0) {
+                        setColorRed(gTimeouts20View);
+                    }
+                    if (autoShowTimeout) {
+                        showTimeout(20, gName);
+                    }
+                }
+                break;
+        }
+        addAction(ACTION_TO20, team, 1);
+    }
+
+    private void revertTimeout20(int team) {
+        switch (team) {
+            case HOME:
+                if (hTimeouts20 > 0) {
+                    if (hTimeouts20 == 0) {
+                        setColorGreen(hTimeouts20View);
+                    }
+                    hTimeouts20View.setText(Short.toString(++hTimeouts20));
+                }
+                break;
+            case GUEST:
+                if (gTimeouts20 > 0) {
+                    if (gTimeouts20 == 0) {
+                        setColorGreen(gTimeouts20View);
+                    }
+                    gTimeouts20View.setText(Short.toString(++gTimeouts20));
+                }
+                break;
         }
     }
 
@@ -1618,6 +1733,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
+        addAction(ACTION_FLS, team, 1);
+    }
+
+    private void nullFouls() {
+        hFouls = gFouls = 0;
+        hFoulsView.setText("0");
+        gFoulsView.setText("0");
+        setColorGreen(hFoulsView);
+        setColorGreen(gFoulsView);
+    }
+
+    private void nullFouls(boolean left) {
+        if (left == leftIsHome) {
+            hFouls = 0;
+            hFoulsView.setText("0");
+            setColorGreen(hFoulsView);
+        } else {
+            gFouls = 0;
+            gFoulsView.setText("0");
+            setColorGreen(gFoulsView);
+        }
+    }
+
+    private void revertFoul(int team) {
+        switch (team) {
+            case HOME:
+                if (hFouls < maxFouls) {
+                    if (hFouls == maxFouls) {
+                        setColorGreen(hFoulsView);
+                    }
+                    hFoulsView.setText(Short.toString(--hFouls));
+                }
+                break;
+            case GUEST:
+                if (gFouls < maxFouls) {
+                    if (gFouls == maxFouls) {
+                        setColorGreen(gFoulsView);
+                    }
+                    gFoulsView.setText(Short.toString(--gFouls));
+                }
+                break;
+        }
+        if (spOn) {}
+    }
+
+    private void setFoulsText(short hValue, short gValue, int hColor, int gColor) {
+        hFoulsView.setText(Short.toString(hValue));
+        gFoulsView.setText(Short.toString(gValue));
+        hFoulsView.setTextColor(hColor);
+        gFoulsView.setTextColor(gColor);
     }
 
     private void setPossession(int team) {
@@ -1667,10 +1832,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void changeScore(boolean left, int value) {
+        hScore_prev = hScore;
+        gScore_prev = gScore;
         if (left == leftIsHome) {
             changeHomeScore(value);
+            addAction(ACTION_PTS, HOME, value);
         } else {
             changeGuestScore(value);
+            addAction(ACTION_PTS, GUEST, value);
         }
         if (left) {
             leftActionType = ACTION_PTS;
@@ -1679,6 +1848,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             rightActionType = ACTION_PTS;
             rightActionValue += value;
         }
+        updateStats();
+    }
+
+    private void updateStats() {
+        if (hScore == gScore) {
+            timesTie++;
+        } else if (hScore > gScore != hScore_prev > gScore_prev) {
+            timesLeadChanged++;
+        }
+        if (hScore - gScore > hMaxLead) {
+            hMaxLead = hScore - gScore;
+        }
+        if (gScore - hScore > gMaxLead) {
+            gMaxLead = gScore - hScore;
+        }
+    }
+
+    private void revertScore(int team, int value) {
+        if (team == HOME) {
+            changeHomeScore(-value);
+        } else {
+            changeGuestScore(-value);
+        }
+//        if (left) {
+//            leftActionValue += value;
+//        } else {
+//            rightActionValue += value;
+//        }
 
     }
 
@@ -1730,6 +1927,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         handleScoreViewSize();
     }
 
+    private void addAction(int type, int team, int value) {
+        if (playByPlay != 0) {
+            lastAction = gameResult.addAction(mainTime, type, team, value);
+        }
+    }
+
+    private boolean cancelLastAction() {
+        lastAction = gameResult.getLastAction();
+        if (lastAction == null) {
+            return false;
+        }
+        switch (lastAction.getType()) {
+            case ACTION_PTS:
+                revertScore(lastAction.getTeam(), lastAction.getValue());
+                if (spOn) {
+                    cancelPlayerScore(lastAction.getTeam(), lastAction.getNumber(), lastAction.getValue());
+                }
+                break;
+            case ACTION_FLS:
+                revertFoul(lastAction.getTeam());
+                if (spOn) {
+                    cancelPlayerFoul(lastAction.getTeam(), lastAction.getNumber(), lastAction.getValue());
+                }
+                break;
+            case ACTION_TO:
+                revertTimeout(lastAction.getTeam());
+                break;
+            case ACTION_TO20:
+                revertTimeout20(lastAction.getTeam());
+                break;
+        }
+        return true;
+    }
+
+    private SidePanelRow getPlayer(int team, int number) {
+        SidePanelFragment panel = (leftIsHome ^ (team == HOME)) ? rightPanel : leftPanel;
+        return panel.getPlayer(number);
+    }
+
+    private void cancelPlayerScore(int team, int number, int value) {
+        SidePanelRow player = getPlayer(team, number);
+        if (player != null) { player.changePoints(-value); }
+    }
+
+    private void cancelPlayerFoul(int team, int number, int value) {
+        SidePanelRow player = getPlayer(team, number);
+        if (player != null) { player.changeFouls(-value); }
+    }
+
     private void setMainTimeText(long millis) {
         mainTimeView.setText(mainTimeFormat.format(millis).replaceAll(API16_TIME_REGEX, "$1"));
     }
@@ -1765,6 +2011,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setTeamNames(String home, String guest) {
         hNameView.setText(home);
         gNameView.setText(guest);
+        gameResult.setHomeName(home);
+        gameResult.setGuestName(guest);
     }
 
     private void setTeamNames() {
@@ -2179,17 +2427,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             ContentValues cv = new ContentValues();
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_DATE, (new Date()).getTime());
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_HOME_TEAM, hName);
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_GUEST_TEAM, gName);
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_HOME_SCORE, hScore);
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_GUEST_SCORE, gScore);
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_SHARE_STRING, gameResult.getResultString(period > numRegularPeriods));
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_HOME_PERIODS, gameResult.getHomeScoreByPeriodString());
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_GUEST_PERIODS, gameResult.getGuestScoreByPeriodString());
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_REGULAR_PERIODS, numRegularPeriods);
-            cv.put(DbScheme.ResultsTable.COLUMN_NAME_COMPLETE, gameResult.isComplete());
-            long gameId = db.insert(DbScheme.ResultsTable.TABLE_NAME_GAME, null, cv);
+            cv.put(DbScheme.ResultsTable.COLUMN_DATE, (new Date()).getTime());
+            cv.put(DbScheme.ResultsTable.COLUMN_HOME_TEAM, hName);
+            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_TEAM, gName);
+            cv.put(DbScheme.ResultsTable.COLUMN_HOME_SCORE, hScore);
+            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_SCORE, gScore);
+            cv.put(DbScheme.ResultsTable.COLUMN_SHARE_STRING, gameResult.getResultString(period > numRegularPeriods));
+            cv.put(DbScheme.ResultsTable.COLUMN_HOME_PERIODS, gameResult.getHomeScoreByPeriodString());
+            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_PERIODS, gameResult.getGuestScoreByPeriodString());
+            cv.put(DbScheme.ResultsTable.COLUMN_REGULAR_PERIODS, numRegularPeriods);
+            cv.put(DbScheme.ResultsTable.COLUMN_COMPLETE, gameResult.isComplete());
+            long gameId = db.insert(DbScheme.ResultsTable.TABLE_NAME, null, cv);
 
             if (spOn) {
                 ContentValues cv2;
@@ -2198,28 +2446,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
                     cv2 = new ContentValues();
                     SidePanelRow row = entry.getValue();
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID, gameId);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM, hName);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER, row.getNumber());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME, row.getName());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS, row.getPoints());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS, row.getFouls());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
-                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS, null, cv2);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, gameId);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, hName);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv2);
                 }
                 for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
                     cv2 = new ContentValues();
                     SidePanelRow row = entry.getValue();
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_GAME_ID, gameId);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_TEAM, gName);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NUMBER, row.getNumber());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_NAME, row.getName());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_POINTS, row.getPoints());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_FOULS, row.getFouls());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_NAME_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
-                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME_GAME_PLAYERS, null, cv2);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, gameId);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, gName);
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
+                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv2);
                 }
             }
+
+            ContentValues cv3 = new ContentValues();
+            cv3.put(DbScheme.GameDetailsTable.COLUMN_GAME_ID, gameId);
+            cv3.put(DbScheme.GameDetailsTable.COLUMN_TIE, timesTie);
+            cv3.put(DbScheme.GameDetailsTable.COLUMN_LEADER_CHANGED, timesLeadChanged);
+            cv3.put(DbScheme.GameDetailsTable.COLUMN_HOME_MAX_LEAD, hMaxLead);
+            cv3.put(DbScheme.GameDetailsTable.COLUMN_GUEST_MAX_LEAD, gMaxLead);
+            if (playByPlay == 2) {
+                cv3.put(DbScheme.GameDetailsTable.COLUMN_PLAY_BY_PLAY, gameResult.toString());
+            }
+            db.insert(DbScheme.GameDetailsTable.TABLE_NAME, null, cv3);
+
 
         } finally {
             dbHelper.close();
@@ -2473,5 +2733,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public int onEditPlayerCheck(boolean left, int number, boolean captain) {
         return ((left) ? leftPanel : rightPanel).checkNewPlayer(number, captain);
     }
-
 }
