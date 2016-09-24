@@ -85,7 +85,7 @@
     <string name="lead_changed">Смена лидера</string>
     <string name="home_max_lead">Максимальное преимущество хозяев</string>
     <string name="guest_max_lead">Максимальное преимущество гостей</string>
-    <string name="foul">foul</string>
+    <string name="foul">фол</string>
     <string name="quarter">четверть</string>
     <string name="timeout">таймаут</string>
     <string name="timeout20">таймаут (20 сек)</string>
@@ -94,6 +94,7 @@
         <item quantity="one">%d очко</item>
         <item quantity="few">%d очка</item>
         <item quantity="many">%d очков</item>
+        <item quantity="other">%d очков</item>
     </plurals>
 
     <string name="side_panel_name">Игрок</string>

@@ -82,7 +82,8 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         void onConfirmDialogPositive(String type);
         void onConfirmDialogPositive(String type, boolean dontShow);
         void onConfirmDialogNeutral(boolean dontShow);
-        void onConfirmDialogNegative(boolean dontShow);
+        void onConfirmDialogNegative(String type, boolean dontShow);
+        void onConfirmDialogNegative(String type);
     }
     private ConfirmDialogListener listener;
 
@@ -110,7 +111,9 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                 break;
             case Dialog.BUTTON_NEGATIVE:
                 if (checkbox != null) {
-                    listener.onConfirmDialogNegative(checkbox.isChecked());
+                    listener.onConfirmDialogNegative(type, checkbox.isChecked());
+                } else {
+                    listener.onConfirmDialogNegative(type);
                 }
                 break;
         }

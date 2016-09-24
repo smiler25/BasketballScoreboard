@@ -17,7 +17,7 @@ public class SeekBarPreference extends DialogPreference implements DialogInterfa
 SeekBar.OnSeekBarChangeListener{
 
     // TODO: логика для случаев, когда min==0 и min!=0,
-    SeekBarDialogListener listener;
+    private SeekBarDialogListener listener;
     private int max = 10;
     private int min = 0;
     private int current = 3;
@@ -88,11 +88,11 @@ SeekBar.OnSeekBarChangeListener{
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {}
 
-    public interface SeekBarDialogListener {
+    interface SeekBarDialogListener {
         void onAcceptSeekBarValue(int value);
     }
 
-    public void attachListener(Context activity) {
+    private void attachListener(Context activity) {
         try {
             listener = (SeekBarDialogListener) activity;
         } catch (ClassCastException e) {

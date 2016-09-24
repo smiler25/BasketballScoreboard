@@ -102,6 +102,8 @@
 
     <plurals name="points">
         <item quantity="one">%d point</item>
+        <item quantity="few">%d points</item>
+        <item quantity="many">%d points</item>
         <item quantity="other">%d points</item>
     </plurals>
 

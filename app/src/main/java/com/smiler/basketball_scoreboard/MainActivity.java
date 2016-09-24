@@ -287,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         getSettings();
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
-        // if (sharedPref.getInt("app_version", 1) < 13) {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
@@ -1243,7 +1242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (autoSaveResults == 2) {
             showConfirmDialog("save_result", false);
         }
-        newGame();
+//        newGame();
     }
 
     private void newGame() {
@@ -2601,7 +2600,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 newGame();
                 break;
             case "save_result":
+                saveResult();
                 saveResultDb();
+                newGame();
                 break;
             case "edit_player_captain":
                 EditPlayerDialog f = (EditPlayerDialog) getFragmentManager().findFragmentByTag(EditPlayerDialog.TAG);
@@ -2613,13 +2614,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onConfirmDialogNeutral(boolean dontShow) {
         dontAskNewGame = (dontShow) ? 2 : 0;
+        saveResult();
         saveResultDb();
         newGame();
     }
 
     @Override
-    public void onConfirmDialogNegative(boolean dontShow) {
+    public void onConfirmDialogNegative(String type, boolean dontShow) {
         dontAskNewGame = (dontShow) ? 1 : 0;
+    }
+
+    @Override
+    public void onConfirmDialogNegative(String type) {
+        if (type.equals("save_result")) {
+            newGame();
+        }
     }
 
     @Override
