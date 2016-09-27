@@ -10,24 +10,20 @@ import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.smiler.basketball_scoreboard.models.Player;
 
 public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
     private static int maxFouls;
-    private TextView numberView, nameView, pointsView, foulsView;
-    private int number;
-    private short points, fouls;
-    private String name;
-    private boolean left, captain = false, selected = false;
-    private Context context;
     private static int count = 0;
+    private TextView numberView, nameView, pointsView, foulsView;
+    private boolean left, selected = false;
+    private Context context;
     private int id = 0;
     private int colorSelected = getResources().getColor(R.color.side_panel_selected);
     private int colorNotSelected = getResources().getColor(R.color.light_grey_background);
     private int colorFouledOut = getResources().getColor(R.color.side_panel_fouled_out);
+    private Player player;
 
     public SidePanelRow(Context context) {
         super(context);
@@ -43,6 +39,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         super(context);
         this.left = left;
         createView(context);
+        player = new Player();
         edit(number, name, captain);
     }
 
@@ -78,72 +75,73 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_right, this);
     }
 
-    public void setNumber(int value) {
-        this.number = value;
-        numberView.setText((captain) ? "" + value + "*" : "" + value);
-    }
-
     public int getId() {
         return id;
     }
 
     public int getNumber() {
-        return number;
+        return player.getNumber();
+    }
+
+    public void setNumber(int value) {
+        player.setNumber(value);
+        numberView.setText((player.isCaptain()) ? "" + value + "*" : "" + value);
     }
 
     public String getName() {
-        return name;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public int getFouls() {
-        return fouls;
-    }
-
-    public boolean getCaptain() {
-        return captain;
+        return player.getName();
     }
 
     public void setName(String value) {
-        this.name = value;
+        player.setName(value);
         nameView.setText(value);
     }
 
+    public int getPoints() {
+        return player.getPoints();
+    }
+
+    public int getFouls() {
+        return player.getFouls();
+    }
+
+    public boolean getCaptain() {
+        return player.isCaptain();
+    }
+
     public void changePoints(int value) {
-        points += value;
-        pointsView.setText(String.valueOf(points));
+        pointsView.setText(String.valueOf(player.changePoints(value)));
     }
 
     public void changeFouls(int value) {
-        fouls += value;
+        int fouls = player.changeFouls(value);
         foulsView.setText(String.valueOf(fouls));
         if (fouls >= maxFouls) {
             Toast.makeText(
-                    getContext(),
-                    String.format(getResources().getString((left) ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), number, name),
-                    Toast.LENGTH_SHORT).show();
+                getContext(),
+                String.format(getResources().getString((left) ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), player.getNumber(), player.getName()),
+                Toast.LENGTH_SHORT).show();
             this.setBackgroundColor(colorFouledOut);
         }
     }
 
     private void edit() {
-        EditPlayerDialog.newInstance(left, id, number, name, captain)
+        EditPlayerDialog.newInstance(left, id, player.getNumber(), player.getName(), player.isCaptain())
                 .show(((Activity) context).getFragmentManager(), EditPlayerDialog.TAG);
     }
 
     public void edit(int number, String name, boolean captain) {
-        this.captain = captain;
-        this.name = (!name.trim().equals("")) ? name.trim() : String.format(getResources().getString(R.string.side_panel_player_name), number);
-        this.number = number;
+        player.setInfo(
+            number,
+            (!name.trim().equals("")) ? name.trim() : String.format(getResources().getString(R.string.side_panel_player_name), number),
+            captain
+        );
         setNumber(number);
-        setName(this.name);
+        setName(player.getName());
     }
 
     public void cancelCaptain() {
-        this.captain = false;
+        player.setCaptain(false);
     }
 
     public boolean toggleSelected() {
@@ -156,30 +154,9 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         return selected;
     }
 
-    public JSONObject getFullInfo() throws JSONException {
-        JSONObject object = new JSONObject();
-//        try {
-            object.put("name", name);
-            object.put("number", number);
-            object.put("points", points);
-            object.put("fouls", fouls);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        return object;
-    }
-
-    public SidePanelRow restoreFromJson(JSONObject object) throws JSONException {
-        this.name = (String) object.get("name");
-        this.number = (int) object.get("number");
-        this.points = (short) object.get("points");
-        this.fouls = (short) object.get("fouls");
-        return this;
-    }
-
     @Override
     public int compareTo(@NonNull SidePanelRow another) {
-        return this.number - another.getNumber();
+        return player.getNumber() - another.getNumber();
     }
 
     public static void setMaxFouls(int value) {
@@ -187,9 +164,8 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     public void clear() {
-        points = 0;
+        player.clear();
         pointsView.setText("0");
-        fouls = 0;
         foulsView.setText("0");
     }
 
@@ -201,13 +177,34 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     private void recreateView() {
         this.removeAllViews();
         createView(context);
-        foulsView.setText(String.valueOf(fouls));
-        nameView.setText(name);
-        numberView.setText((captain) ? "" + number + "*" : "" + number);
-        pointsView.setText(String.valueOf(points));
-        if (fouls >= maxFouls) {
+        foulsView.setText(String.valueOf(player.getFouls()));
+        nameView.setText(player.getName());
+        numberView.setText((player.isCaptain()) ? "" + player.getNumber() + "*" : "" + player.getNumber());
+        pointsView.setText(String.valueOf(player.getPoints()));
+        if (player.getFouls() >= maxFouls) {
             this.setBackgroundColor(colorFouledOut);
         }
     }
+
+//    public JSONObject getFullInfo() throws JSONException {
+//        JSONObject object = new JSONObject();
+////        try {
+//            object.put("name", name);
+//            object.put("number", number);
+//            object.put("points", points);
+//            object.put("fouls", fouls);
+////        } catch (JSONException e) {
+////            e.printStackTrace();
+////        }
+//        return object;
+//    }
+
+//    public SidePanelRow restoreFromJson(JSONObject object) throws JSONException {
+//        this.name = (String) object.get("name");
+//        this.number = (int) object.get("number");
+//        this.points = (short) object.get("points");
+//        this.fouls = (short) object.get("fouls");
+//        return this;
+//    }
 
 }

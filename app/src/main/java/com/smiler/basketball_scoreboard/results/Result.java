@@ -2,6 +2,8 @@ package com.smiler.basketball_scoreboard.results;
 
 import android.text.TextUtils;
 
+import com.smiler.basketball_scoreboard.models.ActionRecord;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;

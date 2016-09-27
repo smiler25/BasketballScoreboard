@@ -5,6 +5,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.models.Player;
 
 class ResultViewBoxscoreRow extends TableRow {
 

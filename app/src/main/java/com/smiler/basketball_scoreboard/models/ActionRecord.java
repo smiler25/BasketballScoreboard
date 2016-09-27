@@ -1,4 +1,4 @@
-package com.smiler.basketball_scoreboard.results;
+package com.smiler.basketball_scoreboard.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +11,7 @@ public class ActionRecord {
     private int number;
     private int value;
 
-    ActionRecord(JSONObject obj) {
+    public ActionRecord(JSONObject obj) {
          try {
              this.time = obj.getLong("time");
              this.type = obj.getInt("type");
@@ -23,7 +23,7 @@ public class ActionRecord {
          }
      }
 
-    ActionRecord(long time, int type, int team, int number, int value) {
+    public ActionRecord(long time, int type, int team, int number, int value) {
         this.time = time;
         this.type = type;
         this.team = team;
@@ -31,7 +31,7 @@ public class ActionRecord {
         this.value = value;
     }
 
-    ActionRecord(long time, int type, int team, int value) {
+    public ActionRecord(long time, int type, int team, int value) {
         this.time = time;
         this.type = type;
         this.team = team;
@@ -69,7 +69,7 @@ public class ActionRecord {
         return getJson().toString();
     }
 
-    JSONObject getJson() {
+    public JSONObject getJson() {
         JSONObject obj = new JSONObject();
         try {
             obj.put("time", time);

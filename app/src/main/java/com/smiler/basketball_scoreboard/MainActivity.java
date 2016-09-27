@@ -56,7 +56,7 @@ import com.smiler.basketball_scoreboard.help.HelpActivity;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
-import com.smiler.basketball_scoreboard.results.ActionRecord;
+import com.smiler.basketball_scoreboard.models.ActionRecord;
 import com.smiler.basketball_scoreboard.results.Result;
 import com.smiler.basketball_scoreboard.results.ResultsActivity;
 

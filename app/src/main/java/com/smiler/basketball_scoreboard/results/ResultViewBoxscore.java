@@ -7,6 +7,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.models.Player;
 
 import java.util.ArrayList;
 import java.util.Map;

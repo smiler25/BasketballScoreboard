@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.TableLayout;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.models.ActionRecord;
+import com.smiler.basketball_scoreboard.models.Player;
 
 import org.json.JSONArray;
 import org.json.JSONException;

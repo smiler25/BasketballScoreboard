@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.smiler.basketball_scoreboard.DbHelper;
 import com.smiler.basketball_scoreboard.DbScheme;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.models.Player;
 
 import org.json.JSONArray;
 import org.json.JSONException;
