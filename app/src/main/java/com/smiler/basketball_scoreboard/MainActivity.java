@@ -4,14 +4,12 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -46,6 +44,9 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.camera.CameraActivity;
+import com.smiler.basketball_scoreboard.db.GameDetails;
+import com.smiler.basketball_scoreboard.db.PlayersResults;
+import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.ListDialog;
@@ -53,10 +54,10 @@ import com.smiler.basketball_scoreboard.elements.NameEditDialog;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 import com.smiler.basketball_scoreboard.elements.TriangleView;
 import com.smiler.basketball_scoreboard.help.HelpActivity;
+import com.smiler.basketball_scoreboard.models.ActionRecord;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
-import com.smiler.basketball_scoreboard.models.ActionRecord;
 import com.smiler.basketball_scoreboard.results.Result;
 import com.smiler.basketball_scoreboard.results.ResultsActivity;
 
@@ -67,6 +68,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 import static com.smiler.basketball_scoreboard.Constants.ACTION_FLS;
 import static com.smiler.basketball_scoreboard.Constants.ACTION_NONE;
@@ -208,6 +212,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int whistleRepeats, hornRepeats, whistleLength, hornLength, hornUserRepeats;
     private boolean whistlePressed, hornPressed;
     private Result gameResult;
+    private Realm realm;
+    private RealmConfiguration realmConfig;
     private SoundPool soundPool;
     private Vibrator vibrator;
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
@@ -276,6 +282,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivityContext = getApplicationContext();
@@ -314,6 +326,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             newGame();
         }
+        Realm.init(this);
+        realmConfig = new RealmConfiguration.Builder()
+                .name("main.realm")
+                .schemaVersion(0)
+//                .migration(new Migration())
+                .build();
     }
 
     @Override
@@ -2422,67 +2440,126 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             gameResult.setComplete(true);
         }
 
-        DbHelper dbHelper = DbHelper.getInstance(this);
-        try {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put(DbScheme.ResultsTable.COLUMN_DATE, (new Date()).getTime());
-            cv.put(DbScheme.ResultsTable.COLUMN_HOME_TEAM, hName);
-            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_TEAM, gName);
-            cv.put(DbScheme.ResultsTable.COLUMN_HOME_SCORE, hScore);
-            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_SCORE, gScore);
-            cv.put(DbScheme.ResultsTable.COLUMN_SHARE_STRING, gameResult.getResultString(period > numRegularPeriods));
-            cv.put(DbScheme.ResultsTable.COLUMN_HOME_PERIODS, gameResult.getHomeScoreByPeriodString());
-            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_PERIODS, gameResult.getGuestScoreByPeriodString());
-            cv.put(DbScheme.ResultsTable.COLUMN_REGULAR_PERIODS, numRegularPeriods);
-            cv.put(DbScheme.ResultsTable.COLUMN_COMPLETE, gameResult.isComplete());
-            long gameId = db.insert(DbScheme.ResultsTable.TABLE_NAME, null, cv);
+        realm = Realm.getInstance(realmConfig);
+        final int nextID = ((int) (realm.where(Results.class).max("id")) + 1);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Results result = realm.createObject(Results.class);
+                result.setId(nextID)
+                      .setDate(new Date())
+                      .setHomeTeam(hName)
+                      .setGuestTeam(gName)
+                      .setHomeScore(hScore)
+                      .setGuestScore(gScore)
+                      .setHomePeriods(gameResult.getHomeScoreByPeriodString())
+                      .setGuestPeriods(gameResult.getGuestScoreByPeriodString())
+                      .setShareString(gameResult.getResultString(period > numRegularPeriods))
+                      .setRegularPeriods(numRegularPeriods)
+                      .setComplete(gameResult.isComplete());
 
-            if (spOn) {
-                ContentValues cv2;
-                TreeMap<Integer, SidePanelRow> allHomePlayers = leftPanel.getAllPlayers();
-                TreeMap<Integer, SidePanelRow> allGuestPlayers = rightPanel.getAllPlayers();
-                for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
-                    cv2 = new ContentValues();
-                    SidePanelRow row = entry.getValue();
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, gameId);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, hName);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
-                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv2);
+                GameDetails details = realm.createObject(GameDetails.class);
+                details.setLeadChanged(timesLeadChanged)
+                       .setHomeMaxLead(hMaxLead)
+                       .setGuestMaxLead(gMaxLead)
+                       .setTie(timesTie);
+                if (playByPlay == 2) {
+                    details.setPlayByPlay(gameResult.toString());
                 }
-                for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
-                    cv2 = new ContentValues();
-                    SidePanelRow row = entry.getValue();
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, gameId);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, gName);
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
-                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
-                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv2);
+                result.setDetails(details);
+
+                if (spOn) {
+                    TreeMap<Integer, SidePanelRow> allHomePlayers = leftPanel.getAllPlayers();
+                    TreeMap<Integer, SidePanelRow> allGuestPlayers = rightPanel.getAllPlayers();
+                    for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
+                        SidePanelRow row = entry.getValue();
+                        PlayersResults playersResults = realm.createObject(PlayersResults.class);
+                        playersResults.setGame(result)
+                                .setPlayerTeam(hName)
+                                .setPlayerNumber(row.getNumber())
+                                .setPlayerName(row.getName())
+                                .setPlayerPoints(row.getPoints())
+                                .setPlayerFouls(row.getFouls())
+                                .setCaptain(row.getCaptain());
+                    }
+                    for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
+                        SidePanelRow row = entry.getValue();
+                        PlayersResults playersResults = realm.createObject(PlayersResults.class);
+                        playersResults.setGame(result)
+                                .setPlayerTeam(gName)
+                                .setPlayerNumber(row.getNumber())
+                                .setPlayerName(row.getName())
+                                .setPlayerPoints(row.getPoints())
+                                .setPlayerFouls(row.getFouls())
+                                .setCaptain((row.getCaptain()));
+                    }
                 }
             }
+        });
+        realm.close();
 
-            ContentValues cv3 = new ContentValues();
-            cv3.put(DbScheme.GameDetailsTable.COLUMN_GAME_ID, gameId);
-            cv3.put(DbScheme.GameDetailsTable.COLUMN_TIE, timesTie);
-            cv3.put(DbScheme.GameDetailsTable.COLUMN_LEADER_CHANGED, timesLeadChanged);
-            cv3.put(DbScheme.GameDetailsTable.COLUMN_HOME_MAX_LEAD, hMaxLead);
-            cv3.put(DbScheme.GameDetailsTable.COLUMN_GUEST_MAX_LEAD, gMaxLead);
-            if (playByPlay == 2) {
-                cv3.put(DbScheme.GameDetailsTable.COLUMN_PLAY_BY_PLAY, gameResult.toString());
-            }
-            db.insert(DbScheme.GameDetailsTable.TABLE_NAME, null, cv3);
+//        DbHelper dbHelper = DbHelper.getInstance(this);
+//        try {
+//            SQLiteDatabase db = dbHelper.getWritableDatabase();
+//            ContentValues cv = new ContentValues();
+//            cv.put(DbScheme.ResultsTable.COLUMN_DATE, (new Date()).getTime());
+//            cv.put(DbScheme.ResultsTable.COLUMN_HOME_TEAM, hName);
+//            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_TEAM, gName);
+//            cv.put(DbScheme.ResultsTable.COLUMN_HOME_SCORE, hScore);
+//            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_SCORE, gScore);
+//            cv.put(DbScheme.ResultsTable.COLUMN_SHARE_STRING, gameResult.getResultString(period > numRegularPeriods));
+//            cv.put(DbScheme.ResultsTable.COLUMN_HOME_PERIODS, gameResult.getHomeScoreByPeriodString());
+//            cv.put(DbScheme.ResultsTable.COLUMN_GUEST_PERIODS, gameResult.getGuestScoreByPeriodString());
+//            cv.put(DbScheme.ResultsTable.COLUMN_REGULAR_PERIODS, numRegularPeriods);
+//            cv.put(DbScheme.ResultsTable.COLUMN_COMPLETE, gameResult.isComplete());
+//            long gameId = db.insert(DbScheme.ResultsTable.TABLE_NAME, null, cv);
+//
+//            if (spOn) {
+//                ContentValues cv2;
+//                TreeMap<Integer, SidePanelRow> allHomePlayers = leftPanel.getAllPlayers();
+//                TreeMap<Integer, SidePanelRow> allGuestPlayers = rightPanel.getAllPlayers();
+//                for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
+//                    cv2 = new ContentValues();
+//                    SidePanelRow row = entry.getValue();
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, gameId);
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, hName);
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+//                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv2);
+//                }
+//                for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
+//                    cv2 = new ContentValues();
+//                    SidePanelRow row = entry.getValue();
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, gameId);
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, gName);
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
+//                    cv2.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
+//                    db.insert(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv2);
+//                }
+//            }
+//
+//            ContentValues cv3 = new ContentValues();
+//            cv3.put(DbScheme.GameDetailsTable.COLUMN_GAME_ID, gameId);
+//            cv3.put(DbScheme.GameDetailsTable.COLUMN_TIE, timesTie);
+//            cv3.put(DbScheme.GameDetailsTable.COLUMN_LEADER_CHANGED, timesLeadChanged);
+//            cv3.put(DbScheme.GameDetailsTable.COLUMN_HOME_MAX_LEAD, hMaxLead);
+//            cv3.put(DbScheme.GameDetailsTable.COLUMN_GUEST_MAX_LEAD, gMaxLead);
+//            if (playByPlay == 2) {
+//                cv3.put(DbScheme.GameDetailsTable.COLUMN_PLAY_BY_PLAY, gameResult.toString());
+//            }
+//            db.insert(DbScheme.GameDetailsTable.TABLE_NAME, null, cv3);
 
 
-        } finally {
-            dbHelper.close();
-        }
+//        } finally {
+//            dbHelper.close();
+//        }
+
     }
 
     @Override

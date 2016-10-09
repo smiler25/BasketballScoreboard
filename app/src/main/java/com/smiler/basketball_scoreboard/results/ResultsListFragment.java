@@ -19,11 +19,13 @@ public class ResultsListFragment extends ListFragment {
 
     private int selectedPos = -1;
     private ResultsCursorAdapter adapter;
+    private ResultsListListener listener;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Cursor cursor = getDataCursor();
+
         if (cursor.getCount() == 0) {
             listener.onListEmpty();
             return;
@@ -65,7 +67,6 @@ public class ResultsListFragment extends ListFragment {
         void onListEmpty();
 
     }
-    private ResultsListListener listener;
 
     @Override
     public void onAttach(Activity activity) {

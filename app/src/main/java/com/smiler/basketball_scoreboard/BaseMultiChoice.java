@@ -9,8 +9,15 @@ import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smiler.basketball_scoreboard.db.PlayersResults;
+import com.smiler.basketball_scoreboard.db.Results;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
 
@@ -20,10 +27,17 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     public boolean actionModeEnabled;
     private TextView title;
     private ActionMode mode;
+    private RealmConfiguration realmConfig;
+    private CabDeletedListener listener;
 
     BaseMultiChoice(AbsListView listView, Activity activity) {
         this.activity = activity;
         this.listView = listView;
+        Realm.init(activity.getApplicationContext());
+        realmConfig = new RealmConfiguration.Builder()
+                .name("main.realm")
+                .schemaVersion(0)
+                .build();
     }
 
     public void close() {
@@ -37,8 +51,6 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     public void setCabDeleteListener(CabDeletedListener listener) {
         this.listener = listener;
     }
-
-    private CabDeletedListener listener;
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -74,8 +86,34 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.cab_action_delete:
-                DbHelper dbHelper = DbHelper.getInstance(activity);
-                dbHelper.delete(selectedIds.toArray(new String[selectedIds.size()]));
+                Realm realm = Realm.getInstance(realmConfig);
+                String[] array = selectedIds.toArray(new String[selectedIds.size()]);
+
+                final RealmResults<Results> results = realm.where(Results.class)
+                        .in("id", array)
+                        .findAll();
+
+                final RealmResults<PlayersResults> playersResults = realm.where(PlayersResults.class)
+                        .in("game.id", array)
+                        .findAll();
+//
+//                final RealmResults<GameDetails> details = realm.where(GameDetails.class)
+//                        .in("game.id", array)
+//                        .findAll();
+
+                for (Results one : results) {
+                    System.out.println("one = " + one);
+                }
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+//                        results.deleteAllFromRealm();
+//                        playersResults.deleteAllFromRealm();
+////                        details.deleteAllFromRealm();
+                    }
+                });
+//                DbHelper dbHelper = DbHelper.getInstance(activity);
+//                dbHelper.delete(selectedIds.toArray(new String[selectedIds.size()]));
                 listener.onCabDelete(selectedIds);
                 Toast.makeText(activity, activity.getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
                 mode.finish();
