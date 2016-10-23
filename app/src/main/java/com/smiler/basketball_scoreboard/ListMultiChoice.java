@@ -18,9 +18,9 @@ public class ListMultiChoice extends BaseMultiChoice {
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long adapterId, boolean checked) {
         if (checked) {
-            super.addSelectedId(adapterId);
+            super.addSelectedId((int) adapterId);
         } else {
-            super.removeSelectedId(adapterId);
+            super.removeSelectedId((int) adapterId);
         }
         adapter.toggleSelection(position, checked);
         super.onItemCheckedStateChanged(mode, position, adapterId, checked);

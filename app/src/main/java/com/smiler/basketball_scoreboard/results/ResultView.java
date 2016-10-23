@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.GameDetails;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
+import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.models.Player;
 import com.smiler.basketball_scoreboard.models.ResultGameDetails;
@@ -22,27 +23,21 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 class ResultView extends LinearLayout {
     public static String TAG = "BS-ResultView";
     private TextView title;
-    private int sqlId;
-    private Results game;
-    private RealmConfiguration realmConfig;
+    private int itemId;
+    private Results gameResult;
+    private RealmResults<PlayersResults> gamePlayers;
+    private RealmController realmController;
 
-    ResultView(Context context, int sqlId) {
+    ResultView(Context context, int itemId) {
         super(context);
-        Realm.init(context);
-        realmConfig = new RealmConfiguration.Builder()
-                .name("main.realm")
-                .schemaVersion(0)
-                .build();
-
+        realmController = RealmController.with(context);
         if(!isInEditMode()) {
-            this.sqlId = sqlId;
+            this.itemId = itemId;
             init();
         }
     }
@@ -51,11 +46,12 @@ class ResultView extends LinearLayout {
         inflate(getContext(), R.layout.result_view, this);
         title = (TextView)findViewById(R.id.result_view_title);
 
+        getData();
         Result result = getResult();
-        System.out.println("game = " + game);
         TreeMap<String, ArrayList<Player>> playersData = getPlayersContent();
         TreeMap<String, Integer> detailData = getDetailContent();
         JSONArray playByPlay = getPlayByPlay();
+
         long date = result.getDate();
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
         String dateStr = dateFormat.format(new Date(date));
@@ -91,15 +87,17 @@ class ResultView extends LinearLayout {
         title.setText(value);
     }
 
-    private Result getResult() {
-        Realm realm = Realm.getInstance(realmConfig);
-        Results realmResults = realm.where(Results.class).equalTo("id", sqlId).findFirst();
+    private void getData() {
+        gameResult = realmController.getResult(itemId);
+        gamePlayers = realmController.getPlayers(itemId);
+    }
 
+    private Result getResult() {
         ArrayList<Integer> hPeriods = new ArrayList<>();
         ArrayList<Integer> gPeriods = new ArrayList<>();
-        String hPeriodsString = realmResults.getHomePeriods();
-        String gPeriodsString = realmResults.getGuestPeriods();
-        if (!hPeriodsString.equals("")) {
+        String hPeriodsString = gameResult.getHomePeriods();
+        String gPeriodsString = gameResult.getGuestPeriods();
+        if (hPeriodsString != null && !hPeriodsString.equals("")) {
             for (String periodString : hPeriodsString.split("-")) {
                 try {
                     hPeriods.add(Integer.parseInt(periodString));
@@ -108,7 +106,7 @@ class ResultView extends LinearLayout {
                 }
             }
         }
-        if (!gPeriodsString.equals("")) {
+        if (gPeriodsString != null && !gPeriodsString.equals("")) {
             for (String periodString : gPeriodsString.split("-")) {
                 try {
                     gPeriods.add(Integer.parseInt(periodString));
@@ -118,35 +116,21 @@ class ResultView extends LinearLayout {
             }
         }
 
-        Result res = new Result(
-                realmResults.getHomeTeam(),
-                realmResults.getGuestTeam(),
-                realmResults.getHomeScore(),
-                realmResults.getGuestScore(),
+        return new Result(
+                gameResult.getHomeTeam(),
+                gameResult.getGuestTeam(),
+                gameResult.getHomeScore(),
+                gameResult.getGuestScore(),
                 hPeriods,
                 gPeriods,
-                realmResults.getComplete(),
-                realmResults.getDate().getTime(),
-                realmResults.getRegularPeriods());
-
-        game = realmResults;
-        realm.close();
-        return res;
+                gameResult.getComplete(),
+                gameResult.getDate().getTime(),
+                gameResult.getRegularPeriods());
     }
 
     private TreeMap<String, ArrayList<Player>> getPlayersContent() {
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .name("main.realm")
-                .schemaVersion(0)
-                .build();
-        Realm realm = Realm.getInstance(config);
-        RealmResults<PlayersResults> results = realm.where(PlayersResults.class)
-                .equalTo("game.id", sqlId)
-                .findAll();
-
         TreeMap<String, ArrayList<Player>> result = new TreeMap<>();
-
-        for (PlayersResults r : results) {
+        for (PlayersResults r : gamePlayers) {
             String team = r.getPlayerTeam();
             if (result.get(team) == null) { result.put(team, new ArrayList<Player>()); }
             result.get(team).add(new Player(
@@ -156,43 +140,34 @@ class ResultView extends LinearLayout {
                     r.getPlayerFouls(),
                     r.getCaptain()));
         }
-        realm.close();
         return result;
     }
 
     private TreeMap<String, Integer> getDetailContent() {
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .name("main.realm")
-                .schemaVersion(0)
-                .build();
-        Realm realm = Realm.getInstance(config);
-        GameDetails details = realm.where(GameDetails.class).equalTo("game.id", sqlId).findFirst();
+        GameDetails details = gameResult.getDetails();
         TreeMap<String, Integer> result = new TreeMap<>();
-        result.put(ResultGameDetails.LEADER_CHANGED, details.getLeadChanged());
-        result.put(ResultGameDetails.TIE, details.getHomeMaxLead());
-        result.put(ResultGameDetails.HOME_MAX_LEAD, details.getGuestMaxLead());
-        result.put(ResultGameDetails.GUEST_MAX_LEAD, details.getTie());
-        realm.close();
+        if (details != null) {
+            result.put(ResultGameDetails.LEADER_CHANGED, details.getLeadChanged());
+            result.put(ResultGameDetails.TIE, details.getHomeMaxLead());
+            result.put(ResultGameDetails.HOME_MAX_LEAD, details.getGuestMaxLead());
+            result.put(ResultGameDetails.GUEST_MAX_LEAD, details.getTie());
+        }
         return result;
     }
 
     private JSONArray getPlayByPlay() {
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .name("main.realm")
-                .schemaVersion(0)
-                .build();
-        Realm realm = Realm.getInstance(config);
-        GameDetails details = realm.where(GameDetails.class).equalTo("game.id", sqlId).findFirst();
         JSONArray result = null;
-        try {
-            String val = details.getPlayByPlay();
-            if (val != null) {
-                result = new JSONArray(val);
+        GameDetails details = gameResult.getDetails();
+        if (details != null) {
+            try {
+                String val = details.getPlayByPlay();
+                if (val != null) {
+                    result = new JSONArray(val);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-        realm.close();
         return result;
     }
 }

@@ -36,10 +36,10 @@ public class ResultViewFragment extends Fragment {
         return new ResultView(getActivity(), getArguments().getInt(SQL_ARG));
     }
 
-    public void updateContent(int sqlId) {
+    public void updateContent(int itemId) {
         if (view != null) {
             view.removeAllViews();
-            view.addView(new ResultView(getActivity(), sqlId));
+            view.addView(new ResultView(getActivity(), itemId));
         }
     }
 

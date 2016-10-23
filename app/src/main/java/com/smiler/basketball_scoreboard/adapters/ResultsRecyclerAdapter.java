@@ -8,39 +8,54 @@ import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.Results;
+import com.smiler.basketball_scoreboard.results.ResultsListListener;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 
 import io.realm.RealmResults;
 
 public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecyclerAdapter.ViewHolder> {
-    private static final String TAG = "BS-ResultsRecyclerAdapter";
-
+    private static final String TAG = "BS-ResultsAdapter";
+    private ResultsListListener listener;
     private RealmResults<Results> dataSet;
     private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
+    private ArrayList<Integer> selectedIds = new ArrayList<>();
+    private boolean multiSelection = false;
+    private View selectedItem;
+    private ItemsCallback callback;
 
-
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
-
-        ViewHolder(View v) {
-            super(v);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    Log.d(TAG, "Element " + getPosition() + " clicked.");
-                }
-            });
-            textView = (TextView) v.findViewById(R.id.textView);
-        }
-
-        TextView getTextView() {
-            return textView;
-        }
+    private interface ItemsCallback {
+        void selectedView(View view, boolean longClick);
     }
 
     public ResultsRecyclerAdapter(RealmResults<Results> dataSet) {
         this.dataSet = dataSet;
+        callback = new ItemsCallback() {
+            @Override
+            public void selectedView(View view, boolean longClick) {
+                System.out.println("longClick = " + longClick + " - " + multiSelection);
+                if (longClick) {
+                    multiSelection = true;
+                }
+                view.setSelected(!view.isSelected());
+                if (multiSelection) {
+                    if (view.isSelected()) {
+                        selectedIds.add((Integer) view.getTag());
+                    } else {
+                        selectedIds.remove((Integer) view.getTag());
+                    }
+
+                } else {
+                    selectedIds.clear();
+                    if (selectedItem != null) {
+                        selectedItem.setSelected(false);
+                    }
+                    selectedItem = view;
+                    listener.onListItemSelected((int) view.getTag());
+                }
+            }
+        };
     }
 
     @Override
@@ -53,14 +68,56 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Results results = dataSet.get(position);
-        viewHolder.getTextView().setText(
-                String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
-                        results.getHomeTeam(), results.getGuestTeam())
-        );
+        viewHolder.setTextView(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
+                results.getHomeTeam(), results.getGuestTeam()));
+        viewHolder.setId(results.getId());
+        viewHolder.setSelected(selectedIds.indexOf(results.getId()) != -1);
+        viewHolder.setCallback(callback);
     }
 
     @Override
     public int getItemCount() {
         return dataSet.size();
     }
+
+    public void setListener(ResultsListListener listener) {
+        this.listener = listener;
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView textView;
+        private final View root;
+        private ItemsCallback callback;
+
+        ViewHolder(View v) {
+            super(v);
+            root = v;
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (callback != null) {
+                        callback.selectedView(root, false);
+                    }
+                }
+            });
+            v.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (callback != null) {
+                        callback.selectedView(root, true);
+                    }
+                    return false;
+                }
+            });
+            textView = (TextView) v.findViewById(R.id.textView);
+        }
+
+        void setTextView(String text) { textView.setText(text); }
+        void setId(int id) { root.setTag(id); }
+        void setCallback(ItemsCallback callback) { this.callback = callback; }
+        void setSelected(boolean selected) {
+            root.setSelected(selected);
+        }
+    }
+
 }

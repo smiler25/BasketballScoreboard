@@ -8,12 +8,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-import com.smiler.basketball_scoreboard.BaseMultiChoice;
 import com.smiler.basketball_scoreboard.DbHelper;
 import com.smiler.basketball_scoreboard.DbScheme;
 import com.smiler.basketball_scoreboard.ListMultiChoice;
-
-import java.util.List;
 
 public class ResultsListFragment extends ListFragment {
 
@@ -36,13 +33,13 @@ public class ResultsListFragment extends ListFragment {
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         final ListMultiChoice cab = new ListMultiChoice(listView, getActivity());
         listView.setMultiChoiceModeListener(cab);
-        cab.setCabDeleteListener(new BaseMultiChoice.CabDeletedListener() {
-            @Override
-            public void onCabDelete(List<String> selectedIds) {
-                listener.onListItemDeleted(updateList());
-                cab.close();
-            }
-        });
+//        cab.setCabDeleteListener(new BaseMultiChoice.CabDeletedListener() {
+//            @Override
+//            public void onCabDelete(List<String> selectedIds) {
+//                listener.onListItemDeleted(updateList());
+//                cab.close();
+//            }
+//        });
     }
 
     boolean updateList() {

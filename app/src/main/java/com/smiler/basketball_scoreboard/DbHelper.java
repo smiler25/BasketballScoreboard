@@ -25,7 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     private static DbHelper instance;
 
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 34;
     private static final String DATABASE_NAME = "scoreboard_results.db";
     private Realm realm;
     private RealmConfiguration config;
@@ -54,8 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Realm.init(this.context);
         config = new RealmConfiguration.Builder()
                 .name("main.realm")
-//                .schemaVersion(0)
-                .deleteRealmIfMigrationNeeded()
+                .schemaVersion(0)
                 .build();
 
         switch (oldVersion) {
@@ -67,7 +66,7 @@ public class DbHelper extends SQLiteOpenHelper {
 //                db.execSQL(DbScheme.GameDetailsTable.CREATE_TABLE);
                 toRealmResultsPlayers(db, toRealmResults(db));
                 break;
-            case 3:
+            case 33:
                 ArrayList<String> gameIds = toRealmResults(db);
                 toRealmGameDetails(db, gameIds);
                 toRealmResultsPlayers(db, gameIds);
@@ -215,10 +214,6 @@ public class DbHelper extends SQLiteOpenHelper {
                                           .setPlayerPoints(c.getInt(3))
                                           .setPlayerFouls(c.getInt(4))
                                           .setCaptain(c.getInt(5) == 1);
-                            System.out.println("game = " + game);
-                            System.out.println("playersResults = " + playersResults);
-                            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
                         } while (c.moveToNext());
                     }
                 });
@@ -230,7 +225,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     private void toRealmGameDetails(SQLiteDatabase db, ArrayList<String> ids) {
-        System.out.println("===========toRealmGameDetails=============");
         try {
             String[] columns = new String[] {
                     DbScheme.GameDetailsTable.COLUMN_LEADER_CHANGED,
@@ -254,12 +248,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     @Override
                     public void execute(Realm realm) {
                         do {
-                            System.out.println(
-                                    "gameid = " + c.getInt(5) + ": " + c.getInt(0) + " - " + c.getInt(1) + " - " +
-                                    c.getInt(2) + " - " + c.getInt(3) + " - " +
-                                    c.getString(4));
                             Results game = realm.where(Results.class).equalTo("id", c.getInt(5)).findFirst();
-                            System.out.println("game = " + game);
                             GameDetails details = realm.createObject(GameDetails.class);
                             details.setLeadChanged(c.getInt(0))
                                    .setHomeMaxLead(c.getInt(2))
@@ -269,10 +258,6 @@ public class DbHelper extends SQLiteOpenHelper {
                                 details.setPlayByPlay(c.getString(4));
                             }
                             game.setDetails(details);
-                            System.out.println("game = " + game);
-                            System.out.println("details = " + details);
-                            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
                         } while (c.moveToNext());
                     }
                 });

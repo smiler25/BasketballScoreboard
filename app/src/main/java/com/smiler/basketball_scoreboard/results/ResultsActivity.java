@@ -9,11 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.smiler.basketball_scoreboard.DbHelper;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.elements.RecyclerViewFragment;
 
-public class ResultsActivity extends ActionBarActivity  implements ResultsListFragment.ResultsListListener,
-        ResultsExpListFragment.ExpListListener {
+public class ResultsActivity extends ActionBarActivity  implements ResultsListListener,
+        ResultsExpListListener {
 
     private Menu menu;
     private int selected = -1;
@@ -21,8 +22,36 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_results);
         initToolbar();
+//        DbHelper helper = DbHelper.getInstance(this);
+//        helper.getReadableDatabase();
+        RecyclerViewFragment list = (RecyclerViewFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        if (list != null) {
+            list.setListener(new ResultsListListener() {
+                @Override
+                public void onListItemSelected(int itemId) {
+                    menu.setGroupVisible(R.id.group, true);
+                    selected = itemId;
+                    System.out.println("ResultsActivity inner itemId onListItemSelected = " + itemId);
+                    ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+                    detailViewFrag.updateContent(itemId);
+                }
+
+                @Override
+                public void onListItemDeleted(boolean empty) {
+                    System.out.println("ResultsActivity inner itemId onListItemDeleted");
+
+                }
+
+                @Override
+                public void onListEmpty() {
+                    System.out.println("ResultsActivity inner onListEmpty ");
+                }
+            });
+        }
+        System.out.println("ResultsActivity onCreate2");
     }
 
     private void initToolbar() {
@@ -65,22 +94,21 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListFr
 
     private void menuShare() {
         if (selected == -1) { return; }
-        DbHelper dbHelper = DbHelper.getInstance(this);
         String mime_type = "text/plain";
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_TEXT, dbHelper.getShareString(selected))
+                .putExtra(Intent.EXTRA_TEXT, RealmController.with(this).getShareString(selected))
                 .setType(mime_type);
         startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.action_share_via)));
     }
 
     private void menuDelete() {
+        System.out.println("menu delete = " + selected);
         menu.setGroupVisible(R.id.group, false);
         if (selected == -1) { return; }
-        DbHelper dbHelper = DbHelper.getInstance(this);
-        dbHelper.delete(new String[]{Integer.toString(selected)});
+        RealmController.with(this).deleteResult(selected);
 
-        ResultsListFragment list = (ResultsListFragment) getFragmentManager().findFragmentById(R.id.list_frag);
+        RecyclerViewFragment list = (RecyclerViewFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
         if (list != null) {
             if (!list.updateList()) {
                 ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
@@ -93,15 +121,17 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListFr
     }
 
     @Override
-    public void onListItemSelected(int sqlId) {
+    public void onListItemSelected(int itemId) {
         menu.setGroupVisible(R.id.group, true);
-        selected = sqlId;
+        selected = itemId;
+        System.out.println("ResultsActivity itemId = " + itemId);
         ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-        detailViewFrag.updateContent(sqlId);
+        detailViewFrag.updateContent(itemId);
     }
 
     @Override
     public void onListItemDeleted(boolean empty) {
+        System.out.println("ResultsActivity onDelete ");
         if (!empty){
             ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
             detailViewFrag.clear();
@@ -112,6 +142,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListFr
 
     @Override
     public void onListEmpty() {
+        System.out.println("ResultsActivity onListEmpty ");
         setEmptyLayout();
     }
 

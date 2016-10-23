@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,12 +57,12 @@ public class ResultsExpListFragment extends Fragment {
         expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         final BaseMultiChoice cab = new ExpListMultiChoice(expListView, getActivity());
         expListView.setMultiChoiceModeListener(cab);
-        cab.setCabDeleteListener(new BaseMultiChoice.CabDeletedListener() {
-            @Override
-            public void onCabDelete(List<String> selectedIds) {
-                listener.onExpListItemDeleted(updateList(selectedIds));
-            }
-        });
+//        cab.setCabDeleteListener(new BaseMultiChoice.CabDeletedListener() {
+//            @Override
+//            public void onCabDelete(List<String> selectedIds) {
+//                listener.onExpListItemDeleted(updateList(selectedIds));
+//            }
+//        });
 
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
@@ -100,27 +102,21 @@ public class ResultsExpListFragment extends Fragment {
         return adapter.getGroupCount() == 0;
     }
 
-    interface ExpListListener {
-        void onExpListItemSelected();
-        void onExpListItemDeleted(boolean empty);
-        void onListEmpty();
-    }
-
-    private ExpListListener listener;
+    private ResultsExpListListener listener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            listener = (ExpListListener) activity;
+            listener = (ResultsExpListListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement ExpListListener");
+            throw new ClassCastException(activity.toString() + " must implement ResultsExpListListener");
         }
     }
 
     private Object[] getListEntries() {
-        HashMap<Integer, ResultsExpListParent> posItems = new HashMap<>();
-        HashMap<Integer, Integer> idPositions = new HashMap<>();
+        SparseArray<ResultsExpListParent> posItems = new SparseArray<>();
+        SparseIntArray idPositions = new SparseIntArray();
         int pos = 0;
 
         DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
