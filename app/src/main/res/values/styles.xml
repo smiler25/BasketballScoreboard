@@ -12,6 +12,7 @@
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="windowActionModeOverlay">true</item>
+
     </style>
 
     <style name="SecondaryTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -20,17 +21,9 @@
         <item name="android:windowActionBarOverlay">false</item>
         <item name="windowActionModeOverlay">true</item>
 
-        <item name="actionModeBackground">@drawable/cab_background</item>
-        <item name="android:actionModeBackground">@color/pressed_color</item>
+        <item name="android:actionModeBackground">@drawable/cab_background</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_action_cancel</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_action_cancel</item>
-
-    </style>
-
-    <style name="actionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="android:layout_height">150dp</item>
-        <item name="background">@color/red</item>
-        <item name="height">150dp</item>
+        <item name="android:actionMenuTextColor">@color/red</item>
     </style>
 
     <declare-styleable name="CustomFontTxtView">

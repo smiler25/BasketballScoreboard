@@ -8,12 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.adapters.ResultsRecyclerAdapter;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
-import com.smiler.basketball_scoreboard.results.ResultsListListener;
+import com.smiler.basketball_scoreboard.results.ListListener;
 
 import io.realm.RealmResults;
 
@@ -63,11 +64,22 @@ public class RecyclerViewFragment extends Fragment {
         realmData = RealmController.with(this).getResults();
     }
 
-    public void setListener(ResultsListListener listener) {
+    public void setListener(ListListener listener) {
         adapter.setListener(listener);
     }
+
     public boolean updateList() {
         adapter.notifyDataSetChanged();
         return adapter.getItemCount() == 0;
     }
+
+    public void clearSelection() {
+        adapter.clearSelection();
+    }
+    public void deleteSelection() {
+        RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
+        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
+        adapter.deleteSelection();
+    }
+
 }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.Results;
-import com.smiler.basketball_scoreboard.results.ResultsListListener;
+import com.smiler.basketball_scoreboard.results.ListListener;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -17,27 +17,39 @@ import io.realm.RealmResults;
 
 public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecyclerAdapter.ViewHolder> {
     private static final String TAG = "BS-ResultsAdapter";
-    private ResultsListListener listener;
+    private ListListener listener;
     private RealmResults<Results> dataSet;
     private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
-    private ArrayList<Integer> selectedIds = new ArrayList<>();
     private boolean multiSelection = false;
     private View selectedItem;
     private ItemsCallback callback;
+    public ArrayList<Integer> selectedIds = new ArrayList<>();
 
     private interface ItemsCallback {
-        void selectedView(View view, boolean longClick);
+        void onElementClick(View view);
+        void onElementLongClick(View view);
     }
 
     public ResultsRecyclerAdapter(RealmResults<Results> dataSet) {
         this.dataSet = dataSet;
         callback = new ItemsCallback() {
             @Override
-            public void selectedView(View view, boolean longClick) {
-                System.out.println("longClick = " + longClick + " - " + multiSelection);
-                if (longClick) {
+            public void onElementLongClick(View view) {
+                if (!multiSelection) {
                     multiSelection = true;
+                    selectedIds.clear();
+                    if (selectedItem != null) {
+                        selectedItem.setSelected(false);
+                    }
+                    // TODO проверить, что onClick происходит всегда после onLongClick
+//                    selectedIds.add((Integer) view.getTag());
+                    listener.onListElementLongClick(0);
+//                    view.setSelected(!view.isSelected());
                 }
+            }
+
+            @Override
+            public void onElementClick(View view) {
                 view.setSelected(!view.isSelected());
                 if (multiSelection) {
                     if (view.isSelected()) {
@@ -45,14 +57,14 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
                     } else {
                         selectedIds.remove((Integer) view.getTag());
                     }
-
+                    listener.onListElementClick(selectedIds.size());
                 } else {
                     selectedIds.clear();
                     if (selectedItem != null) {
                         selectedItem.setSelected(false);
                     }
                     selectedItem = view;
-                    listener.onListItemSelected((int) view.getTag());
+                    listener.onListElementClick((int) view.getTag());
                 }
             }
         };
@@ -80,7 +92,7 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
         return dataSet.size();
     }
 
-    public void setListener(ResultsListListener listener) {
+    public void setListener(ListListener listener) {
         this.listener = listener;
     }
 
@@ -96,7 +108,7 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
                 @Override
                 public void onClick(View v) {
                     if (callback != null) {
-                        callback.selectedView(root, false);
+                        callback.onElementClick(root);
                     }
                 }
             });
@@ -104,7 +116,7 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
                 @Override
                 public boolean onLongClick(View view) {
                     if (callback != null) {
-                        callback.selectedView(root, true);
+                        callback.onElementLongClick(root);
                     }
                     return false;
                 }
@@ -120,4 +132,20 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
         }
     }
 
+    public void clearSelection() {
+        if (selectedItem != null) {
+            selectedItem.setSelected(false);
+            selectedItem = null;
+        }
+        selectedIds.clear();
+        multiSelection = false;
+        notifyDataSetChanged();
+    }
+
+    public void deleteSelection() {
+        selectedItem = null;
+        selectedIds.clear();
+        multiSelection = false;
+        notifyDataSetChanged();
+    }
 }

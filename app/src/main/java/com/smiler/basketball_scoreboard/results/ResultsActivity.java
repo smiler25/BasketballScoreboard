@@ -4,20 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.smiler.basketball_scoreboard.CABListener;
+import com.smiler.basketball_scoreboard.CAB;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.RecyclerViewFragment;
 
-public class ResultsActivity extends ActionBarActivity  implements ResultsListListener,
-        ResultsExpListListener {
+public class ResultsActivity extends ActionBarActivity  implements ResultsExpListListener {
 
     private Menu menu;
     private int selected = -1;
+    private boolean actionModeActive;
+    private ActionMode actionMode;
+    private TextView actionModeText;
+    private ResultViewFragment detailViewFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,22 +34,45 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListLi
         initToolbar();
 //        DbHelper helper = DbHelper.getInstance(this);
 //        helper.getReadableDatabase();
-        RecyclerViewFragment list = (RecyclerViewFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        final String cabString = getResources().getString(R.string.cab_subtitle);
+        final RecyclerViewFragment list = (RecyclerViewFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+        final CABListener cabListener = new CABListener() {
+            @Override
+            public void onFinish() {
+                list.clearSelection();
+            }
+
+            @Override
+            public void onMenuClick() {
+
+            }
+
+            @Override
+            public void onMenuDelete() {
+                list.deleteSelection();
+            }
+        };
+
         if (list != null) {
-            list.setListener(new ResultsListListener() {
+            list.setListener(new ListListener() {
                 @Override
-                public void onListItemSelected(int itemId) {
-                    menu.setGroupVisible(R.id.group, true);
-                    selected = itemId;
-                    System.out.println("ResultsActivity inner itemId onListItemSelected = " + itemId);
-                    ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-                    detailViewFrag.updateContent(itemId);
+                public void onListElementClick(int value) {
+                    if (!actionModeActive) {
+                        menu.setGroupVisible(R.id.group, true);
+                        selected = value;
+                        detailViewFrag.updateContent(value);
+                    } else {
+                        actionModeText.setText(String.format(cabString, value));
+                    }
                 }
 
                 @Override
-                public void onListItemDeleted(boolean empty) {
-                    System.out.println("ResultsActivity inner itemId onListItemDeleted");
-
+                public void onListElementLongClick(int count) {
+                    actionMode = ResultsActivity.this.startSupportActionMode(new CAB(ResultsActivity.this, cabListener));
+                    actionModeText = (TextView)actionMode.getCustomView();
+                    actionModeText.setText(String.format(cabString, 1));
+                    actionModeActive = true;
                 }
 
                 @Override
@@ -51,7 +81,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListLi
                 }
             });
         }
-        System.out.println("ResultsActivity onCreate2");
     }
 
     private void initToolbar() {
@@ -117,26 +146,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsListLi
                 setEmptyLayout();
             }
             selected = -1;
-        }
-    }
-
-    @Override
-    public void onListItemSelected(int itemId) {
-        menu.setGroupVisible(R.id.group, true);
-        selected = itemId;
-        System.out.println("ResultsActivity itemId = " + itemId);
-        ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-        detailViewFrag.updateContent(itemId);
-    }
-
-    @Override
-    public void onListItemDeleted(boolean empty) {
-        System.out.println("ResultsActivity onDelete ");
-        if (!empty){
-            ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-            detailViewFrag.clear();
-        } else {
-            setEmptyLayout();
         }
     }
 
