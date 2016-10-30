@@ -15,21 +15,21 @@ public class RealmController {
 
     private static RealmController instance;
     private final Realm realm;
+    public static String realmName = "main.realm";
 
-    public RealmController(Application application) {
+    private RealmController(Application application) {
         Realm.init(application);
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
-                .name("main.realm")
+                .name(realmName)
                 .schemaVersion(0)
                 .build();
-
         realm = Realm.getInstance(realmConfig);
     }
 
-    public RealmController(Context context) {
+    private RealmController(Context context) {
         Realm.init(context);
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
-                .name("main.realm")
+                .name(realmName)
                 .schemaVersion(0)
                 .build();
         realm = Realm.getInstance(realmConfig);
@@ -63,38 +63,51 @@ public class RealmController {
         return instance;
     }
 
-    public static RealmController getInstance() {
-        return instance;
-    }
+//    public static RealmController getInstance() {
+//        return instance;
+//    }
 
     public Realm getRealm() {
         return realm;
     }
 
-//    public void refresh() {
-//        realm.refresh();
-//    }
-
     public RealmResults<Results> getResults() {
-        return realm.where(Results.class).findAll().sort("date", Sort.DESCENDING);
+        return realm.where(Results.class).notEqualTo("id", -1).findAll().sort("date", Sort.DESCENDING);
     }
 
     public Results getResult(int id) {
         return realm.where(Results.class).equalTo("id", id).findFirst();
     }
 
+    public Results getTmpResult() {
+        Results res = getResult(-1);
+        if (res != null) {
+            return res;
+        }
+        return createTmpResult();
+    }
+
+//    public void deleteTmpResult() {
+//        deleteResult(-1);
+//    }
+
+    private Results createTmpResult() {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.createObject(Results.class, -1);
+            }
+        });
+        return getResult(-1);
+    }
+
     public RealmResults<PlayersResults> getPlayers(int gameId) {
         return realm.where(PlayersResults.class).equalTo("game.id", gameId).findAll();
     }
 
-//    public RealmResults<Results> queryResults() {
-//        return realm.where(Results.class)
-//                .contains("author", "Author 0")
-//                .or()
-//                .contains("title", "Realm")
-//                .findAll();
-//
-//    }
+    public RealmResults<PlayersResults> getPlayers(int gameId, String team) {
+        return realm.where(PlayersResults.class).equalTo("game.id", gameId).equalTo("team", team).findAll();
+    }
 
     public void deleteResult(final int id) {
         final Results result = realm.where(Results.class).equalTo("id", id).findFirst();
@@ -106,8 +119,35 @@ public class RealmController {
         });
     }
 
+    public void deleteTmpPlayers(String team) {
+        final RealmResults<PlayersResults> data = realm.where(PlayersResults.class)
+                .equalTo("team", team)
+                .beginGroup()
+                    .isNull("game")
+                    .or()
+                    .equalTo("game.id", -1)
+                .endGroup()
+                .findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                data.deleteAllFromRealm();
+            }
+        });
+    }
+
     public void deleteResults(final Integer[] ids) {
         final RealmResults<Results> results = realm.where(Results.class).in("id", ids).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                results.deleteAllFromRealm();
+            }
+        });
+    }
+
+    public void deletePlayerResults(final int gameId) {
+        final RealmResults<Results> results = realm.where(Results.class).equalTo("id", gameId).findAll();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

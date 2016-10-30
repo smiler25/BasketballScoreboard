@@ -113,10 +113,14 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
 
         realmData = RealmController.with(this).getResults();
-        for (Results results : realmData) {
-            items.put(pos, new ResultsExpListParent(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
-                    results.getHomeTeam(), results.getGuestTeam()), results.getId()));
-            idPositions.put(results.getId(), pos++);
+        try {
+            for (Results results : realmData) {
+                items.put(pos, new ResultsExpListParent(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
+                        results.getHomeTeam(), results.getGuestTeam()), results.getId()));
+                idPositions.put(results.getId(), pos++);
+            }
+        } catch (NullPointerException e) {
+
         }
     }
 }

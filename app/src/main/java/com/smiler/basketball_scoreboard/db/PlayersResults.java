@@ -3,47 +3,55 @@ package com.smiler.basketball_scoreboard.db;
 import io.realm.RealmObject;
 
 public class PlayersResults extends RealmObject {
+    private int id;
     private Results game;
-    private String player_team;
-    private int player_number;
-    private String player_name;
-    private int player_points;
-    private int player_fouls;
+    private String team;
+    private int number;
+    private String name;
+    private int points;
+    private int fouls;
     private boolean captain;
+    private boolean active;
+    private long timePlayed;
 
     public Results getGame() { return game; }
     public PlayersResults setGame(Results value) {
         game = value;
         return this;
     }
-    public String getPlayerTeam() { return player_team; }
-    public PlayersResults setPlayerTeam(String value) {
-        player_team = value;
+    public String getTeam() { return team; }
+    public PlayersResults setTeam(String value) {
+        team = value;
         return this;
     }
-    public int getPlayerNumber() { return player_number; }
-    public PlayersResults setPlayerNumber(int value) {
-        player_number = value;
+    public int getNumber() { return number; }
+    public PlayersResults setNumber(int value) {
+        number = value;
         return this;
     }
-    public String getPlayerName() { return player_name; }
-    public PlayersResults setPlayerName(String value) {
-        player_name = value;
+    public String getPlayerName() { return name; }
+    public PlayersResults setName(String value) {
+        name = value;
         return this;
     }
-    public int getPlayerPoints() { return player_points; }
-    public PlayersResults setPlayerPoints(int value) {
-        player_points = value;
+    public int getPoints() { return points; }
+    public PlayersResults setPoints(int value) {
+        points = value;
         return this;
     }
-    public int getPlayerFouls() { return player_fouls; }
-    public PlayersResults setPlayerFouls(int value) {
-        player_fouls = value;
+    public int getFouls() { return fouls; }
+    public PlayersResults setFouls(int value) {
+        fouls = value;
         return this;
     }
     public boolean getCaptain() { return captain; }
     public PlayersResults setCaptain(boolean value) {
         captain = value;
+        return this;
+    }
+    public boolean getActive() { return active; }
+    public PlayersResults setActive(boolean value) {
+        active = value;
         return this;
     }
 

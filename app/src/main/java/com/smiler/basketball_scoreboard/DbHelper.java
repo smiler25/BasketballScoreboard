@@ -9,15 +9,14 @@ import android.util.Log;
 
 import com.smiler.basketball_scoreboard.db.GameDetails;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
+import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -25,10 +24,9 @@ public class DbHelper extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     private static DbHelper instance;
 
-    private static final int DATABASE_VERSION = 35;
-    private static final String DATABASE_NAME = "scoreboard_results.db";
+    private static final int DATABASE_VERSION = 4;
+    static final String DATABASE_NAME = "scoreboard_results.db";
     private Realm realm;
-    private RealmConfiguration config;
     private Context context;
 
     public static synchronized DbHelper getInstance(Context context) {
@@ -51,22 +49,17 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "onUpgrade: " + oldVersion + " -> " + newVersion);
-        Realm.init(this.context);
-        config = new RealmConfiguration.Builder()
-                .name("main.realm")
-                .schemaVersion(0)
-                .build();
-
+        realm = RealmController.with(this.context).getRealm();
         switch (oldVersion) {
             case 1:
-//                db.execSQL(DbScheme.ResultsPlayersTable.CREATE_TABLE);
+                // db.execSQL(DbScheme.ResultsPlayersTable.CREATE_TABLE);
                 toRealmResults(db);
                 break;
             case 2:
-//                db.execSQL(DbScheme.GameDetailsTable.CREATE_TABLE);
+                // db.execSQL(DbScheme.GameDetailsTable.CREATE_TABLE);
                 toRealmResultsPlayers(db, toRealmResults(db));
                 break;
-            case 34:
+            case 3:
                 ArrayList<String> gameIds = toRealmResults(db);
                 toRealmGameDetails(db, gameIds);
                 toRealmResultsPlayers(db, gameIds);
@@ -85,45 +78,33 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(DbScheme.GameDetailsTable.DELETE_TABLE);
     }
 
-    public int delete(String[] ids) {
-        this.open();
-        String stringIds = new String(new char[ids.length - 1]).replace("\0", "?, ");
-        int deleted = db.delete(DbScheme.ResultsTable.TABLE_NAME,
-                DbScheme.ResultsTable._ID + " IN (" + stringIds + "?)",
-                ids);
-        db.delete(DbScheme.ResultsPlayersTable.TABLE_NAME,
-                DbScheme.ResultsPlayersTable.COLUMN_GAME_ID + " IN (" + stringIds + "?)",
-                ids);
-        return deleted;
-    }
-
-    public String getShareString(int id) {
-        this.open();
-        String[] columns = new String[] {
-                DbScheme.ResultsTable.COLUMN_DATE,
-                DbScheme.ResultsTable.COLUMN_SHARE_STRING
-        };
-        String query = "_id = ?";
-        Cursor c = db.query(
-                DbScheme.ResultsTable.TABLE_NAME,
-                columns,
-                query,
-                new String[]{Integer.toString(id)},
-                null,   // rows group
-                null,   // filter by row groups
-                null    // sort order
-        );
-
-        String result = "";
-        if (c.getCount() == 1) {
-            c.moveToFirst();
-            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-            String dateStr = dateFormat.format(new Date(c.getLong(0)));
-            result = String.format("%1$s (%2$s)", c.getString(1), dateStr);
-        }
-        c.close();
-        return result;
-    }
+//    public String getShareString(int id) {
+//        this.open();
+//        String[] columns = new String[] {
+//                DbScheme.ResultsTable.COLUMN_DATE,
+//                DbScheme.ResultsTable.COLUMN_SHARE_STRING
+//        };
+//        String query = "_id = ?";
+//        Cursor c = db.query(
+//                DbScheme.ResultsTable.TABLE_NAME,
+//                columns,
+//                query,
+//                new String[]{Integer.toString(id)},
+//                null,   // rows group
+//                null,   // filter by row groups
+//                null    // sort order
+//        );
+//
+//        String result = "";
+//        if (c.getCount() == 1) {
+//            c.moveToFirst();
+//            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+//            String dateStr = dateFormat.format(new Date(c.getLong(0)));
+//            result = String.format("%1$s (%2$s)", c.getString(1), dateStr);
+//        }
+//        c.close();
+//        return result;
+//    }
 
     private ArrayList<String> toRealmResults(SQLiteDatabase db) {
         final ArrayList<String> ids = new ArrayList<>();
@@ -148,14 +129,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                realm = Realm.getInstance(config);
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         do {
-                            Results result = realm.createObject(Results.class);
-                            result.setId(c.getInt(10))
-                                  .setDate(new Date(c.getLong(0)))
+                            Results result = realm.createObject(Results.class, c.getInt(10));
+                            result.setDate(new Date(c.getLong(0)))
                                   .setHomeTeam(c.getString(1))
                                   .setGuestTeam(c.getString(2))
                                   .setHomeScore(c.getInt(3))
@@ -169,7 +148,6 @@ public class DbHelper extends SQLiteOpenHelper {
                         } while (c.moveToNext());
                     }
                 });
-                realm.close();
             }
             c.close();
         } finally {
@@ -199,7 +177,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                realm = Realm.getInstance(config);
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
@@ -208,16 +185,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
                             PlayersResults playersResults = realm.createObject(PlayersResults.class);
                             playersResults.setGame(game)
-                                          .setPlayerTeam(c.getString(0))
-                                          .setPlayerNumber(c.getInt(1))
-                                          .setPlayerName(c.getString(2))
-                                          .setPlayerPoints(c.getInt(3))
-                                          .setPlayerFouls(c.getInt(4))
+                                          .setTeam(c.getString(0))
+                                          .setNumber(c.getInt(1))
+                                          .setName(c.getString(2))
+                                          .setPoints(c.getInt(3))
+                                          .setFouls(c.getInt(4))
                                           .setCaptain(c.getInt(5) == 1);
                         } while (c.moveToNext());
                     }
                 });
-                realm.close();
             }
             c.close();
         } finally {
@@ -243,7 +219,6 @@ public class DbHelper extends SQLiteOpenHelper {
             );
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                realm = Realm.getInstance(config);
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
@@ -261,7 +236,6 @@ public class DbHelper extends SQLiteOpenHelper {
                         } while (c.moveToNext());
                     }
                 });
-                realm.close();
             }
             c.close();
         } finally {

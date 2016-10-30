@@ -154,6 +154,10 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         return selected;
     }
 
+    public boolean getSelected() {
+        return selected;
+    }
+
     @Override
     public int compareTo(@NonNull SidePanelRow another) {
         return player.getNumber() - another.getNumber();

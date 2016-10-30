@@ -3,8 +3,10 @@ package com.smiler.basketball_scoreboard.db;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Results extends RealmObject {
+    @PrimaryKey
     private int id;
     private Date date;
     private String home_team;

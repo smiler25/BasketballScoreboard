@@ -131,13 +131,13 @@ class ResultView extends LinearLayout {
     private TreeMap<String, ArrayList<Player>> getPlayersContent() {
         TreeMap<String, ArrayList<Player>> result = new TreeMap<>();
         for (PlayersResults r : gamePlayers) {
-            String team = r.getPlayerTeam();
+            String team = r.getTeam();
             if (result.get(team) == null) { result.put(team, new ArrayList<Player>()); }
             result.get(team).add(new Player(
-                    r.getPlayerNumber(),
+                    r.getNumber(),
                     r.getPlayerName(),
-                    r.getPlayerPoints(),
-                    r.getPlayerFouls(),
+                    r.getPoints(),
+                    r.getFouls(),
                     r.getCaptain()));
         }
         return result;

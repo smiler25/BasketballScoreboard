@@ -35,9 +35,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
 
         setContentView(R.layout.activity_results);
         initToolbar();
-//        DbHelper helper = DbHelper.getInstance(this);
-//        helper.getReadableDatabase();
-//        System.out.println(helper.getShareString(0));
         final String cabString = getResources().getString(R.string.cab_subtitle);
 
         list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
