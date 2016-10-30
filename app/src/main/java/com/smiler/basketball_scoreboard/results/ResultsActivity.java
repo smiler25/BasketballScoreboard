@@ -11,11 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.smiler.basketball_scoreboard.CABListener;
 import com.smiler.basketball_scoreboard.CAB;
+import com.smiler.basketball_scoreboard.CABListener;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
-import com.smiler.basketball_scoreboard.elements.RecyclerViewFragment;
+import com.smiler.basketball_scoreboard.elements.BaseResultsListFragment;
+import com.smiler.basketball_scoreboard.elements.RecyclerListFragment;
 
 public class ResultsActivity extends ActionBarActivity  implements ResultsExpListListener {
 
@@ -25,6 +26,8 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
     private ActionMode actionMode;
     private TextView actionModeText;
     private ResultViewFragment detailViewFrag;
+    private BaseResultsListFragment list;
+    private boolean wide = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,34 +37,39 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
         initToolbar();
 //        DbHelper helper = DbHelper.getInstance(this);
 //        helper.getReadableDatabase();
+//        System.out.println(helper.getShareString(0));
         final String cabString = getResources().getString(R.string.cab_subtitle);
-        final RecyclerViewFragment list = (RecyclerViewFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
-        detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+
+        list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        if (list == null) {
+            list = (ResultsExpListFragment) getSupportFragmentManager().findFragmentById(R.id.expandable_list_frag);
+        }
         final CABListener cabListener = new CABListener() {
             @Override
-            public void onFinish() {
-                list.clearSelection();
-            }
+            public void onFinish() { list.clearSelection(); }
 
             @Override
-            public void onMenuClick() {
-
-            }
+            public void onMenuClick() {}
 
             @Override
             public void onMenuDelete() {
                 list.deleteSelection();
             }
         };
+        detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+        if (detailViewFrag != null) { wide = true; }
 
         if (list != null) {
+            list.setMode(cabListener);
             list.setListener(new ListListener() {
                 @Override
                 public void onListElementClick(int value) {
                     if (!actionModeActive) {
                         menu.setGroupVisible(R.id.group, true);
                         selected = value;
-                        detailViewFrag.updateContent(value);
+                        if (wide) {
+                            detailViewFrag.updateContent(value);
+                        }
                     } else {
                         actionModeText.setText(String.format(cabString, value));
                     }
@@ -70,7 +78,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
                 @Override
                 public void onListElementLongClick(int count) {
                     actionMode = ResultsActivity.this.startSupportActionMode(new CAB(ResultsActivity.this, cabListener));
-                    actionModeText = (TextView)actionMode.getCustomView();
+                    actionModeText = (TextView) (actionMode != null ? actionMode.getCustomView() : new TextView(ResultsActivity.this));
                     actionModeText.setText(String.format(cabString, 1));
                     actionModeActive = true;
                 }
@@ -137,7 +145,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
         if (selected == -1) { return; }
         RealmController.with(this).deleteResult(selected);
 
-        RecyclerViewFragment list = (RecyclerViewFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
         if (list != null) {
             if (!list.updateList()) {
                 ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);

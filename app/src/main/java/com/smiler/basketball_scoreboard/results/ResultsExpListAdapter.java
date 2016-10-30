@@ -1,7 +1,8 @@
 package com.smiler.basketball_scoreboard.results;
 
 import android.content.Context;
-import android.util.SparseBooleanArray;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,36 +11,36 @@ import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultsExpListAdapter extends BaseExpandableListAdapter{
 
     private LayoutInflater inflater;
-    private HashMap<Integer, ResultsExpListParent> posObjects;
-    private HashMap<Integer, Integer> idPositions;
-    private SparseBooleanArray selectedIds;
+    private SparseArray<ResultsExpListParent> objects;
 
-    ResultsExpListAdapter(Context context, HashMap<Integer, ResultsExpListParent> posObjects, HashMap<Integer, Integer> idPositions) {
-        this.posObjects = posObjects;
+    private SparseIntArray idPositions;
+    ArrayList<Integer> selectedIds = new ArrayList<>();
+
+    ResultsExpListAdapter(Context context, SparseArray<ResultsExpListParent> objects, SparseIntArray idPositions) {
+        this.objects = objects;
         this.idPositions = idPositions;
         this.inflater = LayoutInflater.from(context);
-        selectedIds = new SparseBooleanArray();
     }
 
     private void deleteItem(int id) {
-        posObjects.remove(idPositions.get(id));
-        idPositions.remove(id);
+        objects.remove(idPositions.get(id));
+        idPositions.delete(id);
     }
 
     void deleteItems(List<String> selectedIds) {
-        for (String id:selectedIds) {
+        for (String id : selectedIds) {
             deleteItem(Integer.valueOf(id));
         }
     }
 
     public int getGroupCount() {
-        return posObjects.size();
+        return objects.size();
     }
 
     public int getChildrenCount(int parentPosition) {
@@ -47,20 +48,20 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
     }
 
     public Object getGroup(int i) {
-        return posObjects.get(i).getParent();
+        return objects.get(i).getParent();
     }
 
-    public HashMap<Integer, ResultsExpListParent> getParent() {
-        return posObjects;
+    SparseArray<ResultsExpListParent> getParent() {
+        return objects;
     }
 
     public Object getChild(int parentPosition, int childPosition) {
-        return posObjects.get(parentPosition).getChild();
+        return objects.get(parentPosition).getChild();
     }
 
     public long getGroupId(int parentPosition) {
         try {
-            return posObjects.get(parentPosition).getSqlId();
+            return objects.get(parentPosition).getItemId();
         } catch (NullPointerException e) {
             return -1;
         }
@@ -78,9 +79,9 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
         if (view == null) {
             view = inflater.inflate(R.layout.results_list_item, viewGroup, false);
         }
-        ResultsExpListParent obj = posObjects.get(parentPosition);
+        ResultsExpListParent obj = objects.get(parentPosition);
         ((TextView) view).setText(obj.getParent());
-        view.setTag(obj.getSqlId());
+        view.setTag(obj.getItemId());
         return view;
     }
 
@@ -94,10 +95,21 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
 
     public void toggleSelection(int position, boolean selected) {
         if (selected) {
-            selectedIds.put(position, true);
+            selectedIds.add((Integer) position);
+
         } else {
-            selectedIds.delete(position);
+            selectedIds.remove((Integer) position);
+
         }
+        notifyDataSetChanged();
+    }
+
+    public void deleteSelection() {
+//        for (Integer id : selectedIds) {
+//            idPositions.delete(id);
+//            objects.delete(id);
+//        }
+        selectedIds.clear();
         notifyDataSetChanged();
     }
 

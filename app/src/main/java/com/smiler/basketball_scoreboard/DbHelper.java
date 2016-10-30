@@ -25,7 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     private static DbHelper instance;
 
-    private static final int DATABASE_VERSION = 34;
+    private static final int DATABASE_VERSION = 35;
     private static final String DATABASE_NAME = "scoreboard_results.db";
     private Realm realm;
     private RealmConfiguration config;
@@ -66,7 +66,7 @@ public class DbHelper extends SQLiteOpenHelper {
 //                db.execSQL(DbScheme.GameDetailsTable.CREATE_TABLE);
                 toRealmResultsPlayers(db, toRealmResults(db));
                 break;
-            case 33:
+            case 34:
                 ArrayList<String> gameIds = toRealmResults(db);
                 toRealmGameDetails(db, gameIds);
                 toRealmResultsPlayers(db, gameIds);

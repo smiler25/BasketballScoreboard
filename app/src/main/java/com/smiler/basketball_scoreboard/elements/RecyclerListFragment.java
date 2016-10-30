@@ -2,7 +2,6 @@ package com.smiler.basketball_scoreboard.elements;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,24 +12,14 @@ import android.widget.Toast;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.adapters.ResultsRecyclerAdapter;
 import com.smiler.basketball_scoreboard.db.RealmController;
-import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.results.ListListener;
 
-import io.realm.RealmResults;
-
-public class RecyclerViewFragment extends Fragment {
+public class RecyclerListFragment extends BaseResultsListFragment {
 
     private static final String TAG = "BS-RecyclerViewFragment";
     protected RecyclerView recyclerView;
     protected ResultsRecyclerAdapter adapter;
     protected RecyclerView.LayoutManager layoutManager;
-    protected RealmResults<Results> realmData;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initDataset();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,12 +49,10 @@ public class RecyclerViewFragment extends Fragment {
         recyclerView.scrollToPosition(scrollPosition);
     }
 
-    private void initDataset() {
-        realmData = RealmController.with(this).getResults();
-    }
-
     public void setListener(ListListener listener) {
-        adapter.setListener(listener);
+        if (adapter != null) {
+            adapter.setListener(listener);
+        }
     }
 
     public boolean updateList() {
@@ -76,10 +63,10 @@ public class RecyclerViewFragment extends Fragment {
     public void clearSelection() {
         adapter.clearSelection();
     }
+
     public void deleteSelection() {
         RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
         adapter.deleteSelection();
     }
-
 }

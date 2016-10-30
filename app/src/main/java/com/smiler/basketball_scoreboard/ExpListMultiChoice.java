@@ -11,8 +11,8 @@ public class ExpListMultiChoice extends BaseMultiChoice {
 
     private ResultsExpListAdapter adapter;
 
-    public ExpListMultiChoice(AbsListView listView, Activity activity) {
-        super(listView, activity);
+    public ExpListMultiChoice(AbsListView listView, Activity activity, CABListener listener) {
+        super(listView, activity, listener);
         adapter = (ResultsExpListAdapter)((ExpandableListView)listView).getExpandableListAdapter();
     }
 

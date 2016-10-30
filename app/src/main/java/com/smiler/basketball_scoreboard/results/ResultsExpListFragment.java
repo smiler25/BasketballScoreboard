@@ -1,9 +1,5 @@
 package com.smiler.basketball_scoreboard.results;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -13,33 +9,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.BaseMultiChoice;
-import com.smiler.basketball_scoreboard.DbHelper;
-import com.smiler.basketball_scoreboard.DbScheme;
+import com.smiler.basketball_scoreboard.CABListener;
 import com.smiler.basketball_scoreboard.ExpListMultiChoice;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.db.Results;
+import com.smiler.basketball_scoreboard.elements.BaseResultsListFragment;
 
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-public class ResultsExpListFragment extends Fragment {
+public class ResultsExpListFragment extends BaseResultsListFragment {
 
     private ResultsExpListAdapter adapter;
     private ExpandableListView expListView;
+    private SparseArray<ResultsExpListParent> items = new SparseArray<>();
+    private SparseIntArray idPositions = new SparseIntArray();
+    private ListListener listener;
+    private BaseMultiChoice cab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.expandable_list, container, false);
-        Object[] content = getListEntries();
-        HashMap<Integer, ResultsExpListParent> posItems = (HashMap<Integer, ResultsExpListParent>) content[0];
-        if (posItems.isEmpty()) {
-            listener.onListEmpty();
+        getListEntries();
+        if (items.size() == 0) {
             return rootView;
+//            listener.onListEmpty();
         }
-        adapter = new ResultsExpListAdapter(getActivity(), posItems, (HashMap<Integer, Integer>) content[1]);
+        adapter = new ResultsExpListAdapter(getActivity(), items, idPositions);
         expListView = (ExpandableListView) rootView.findViewById(R.id.expListView);
         expListView.setAdapter(adapter);
         expListView.setChildDivider(getResources().getDrawable(android.R.color.transparent));
@@ -54,23 +54,13 @@ public class ResultsExpListFragment extends Fragment {
             expListView.setIndicatorBoundsRelative(width-margin, width-margin2);
         }
 
-        expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        final BaseMultiChoice cab = new ExpListMultiChoice(expListView, getActivity());
-        expListView.setMultiChoiceModeListener(cab);
-//        cab.setCabDeleteListener(new BaseMultiChoice.CabDeletedListener() {
-//            @Override
-//            public void onCabDelete(List<String> selectedIds) {
-//                listener.onExpListItemDeleted(updateList(selectedIds));
-//            }
-//        });
-
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                listener.onExpListItemSelected();
+                listener.onListElementClick(groupPosition);
                 ResultsExpListParent parent = adapter.getParent().get(groupPosition);
                 if (parent.getChild() == null) {
-                    parent.setChild(new ResultView(getActivity(), parent.getSqlId()));
+                    parent.setChild(new ResultView(getActivity(), parent.getItemId()));
                     adapter.notifyDataSetChanged();
                     adapter.notifyDataSetInvalidated();
                 }
@@ -102,44 +92,31 @@ public class ResultsExpListFragment extends Fragment {
         return adapter.getGroupCount() == 0;
     }
 
-    private ResultsExpListListener listener;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            listener = (ResultsExpListListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement ResultsExpListListener");
-        }
+    public void setListener(ListListener listener) {
+        this.listener = listener;
     }
 
-    private Object[] getListEntries() {
-        SparseArray<ResultsExpListParent> posItems = new SparseArray<>();
-        SparseIntArray idPositions = new SparseIntArray();
+    public void setMode(CABListener listener) {
+        expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        cab = new ExpListMultiChoice(expListView, getActivity(), listener);
+        expListView.setMultiChoiceModeListener(cab);
+    }
+
+    public void deleteSelection() {
+        RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
+        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
+        adapter.deleteSelection();
+    }
+
+    private void getListEntries() {
         int pos = 0;
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
 
-        DbHelper dbHelper = DbHelper.getInstance(getActivity().getApplicationContext());
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sortOrder = DbScheme.ResultsTable.COLUMN_DATE + " DESC";
-        Cursor c = db.query(DbScheme.ResultsTable.TABLE_NAME,
-                            null, null, null, null, null, sortOrder);
-        c.moveToFirst();
-        if (c.getCount() == 0) { return new Object[]{posItems, idPositions}; }
-        String str;
-        do {
-            int id = c.getInt(c.getColumnIndex(DbScheme.ResultsTable._ID));
-            long date = c.getLong(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_DATE));
-            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
-            String hName = c.getString(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_HOME_TEAM));
-            String gName = c.getString(c.getColumnIndex(DbScheme.ResultsTable.COLUMN_GUEST_TEAM));
-            str = dateFormat.format(new Date(date)) + "\n" + hName + " - " + gName;
-            posItems.put(pos, new ResultsExpListParent(str, id));
-            idPositions.put(id, pos++);
-        } while (c.moveToNext());
-        c.close();
-        dbHelper.close();
-
-        return new Object[]{posItems, idPositions};
+        realmData = RealmController.with(this).getResults();
+        for (Results results : realmData) {
+            items.put(pos, new ResultsExpListParent(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
+                    results.getHomeTeam(), results.getGuestTeam()), results.getId()));
+            idPositions.put(results.getId(), pos++);
+        }
     }
 }

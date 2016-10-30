@@ -12,35 +12,27 @@ import android.widget.Toast;
 import com.smiler.basketball_scoreboard.db.RealmController;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
 
     private AbsListView listView;
     private Activity activity;
-    private List<Integer> selectedIds = new ArrayList<>();
+    private ArrayList<Integer> selectedIds = new ArrayList<>();
     public boolean actionModeEnabled;
     private TextView title;
     private ActionMode mode;
     private RealmController realmController;
-    private CabDeletedListener listener;
+    private CABListener listener;
 
-    BaseMultiChoice(AbsListView listView, Activity activity) {
+    BaseMultiChoice(AbsListView listView, Activity activity, CABListener listener) {
         this.activity = activity;
         this.listView = listView;
+        this.listener = listener;
         realmController = RealmController.with(activity);
     }
 
     public void close() {
         mode.finish();
-    }
-
-    public interface CabDeletedListener {
-        void onCabDelete(List<Integer> selectedIds);
-    }
-
-    public void setCabDeleteListener(CabDeletedListener listener) {
-        this.listener = listener;
     }
 
     @Override
@@ -59,7 +51,7 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     }
 
     void removeSelectedId(int id){
-        selectedIds.remove(id);
+        selectedIds.remove((Integer) id);
     }
 
     @Override
@@ -76,8 +68,10 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.cab_action_delete:
-                realmController.deleteResults(selectedIds.toArray(new Integer[selectedIds.size()]));
-                listener.onCabDelete(selectedIds);
+//                realmController.deleteResults(selectedIds.toArray(new Integer[selectedIds.size()]));
+                if (listener != null) {
+                    listener.onMenuDelete();
+                }
                 Toast.makeText(activity, activity.getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
                 mode.finish();
                 return true;
