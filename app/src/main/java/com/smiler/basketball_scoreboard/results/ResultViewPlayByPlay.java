@@ -65,9 +65,9 @@ class ResultViewPlayByPlay extends ResultViewExpandable {
                 for (int y = 0; y < count; y++) {
                     record = new ActionRecord(period_data.getJSONObject(y));
                     time = record.getTime();
-                    mainTimeFormat = (0 < time && time < SECONDS_60) ? TIME_FORMAT_MILLIS : TIME_FORMAT;
+                    mainTimeFormat = 0 < time && time < SECONDS_60 ? TIME_FORMAT_MILLIS : TIME_FORMAT;
                     center = mainTimeFormat.format(time);
-                    players = (record.getTeam() == HOME) ? hPlayers : gPlayers;
+                    players = record.getTeam() == HOME ? hPlayers : gPlayers;
                     text = String.format(recordFmt, playerString(record, players), actionString(record));
                     if (record.getTeam() == HOME) {
                         left = text;
@@ -87,9 +87,9 @@ class ResultViewPlayByPlay extends ResultViewExpandable {
 
     private String playerString(ActionRecord record, SparseArray players) {
         if (record.getNumber() == -1) {
-            return (record.getTeam() == HOME) ? hName : gName;
+            return record.getTeam() == HOME ? hName : gName;
         }
-        return String.format("%s (%d)", (players.indexOfKey(record.getNumber()) > -1) ? ((Player)players.get(record.getNumber())).getName() : getResources().getString(R.string.side_panel_name), record.getNumber());
+        return String.format("%s (%d)", players.indexOfKey(record.getNumber()) > -1 ? ((Player)players.get(record.getNumber())).getName() : getResources().getString(R.string.side_panel_name), record.getNumber());
     }
 
     private String actionString(ActionRecord record) {

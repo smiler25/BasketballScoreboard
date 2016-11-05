@@ -19,9 +19,9 @@ public class ExpListMultiChoice extends BaseMultiChoice {
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long adapterId, boolean checked) {
         if (checked) {
-            super.addSelectedId((int) adapter.getGroupId(position));
+            addSelectedId((int) adapter.getGroupId(position));
         } else {
-            super.removeSelectedId((int) adapter.getGroupId(position));
+            removeSelectedId((int) adapter.getGroupId(position));
         }
         super.onItemCheckedStateChanged(mode, position, adapterId, checked);
         adapter.toggleSelection(position, checked);

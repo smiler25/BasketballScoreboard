@@ -78,7 +78,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             intent = getIntent();
         }
         layoutType = intent.getIntExtra("layoutType", Constants.LAYOUT_FULL);
-        setContentView((layoutType == Constants.LAYOUT_FULL) ? R.layout.camera_layout_full : R.layout.camera_layout_simple);
+        setContentView(layoutType == Constants.LAYOUT_FULL ? R.layout.camera_layout_full : R.layout.camera_layout_simple);
         CameraView cameraView = new CameraView(this, camera);
         FrameLayout view = (FrameLayout) findViewById(R.id.camera_preview);
         view.addView(cameraView);
@@ -197,7 +197,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Camera.PictureCallback picture = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+//            android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
             new SaveImageTask(getWindowManager().getDefaultDisplay().getRotation()).execute(data);
             camera.startPreview();
         }
@@ -251,7 +251,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
             Point size = new Point();
             getWindowManager().getDefaultDisplay().getSize(size);
-            int h = (size.x > size.y) ? size.y : size.x;
+            int h = size.x > size.y ? size.y : size.x;
             int w = (int)((float) cameraBitmap.getWidth() / cameraBitmap.getHeight() * h);
 
             Bitmap cameraScaledBitmap = Bitmap.createScaledBitmap(cameraBitmap, w, h, true);
@@ -263,7 +263,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             Bitmap finalImage = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(finalImage);
             canvas.drawBitmap(cameraScaledBitmap, 0, 0, null);
-            canvas.drawBitmap(overlayBitmap, (w - overlayW) / 2, (h - overlayBottomMargin), null);
+            canvas.drawBitmap(overlayBitmap, (w - overlayW) / 2, h - overlayBottomMargin, null);
 
             path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Basketball scoreboard");
             if (!path.exists()) {
@@ -358,7 +358,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         enableShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
         shotTimePref = sharedPref.getInt(PrefActivity.PREF_SHOT_TIME, 24) * 1000;
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
-        shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, 14) * 1000 : shotTimePref;
+        shortShotTimePref = enableShortShotTime ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, 14) * 1000 : shotTimePref;
         mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, 10) * Constants.SECONDS_60;
         overTimePref = sharedPref.getInt(PrefActivity.PREF_OVERTIME, 5) * Constants.SECONDS_60;
         numRegular = (short) sharedPref.getInt(PrefActivity.PREF_NUM_REGULAR, 4);
@@ -382,7 +382,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         if (millis >= 5000) {
             shotTimeView.setText(String.format(Constants.FORMAT_TWO_DIGITS, (short) Math.ceil(millis / 1000.0)));
         } else {
-            shotTimeView.setText(String.format(Constants.TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
+            shotTimeView.setText(String.format(Constants.TIME_FORMAT_SHORT, millis / 1000, millis % 1000 / 100));
         }
     }
 
@@ -424,6 +424,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private void startMainCountDownTimer() {
         mainTimer = new CountDownTimer(mainTime, Constants.SECOND) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 mainTime = millisUntilFinished;
                 setMainTimeText(mainTime);
@@ -431,6 +432,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     shotTimer.cancel();
                 }
             }
+            @Override
             public void onFinish() {
                 mainTimerOn = false;
                 setMainTimeText(0);
@@ -456,10 +458,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private void startShotCountDownTimer() {
         shotTimer = new CountDownTimer(shotTime, Constants.SECOND) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 shotTime = millisUntilFinished;
                 setShotTimeText(shotTime);
             }
+            @Override
             public void onFinish() {
                 pauseGame();
                 setShotTimeText(0);
@@ -497,6 +501,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private Runnable directTimerThread = new Runnable() {
+        @Override
         public void run() {
             mainTime = SystemClock.uptimeMillis() - startTime;
             setMainTimeText(mainTime);

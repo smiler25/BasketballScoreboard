@@ -73,7 +73,7 @@ class ResultView extends LinearLayout {
             SparseArray<Player> gPlayers = new SparseArray<>();
             if (!playersData.isEmpty()) {
                 for (Map.Entry<String, ArrayList<Player>> entry : playersData.entrySet()) {
-                    SparseArray<Player> players = (entry.getKey().equals(result.getHomeName())) ? hPlayers : gPlayers;
+                    SparseArray<Player> players = entry.getKey().equals(result.getHomeName()) ? hPlayers : gPlayers;
                     for (Player player : entry.getValue()) {
                         players.put(player.getNumber(), player);
                     }

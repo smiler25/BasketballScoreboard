@@ -147,7 +147,7 @@
     </string-array>
 
     <string-array name="side_panels_interaction_titles">
-        <item>Apply during the time. Write to captian if late</item>
+        <item>Apply during the time. Write to captain if late</item>
         <item>Apply during the time. Write to invisible player if late</item>
         <item>Accumulate actions until player\'s button not clicked</item>
     </string-array>

@@ -185,7 +185,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         } else {
             panelSelect.setChecked(true);
             Toast.makeText(getActivity(),
-                    String.format((activePlayers.size() < 5)
+                    String.format(activePlayers.size() < 5
                             ? getResources().getString(R.string.side_panel_few) : getResources().getString(R.string.side_panel_many),
                             activePlayers.size()),
                     Toast.LENGTH_SHORT).show();
@@ -260,7 +260,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     }
 
     private boolean numberAvailable(int number) {
-        return !(playersNumbers.contains(number));
+        return !playersNumbers.contains(number);
     }
 
     public TreeMap<Integer, SidePanelRow> getInactivePlayers() {

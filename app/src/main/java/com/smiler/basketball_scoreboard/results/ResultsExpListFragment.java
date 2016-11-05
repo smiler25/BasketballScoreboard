@@ -1,5 +1,6 @@
 package com.smiler.basketball_scoreboard.results;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -48,7 +49,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
         int width = newDisplay.getWidth();
         int margin = getResources().getDimensionPixelSize(R.dimen.indicator_margin);
         int margin2 = getResources().getDimensionPixelSize(R.dimen.indicator_margin2);
-        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             expListView.setIndicatorBounds(width-margin, width-margin2);
         } else {
             expListView.setIndicatorBoundsRelative(width-margin, width-margin2);
@@ -92,10 +93,12 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
         return adapter.getGroupCount() == 0;
     }
 
+    @Override
     public void setListener(ListListener listener) {
         this.listener = listener;
     }
 
+    @Override
     public void setMode(CABListener listener) {
         if (expListView != null) {
             expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -104,6 +107,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
         }
     }
 
+    @Override
     public void deleteSelection() {
         RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();

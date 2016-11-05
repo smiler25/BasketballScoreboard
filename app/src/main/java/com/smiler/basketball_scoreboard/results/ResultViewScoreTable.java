@@ -30,7 +30,7 @@ class ResultViewScoreTable extends TableLayout {
         int pos = 1;
         for (int i=0; i < result.getHomeScoreByPeriod().size(); i++, pos++) {
             TextView view = (TextView) inflate(getContext(), cellLayoutId, null);
-            view.setText((i < numRegular) ? String.valueOf(pos) : "OT" + (pos - numRegular));
+            view.setText(i < numRegular ? String.valueOf(pos) : "OT" + (pos - numRegular));
             headerRow.addView(view, pos);
         }
         ((TextView) findViewById(R.id.res_score_table_title_final)).setText(R.string.final_result);

@@ -1,6 +1,7 @@
 package com.smiler.basketball_scoreboard.help;
 
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -67,7 +68,7 @@ public class HelpRulesFragment extends Fragment{
         int width = newDisplay.getWidth();
         int margin = getResources().getDimensionPixelSize(R.dimen.indicator_margin);
         int margin2 = getResources().getDimensionPixelSize(R.dimen.indicator_margin2);
-        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             expListView.setIndicatorBounds(width-margin, width-margin2);
         } else {
             expListView.setIndicatorBoundsRelative(width-margin, width-margin2);

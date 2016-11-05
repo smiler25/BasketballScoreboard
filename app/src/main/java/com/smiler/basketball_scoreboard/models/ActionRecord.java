@@ -13,11 +13,11 @@ public class ActionRecord {
 
     public ActionRecord(JSONObject obj) {
          try {
-             this.time = obj.getLong("time");
-             this.type = obj.getInt("type");
-             this.team = obj.getInt("team");
-             this.number = obj.getInt("number");
-             this.value = obj.getInt("value");
+             time = obj.getLong("time");
+             type = obj.getInt("type");
+             team = obj.getInt("team");
+             number = obj.getInt("number");
+             value = obj.getInt("value");
          } catch (JSONException e) {
              e.printStackTrace();
          }
@@ -35,32 +35,32 @@ public class ActionRecord {
         this.time = time;
         this.type = type;
         this.team = team;
-        this.number = -1;
+        number = -1;
         this.value = value;
     }
 
     public int getNumber() {
-        return this.number;
+        return number;
     }
 
     public int getTeam() {
-        return this.team;
+        return team;
     }
 
     public long getTime() {
-        return this.time;
+        return time;
     }
 
     public int getType() {
-        return this.type;
+        return type;
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public void setNumber(int value) {
-        this.number = value;
+        number = value;
     }
 
     @Override

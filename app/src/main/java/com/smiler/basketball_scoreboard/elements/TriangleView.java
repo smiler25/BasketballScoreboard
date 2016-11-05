@@ -16,7 +16,7 @@ public class TriangleView extends View {
 
     private int direction;
     private Paint paint;
-    private int color;
+//    private int color;
     private int borderWidth;
 
     public enum Direction {
@@ -102,14 +102,14 @@ public class TriangleView extends View {
         return path;
     }
 
-    public void toggleState() {
-        if (paint.getStyle() == Paint.Style.STROKE) {
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        } else {
-            paint.setStyle(Paint.Style.STROKE);
-        }
-        invalidate();
-    }
+//    public void toggleState() {
+//        if (paint.getStyle() == Paint.Style.STROKE) {
+//            paint.setStyle(Paint.Style.FILL_AND_STROKE);
+//        } else {
+//            paint.setStyle(Paint.Style.STROKE);
+//        }
+//        invalidate();
+//    }
 
     public void setFill() {
         paint.setStyle(Paint.Style.FILL_AND_STROKE);

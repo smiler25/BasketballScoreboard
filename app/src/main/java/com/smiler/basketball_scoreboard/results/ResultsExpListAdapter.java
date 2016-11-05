@@ -25,7 +25,7 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
     ResultsExpListAdapter(Context context, SparseArray<ResultsExpListParent> objects, SparseIntArray idPositions) {
         this.objects = objects;
         this.idPositions = idPositions;
-        this.inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
     }
 
     private void deleteItem(int id) {
@@ -39,14 +39,17 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
         }
     }
 
+    @Override
     public int getGroupCount() {
         return objects.size();
     }
 
+    @Override
     public int getChildrenCount(int parentPosition) {
         return 1;
     }
 
+    @Override
     public Object getGroup(int i) {
         return objects.get(i).getParent();
     }
@@ -55,10 +58,12 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
         return objects;
     }
 
+    @Override
     public Object getChild(int parentPosition, int childPosition) {
         return objects.get(parentPosition).getChild();
     }
 
+    @Override
     public long getGroupId(int parentPosition) {
         try {
             return objects.get(parentPosition).getItemId();
@@ -67,14 +72,17 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
         }
     }
 
+    @Override
     public long getChildId(int i, int childPosition) {
         return childPosition;
     }
 
+    @Override
     public boolean hasStableIds() {
         return true;
     }
 
+    @Override
     public View getGroupView(int parentPosition, boolean b, View view, ViewGroup viewGroup) {
         if (view == null) {
             view = inflater.inflate(R.layout.results_list_item, viewGroup, false);
@@ -85,17 +93,19 @@ public class ResultsExpListAdapter extends BaseExpandableListAdapter{
         return view;
     }
 
+    @Override
     public View getChildView(int parentPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
         return (ResultView) getChild(parentPosition, childPosition);
     }
 
+    @Override
     public boolean isChildSelectable(int i, int i1) {
         return true;
     }
 
     public void toggleSelection(int position, boolean selected) {
         if (selected) {
-            selectedIds.add((Integer) position);
+            selectedIds.add(position);
 
         } else {
             selectedIds.remove((Integer) position);

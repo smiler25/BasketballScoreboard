@@ -48,21 +48,25 @@ public class RecyclerListFragment extends BaseResultsListFragment {
         recyclerView.scrollToPosition(scrollPosition);
     }
 
+    @Override
     public void setListener(ListListener listener) {
         if (adapter != null) {
             adapter.setListener(listener);
         }
     }
 
+    @Override
     public boolean updateList() {
         adapter.notifyDataSetChanged();
         return adapter.getItemCount() == 0;
     }
 
+    @Override
     public void clearSelection() {
         adapter.clearSelection();
     }
 
+    @Override
     public void deleteSelection() {
         RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();

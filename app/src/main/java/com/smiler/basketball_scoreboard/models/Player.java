@@ -1,5 +1,6 @@
 package com.smiler.basketball_scoreboard.models;
 
+@SuppressWarnings("UnnecessaryThis")
 public class Player {
 
     private String name;
@@ -26,50 +27,50 @@ public class Player {
     }
 
     public int getNumber() {
-        return this.number;
+        return number;
     }
 
     public void setNumber(int value) {
-        this.number = value;
+        number = value;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String value) {
-        this.name = value;
+        name = value;
     }
 
     public int getPoints() {
-        return this.points;
+        return points;
     }
 
     public int changePoints(int value) {
-        this.points += value;
-        return this.points;
+        points += value;
+        return points;
     }
 
     public int getFouls() {
-        return this.fouls;
+        return fouls;
     }
 
     public int changeFouls(int value) {
-        this.fouls += value;
-        return this.fouls;
+        fouls += value;
+        return fouls;
     }
 
     public boolean isCaptain() {
-        return this.captain;
+        return captain;
     }
 
     public void setCaptain(boolean value) {
-        this.captain = value;
+        captain = value;
     }
 
     public void clear() {
-        this.points = 0;
-        this.fouls = 0;
+        points = 0;
+        fouls = 0;
     }
 
 }

@@ -3,7 +3,7 @@ package com.smiler.basketball_scoreboard.results;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,7 +18,7 @@ import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.BaseResultsListFragment;
 import com.smiler.basketball_scoreboard.elements.RecyclerListFragment;
 
-public class ResultsActivity extends ActionBarActivity  implements ResultsExpListListener {
+public class ResultsActivity extends AppCompatActivity implements ResultsExpListListener {
 
     private Menu menu;
     private int selected = -1;
@@ -26,8 +26,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
     private ActionMode actionMode;
     private TextView actionModeText;
     private ResultViewFragment detailViewFrag;
-    private BaseResultsListFragment list;
-    private boolean wide = false;
+    private boolean wide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +44,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
 
     private void initList() {
         detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+        BaseResultsListFragment list;
         if (detailViewFrag != null && detailViewFrag.isAdded()) {
             wide = true;
             list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
@@ -93,7 +93,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
 
                 @Override
                 public void onListElementLongClick(int count) {
-                    actionMode = ResultsActivity.this.startSupportActionMode(new CAB(ResultsActivity.this, cabListener));
+                    actionMode = startSupportActionMode(new CAB(ResultsActivity.this, cabListener));
                     actionModeText = (TextView) (actionMode != null ? actionMode.getCustomView() : new TextView(ResultsActivity.this));
                     actionModeText.setText(String.format(cabString, 1));
                     actionModeActive = true;

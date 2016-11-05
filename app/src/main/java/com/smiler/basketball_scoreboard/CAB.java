@@ -9,7 +9,7 @@ import android.widget.TextView;
 public class CAB implements ActionMode.Callback {
     private final CABListener callback;
     private Activity activity;
-    private boolean closeAction = false;
+    private boolean closeAction;
 
     public CAB(Activity activity, CABListener callback) {
         this.activity = activity;

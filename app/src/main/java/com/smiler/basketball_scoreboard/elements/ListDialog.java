@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class ListDialog extends DialogFragment {
 
     public static final String TAG = "ListDialog";
-    private boolean left = false;
+    private boolean left;
 
     public static ListDialog newInstance(String type) {
         ListDialog f = new ListDialog();
@@ -46,6 +46,7 @@ public class ListDialog extends DialogFragment {
         return f;
     }
 
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         String type = args.getString("type", "");
@@ -54,6 +55,7 @@ public class ListDialog extends DialogFragment {
         switch (type) {
             case "timeout":
                 builder.setItems(R.array.timeout_variants, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onTimeoutDialogItemClick(which);
                     }
@@ -61,6 +63,7 @@ public class ListDialog extends DialogFragment {
                 break;
             case "new_period":
                 builder.setItems(R.array.new_period_variants, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onNewPeriodDialogItemClick(which);
                     }
@@ -69,6 +72,7 @@ public class ListDialog extends DialogFragment {
             case "clear_panel":
                 left = args.getBoolean("left", true);
                 builder.setItems(R.array.side_panels_clear_titles, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onClearPanelDialogItemClick(which, left);
                     }
@@ -83,11 +87,11 @@ public class ListDialog extends DialogFragment {
                 int number = args.getInt("number", -1);
                 String title;
                 if (left) {
-                    title = (number == -1)
+                    title = number == -1
                             ? getResources().getString(R.string.substitute_dialog_title_home0)
                             : String.format(getResources().getString(R.string.substitute_dialog_title_home), number);
                 } else {
-                    title = (number == -1)
+                    title = number == -1
                             ? getResources().getString(R.string.substitute_dialog_title_guest0)
                             : String.format(getResources().getString(R.string.substitute_dialog_title_guest), number);
                 }
@@ -99,6 +103,7 @@ public class ListDialog extends DialogFragment {
     }
 
     DialogInterface.OnClickListener listClickListener = new DialogInterface.OnClickListener() {
+        @Override
         public void onClick(DialogInterface dialog, int which) {
             listener.onSubstituteListSelect(left,
                     Integer.parseInt(((AlertDialog) dialog).getListView().getAdapter().getItem(which).toString().split(":")[0]));

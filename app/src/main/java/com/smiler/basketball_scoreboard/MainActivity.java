@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 } catch (NullPointerException e) {
-                    Log.d(TAG, e.getMessage() + ((shotTimeView != null) ? shotTimeView.toString() : "shotTimeView == null"));
+                    Log.d(TAG, e.getMessage() + (shotTimeView != null ? shotTimeView.toString() : "shotTimeView == null"));
                 }
             }
             if (arrowsStateChanged) {
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
 
             new AppUpdatesFragment().show(getFragmentManager(), TAG_FRAGMENT_APP_UPDATES);
-            String parent = this.getFilesDir().getParent();
+            String parent = getFilesDir().getParent();
             File path = new File(parent + "/databases");
             if (path.exists()) {
                 File dbPath = new File(parent + "/databases/" + DbHelper.DATABASE_NAME);
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
         }
 
-        shotTimeBlinkAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_out);
+        shotTimeBlinkAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         gameResult = new Result(hName, gName);
         floatingDialog = new FloatingCountdownTimerDialog();
         floatingDialog.setCancelable(false);
@@ -430,21 +430,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gNameView.setOnClickListener(this);
         gNameView.setOnLongClickListener(this);
 
-        (findViewById(R.id.leftMinus1View)).setOnClickListener(this);
-        (findViewById(R.id.rightMinus1View)).setOnClickListener(this);
-        (findViewById(R.id.leftPlus1View)).setOnClickListener(this);
-        (findViewById(R.id.rightPlus1View)).setOnClickListener(this);
-        (findViewById(R.id.leftPlus3View)).setOnClickListener(this);
-        (findViewById(R.id.rightPlus3View)).setOnClickListener(this);
+        findViewById(R.id.leftMinus1View).setOnClickListener(this);
+        findViewById(R.id.rightMinus1View).setOnClickListener(this);
+        findViewById(R.id.leftPlus1View).setOnClickListener(this);
+        findViewById(R.id.rightPlus1View).setOnClickListener(this);
+        findViewById(R.id.leftPlus3View).setOnClickListener(this);
+        findViewById(R.id.rightPlus3View).setOnClickListener(this);
 
-        View whislteView = findViewById(R.id.whistleView);
+        View whistleView = findViewById(R.id.whistleView);
         View hornView = findViewById(R.id.hornView);
         hornView.setOnClickListener(this);
-        (findViewById(R.id.timeoutIconView)).setOnClickListener(this);
-        (findViewById(R.id.cameraView)).setOnClickListener(this);
-        (findViewById(R.id.switchSidesView)).setOnClickListener(this);
+        findViewById(R.id.timeoutIconView).setOnClickListener(this);
+        findViewById(R.id.cameraView).setOnClickListener(this);
+        findViewById(R.id.switchSidesView).setOnClickListener(this);
 
         hornView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_UP:
@@ -461,7 +462,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        whislteView.setOnTouchListener(new View.OnTouchListener() {
+        whistleView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_UP:
@@ -486,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initExtensiveLayout() {
         setContentView(R.layout.activity_main);
         ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
-        stub.setLayoutResource((timeoutRules == TO_RULES_NBA) ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
+        stub.setLayoutResource(timeoutRules == TO_RULES_NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
         stub.inflate();
 
         periodView = (TextView) findViewById(R.id.periodView);
@@ -546,8 +548,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rightPanel.setRetainInstance(true);
         overlayPanels.setRetainInstance(true);
 
-        (findViewById(R.id.left_panel_toggle)).setOnClickListener(this);
-        (findViewById(R.id.right_panel_toggle)).setOnClickListener(this);
+        findViewById(R.id.left_panel_toggle).setOnClickListener(this);
+        findViewById(R.id.right_panel_toggle).setOnClickListener(this);
         spStateChanged = false;
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -575,7 +577,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SidePanelRow row = ((SidePanelRow) v.getTag());
+                SidePanelRow row = (SidePanelRow) v.getTag();
                 if (row == null) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
                     return;
@@ -608,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SidePanelRow row = ((SidePanelRow) v.getTag());
+                SidePanelRow row = (SidePanelRow) v.getTag();
                 if (row == null) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
                     return;
@@ -828,7 +830,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onBackPressed();
             return;
         }
-        this.doubleBackPressedFirst = true;
+        doubleBackPressedFirst = true;
         Toast.makeText(this, getResources().getString(R.string.toast_confirm_exit), Toast.LENGTH_LONG).show();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -842,6 +844,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
     }
 
+    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
         switch (i) {
             case 0:
@@ -1151,7 +1154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fixLandscapeChanged = fixLandscape != fixLandscape_;
         fixLandscape = fixLandscape_;
         autoSound = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
-        hornUserRepeats = (sharedPref.getInt(PrefActivity.PREF_HORN_LENGTH, DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f));
+        hornUserRepeats = sharedPref.getInt(PrefActivity.PREF_HORN_LENGTH, DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f);
         autoSaveResults = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0"));
         autoShowTimeout = sharedPref.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = sharedPref.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
@@ -1167,7 +1170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         enableShotTimeChanged = enableShotTime != enableShotTime_;
         enableShotTime = enableShotTime_;
         boolean enableShortShotTime = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
-        shortShotTimePref = (enableShortShotTime) ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
+        shortShotTimePref = enableShortShotTime ? sharedPref.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
         mainTimePref = sharedPref.getInt(PrefActivity.PREF_REGULAR_TIME, DEFAULT_FIBA_MAIN_TIME) * SECONDS_60;
         overTimePref = sharedPref.getInt(PrefActivity.PREF_OVERTIME, DEFAULT_OVERTIME) * SECONDS_60;
         numRegularPeriods = (short) sharedPref.getInt(PrefActivity.PREF_NUM_REGULAR, DEFAULT_NUM_REGULAR);
@@ -1175,7 +1178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gName = sharedPref.getString(PrefActivity.PREF_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
         actualTime = Integer.parseInt(sharedPref.getString(PrefActivity.PREF_ACTUAL_TIME, "1"));
         maxFouls = (short) sharedPref.getInt(PrefActivity.PREF_MAX_FOULS, DEFAULT_MAX_FOULS);
-        mainTimeFormat = (fractionSecondsMain && 0 < mainTime && mainTime < SECONDS_60) ? TIME_FORMAT_MILLIS : TIME_FORMAT;
+        mainTimeFormat = fractionSecondsMain && 0 < mainTime && mainTime < SECONDS_60 ? TIME_FORMAT_MILLIS : TIME_FORMAT;
         boolean sidePanelsOn_ = sharedPref.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
         if (sidePanelsOn_ != spOn) {
             spOn = sidePanelsOn_;
@@ -1585,7 +1588,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         } else {
-            timeoutFullDuration = (takenTimeoutsFull <= maxTimeouts100) ? 100 : 60;
+            timeoutFullDuration = takenTimeoutsFull <= maxTimeouts100 ? 100 : 60;
             switch (team) {
                 case HOME:
                     if (hTimeouts > 0) {
@@ -1641,7 +1644,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         } else {
-            timeoutFullDuration = (takenTimeoutsFull <= maxTimeouts100) ? 100 : 60;
+            timeoutFullDuration = takenTimeoutsFull <= maxTimeouts100 ? 100 : 60;
             switch (team) {
                 case HOME:
                     hTimeoutsView.setText(Short.toString(++hTimeouts));
@@ -1700,17 +1703,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (team) {
             case HOME:
                 if (hTimeouts20 > 0) {
-                    if (hTimeouts20 == 0) {
-                        setColorGreen(hTimeouts20View);
-                    }
+                    setColorGreen(hTimeouts20View);
                     hTimeouts20View.setText(Short.toString(++hTimeouts20));
                 }
                 break;
             case GUEST:
                 if (gTimeouts20 > 0) {
-                    if (gTimeouts20 == 0) {
-                        setColorGreen(gTimeouts20View);
-                    }
+                    setColorGreen(gTimeouts20View);
                     gTimeouts20View.setText(Short.toString(++gTimeouts20));
                 }
                 break;
@@ -1785,22 +1784,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (team) {
             case HOME:
                 if (hFouls < maxFouls) {
-                    if (hFouls == maxFouls) {
-                        setColorGreen(hFoulsView);
-                    }
+                    setColorGreen(hFoulsView);
                     hFoulsView.setText(Short.toString(--hFouls));
                 }
                 break;
             case GUEST:
                 if (gFouls < maxFouls) {
-                    if (gFouls == maxFouls) {
-                        setColorGreen(gFoulsView);
-                    }
+                    setColorGreen(gFoulsView);
                     gFoulsView.setText(Short.toString(--gFouls));
                 }
                 break;
         }
-        if (spOn) {}
+//        if (spOn) {}
     }
 
     private void setFoulsText(short hValue, short gValue, int hColor, int gColor) {
@@ -1928,7 +1923,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setShotTimeText(shotTimePref);
             }
         }
-        if (actualTime == 2 || (actualTime == 3 && mainTime < SECONDS_60)) {
+        if (actualTime == 2 || actualTime == 3 && mainTime < SECONDS_60) {
             pauseGame();
         }
         scoreSaved = false;
@@ -1987,7 +1982,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private SidePanelRow getPlayer(int team, int number) {
-        SidePanelFragment panel = (leftIsHome ^ (team == HOME)) ? rightPanel : leftPanel;
+        SidePanelFragment panel = leftIsHome ^ team == HOME ? rightPanel : leftPanel;
         return panel.getPlayer(number);
     }
 
@@ -2007,7 +2002,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setShotTimeText(long millis) {
         if (millis < 5000 && fractionSecondsShot) {
-            shotTimeView.setText(String.format(TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
+            shotTimeView.setText(String.format(TIME_FORMAT_SHORT, millis / 1000, millis % 1000 / 100));
         } else {
             shotTimeView.setText(String.format(FORMAT_TWO_DIGITS, (short) Math.ceil(millis / 1000.0)));
         }
@@ -2077,6 +2072,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startMainCountDownTimer() {
         mainTimer = new CountDownTimer(mainTime, mainTickInterval) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 mainTime = millisUntilFinished;
                 setMainTimeText(mainTime);
@@ -2088,7 +2084,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     under2Minutes();
                 }
                 if (fractionSecondsMain && mainTime < SECONDS_60 && mainTickInterval == SECOND) {
-                    this.cancel();
+                    cancel();
                     mainTickInterval = 100;
                     mainTimeFormat = TIME_FORMAT_MILLIS;
                     startMainCountDownTimer();
@@ -2100,6 +2096,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
+            @Override
             public void onFinish() {
                 mainTimerOn = false;
                 if (autoSound >= 2) {
@@ -2145,6 +2142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startShotCountDownTimer() {
         shotTimer = new CountDownTimer(shotTime, shotTickInterval) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 shotTime = millisUntilFinished;
                 setShotTimeText(shotTime);
@@ -2155,6 +2153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
+            @Override
             public void onFinish() {
                 pauseGame();
                 if (autoSound == 1 || autoSound == 3) {
@@ -2202,6 +2201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private Runnable directTimerThread = new Runnable() {
+        @Override
         public void run() {
             mainTime = SystemClock.uptimeMillis() - startTime;
             setMainTimeText(mainTime);
@@ -2236,8 +2236,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         soundWhistleStreamId = soundPool.play(soundWhistleId, 1, 1, 0, repeats, 1);
         whistleRepeats = repeats;
         if (repeats != -1) {
-            new android.os.Handler().postDelayed(
+            new Handler().postDelayed(
                     new Runnable() {
+                        @Override
                         public void run() {
                             if (whistlePressed) {
                                 stopWhistle();
@@ -2260,8 +2261,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         soundHornStreamId = soundPool.play(soundHornId, 1, 1, 0, repeats, 1);
         hornRepeats = repeats;
         if (repeats != -1) {
-            new android.os.Handler().postDelayed(
+            new Handler().postDelayed(
                 new Runnable() {
+                    @Override
                     public void run() {
                         if (hornPressed) {
                             stopHorn();
@@ -2328,7 +2330,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         ArrayList<String> numberNameList = new ArrayList<>();
-        inactivePlayers = ((left) ? leftPanel : rightPanel).getInactivePlayers();
+        inactivePlayers = (left ? leftPanel : rightPanel).getInactivePlayers();
         if (inactivePlayers.isEmpty()){
             Toast.makeText(this, getResources().getString(R.string.side_panel_no_data), Toast.LENGTH_LONG).show();
             return;
@@ -2336,7 +2338,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (Map.Entry<Integer, SidePanelRow> entry : inactivePlayers.entrySet()) {
             numberNameList.add(String.format("%d: %s", entry.getValue().getNumber(), entry.getValue().getName()));
         }
-        int number = (longClickPlayerBu.getTag() != null) ? ((SidePanelRow)longClickPlayerBu.getTag()).getNumber() : -1;
+        int number = longClickPlayerBu.getTag() != null ? ((SidePanelRow)longClickPlayerBu.getTag()).getNumber() : -1;
 
         ListDialog.newInstance("substitute", numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
     }
@@ -2450,7 +2452,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         realm = RealmController.with(this).getRealm();
         Number lastId = realm.where(Results.class).max("id");
-        final long nextID  = (lastId != null) ? (int) lastId + 1 : 0;
+        final long nextID  = lastId != null ? (int) lastId + 1 : 0;
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -2499,7 +2501,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 .setName(row.getName())
                                 .setPoints(row.getPoints())
                                 .setFouls(row.getFouls())
-                                .setCaptain((row.getCaptain()));
+                                .setCaptain(row.getCaptain());
                     }
                 }
             }
@@ -2579,13 +2581,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClearPanelDialogItemClick(int which, boolean left) {
-        ((left) ? leftPanel : rightPanel).clear(which == 0);
+        (left ? leftPanel : rightPanel).clear(which == 0);
     }
 
     @Override
     public void onSubstituteListSelect(boolean left, int newNumber) {
         SidePanelRow row = inactivePlayers.get(newNumber);
-        ((left) ? leftPanel : rightPanel).substitute(row, (SidePanelRow) longClickPlayerBu.getTag());
+        (left ? leftPanel : rightPanel).substitute(row, (SidePanelRow) longClickPlayerBu.getTag());
         longClickPlayerBu.setTag(row);
         longClickPlayerBu.setText(Integer.toString(newNumber));
     }
@@ -2610,7 +2612,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConfirmDialogPositive(String type, boolean dontShow) {
-        dontAskNewGame = (dontShow) ? 2 : 0;
+        dontAskNewGame = dontShow ? 2 : 0;
         newGame();
     }
 
@@ -2634,7 +2636,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConfirmDialogNeutral(boolean dontShow) {
-        dontAskNewGame = (dontShow) ? 2 : 0;
+        dontAskNewGame = dontShow ? 2 : 0;
         saveResult();
         saveResultDb();
         newGame();
@@ -2642,7 +2644,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConfirmDialogNegative(String type, boolean dontShow) {
-        dontAskNewGame = (dontShow) ? 1 : 0;
+        dontAskNewGame = dontShow ? 1 : 0;
     }
 
     @Override
@@ -2670,7 +2672,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
-        ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
         int pos = 0;
         for (SidePanelRow row : rows) {
             View bu = group.get(pos++);
@@ -2681,7 +2683,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSidePanelNoActive(boolean left) {
-        ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
         for (View bu : group) {
             ((Button) bu).setText(R.string.minus);
             bu.setTag(null);
@@ -2727,13 +2729,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onEditPlayerAdd(boolean left, int number, String name, boolean captain) {
-        ((left) ? leftPanel : rightPanel).addRow(number, name, captain);
+        (left ? leftPanel : rightPanel).addRow(number, name, captain);
     }
 
     @Override
     public void onEditPlayerEdit(boolean left, int id, int number, String name, boolean captain) {
-        if (((left) ? leftPanel : rightPanel).editRow(id, number, name, captain)) {
-            ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        if ((left ? leftPanel : rightPanel).editRow(id, number, name, captain)) {
+            ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
             for (View bu : group) {
                 SidePanelRow row = (SidePanelRow) bu.getTag();
                 if (row != null && row.getId() == id) {
@@ -2746,8 +2748,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onEditPlayerDelete(boolean left, int id) {
-        if (((left) ? leftPanel : rightPanel).deleteRow(id)) {
-            ArrayList<View> group = (left) ? leftPlayersButtons : rightPlayersButtons;
+        if ((left ? leftPanel : rightPanel).deleteRow(id)) {
+            ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
             for (View bu : group) {
                 SidePanelRow row = (SidePanelRow) bu.getTag();
                 if (row != null && row.getId() == id) {
@@ -2761,6 +2763,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public int onEditPlayerCheck(boolean left, int number, boolean captain) {
-        return ((left) ? leftPanel : rightPanel).checkNewPlayer(number, captain);
+        return (left ? leftPanel : rightPanel).checkNewPlayer(number, captain);
     }
 }

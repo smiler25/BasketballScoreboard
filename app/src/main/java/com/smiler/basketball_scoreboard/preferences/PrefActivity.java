@@ -116,6 +116,7 @@ public class PrefActivity extends Activity implements
         });
     }
 
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (restartPrefs.contains(key)) {
             prefChangedRestart = true;
@@ -164,7 +165,7 @@ public class PrefActivity extends Activity implements
 
     private void setPlayerDefaultFouls() {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, (prefs.getInt(PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS)));
+        editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, prefs.getInt(PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS));
         playerRulesDefault = true;
         editor.apply();
     }

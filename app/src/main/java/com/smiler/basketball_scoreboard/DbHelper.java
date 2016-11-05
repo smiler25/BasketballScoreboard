@@ -49,7 +49,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "onUpgrade: " + oldVersion + " -> " + newVersion);
-        realm = RealmController.with(this.context).getRealm();
+        realm = RealmController.with(context).getRealm();
         switch (oldVersion) {
             case 1:
                 // db.execSQL(DbScheme.ResultsPlayersTable.CREATE_TABLE);
@@ -68,7 +68,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public SQLiteDatabase open() {
-        if (db == null || !db.isOpen()) db = this.getWritableDatabase();
+        if (db == null || !db.isOpen()) db = getWritableDatabase();
         return db;
     }
 
@@ -143,7 +143,7 @@ public class DbHelper extends SQLiteOpenHelper {
                                   .setGuestPeriods(c.getString(6))
                                   .setShareString(c.getString(9))
                                   .setRegularPeriods(c.getInt(7))
-                                  .setComplete((c.getInt(8) > 0));
+                                  .setComplete(c.getInt(8) > 0);
                             ids.add(c.getString(10));
                         } while (c.moveToNext());
                     }

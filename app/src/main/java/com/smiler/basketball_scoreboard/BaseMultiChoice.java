@@ -31,9 +31,9 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
         realmController = RealmController.with(activity);
     }
 
-    public void close() {
-        mode.finish();
-    }
+//    public void close() {
+//        mode.finish();
+//    }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -68,7 +68,7 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.cab_action_delete:
-//                realmController.deleteResults(selectedIds.toArray(new Integer[selectedIds.size()]));
+                realmController.deleteResults(selectedIds.toArray(new Integer[selectedIds.size()]));
                 if (listener != null) {
                     listener.onMenuDelete();
                 }

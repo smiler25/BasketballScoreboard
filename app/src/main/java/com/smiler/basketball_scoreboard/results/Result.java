@@ -42,19 +42,19 @@ public class Result {
     }
 
     int getHomeScore() {
-        return this.hScore;
+        return hScore;
     }
 
     int getGuestScore() {
-        return this.gScore;
+        return gScore;
     }
 
     String getHomeName() {
-        return this.hName;
+        return hName;
     }
 
     String getGuestName() {
-        return this.gName;
+        return gName;
     }
 
     public ArrayList<Integer> getHomeScoreByPeriod() {
@@ -66,15 +66,15 @@ public class Result {
     }
 
     public boolean isComplete() {
-        return this.complete;
+        return complete;
     }
 
     public void setHomeName(String name) {
-        this.hName = name;
+        hName = name;
     }
 
     public void setGuestName(String name) {
-        this.gName = name;
+        gName = name;
     }
 
     public void setComplete(boolean complete) {
@@ -151,13 +151,13 @@ public class Result {
     }
 
     public ActionRecord getLastAction() {
-        return (!play_by_play.isEmpty()) ? play_by_play.pop() : null;
+        return !play_by_play.isEmpty() ? play_by_play.pop() : null;
     }
 
     @Override
     public String toString() {
         JSONArray data = getJson();
-        return (data != null) ? data.toString() : "";
+        return data != null ? data.toString() : "";
     }
 
     private JSONArray getJson() {

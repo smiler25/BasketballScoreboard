@@ -36,9 +36,9 @@ class ResultViewPlayByPlayRow extends TableRow {
         ((TextView) findViewById(R.id.results_play_by_play_center)).setText(center);
         ((TextView) findViewById(R.id.results_play_by_play_right)).setText(right);
         if (last) {
-            setBackground((even ? getResources().getDrawable(R.drawable.result_table_row_last) : getResources().getDrawable(R.drawable.result_table_row_even_last)));
+            setBackground(even ? getResources().getDrawable(R.drawable.result_table_row_last) : getResources().getDrawable(R.drawable.result_table_row_even_last));
         } else {
-            setBackground((even ? getResources().getDrawable(R.drawable.result_table_row) : getResources().getDrawable(R.drawable.result_table_row_even)));
+            setBackground(even ? getResources().getDrawable(R.drawable.result_table_row) : getResources().getDrawable(R.drawable.result_table_row_even));
         }
     }
 }

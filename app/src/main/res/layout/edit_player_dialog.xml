@@ -62,16 +62,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/floating_fragment">
-
         <Button
-            android:id="@+id/button_add"
+            android:id="@+id/button_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
             style="?android:attr/segmentedButtonStyle"
-            android:text="@string/edit_player_dialog_add"
-            />
+            android:text="@string/edit_player_dialog_cancel"/>
 
         <Button
             android:id="@+id/button_custom_action"
@@ -82,14 +80,16 @@
             style="?android:attr/segmentedButtonStyle"
             android:text="@string/edit_player_dialog_add2"
             />
+
         <Button
-            android:id="@+id/button_cancel"
+            android:id="@+id/button_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
             style="?android:attr/segmentedButtonStyle"
-            android:text="@string/edit_player_dialog_cancel"/>
+            android:text="@string/edit_player_dialog_add"
+            />
 
     </LinearLayout>
 </LinearLayout>

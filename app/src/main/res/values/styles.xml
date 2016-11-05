@@ -3,19 +3,19 @@
     <style name="AppTheme" parent="AppTheme.Base">
     </style>
     
-     <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
     </style>
 
     <style name="ToolBarStyle" parent="">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="windowActionModeOverlay">true</item>
-
     </style>
 
     <style name="SecondaryTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:titleTextStyle">@color/red</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowActionBarOverlay">false</item>

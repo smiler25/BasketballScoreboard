@@ -30,7 +30,7 @@ class ResultViewExpandable extends LinearLayout {
             @Override
             public void onClick(View v) {
                 if (view != null) {
-                    view.setVisibility((view.getVisibility() == VISIBLE) ? GONE : VISIBLE);
+                    view.setVisibility(view.getVisibility() == VISIBLE ? GONE : VISIBLE);
                 }
 
             }

@@ -35,7 +35,7 @@ class ResultViewDetail extends ResultViewExpandable {
         for (Map.Entry<String, Integer> entry : data.entrySet()) {
             key = entry.getKey();
             val = entry.getValue();
-            parts.add(String.format("%s: %s", (strings.containsKey(key)) ? strings.get(key) : key, val));
+            parts.add(String.format("%s: %s", strings.containsKey(key) ? strings.get(key) : key, val));
         }
         info.setText(TextUtils.join("; ", parts));
         return info;
