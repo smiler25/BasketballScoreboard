@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import com.smiler.basketball_scoreboard.R;
 
 public class ResultViewFragment extends Fragment {
-    private static final String SQL_ARG = "sqlId";
-
+    public static String TAG = "BS-ResultViewFragment";
+    private static final String gameId = "gameId";
     private ViewGroup view;
 
     public static ResultViewFragment newInstance(int sqlId) {
         ResultViewFragment fragment = new ResultViewFragment();
         Bundle args = new Bundle();
-        args.putInt(SQL_ARG, sqlId);
+        args.putInt(gameId, sqlId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -33,7 +33,7 @@ public class ResultViewFragment extends Fragment {
             view = (ViewGroup) inflater.inflate(R.layout.result_view_empty, container, false);
             return view;
         }
-        return new ResultView(getActivity(), getArguments().getInt(SQL_ARG));
+        return new ResultView(getActivity(), getArguments().getInt(gameId));
     }
 
     public void updateContent(int itemId) {

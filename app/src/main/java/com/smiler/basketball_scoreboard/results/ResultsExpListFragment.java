@@ -23,7 +23,7 @@ import java.text.DateFormat;
 import java.util.List;
 
 public class ResultsExpListFragment extends BaseResultsListFragment {
-
+    public static String TAG = "BS-ResultsExpListFragment";
     private ResultsExpListAdapter adapter;
     private ExpandableListView expListView;
     private SparseArray<ResultsExpListParent> items = new SparseArray<>();
@@ -97,9 +97,11 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
     }
 
     public void setMode(CABListener listener) {
-        expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        cab = new ExpListMultiChoice(expListView, getActivity(), listener);
-        expListView.setMultiChoiceModeListener(cab);
+        if (expListView != null) {
+            expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            cab = new ExpListMultiChoice(expListView, getActivity(), listener);
+            expListView.setMultiChoiceModeListener(cab);
+        }
     }
 
     public void deleteSelection() {

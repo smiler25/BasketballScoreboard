@@ -19,7 +19,7 @@
         min="1" />
 
     <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
-        android:key="pref_max_fouls"
+        android:key="max_fouls"
         android:title="@string/max_fouls"
         android:defaultValue="@string/max_fouls_default"
         max="10"

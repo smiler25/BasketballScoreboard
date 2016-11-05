@@ -15,8 +15,7 @@ import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.results.ListListener;
 
 public class RecyclerListFragment extends BaseResultsListFragment {
-
-    private static final String TAG = "BS-RecyclerViewFragment";
+    public static final String TAG = "BS-RecyclerListFragment";
     protected RecyclerView recyclerView;
     protected ResultsRecyclerAdapter adapter;
     protected RecyclerView.LayoutManager layoutManager;

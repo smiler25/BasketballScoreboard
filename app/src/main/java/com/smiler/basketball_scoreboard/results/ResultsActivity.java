@@ -32,15 +32,37 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_results);
         initToolbar();
+        initList();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initList();
+    }
+
+    private void initList() {
+        detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+        if (detailViewFrag != null && detailViewFrag.isAdded()) {
+            wide = true;
+            list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+            if (list != null) {
+                setListeners(list);
+            }
+        } else {
+            wide = false;
+            list = (ResultsExpListFragment) getSupportFragmentManager().findFragmentById(R.id.expandable_list_frag);
+            if (list != null) {
+                setListeners(list);
+            }
+        }
+    }
+
+    private void setListeners(final BaseResultsListFragment list) {
         final String cabString = getResources().getString(R.string.cab_subtitle);
 
-        list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
-        if (list == null) {
-            list = (ResultsExpListFragment) getSupportFragmentManager().findFragmentById(R.id.expandable_list_frag);
-        }
         final CABListener cabListener = new CABListener() {
             @Override
             public void onFinish() { list.clearSelection(); }
@@ -53,9 +75,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
                 list.deleteSelection();
             }
         };
-        detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-        if (detailViewFrag != null) { wide = true; }
-
         if (list != null) {
             list.setMode(cabListener);
             list.setListener(new ListListener() {
@@ -64,7 +83,7 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
                     if (!actionModeActive) {
                         menu.setGroupVisible(R.id.group, true);
                         selected = value;
-                        if (wide) {
+                        if (wide && detailViewFrag != null) {
                             detailViewFrag.updateContent(value);
                         }
                     } else {
@@ -82,7 +101,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
 
                 @Override
                 public void onListEmpty() {
-                    System.out.println("ResultsActivity inner onListEmpty ");
                 }
             });
         }
@@ -137,7 +155,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
     }
 
     private void menuDelete() {
-        System.out.println("menu delete = " + selected);
         menu.setGroupVisible(R.id.group, false);
         if (selected == -1) { return; }
         RealmController.with(this).deleteResult(selected);
@@ -156,7 +173,6 @@ public class ResultsActivity extends ActionBarActivity  implements ResultsExpLis
 
     @Override
     public void onListEmpty() {
-        System.out.println("ResultsActivity onListEmpty ");
         setEmptyLayout();
     }
 
