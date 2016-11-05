@@ -23,13 +23,13 @@ class ResultViewBoxscoreRow extends TableRow {
         super(context);
         inflate(context, R.layout.result_view_info_table_row, this);
         ((TextView) findViewById(R.id.results_player_number)).setText(String.valueOf(record.getNumber()));
-        ((TextView) findViewById(R.id.results_player_name)).setText((!record.isCaptain()) ? String.valueOf(record.getName()) : String.valueOf(record.getName()) + "*");
+        ((TextView) findViewById(R.id.results_player_name)).setText(!record.isCaptain() ? String.valueOf(record.getName()) : String.valueOf(record.getName()) + "*");
         ((TextView) findViewById(R.id.results_player_points)).setText(String.valueOf(record.getPoints()));
         ((TextView) findViewById(R.id.results_player_fouls)).setText(String.valueOf(record.getFouls()));
         if (last) {
-            setBackground((even ? getResources().getDrawable(R.drawable.result_table_row_last) : getResources().getDrawable(R.drawable.result_table_row_even_last)));
+            setBackground(even ? getResources().getDrawable(R.drawable.result_table_row_last) : getResources().getDrawable(R.drawable.result_table_row_even_last));
         } else {
-            setBackground((even ? getResources().getDrawable(R.drawable.result_table_row) : getResources().getDrawable(R.drawable.result_table_row_even)));
+            setBackground(even ? getResources().getDrawable(R.drawable.result_table_row) : getResources().getDrawable(R.drawable.result_table_row_even));
         }
     }
 }

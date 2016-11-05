@@ -22,7 +22,7 @@ public class CustomNumberPicker extends NumberPicker {
     }
 
     private void processAttributeSet(AttributeSet attrs) {
-        this.setMinValue(attrs.getAttributeIntValue(null, "min", 0));
-        this.setMaxValue(attrs.getAttributeIntValue(null, "max", 0));
+        setMinValue(attrs.getAttributeIntValue(null, "min", 0));
+        setMaxValue(attrs.getAttributeIntValue(null, "max", 0));
     }
 }

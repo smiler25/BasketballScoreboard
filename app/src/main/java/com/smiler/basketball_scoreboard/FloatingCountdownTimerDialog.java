@@ -62,10 +62,12 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
     public void startCountDownTimer() {
         long shotTickInterval = 100;
         timer = new CountDownTimer(duration, shotTickInterval) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 timeLeft = millisUntilFinished;
                 setTimeText(timeLeft);
             }
+            @Override
             public void onFinish() {
                  setTimeText(0);
             }
@@ -80,7 +82,7 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
         if (millis >= 60000) {
             clockView.setText(TIME_FORMAT.format(millis));
         } else {
-            clockView.setText(String.format(TIME_FORMAT_SHORT, millis / 1000, (millis % 1000) / 100));
+            clockView.setText(String.format(TIME_FORMAT_SHORT, millis / 1000, millis % 1000 / 100));
         }
     }
 }

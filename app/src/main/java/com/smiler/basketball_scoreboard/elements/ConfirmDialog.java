@@ -35,6 +35,7 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         return f;
     }
 
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setPositiveButton(R.string.yes, this)
@@ -97,6 +98,7 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         }
     }
 
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case Dialog.BUTTON_POSITIVE:

@@ -43,7 +43,7 @@ class ResultViewBoxscore extends ResultViewExpandable {
         title.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                table.setVisibility((table.getVisibility() == VISIBLE) ? GONE : VISIBLE);
+                table.setVisibility(table.getVisibility() == VISIBLE ? GONE : VISIBLE);
             }
         });
 

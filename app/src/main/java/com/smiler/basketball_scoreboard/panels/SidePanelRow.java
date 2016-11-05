@@ -15,11 +15,11 @@ import com.smiler.basketball_scoreboard.models.Player;
 public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
     private static int maxFouls;
-    private static int count = 0;
+    private static int count;
     private TextView numberView, nameView, pointsView, foulsView;
-    private boolean left, selected = false;
+    private boolean left, selected;
     private Context context;
-    private int id = 0;
+    private int id;
     private int colorSelected = getResources().getColor(R.color.side_panel_selected);
     private int colorNotSelected = getResources().getColor(R.color.light_grey_background);
     private int colorFouledOut = getResources().getColor(R.color.side_panel_fouled_out);
@@ -49,18 +49,18 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         if (left) {
             inflate(context, R.layout.side_panel_row_left, this);
             numberView = (TextView) findViewById(R.id.left_panel_number);
-            nameView = (TextView) this.findViewById(R.id.left_panel_name);
-            pointsView = (TextView) this.findViewById(R.id.left_panel_points);
-            foulsView = (TextView) this.findViewById(R.id.left_panel_fouls);
-            edit = this.findViewById(R.id.left_panel_edit);
+            nameView = (TextView) findViewById(R.id.left_panel_name);
+            pointsView = (TextView) findViewById(R.id.left_panel_points);
+            foulsView = (TextView) findViewById(R.id.left_panel_fouls);
+            edit = findViewById(R.id.left_panel_edit);
 
         } else {
             inflate(context, R.layout.side_panel_row_right, this);
             numberView = (TextView) findViewById(R.id.right_panel_number);
-            nameView = (TextView) this.findViewById(R.id.right_panel_name);
-            pointsView = (TextView) this.findViewById(R.id.right_panel_points);
-            foulsView = (TextView) this.findViewById(R.id.right_panel_fouls);
-            edit = this.findViewById(R.id.right_panel_edit);
+            nameView = (TextView) findViewById(R.id.right_panel_name);
+            pointsView = (TextView) findViewById(R.id.right_panel_points);
+            foulsView = (TextView) findViewById(R.id.right_panel_fouls);
+            edit = findViewById(R.id.right_panel_edit);
         }
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,9 +72,10 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     private void createHeaderRow(Context context) {
-        inflate(context, (left) ? R.layout.side_panel_header_left : R.layout.side_panel_header_right, this);
+        inflate(context, left ? R.layout.side_panel_header_left : R.layout.side_panel_header_right, this);
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -85,7 +86,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
     public void setNumber(int value) {
         player.setNumber(value);
-        numberView.setText((player.isCaptain()) ? "" + value + "*" : "" + value);
+        numberView.setText(player.isCaptain() ? "" + value + "*" : "" + value);
     }
 
     public String getName() {
@@ -119,9 +120,9 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         if (fouls >= maxFouls) {
             Toast.makeText(
                 getContext(),
-                String.format(getResources().getString((left) ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), player.getNumber(), player.getName()),
+                String.format(getResources().getString(left ? R.string.side_panel_fouls_limit_home : R.string.side_panel_fouls_limit_guest), player.getNumber(), player.getName()),
                 Toast.LENGTH_SHORT).show();
-            this.setBackgroundColor(colorFouledOut);
+            setBackgroundColor(colorFouledOut);
         }
     }
 
@@ -133,7 +134,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     public void edit(int number, String name, boolean captain) {
         player.setInfo(
             number,
-            (!name.trim().equals("")) ? name.trim() : String.format(getResources().getString(R.string.side_panel_player_name), number),
+            !name.trim().equals("") ? name.trim() : String.format(getResources().getString(R.string.side_panel_player_name), number),
             captain
         );
         setNumber(number);
@@ -147,10 +148,14 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     public boolean toggleSelected() {
         selected = !selected;
         if (selected) {
-            this.setBackgroundColor(colorSelected);
+            setBackgroundColor(colorSelected);
         } else {
-            this.setBackgroundColor(colorNotSelected);
+            setBackgroundColor(colorNotSelected);
         }
+        return selected;
+    }
+
+    public boolean getSelected() {
         return selected;
     }
 
@@ -175,14 +180,14 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     private void recreateView() {
-        this.removeAllViews();
+        removeAllViews();
         createView(context);
         foulsView.setText(String.valueOf(player.getFouls()));
         nameView.setText(player.getName());
-        numberView.setText((player.isCaptain()) ? "" + player.getNumber() + "*" : "" + player.getNumber());
+        numberView.setText(player.isCaptain() ? "" + player.getNumber() + "*" : "" + player.getNumber());
         pointsView.setText(String.valueOf(player.getPoints()));
         if (player.getFouls() >= maxFouls) {
-            this.setBackgroundColor(colorFouledOut);
+            setBackgroundColor(colorFouledOut);
         }
     }
 

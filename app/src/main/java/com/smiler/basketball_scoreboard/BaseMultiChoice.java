@@ -9,36 +9,31 @@ import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smiler.basketball_scoreboard.db.RealmController;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
 
     private AbsListView listView;
     private Activity activity;
-    private List<String> selectedIds = new ArrayList<>();
+    private ArrayList<Integer> selectedIds = new ArrayList<>();
     public boolean actionModeEnabled;
     private TextView title;
     private ActionMode mode;
+    private RealmController realmController;
+    private CABListener listener;
 
-    BaseMultiChoice(AbsListView listView, Activity activity) {
+    BaseMultiChoice(AbsListView listView, Activity activity, CABListener listener) {
         this.activity = activity;
         this.listView = listView;
-    }
-
-    public void close() {
-        mode.finish();
-    }
-
-    public interface CabDeletedListener {
-        void onCabDelete(List<String> selectedIds);
-    }
-
-    public void setCabDeleteListener(CabDeletedListener listener) {
         this.listener = listener;
+        realmController = RealmController.with(activity);
     }
 
-    private CabDeletedListener listener;
+//    public void close() {
+//        mode.finish();
+//    }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -51,13 +46,12 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
         return true;
     }
 
-    void addSelectedId(long id){
-        selectedIds.add(Long.toString(id));
+    void addSelectedId(int id){
+        selectedIds.add(id);
     }
 
-    void removeSelectedId(long id){
-        selectedIds.remove(Long.toString(id));
-
+    void removeSelectedId(int id){
+        selectedIds.remove((Integer) id);
     }
 
     @Override
@@ -74,9 +68,10 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.cab_action_delete:
-                DbHelper dbHelper = DbHelper.getInstance(activity);
-                dbHelper.delete(selectedIds.toArray(new String[selectedIds.size()]));
-                listener.onCabDelete(selectedIds);
+                realmController.deleteResults(selectedIds.toArray(new Integer[selectedIds.size()]));
+                if (listener != null) {
+                    listener.onMenuDelete();
+                }
                 Toast.makeText(activity, activity.getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
                 mode.finish();
                 return true;

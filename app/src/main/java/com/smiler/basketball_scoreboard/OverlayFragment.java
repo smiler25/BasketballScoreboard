@@ -34,7 +34,7 @@ public class OverlayFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
-        int type = (args == null) ? OVERLAY_PANELS : args.getInt("type", OVERLAY_PANELS);
+        int type = args == null ? OVERLAY_PANELS : args.getInt("type", OVERLAY_PANELS);
         View v = null;
 
         switch (type) {
@@ -46,14 +46,14 @@ public class OverlayFragment extends Fragment{
                         listener.onOverlayClick();
                     }
                 });
-                (v.findViewById(R.id.left_panel_overlay_open)).setOnClickListener(new View.OnClickListener() {
+                v.findViewById(R.id.left_panel_overlay_open).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         listener.onOverlayOpenPanel(Constants.SIDE_PANELS_LEFT);
                     }
                 });
 
-                (v.findViewById(R.id.right_panel_overlay_open)).setOnClickListener(new View.OnClickListener() {
+                v.findViewById(R.id.right_panel_overlay_open).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         listener.onOverlayOpenPanel(Constants.SIDE_PANELS_RIGHT);

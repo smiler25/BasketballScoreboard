@@ -73,11 +73,11 @@ public class NumberPickerPreference extends DialogPreference {
     }
 
     private int getValue() {
-        return this.value;
+        return value;
     }
 
     @Override
     public CharSequence getSummary() {
-        return Integer.toString(this.value);
+        return Integer.toString(value);
     }
 }

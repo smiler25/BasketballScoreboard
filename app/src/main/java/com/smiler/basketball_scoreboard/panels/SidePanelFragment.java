@@ -2,11 +2,6 @@ package com.smiler.basketball_scoreboard.panels;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -18,19 +13,22 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.smiler.basketball_scoreboard.Constants;
-import com.smiler.basketball_scoreboard.DbHelper;
-import com.smiler.basketball_scoreboard.DbScheme;
 import com.smiler.basketball_scoreboard.MainActivity;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.db.PlayersResults;
+import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.ListDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class SidePanelFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
@@ -177,7 +175,6 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         return false;
     }
 
-
     private void handleSelection() {
         if (panelSelect.isChecked() || activePlayers.size() <= 5) {
             View.OnClickListener l = panelSelect.isChecked() ? this : null;
@@ -188,7 +185,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         } else {
             panelSelect.setChecked(true);
             Toast.makeText(getActivity(),
-                    String.format((activePlayers.size() < 5)
+                    String.format(activePlayers.size() < 5
                             ? getResources().getString(R.string.side_panel_few) : getResources().getString(R.string.side_panel_many),
                             activePlayers.size()),
                     Toast.LENGTH_SHORT).show();
@@ -263,7 +260,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     }
 
     private boolean numberAvailable(int number) {
-        return !(playersNumbers.contains(number));
+        return !playersNumbers.contains(number);
     }
 
     public TreeMap<Integer, SidePanelRow> getInactivePlayers() {
@@ -340,93 +337,55 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    public boolean saveCurrentData(SharedPreferences statePref) {
-        SharedPreferences.Editor editor = statePref.edit();
-        Set<String> activePlayersNumbers = new TreeSet<>();
-        for (SidePanelRow row : activePlayers) {
-            activePlayersNumbers.add(Integer.toString(row.getNumber()));
+    public boolean saveCurrentData() {
+        if (rows.size() == 0) {
+            return true;
         }
-        editor.putStringSet((left) ? Constants.STATE_HOME_ACTIVE_PLAYERS : Constants.STATE_GUEST_ACTIVE_PLAYERS, activePlayersNumbers);
-        editor.apply();
-        DbHelper dbHelper = DbHelper.getInstance(MainActivity.getContext());
-        String team = Boolean.toString(left);
-        try {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            ContentValues cv;
-            for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
-                cv = new ContentValues();
-                SidePanelRow row = entry.getValue();
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_GAME_ID, -1);
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM, team);
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER, row.getNumber());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME, row.getName());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS, row.getPoints());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS, row.getFouls());
-                cv.put(DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN, (row.getCaptain()) ? 1 : 0);
-                db.insertWithOnConflict(DbScheme.ResultsPlayersTable.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+
+        final String team = Boolean.toString(left);
+        RealmController.with(MainActivity.getContext()).deleteTmpPlayers(team);
+        final Results tmpResult = RealmController.with(MainActivity.getContext()).getTmpResult();
+        Realm realm = RealmController.with(MainActivity.getContext()).getRealm();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
+                    SidePanelRow row = entry.getValue();
+                    PlayersResults playersResults = realm.createObject(PlayersResults.class);
+                    playersResults.setGame(tmpResult)
+                            .setTeam(team)
+                            .setNumber(row.getNumber())
+                            .setName(row.getName())
+                            .setPoints(row.getPoints())
+                            .setFouls(row.getFouls())
+                            .setCaptain(row.getCaptain())
+                            .setActive(row.getSelected());
+                }
             }
-        } finally {
-            dbHelper.close();
-        }
+        });
         return true;
     }
 
     public static void clearCurrentData() {
-        DbHelper dbHelper = DbHelper.getInstance(MainActivity.getContext());
-        SQLiteDatabase db = dbHelper.open();
-        try {
-            db.delete(DbScheme.ResultsPlayersTable.TABLE_NAME,
-                    DbScheme.ResultsPlayersTable.COLUMN_GAME_ID + " = ?",
-                    new String[]{Integer.toString(-1)});
-        } finally {
-            dbHelper.close();
-        }
+        RealmController.with(MainActivity.getContext()).deletePlayerResults(-1);
     }
 
     private void restoreCurrentData() {
-        Set<String> activePlayersNumbers = new TreeSet<>();
-        SharedPreferences statePref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        activePlayersNumbers = statePref.getStringSet((left) ? Constants.STATE_HOME_ACTIVE_PLAYERS
-                                                             : Constants.STATE_GUEST_ACTIVE_PLAYERS, activePlayersNumbers);
         activePlayers = new TreeSet<>();
-        DbHelper dbHelper = DbHelper.getInstance(MainActivity.getContext());
-        SQLiteDatabase db = dbHelper.open();
-        try {
-            String[] columns = new String[] {
-                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NUMBER,
-                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_NAME,
-                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_CAPTAIN,
-                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_POINTS,
-                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_FOULS,
-            };
-            String query = DbScheme.ResultsPlayersTable.COLUMN_GAME_ID + " = ? AND " +
-                    DbScheme.ResultsPlayersTable.COLUMN_PLAYER_TEAM + " = ?";
-            Cursor c = db.query(
-                    DbScheme.ResultsPlayersTable.TABLE_NAME,
-                    columns,
-                    query,
-                    new String[]{Integer.toString(-1), Boolean.toString(left)},
-                    null, null, null
-            );
-            if (c.getCount() > 0) {
-                clear(true);
-                c.moveToFirst();
-                do {
-                    SidePanelRow row = addRow(c.getInt(0), c.getString(1), c.getInt(2) == 1);
-                    row.changePoints(c.getInt(3));
-                    row.changeFouls(c.getInt(4));
-                    if (activePlayersNumbers.contains(Integer.toString(row.getNumber()))) {
-                        activePlayers.add(row);
-                        row.toggleSelected();
-                    }
-                } while (c.moveToNext());
-                listener.onSidePanelActiveSelected(activePlayers, left);
-            } else {
-                Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_no_save_data), Toast.LENGTH_LONG).show();
+        RealmResults<PlayersResults> players = RealmController.with(MainActivity.getContext()).getPlayers(-1, Boolean.toString(left));
+        if (players.size() > 0) {
+            for (PlayersResults player : players) {
+                SidePanelRow row = addRow(player.getNumber(), player.getPlayerName(), player.getCaptain());
+                row.changePoints(player.getPoints());
+                row.changeFouls(player.getFouls());
+                if (player.getActive()) {
+                    activePlayers.add(row);
+                    row.toggleSelected();
+                }
             }
-            c.close();
-        } finally {
-            dbHelper.close();
+            listener.onSidePanelActiveSelected(activePlayers, left);
+        } else {
+            Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_no_save_data), Toast.LENGTH_LONG).show();
         }
     }
 

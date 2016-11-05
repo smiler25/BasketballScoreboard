@@ -19,7 +19,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     public CameraView(Context context, Camera camera) {
         super(context);
         this.camera = camera;
-        this.holder = getHolder();
+        holder = getHolder();
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         holder.addCallback(this);
     }
@@ -36,6 +36,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
     }
 
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
             camera.setPreviewDisplay(holder);
@@ -46,9 +47,11 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
     }
 
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         if (holder.getSurface() == null) {
             return;
@@ -65,29 +68,29 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
 
-        int degrees = 0;
+//        int degrees = 0;
         switch (display.getRotation()) {
             case Surface.ROTATION_0:
                 camera.setDisplayOrientation(90);
                 parameters.setRotation(90);
-                degrees = 0;
+//                degrees = 0;
                 break;
             case Surface.ROTATION_90:
                 camera.setDisplayOrientation(0);
-                degrees = 90;
+//                degrees = 90;
                 break;
             case Surface.ROTATION_180:
                 camera.setDisplayOrientation(270);
-                degrees = 180;
+//                degrees = 180;
                 break;
             case Surface.ROTATION_270:
                 camera.setDisplayOrientation(180);
-                degrees = 270;
+//                degrees = 270;
                 break;
         }
 
-        int result = (info.orientation + degrees) % 360;
-        result = (360 - result) % 360; //Compensate the mirror
+        //int result = (info.orientation + degrees) % 360;
+        //result = (360 - result) % 360; // Compensate the mirror
         //camera.setDisplayOrientation(result);
         //parameters.setRotation(result);
         try {

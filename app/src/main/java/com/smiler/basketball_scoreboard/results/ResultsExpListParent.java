@@ -1,29 +1,29 @@
 package com.smiler.basketball_scoreboard.results;
 
-public class ResultsExpListParent {
+class ResultsExpListParent {
 
     private String parent;
     private ResultView child;
-    private int sqlId;
+    private int itemId;
 
-    public ResultsExpListParent(String parent, int sqlId) {
+    ResultsExpListParent(String parent, int itemId) {
         this.parent = parent;
-        this.sqlId = sqlId;
+        this.itemId = itemId;
     }
 
-    public String getParent() {
+    String getParent() {
         return parent;
     }
 
-    public ResultView getChild() {
+    ResultView getChild() {
         return child;
     }
 
-    public void setChild(ResultView child) {
+    void setChild(ResultView child) {
         this.child = child;
     }
 
-    public int getSqlId() {
-        return sqlId;
+    int getItemId() {
+        return itemId;
     }
 }
