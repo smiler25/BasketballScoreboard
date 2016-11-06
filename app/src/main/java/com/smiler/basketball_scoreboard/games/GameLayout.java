@@ -30,6 +30,11 @@ import java.util.TreeMap;
 
 
 import static com.smiler.basketball_scoreboard.Constants.ACTION_NONE;
+import static com.smiler.basketball_scoreboard.Constants.LAYOUT_3X3;
+import static com.smiler.basketball_scoreboard.Constants.LAYOUT_FIBA;
+import static com.smiler.basketball_scoreboard.Constants.LAYOUT_FULL;
+import static com.smiler.basketball_scoreboard.Constants.LAYOUT_NBA;
+import static com.smiler.basketball_scoreboard.Constants.LAYOUT_SIMPLE;
 import static com.smiler.basketball_scoreboard.Constants.NO_TEAM;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
 import static com.smiler.basketball_scoreboard.Constants.SECOND;
@@ -104,6 +109,22 @@ public class GameLayout extends LinearLayout {
 
     public GameLayout(Context context) {
         super(context);
+    }
+
+    public GameLayout(Context context, int type) {
+        super(context);
+        switch (type) {
+            case LAYOUT_3X3:
+                break;
+            case LAYOUT_FIBA:
+                break;
+            case LAYOUT_FULL:
+                break;
+            case LAYOUT_NBA:
+                break;
+            case LAYOUT_SIMPLE:
+                break;
+        }
     }
 
     private GameLayout initLayout(ViewStub stub, OnClickListener clickListener, OnLongClickListener longClickListener) {
