@@ -2452,7 +2452,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         realm = RealmController.with(this).getRealm();
         Number lastId = realm.where(Results.class).max("id");
-        final long nextID  = lastId != null ? (int) lastId + 1 : 0;
+        final long nextID  = lastId != null ? (long) lastId + 1 : 0;
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
