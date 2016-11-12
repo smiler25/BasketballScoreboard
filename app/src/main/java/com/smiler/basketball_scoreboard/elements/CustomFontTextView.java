@@ -2,6 +2,7 @@ package com.smiler.basketball_scoreboard.elements;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -44,6 +45,11 @@ public class CustomFontTextView extends TextView {
         }
         setTypeface(tf);
         return true;
+    }
+
+    public void setColor(int red, int green, int blue) {
+        this.setTextColor(Color.rgb(red, green, blue));
+        invalidate();
     }
 
 }

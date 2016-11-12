@@ -16,12 +16,17 @@ android {
     }
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
+
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
     defaultConfig {
         applicationId "com.smiler.scoreboard"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 20
-        versionName "2.4.1"
+        versionCode 21
+        versionName "2.5"
     }
     buildTypes {
         release {
@@ -31,7 +36,7 @@ android {
             applicationIdSuffix ""
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
-                    def fileName = "basketball_scoreboard-" + defaultConfig.versionName + ".apk"
+                    def fileName = "basketball_scoreboard_" + defaultConfig.versionName + ".apk"
                     output.outputFile = new File(output.outputFile.parent, fileName)
                 }
             }

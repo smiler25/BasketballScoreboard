@@ -21,10 +21,12 @@ public class PrefActivity extends Activity implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         SetDefaultPreference.SetDefaultDialogListener,
         SeekBarPreference.SeekBarDialogListener,
+        ColorPickerPreference.ColorPickerListener,
         PrefFragment.OnSelectNestedScreenPreference {
 
     public static boolean prefChangedRestart = false;
     public static boolean prefChangedNoRestart = false;
+    public static boolean prefColorChanged = false;
 
     public static final String PREF_REGULAR_TIME = "regular_time_length";
     public static final String PREF_OVERTIME = "overtime_length";
@@ -242,5 +244,10 @@ public class PrefActivity extends Activity implements
                 .addToBackStack(null)
                 .commit();
         toolbar.setTitle(R.string.sounds_screen);
+    }
+
+    @Override
+    public void onAcceptColor() {
+        prefColorChanged = true;
     }
 }
