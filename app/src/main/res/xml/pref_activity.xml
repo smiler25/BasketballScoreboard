@@ -116,6 +116,12 @@
             android:title="@string/pref_possession_arrows"
             android:defaultValue="false" />
 
+        <com.smiler.basketball_scoreboard.preferences.ColorPickerPreference
+            android:key="color"
+            android:title="@string/pref_custom_colors"
+            android:positiveButtonText="@string/action_save"
+            />
+
         <PreferenceScreen
             android:key="sounds_screen"
             android:title="@string/sounds_screen"

@@ -58,6 +58,7 @@ import com.smiler.basketball_scoreboard.help.HelpActivity;
 import com.smiler.basketball_scoreboard.models.ActionRecord;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
+import com.smiler.basketball_scoreboard.preferences.ColorPickerPreference;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 import com.smiler.basketball_scoreboard.results.Result;
@@ -275,12 +276,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ColorPickerPreference.getKeyName(2);
         super.onCreate(savedInstanceState);
         mainActivityContext = getApplicationContext();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        setColors();
         initSounds();
 
         preferences = new Preferences(this);
@@ -397,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
         }
         initArrows();
+        setColors();
     }
 
     private void initCommonLayout() {
@@ -1103,6 +1107,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             hTimeouts20 = (short) statePref.getInt(STATE_HOME_TIMEOUTS20, 0);
             gTimeouts20 = (short) statePref.getInt(STATE_GUEST_TIMEOUTS20, 0);
         }
+        if (arrowsOn) {
+            setPossession(statePref.getInt(STATE_POSSESSION, possession));
+        }
     }
 
     private void setSavedState() {
@@ -1133,6 +1140,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSettings() {
         preferences.read();
+    }
+
+    private void setColors() {
+        if (hScoreView != null) {
+            hScoreView.setTextColor(sharedPref.getInt(ColorPickerPreference.getKeyName(0),
+                    getResources().getColor(R.color.orange)));
+        }
+        if (gScoreView != null) {
+            gScoreView.setTextColor(sharedPref.getInt(ColorPickerPreference.getKeyName(1),
+                    getResources().getColor(R.color.orange)));
+        }
     }
 
     private void zeroState() {
@@ -1282,6 +1300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setTimeouts20Text(hTimeouts20, gTimeouts20, gTimeouts20View.getCurrentTextColor(), hTimeouts20View.getCurrentTextColor());
             }
         }
+        setColors();
 
         if (preferences.spOn && leftPanel != null) {
             try {

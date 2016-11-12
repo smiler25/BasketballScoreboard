@@ -6,7 +6,7 @@
     <string name="default_category">Default values</string>
     <string name="side_panels_category">Players panels</string>
     <string name="app_category">App behavior</string>
-    <string name="sounds_screen">Sound settings</string>
+    <string name="sounds_screen">Sounds</string>
 
     <string name="main_time_length">Main period duration (minutes)</string>
     <string name="main_time_length_default" translatable="false">10</string>
@@ -38,7 +38,7 @@
         <item>Keep and save in results</item>
     </string-array>
 
-    <string name="pref_possession_arrows">Enable possession arrows</string>
+    <string name="pref_possession_arrows">Possession arrows</string>
     <string name="pref_fix_landscape">Only landscape orientation</string>
     <string name="pref_auto_break">Show break time</string>
     <string name="pref_auto_break_descr">Automatically show break interval timer when period is over</string>
@@ -75,6 +75,13 @@
         <item>On shot clock expire</item>
         <item>On main time expire</item>
         <item>On main time or shot clock expire</item>
+    </string-array>
+
+    <string name="pref_custom_colors_text">Chose element and set color</string>
+    <string name="pref_custom_colors">Colors</string>
+    <string-array name="pref_custom_color_elements">
+        <item>Home score</item>
+        <item>Guest score</item>
     </string-array>
 
     <string name="pref_auto_save_save_results">Save result before start new game</string>

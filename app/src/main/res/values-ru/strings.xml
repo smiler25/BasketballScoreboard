@@ -12,7 +12,9 @@
     <string name="action_whats_new">Что нового</string>
     <string name="action_new_game">Новая игра</string>
     <string name="action_rate">Оценить</string>
+    <string name="action_reset">Сбросить</string>
     <string name="action_save">Сохранить</string>
+    <string name="action_save_continue">Сохранить и продолжить</string>
     <string name="action_settings">Настройки</string>
     <string name="action_share">Поделиться</string>
     <string name="action_share_via">Поделиться</string>
