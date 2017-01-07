@@ -3,8 +3,11 @@ package com.smiler.basketball_scoreboard.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 
+import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.models.Game;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 
 import java.text.SimpleDateFormat;
@@ -24,7 +27,9 @@ public class Preferences {
     private final SharedPreferences prefs;
     private final Resources resources;
 
-    public int layoutType, autoSaveResults, autoSound, actualTime, timeoutRules;
+    public int autoSaveResults, autoSound, actualTime;
+    public Game.TO_RULES timeoutRules;
+    public Game.GAME_TYPE layoutType;
     public int playByPlay;
     public boolean fixLandscape, fixLandscapeChanged;
     public boolean layoutChanged, timeoutsRulesChanged;
@@ -38,17 +43,30 @@ public class Preferences {
     public long mainTimePref, shotTimePref, shortShotTimePref, overTimePref;
     public short maxFouls;
     public short numRegularPeriods;
-
     private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
-
     public int whistleRepeats, hornRepeats, whistleLength, hornLength, hornUserRepeats;
+    private int defaultScoreColor;
+    public String hName, gName;
 
-    public Preferences(Context context) {
+    public enum Elements {
+        HSCORE, GSCORE;
+    }
+
+    private static Preferences instance;
+
+    public static Preferences getInstance(Context context){
+        if (instance == null){
+            instance = new Preferences(context);
+        }
+        return instance;
+    }
+
+    private Preferences(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         resources = context.getResources();
         whistleLength = 190;
         hornLength = 850;
-
+        defaultScoreColor = context.getResources().getColor(R.color.orange);
     }
 
     public Preferences read() {
@@ -77,8 +95,8 @@ public class Preferences {
         mainTimePref = prefs.getInt(PrefActivity.PREF_REGULAR_TIME, DEFAULT_FIBA_MAIN_TIME) * SECONDS_60;
         overTimePref = prefs.getInt(PrefActivity.PREF_OVERTIME, DEFAULT_OVERTIME) * SECONDS_60;
         numRegularPeriods = (short) prefs.getInt(PrefActivity.PREF_NUM_REGULAR, DEFAULT_NUM_REGULAR);
-//        hName = prefs.getString(PrefActivity.PREF_HOME_NAME, resources.getString(R.string.home_team_name_default));
-//        gName = prefs.getString(PrefActivity.PREF_GUEST_NAME, resources.getString(R.string.guest_team_name_default));
+        hName = prefs.getString(PrefActivity.PREF_HOME_NAME, resources.getString(R.string.home_team_name_default));
+        gName = prefs.getString(PrefActivity.PREF_GUEST_NAME, resources.getString(R.string.guest_team_name_default));
         actualTime = Integer.parseInt(prefs.getString(PrefActivity.PREF_ACTUAL_TIME, "1"));
         maxFouls = (short) prefs.getInt(PrefActivity.PREF_MAX_FOULS, DEFAULT_MAX_FOULS);
         boolean sidePanelsOn_ = prefs.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
@@ -100,24 +118,37 @@ public class Preferences {
         }
 
         PrefActivity.prefChangedNoRestart = false;
+        if (PrefActivity.prefColorChanged) {
+            PrefActivity.prefColorChanged = false;
+        }
+
         readRestart();
         return this;
     }
 
     public Preferences readRestart() {
-        int temp_int = Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0"));
-        if (temp_int != layoutType) {
+        Game.GAME_TYPE temp = Game.GAME_TYPE.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
+        if (temp != layoutType) {
             layoutChanged = true;
-            layoutType = temp_int;
+            layoutType = temp;
         }
         useDirectTimer = prefs.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
-        temp_int = Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, "0"));
-        if (temp_int != timeoutRules) {
+        Game.TO_RULES temp_rules = Game.TO_RULES.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, "0")));
+        if (temp_rules != timeoutRules) {
             timeoutsRulesChanged = true;
-            timeoutRules = temp_int;
+            timeoutRules = temp_rules;
         }
         PrefActivity.prefChangedRestart = false;
         return this;
     }
 
+    public int getColor(Elements element) {
+        switch (element) {
+            case HSCORE:
+                return prefs.getInt(ColorPickerPreference.getKeyName(0), defaultScoreColor);
+            case GSCORE:
+                return prefs.getInt(ColorPickerPreference.getKeyName(1), defaultScoreColor);
+        }
+        return Color.RED;
+    }
 }

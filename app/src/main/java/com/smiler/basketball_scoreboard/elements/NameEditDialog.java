@@ -11,24 +11,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
+import static com.smiler.basketball_scoreboard.Constants.HOME;
+
 
 public class NameEditDialog extends DialogFragment {
 
     OnChangeNameListener changeTimeListener;
     private EditText editView;
-    private String team;
+    private int team;
 
-    public static NameEditDialog newInstance(String team) {
+    public static NameEditDialog newInstance(int team, String name) {
         NameEditDialog f = new NameEditDialog();
         Bundle args = new Bundle();
-        args.putString("team", team);
-        f.setArguments(args);
-        return f;
-    }
-    public static NameEditDialog newInstance(String team, String name) {
-        NameEditDialog f = new NameEditDialog();
-        Bundle args = new Bundle();
-        args.putString("team", team);
+        args.putInt("team", team);
         args.putString("name", name);
         f.setArguments(args);
         return f;
@@ -37,11 +32,9 @@ public class NameEditDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
-        team = args.getString("team");
+        team = args.getInt("team", HOME);
         int strId;
-        if (team == null ) {
-            strId = R.string.edit_name;
-        } else if (team.equals("home")){
+        if (team == HOME){
             strId = R.string.edit_home_name;
         } else {
             strId = R.string.edit_guest_name;
@@ -51,7 +44,6 @@ public class NameEditDialog extends DialogFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.team_name_edit, null);
-
 
         builder.setView(v).setCancelable(true);
 
@@ -77,7 +69,7 @@ public class NameEditDialog extends DialogFragment {
 
 
     public interface OnChangeNameListener {
-        void onNameChanged(String value, String team);
+        void onNameChanged(String value, int team);
     }
 
     @Override

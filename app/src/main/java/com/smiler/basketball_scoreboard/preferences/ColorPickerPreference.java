@@ -151,7 +151,7 @@ public class ColorPickerPreference extends DialogPreference implements
         setPreviewColor(elementPicker.getSelectedItemId());
     }
 
-    public static String getKeyName(long id) {
+    static String getKeyName(long id) {
         return String.format("color_%d", id);
     }
 

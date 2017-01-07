@@ -10,6 +10,10 @@ import android.view.View;
 
 import com.smiler.basketball_scoreboard.R;
 
+import java.util.concurrent.TimeUnit;
+
+import static com.smiler.basketball_scoreboard.Constants.SECONDS_60;
+
 
 public class TimePickerFragment extends DialogFragment {
 
@@ -19,23 +23,11 @@ public class TimePickerFragment extends DialogFragment {
     private CustomNumberPicker millisPicker;
     private boolean isMain = true;
 
-    public static TimePickerFragment newInstance(int minutes, int seconds, int millis) {
+    public static TimePickerFragment newInstance(long time, boolean main) {
         TimePickerFragment f = new TimePickerFragment();
         Bundle args = new Bundle();
-        args.putInt("minutes", minutes);
-        args.putInt("seconds", seconds);
-        args.putInt("millis", millis);
-        args.putBoolean("isMain", true);
-        f.setArguments(args);
-        return f;
-    }
-
-    public static TimePickerFragment newInstance(int seconds, int millis) {
-        TimePickerFragment f = new TimePickerFragment();
-        Bundle args = new Bundle();
-        args.putInt("seconds", seconds);
-        args.putInt("millis", millis);
-        args.putBoolean("isMain", false);
+        args.putLong("millis", time);
+        args.putBoolean("isMain", main);
         f.setArguments(args);
         return f;
     }
@@ -51,22 +43,34 @@ public class TimePickerFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(layoutId, null);
         builder.setView(v);
+
+        long time = args.getLong("millis", 0);
+        int seconds, millis;
         if (isMain) {
+            int minutes = (int) (TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)));
+            seconds = (int) (TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+            millis = (int) (time % 1000) / 100;
+
             minutesPicker = (CustomNumberPicker) v.findViewById(R.id.pickerMinutes);
-            minutesPicker.setValue(args.getInt("minutes", 0));
+            minutesPicker.setValue(minutes);
+
+        } else {
+            seconds = (int) time / 1000;
+            millis = (int) (time % 1000) / 100;
+
         }
         secondsPicker = (CustomNumberPicker) v.findViewById(R.id.pickerSeconds);
         millisPicker = (CustomNumberPicker) v.findViewById(R.id.pickerMillis);
-        secondsPicker.setValue(args.getInt("seconds", 0));
-        millisPicker.setValue(args.getInt("millis", 0));
+        secondsPicker.setValue(seconds);
+        millisPicker.setValue(millis);
 
         v.findViewById(R.id.buttonApply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isMain) {
-                    changeTimeListener.onTimeChanged(minutesPicker.getValue(), secondsPicker.getValue(), millisPicker.getValue());
+                    changeTimeListener.onTimeChanged(getMainTime(), isMain);
                 } else {
-                    changeTimeListener.onTimeChanged(secondsPicker.getValue(), millisPicker.getValue());
+                    changeTimeListener.onTimeChanged(getShotTime(), isMain);
                 }
                 dismiss();
             }
@@ -75,8 +79,17 @@ public class TimePickerFragment extends DialogFragment {
     }
 
     public interface OnChangeTimeListener {
-        void onTimeChanged(int minutes, int seconds, int millis);
-        void onTimeChanged(int seconds, int millis);
+        void onTimeChanged(long time, boolean main);
+    }
+
+    private long getMainTime() {
+        return minutesPicker.getValue() * SECONDS_60 +
+                secondsPicker.getValue() * 1000 +
+                millisPicker.getValue() * 100;
+    }
+
+    private long getShotTime() {
+        return secondsPicker.getValue() * 1000 + millisPicker.getValue() * 100;
     }
 
     @Override
