@@ -750,7 +750,7 @@ public class MainActivity extends AppCompatActivity implements
 //            gTimeouts20 = (short) statePref.getInt(STATE_GUEST_TIMEOUTS20, 0);
 //        }
 //        if (preferences.arrowsOn) {
-//            setPossession(statePref.getInt(STATE_POSSESSION, possession));
+//            toggleArrow(statePref.getInt(STATE_POSSESSION, possession));
 //        }
     }
 
@@ -778,7 +778,7 @@ public class MainActivity extends AppCompatActivity implements
 //                gTimeouts20View.setText(Short.toString(gTimeouts20));
 //            }
 //        }
-//        if (preferences.arrowsOn) { setPossession(possession); }
+//        if (preferences.arrowsOn) { toggleArrow(possession); }
     }
 
     private void getSettings() {
@@ -1392,23 +1392,22 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onPeriodClick() {
-
+        game.newPeriod(true);
     }
 
     @Override
     public void onChangeScoreClick(boolean left, int value) {
-        System.out.println("onChangeScoreClick left = " + left + ", value =" + value);
         game.changeScore(left, value);
     }
 
     @Override
     public void onTeamClick(boolean left) {
-
+        game.setPossession(left);
     }
 
     @Override
     public void onFoulsClick(boolean left) {
-
+        game.foul(left);
     }
 
     @Override
@@ -1418,12 +1417,12 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onTimeoutsClick(boolean left) {
-
+        game.timeout(left);
     }
 
     @Override
     public void onTimeouts20Click(boolean left) {
-
+        game.timeout20(left);
     }
 
     @Override
@@ -1433,11 +1432,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onArrowLongClick() {
+        game.clearPossession();
         return false;
     }
 
     @Override
     public boolean onFoulsLongClick(boolean left) {
+        game.nullFouls(left);
         return false;
     }
 
@@ -1448,16 +1449,19 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onNameLongClick(boolean left) {
+        chooseTeamNameDialog(game.getTeam(left), game.getName(left));
         return false;
     }
 
     @Override
     public boolean onPeriodLongClick() {
+        game.newPeriod(false);
         return false;
     }
 
     @Override
     public boolean onScoreLongClick(boolean left) {
+        game.nullScore(left);
         return false;
     }
 
@@ -1468,11 +1472,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onTimeoutsLongClick(boolean left) {
+        game.nullTimeouts(left);
         return false;
     }
 
     @Override
     public boolean onTimeouts20LongClick(boolean left) {
+        game.nullTimeouts20(left);
         return false;
     }
 }

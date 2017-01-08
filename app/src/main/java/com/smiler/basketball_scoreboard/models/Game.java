@@ -207,7 +207,9 @@ public class Game {
         }
         gameResult = new Result(hName, gName);
         leftIsHome = true;
-
+        getSavedState();
+        newPeriod(false);
+        setTimeouts();
     }
 
     private Game(Context context) {
@@ -250,13 +252,27 @@ public class Game {
             hTimeouts20 = (short) statePref.getInt(STATE_HOME_TIMEOUTS20, 0);
             gTimeouts20 = (short) statePref.getInt(STATE_GUEST_TIMEOUTS20, 0);
         }
-        if (preferences.arrowsOn) {
-            setPossession(statePref.getInt(STATE_POSSESSION, possession));
-        }
+        possession = statePref.getInt(STATE_POSSESSION, possession);
     }
 
     private void getSettings() {
         preferences.read();
+    }
+
+    public int getTeam(boolean left) {
+        if (left == leftIsHome) {
+            return HOME;
+        } else {
+            return GUEST;
+        }
+    }
+
+    public String getName(boolean left) {
+        if (left == leftIsHome) {
+            return hName;
+        } else {
+            return gName;
+        }
     }
 
     public void newPeriod(boolean next) {
@@ -295,7 +311,6 @@ public class Game {
 //        setMainTimeText(mainTime);
     }
 
-    // TODO как-то проверять, что реализован интерфейс
     interface GameListener {
         void onScoreChange(int team, int current, long mainTime);
         void onFoul(int team, int current, long mainTime);
@@ -308,78 +323,6 @@ public class Game {
         void onUnder2Minutes();
     }
 
-
-    // SCORE
-    public void setScores(short hValue, short gValue) {
-        hScore = hValue;
-        gScore = gValue;
-    }
-
-    public void nullScore(boolean left) {
-        if (left == leftIsHome) {
-            hScore = 0;
-        } else {
-            gScore = 0;
-        }
-    }
-
-    public void changeScore(boolean left, int value) {
-        hScore_prev = hScore;
-        gScore_prev = gScore;
-        if (left == leftIsHome) {
-            changeHomeScore(value);
-            addAction(ACTION_PTS, HOME, value);
-        } else {
-            changeGuestScore(value);
-            addAction(ACTION_PTS, GUEST, value);
-        }
-        if (left) {
-            hActionType = ACTION_PTS;
-            hActionValue += value;
-        } else {
-            gActionType = ACTION_PTS;
-            gActionValue += value;
-        }
-        updateStats();
-    }
-
-    private void changeGuestScore(int value) {
-        gScore += value;
-        if (value != 0) {
-            handleScoreChange();
-        }
-        layout.setGuestScore(gScore);
-    }
-
-    private void changeHomeScore(int value) {
-        hScore += value;
-        if (value != 0) {
-            handleScoreChange();
-        }
-        layout.setHomeScore(hScore);
-    }
-
-    private void handleScoreChange() {
-        if (preferences.enableShotTime && preferences.layoutType == GAME_TYPE.COMMON && preferences.restartShotTimer) {
-            if (mainTimerOn) {
-                startShotCountDownTimer(preferences.shotTimePref);
-            } else {
-                shotTime = preferences.shotTimePref;
-            }
-        }
-        if (preferences.actualTime == 2 || preferences.actualTime == 3 && mainTime < SECONDS_60) {
-            pauseGame();
-        }
-        scoreSaved = false;
-    }
-
-    public void revertScore(int team, int value) {
-        if (team == HOME) {
-            changeHomeScore(-value);
-        } else {
-            changeGuestScore(-value);
-        }
-    }
 
     private void updateStats() {
         if (hScore == gScore) {
@@ -396,205 +339,241 @@ public class Game {
     }
 
 
+    // scores
+    public void setScores(short hValue, short gValue) {
+        hScore = hValue;
+        gScore = gValue;
+    }
+
+    public void nullScore(boolean left) {
+        if (left == leftIsHome) {
+            hScore = 0;
+            layout.setHomeScore(0);
+        } else {
+            gScore = 0;
+            layout.setGuestScore(0);
+        }
+    }
+
+    public void changeScore(boolean left, int value) {
+        hScore_prev = hScore;
+        gScore_prev = gScore;
+        if (left == leftIsHome) {
+            if (!changeHomeScore(value)) {
+                return;
+            }
+            addAction(ACTION_PTS, HOME, value);
+        } else {
+            if (!changeGuestScore(value)) {
+                return;
+            }
+            addAction(ACTION_PTS, GUEST, value);
+        }
+        if (left) {
+            hActionType = ACTION_PTS;
+            hActionValue += value;
+        } else {
+            gActionType = ACTION_PTS;
+            gActionValue += value;
+        }
+        updateStats();
+    }
+
+    private boolean changeGuestScore(int value) {
+        if (value < 0 && gScore < -value) {
+            return false;
+        }
+        gScore += value;
+        if (value != 0) {
+            handleScoreChange();
+        }
+        layout.setGuestScore(gScore);
+        return true;
+    }
+
+    private boolean changeHomeScore(int value) {
+        if (value < 0 && hScore < -value) {
+            return false;
+        }
+        hScore += value;
+        if (value != 0) {
+            handleScoreChange();
+        }
+        layout.setHomeScore(hScore);
+        return true;
+    }
+
+    private void handleScoreChange() {
+        if (preferences.enableShotTime && preferences.layoutType == GAME_TYPE.COMMON && preferences.restartShotTimer) {
+            if (mainTimerOn) {
+                startShotCountDownTimer(preferences.shotTimePref);
+            } else {
+                shotTime = preferences.shotTimePref;
+            }
+        }
+        if (preferences.actualTime == 2 || preferences.actualTime == 3 && mainTime < SECONDS_60) {
+            pauseGame();
+        }
+        scoreSaved = false;
+    }
+
+    private void revertScore(int team, int value) {
+        if (team == HOME) {
+            changeHomeScore(-value);
+        } else {
+            changeGuestScore(-value);
+        }
+    }
 
 
-
-    // TIMEOUTS
-    public void setTimeouts() {
+    // timeouts
+    private void setTimeouts() {
         if (preferences.timeoutRules == TO_RULES.FIBA) {
-            timeoutFullDuration = 60;
-            if (period == 1) {
-                maxTimeouts = 2;
-                nullTimeouts(2);
-            } else if (period == 3) {
-                maxTimeouts = 3;
-                nullTimeouts(2);
-            } else if (period == preferences.numRegularPeriods + 1) {
-                maxTimeouts = 1;
-                nullTimeouts(2);
-            }
+            setTimeoutsFIBA();
         } else if (preferences.timeoutRules == TO_RULES.NBA) {
-            takenTimeoutsFull = 0;
-            maxTimeouts20 = 1;
-            nullTimeouts20(2);
-            if (period == 1) {
-                maxTimeouts = 6;
-                nullTimeouts(2);
-            } else if (period == 4 && maxTimeouts > 3) {
-                maxTimeouts = 3;
-                if (hTimeouts > maxTimeouts) {
-                    nullTimeouts(0);
-                }
-                if (gTimeouts > maxTimeouts) {
-                    nullTimeouts(1);
-                }
-            }
-            if (period == 1 || period == 3) {
-                maxTimeouts100 = 2;
-            } else if (period == 2 || period == 4) {
-                maxTimeouts100 = 3;
-            } else if (period == preferences.numRegularPeriods + 1) {
-                maxTimeouts100 = 1;
-                maxTimeouts = 2;
-                nullTimeouts(2);
-            }
+            setTimeoutsNBA();
         } else {
             timeoutFullDuration = 60;
+            nullTimeoutsNoRules(NO_TEAM);
+        }
+    }
+
+    private void setTimeoutsFIBA() {
+        timeoutFullDuration = 60;
+        if (period == 1) {
+            maxTimeouts = 2;
+        } else if (period == 3) {
+            maxTimeouts = 3;
+        } else if (period == preferences.numRegularPeriods + 1) {
+            maxTimeouts = 1;
+        }
+        nullTimeouts(NO_TEAM);
+    }
+
+    private void setTimeoutsNBA() {
+        takenTimeoutsFull = 0;
+        maxTimeouts20 = 1;
+        nullTimeouts20(NO_TEAM);
+        if (period == 1) {
+            maxTimeouts = 6;
+            nullTimeouts(NO_TEAM);
+        } else if (period == 4 && maxTimeouts > 3) {
+            maxTimeouts = 3;
+            if (hTimeouts > maxTimeouts) {
+                nullTimeouts(HOME);
+            }
+            if (gTimeouts > maxTimeouts) {
+                nullTimeouts(GUEST);
+            }
+        }
+        if (period == 1 || period == 3) {
+            maxTimeouts100 = 2;
+        } else if (period == 2 || period == 4) {
+            maxTimeouts100 = 3;
+        } else if (period == preferences.numRegularPeriods + 1) {
+            maxTimeouts100 = 1;
+            maxTimeouts = 2;
+            nullTimeouts(NO_TEAM);
         }
     }
 
     public void nullTimeouts(boolean left) {
         if (preferences.timeoutRules == TO_RULES.NONE) {
-            nullTimeoutsNoRules(left);
+            nullTimeoutsNoRules(left == leftIsHome ? HOME : GUEST);
             return;
         }
-        if (left == leftIsHome) {
-            nullTimeouts(HOME);
-        } else {
-            nullTimeouts(GUEST);
-        }
+        nullTimeouts(left == leftIsHome ? HOME : GUEST);
     }
 
-    public void nullTimeoutsNoRules(boolean left) {
-        if (left == leftIsHome) {
-            nullTimeoutsNoRules(HOME);
+    private void nullTimeoutsNoRules(int team) {
+        if (team == HOME) {
+            hTimeouts = 0;
+            layout.nullHomeTimeouts("0");
+        } else if (team == GUEST) {
+            gTimeouts = 0;
+            layout.nullGuestTimeouts("0");
         } else {
-            nullTimeoutsNoRules(GUEST);
+            hTimeouts = gTimeouts = 0;
+            layout.nullHomeTimeouts("0");
+            layout.nullGuestTimeouts("0");
         }
     }
 
     public void nullTimeouts20(boolean left) {
-        if (left == leftIsHome) {
-            nullTimeouts20(HOME);
-        } else {
-            nullTimeouts20(GUEST);
-        }
+        nullTimeouts20(left == leftIsHome ? HOME : GUEST);
     }
 
-    public void nullTimeouts(int team) {
-        if (team > 0) {
+    private void nullTimeouts(int team) {
+        if (team == HOME) {
+            hTimeouts = maxTimeouts;
+            layout.nullHomeTimeouts(Short.toString(maxTimeouts));
+        } else if (team == GUEST) {
             gTimeouts = maxTimeouts;
-//            setColorGreen(gTimeoutsView);
-//            gTimeoutsView.setText(Short.toString(maxTimeouts));
-            if (team == 1) {
-                return;
-            }
+            layout.nullGuestTimeouts(Short.toString(maxTimeouts));
+        } else {
+            hTimeouts = gTimeouts = maxTimeouts;
+            layout.nullHomeTimeouts(Short.toString(maxTimeouts));
+            layout.nullGuestTimeouts(Short.toString(maxTimeouts));
         }
-        hTimeouts = maxTimeouts;
-//        setColorGreen(hTimeoutsView);
-//        hTimeoutsView.setText(Short.toString(maxTimeouts));
     }
 
-    public void nullTimeoutsNoRules(int team) {
-        if (team > 0) {
-            gTimeouts = 0;
-//            setColorGreen(gTimeoutsView);
-//            gTimeoutsView.setText("0");
-            if (team == 1) {
-                return;
-            }
-        }
-        hTimeouts = 0;
-//        setColorGreen(hTimeoutsView);
-//        hTimeoutsView.setText("0");
-    }
-
-    public void nullTimeouts20(int team) {
-        if (team > 0) {
+    private void nullTimeouts20(int team) {
+        if (team == HOME) {
+            hTimeouts20 = maxTimeouts20;
+            layout.nullHomeTimeouts20(Short.toString(maxTimeouts20));
+        } else if (team == GUEST) {
             gTimeouts20 = maxTimeouts20;
-//            gTimeouts20View.setText(Short.toString(maxTimeouts20));
-//            setColorGreen(gTimeouts20View);
-            if (team == 1) {
-                return;
-            }
+            layout.nullGuestTimeouts20(Short.toString(maxTimeouts20));
+        } else {
+            hTimeouts20 = gTimeouts20 = maxTimeouts20;
+            layout.nullHomeTimeouts20(Short.toString(maxTimeouts20));
+            layout.nullGuestTimeouts20(Short.toString(maxTimeouts20));
         }
-        hTimeouts20 = maxTimeouts20;
-//        hTimeouts20View.setText(Short.toString(maxTimeouts20));
-//        setColorGreen(hTimeouts20View);
     }
 
     public void timeout(boolean left) {
-        if (left == leftIsHome) {
-            timeout(HOME);
-        } else {
-            timeout(GUEST);
-        }
+        timeout(left == leftIsHome ? HOME : GUEST);
     }
 
     public void timeout(int team) {
         pauseGame();
         takenTimeoutsFull++;
         if (preferences.timeoutRules == TO_RULES.NONE) {
-            switch (team) {
-                case HOME:
-//                    hTimeoutsView.setText(Short.toString(++hTimeouts));
+            if (team == HOME) {
+                layout.setHomeTimeouts(Short.toString(++hTimeouts), false);
+//                if (preferences.autoShowTimeout) {
+//                    showTimeout(timeoutFullDuration, hName);
+//                }
+            } else if (team == GUEST) {
+                layout.setGuestTimeouts(Short.toString(++gTimeouts), false);
+//                if (preferences.autoShowTimeout) {
+//                    showTimeout(timeoutFullDuration, gName);
+//                }
+            }
+        } else {
+            if (preferences.timeoutRules == TO_RULES.NBA) {
+                timeoutFullDuration = takenTimeoutsFull <= maxTimeouts100 ? 100 : 60;
+            }
+            if (team == HOME) {
+                if (hTimeouts > 0) {
+                    layout.setHomeTimeouts(Short.toString(--hTimeouts), hTimeouts == 0);
 //                    if (preferences.autoShowTimeout) {
 //                        showTimeout(timeoutFullDuration, hName);
 //                    }
-                    break;
-                case GUEST:
-//                    gTimeoutsView.setText(Short.toString(++gTimeouts));
+                }
+            } else if (team == GUEST) {
+                if (gTimeouts > 0) {
+                    layout.setGuestTimeouts(Short.toString(--gTimeouts), gTimeouts == 0);
 //                    if (preferences.autoShowTimeout) {
 //                        showTimeout(timeoutFullDuration, gName);
 //                    }
-                    break;
-            }
-        } else if (preferences.timeoutRules == TO_RULES.FIBA) {
-            switch (team) {
-                case HOME:
-//                    if (hTimeouts > 0) {
-////                        hTimeoutsView.setText(Short.toString(--hTimeouts));
-////                        if (hTimeouts == 0) {
-//////                            setColorRed(hTimeoutsView);
-////                        }
-////                        if (preferences.autoShowTimeout) {
-//////                            showTimeout(timeoutFullDuration, hName);
-////                        }
-//                    }
-                    break;
-                case GUEST:
-//                    if (gTimeouts > 0) {
-////                        gTimeoutsView.setText(Short.toString(--gTimeouts));
-//                        if (gTimeouts == 0) {
-////                            setColorRed(gTimeoutsView);
-//                        }
-//                        if (preferences.autoShowTimeout) {
-////                            showTimeout(timeoutFullDuration, gName);
-//                        }
-//                    }
-                    break;
-            }
-        } else {
-            timeoutFullDuration = takenTimeoutsFull <= maxTimeouts100 ? 100 : 60;
-            switch (team) {
-                case HOME:
-//                    if (hTimeouts > 0) {
-////                        hTimeoutsView.setText(Short.toString(--hTimeouts));
-//                        if (hTimeouts == 0) {
-////                            setColorRed(hTimeoutsView);
-//                        }
-//                        if (preferences.autoShowTimeout) {
-////                            showTimeout(timeoutFullDuration, hName);
-//                        }
-//                    }
-                    break;
-                case GUEST:
-//                    if (gTimeouts > 0) {
-////                        gTimeoutsView.setText(Short.toString(--gTimeouts));
-//                        if (gTimeouts == 0) {
-////                            setColorRed(gTimeoutsView);
-//                        }
-//                        if (preferences.autoShowTimeout) {
-////                            showTimeout(timeoutFullDuration, gName);
-//                        }
-//                    }
-                    break;
+                }
             }
         }
         addAction(ACTION_TO, team, 1);
     }
 
-    public void revertTimeout(int team) {
+    private void revertTimeout(int team) {
         takenTimeoutsFull--;
         if (preferences.timeoutRules == TO_RULES.NONE) {
             switch (team) {
@@ -640,14 +619,10 @@ public class Game {
     }
 
     public void timeout20(boolean left) {
-        if (left == leftIsHome) {
-            timeout20(HOME);
-        } else {
-            timeout20(GUEST);
-        }
+        timeout20(left == leftIsHome ? HOME : GUEST);
     }
 
-    public void timeout20(int team) {
+    private void timeout20(int team) {
         pauseGame();
         switch (team) {
             case HOME:
@@ -676,7 +651,7 @@ public class Game {
         addAction(ACTION_TO20, team, 1);
     }
 
-    public void revertTimeout20(int team) {
+    private void revertTimeout20(int team) {
         switch (team) {
             case HOME:
                 if (hTimeouts20 > 0) {
@@ -696,61 +671,60 @@ public class Game {
 
 
 
-    // FOULS
+    // fouls
+    public void foul(boolean left) {
+        if (left == leftIsHome) {
+            foul(HOME);
+        } else {
+            foul(GUEST);
+        }
+    }
+
     public void foul(int team) {
         if (preferences.actualTime > 0) {
             pauseGame();
         }
         if (preferences.enableShotTime && shotTime < preferences.shortShotTimePref) {
             shotTime = preferences.shortShotTimePref;
-//            setShotTimeText(shotTime);
         }
         switch (team) {
             case HOME:
                 if (hFouls < preferences.maxFouls) {
-                    listener.onFoul(team, ++hFouls, mainTime);
-                    if (hFouls == preferences.maxFouls) {
-                        if (listener != null) {
-                            listener.onTeamMaxFouls(team);
-                        }
-                    }
+                    layout.setHomeFoul(Short.toString(++hFouls), hFouls == preferences.maxFouls);
                 }
                 hActionType = ACTION_FLS;
                 hActionValue += 1;
                 break;
             case GUEST:
                 if (gFouls < preferences.maxFouls) {
-                    listener.onFoul(team, ++gFouls, mainTime);
-                    if (gFouls == preferences.maxFouls) {
-                        if (listener != null) {
-                            listener.onTeamMaxFouls(team);
-                        }
-                    }
+                    layout.setGuestFoul(Short.toString(++gFouls), gFouls == preferences.maxFouls);
                 }
 
                 gActionType = ACTION_FLS;
                 gActionValue += 1;
-
                 break;
         }
 
         addAction(ACTION_FLS, team, 1);
     }
 
-    public void nullFouls() {
+    private void nullFouls() {
         hFouls = gFouls = 0;
-        listener.onFoulsClear(NO_TEAM);
+        layout.nullHomeFouls();
+        layout.nullGuestFouls();
     }
 
     public void nullFouls(boolean left) {
         if (left == leftIsHome) {
             hFouls = 0;
+            layout.nullHomeFouls();
         } else {
             gFouls = 0;
+            layout.nullGuestFouls();
         }
     }
 
-    public void revertFoul(int team) {
+    private void revertFoul(int team) {
         switch (team) {
             case HOME:
                 if (--hFouls < preferences.maxFouls) {
@@ -768,29 +742,27 @@ public class Game {
 
 
 
+    // possession
     public void switchPossession() {
         if (possession == NO_TEAM) { return; }
         possession = 1 - possession;
     }
 
-    public void setPossession(int team) {
-//        if (leftArrow != null && rightArrow != null) {
-//            switch (team) {
-//                case HOME:
-//                    leftArrow.setFill();
-//                    rightArrow.setStroke();
-//                    break;
-//                case GUEST:
-//                    rightArrow.setFill();
-//                    leftArrow.setStroke();
-//                    break;
-//                case NO_TEAM:
-//                    leftArrow.setStroke();
-//                    rightArrow.setStroke();
-//                    break;
-//            }
-//            possession = team;
-//        }
+    private void setPossession(int team) {
+        possession = team;
+        if (team == NO_TEAM) {
+            layout.clearPossession();
+        } else {
+            layout.toggleArrow(team == HOME && leftIsHome);
+        }
+    }
+
+    public void setPossession(boolean left) {
+        setPossession(left == leftIsHome ? HOME : GUEST);
+    }
+
+    public void clearPossession() {
+        setPossession(NO_TEAM);
     }
 
 //    private void switchSides() {
@@ -891,7 +863,7 @@ public class Game {
         return true;
     }
 
-    public void setPeriod() {
+    private void setPeriod() {
         if (period <= preferences.numRegularPeriods) {
             mainTime = totalTime = preferences.mainTimePref;
 //            periodView.setText(Short.toString(period));
@@ -911,7 +883,7 @@ public class Game {
         }
     }
 
-    public void setTeamNames(String home, String guest) {
+    private void setTeamNames(String home, String guest) {
         gameResult.setHomeName(home);
         gameResult.setGuestName(guest);
     }
@@ -931,14 +903,16 @@ public class Game {
     private void setHomeName(String value) {
         hName = value;
         gameResult.setHomeName(value);
+        layout.setHomeName(value);
     }
 
     private void setGuestName(String value) {
         gName = value;
         gameResult.setGuestName(value);
+        layout.setGuestName(value);
     }
 
-    public void pauseGame() {
+    private void pauseGame() {
         if (preferences.useDirectTimer) {
             pauseDirectTimer();
         } else if (mainTimerOn) {
@@ -961,12 +935,8 @@ public class Game {
 //    }
 
 
-
-
-
-
     // TIMER
-    public void under2Minutes() {
+    private void under2Minutes() {
         if (preferences.timeoutRules == TO_RULES.NBA) {
             if (period == 4) {
                 if (hTimeouts == 2 || hTimeouts == 3) {
@@ -985,7 +955,7 @@ public class Game {
         }
     }
 
-    public void startMainCountDownTimer() {
+    private void startMainCountDownTimer() {
         mainTimer = new CountDownTimer(mainTime, mainTickInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -1047,7 +1017,7 @@ public class Game {
         }
     }
 
-    public void startShotCountDownTimer(long startValue) {
+    private void startShotCountDownTimer(long startValue) {
         if (shotTimerOn) {
             shotTimer.cancel();
         }
@@ -1055,7 +1025,7 @@ public class Game {
         startShotCountDownTimer();
     }
 
-    public void startShotCountDownTimer() {
+    private void startShotCountDownTimer() {
 //        shotTimer = new CountDownTimer(shotTime, shotTickInterval) {
 //            @Override
 //            public void onTick(long millisUntilFinished) {
