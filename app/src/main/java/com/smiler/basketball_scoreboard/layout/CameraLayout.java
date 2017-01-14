@@ -7,9 +7,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,7 +27,7 @@ import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
 
-public class StandardLayout extends LinearLayout implements View.OnClickListener, View.OnLongClickListener {
+public class CameraLayout extends LinearLayout implements View.OnClickListener, View.OnLongClickListener {
 
     public static final String TAG = "BS-StandardLayout";
     private final Preferences preferences;
@@ -48,7 +45,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     private LongClickListener longClickListener;
     private boolean blockLongClick;
     private float periodViewSize, scoreViewSize;
-    private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
+//    private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private Vibrator vibrator;
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
 
@@ -221,8 +218,8 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         HORN, WHISTLE, CAMERA, TIMEOUT, NEW_PERIOD, SWITCH_SIDES
     }
 
-    public StandardLayout(Context context, Preferences preferences,
-                          ClickListener clickListener, LongClickListener longClickListener) {
+    public CameraLayout(Context context, Preferences preferences,
+                        ClickListener clickListener, LongClickListener longClickListener) {
         super(context);
         this.preferences = preferences;
         layoutType = preferences.layoutType;
@@ -243,11 +240,11 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
                 break;
         }
         init();
-        shotTimeBlinkAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+//        shotTimeBlinkAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    private StandardLayout init() {
+    private CameraLayout init() {
         ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
 //        stub.setLayoutResource(R.layout.board_layout);
         stub.setLayoutResource(R.layout.board_central);
@@ -968,19 +965,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     public void showShotTime() {
         shotTimeView.setVisibility(View.VISIBLE);
-    }
-
-    public void blinkShotTime() {
-        shotTimeView.startAnimation(shotTimeBlinkAnimation);
-
-    }
-
-    public boolean shotTimeVisible() {
-        return shotTimeView.getVisibility() == View.VISIBLE;
-    }
-
-    public boolean shotTimeSwitchVisible() {
-        return shotTimeSwitchView.getVisibility() == View.VISIBLE;
     }
 
     public void hideShotTimeSwitch() {

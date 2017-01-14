@@ -16,7 +16,6 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -27,9 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
@@ -38,6 +34,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.smiler.basketball_scoreboard.camera.CameraActivity;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
@@ -73,6 +70,7 @@ import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_TIME;
 
 
 public class MainActivity extends AppCompatActivity implements
+        Game.GameListener,
         StandardLayout.ClickListener,
         StandardLayout.LongClickListener,
         ConfirmDialog.ConfirmDialogListener,
@@ -100,14 +98,11 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<View> leftPlayersButtons = new ArrayList<>();
     private ArrayList<View> rightPlayersButtons = new ArrayList<>();
 
-    private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
     private int whistleRepeats, hornRepeats, whistleLength, hornLength;
     private boolean whistlePressed, hornPressed;
 
     private SoundPool soundPool;
-    private Vibrator vibrator;
-    private long[] longClickVibrationPattern = {0, 50, 50, 50};
     private TreeMap<Integer, SidePanelRow> inactivePlayers;
     private static Context mainActivityContext;
 
@@ -186,8 +181,6 @@ public class MainActivity extends AppCompatActivity implements
         mainActivityContext = getApplicationContext();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         initSounds();
 
         preferences = Preferences.getInstance(getApplicationContext());
@@ -220,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements
             editor.apply();
         }
 
-        shotTimeBlinkAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         floatingDialog = new FloatingCountdownTimerDialog();
         floatingDialog.setCancelable(false);
 //        if (preferences.saveOnExit) {
@@ -247,8 +239,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private void migrateActivityPreferences() {
         getSavedState();
-        SharedPreferences prefs = getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+//        SharedPreferences prefs = getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
 //        editor.putString(STATE_HOME_NAME, hName);
 //        editor.putString(STATE_GUEST_NAME, gName);
 //        editor.putLong(STATE_SHOT_TIME, shotTime);
@@ -559,7 +551,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void runCameraActivity() {
-//        Intent intent = new Intent(this, CameraActivity.class);
+        if (!checkCameraHardware(this)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(this, CameraActivity.class);
 //        intent.putExtra("layoutType", preferences.layoutType);
 //        intent.putExtra("hName", hName);
 //        intent.putExtra("gName", gName);
@@ -570,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements
 //            intent.putExtra("shotTime", shotTime);
 //            intent.putExtra("period", period);
 //        }
-//        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 1);
     }
 
     private void runHelpActivity() {
@@ -1173,7 +1169,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onTimeoutDialogItemClick(int which) {
-////        pauseGame();
+        game.pauseGame();
         int duration;
         switch (which) {
             case 0:
@@ -1377,17 +1373,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMainTimeClick() {
-
+        game.mainTimeClick();
     }
 
     @Override
     public void onShotTimeClick() {
-
+        game.shotTimeClick();
     }
 
     @Override
     public void onShotTimeSwitchClick() {
-
+        game.shotTimeSwitch();
     }
 
     @Override
@@ -1427,7 +1423,25 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onIconClick(StandardLayout.ICONS icon) {
-
+        switch (icon) {
+            case CAMERA:
+                runCameraActivity();
+                break;
+            case HORN:
+                playHorn();
+                break;
+            case NEW_PERIOD:
+                showListDialog("new_period");
+                break;
+            case SWITCH_SIDES:
+                game.switchSides();
+                break;
+            case TIMEOUT:
+                showListDialog("timeout");
+                break;
+            case WHISTLE:
+                break;
+        }
     }
 
     @Override
@@ -1444,7 +1458,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onMainTimeLongClick() {
-        return false;
+        showMainTimePicker();
+        return true;
     }
 
     @Override
@@ -1467,7 +1482,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onShotTimeLongClick() {
-        return false;
+        showShotTimePicker();
+        return true;
     }
 
     @Override
@@ -1480,5 +1496,10 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onTimeouts20LongClick(boolean left) {
         game.nullTimeouts20(left);
         return false;
+    }
+
+    @Override
+    public void onPlayHorn() {
+        playHorn();
     }
 }

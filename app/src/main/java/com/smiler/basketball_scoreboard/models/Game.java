@@ -43,6 +43,8 @@ import static com.smiler.basketball_scoreboard.Constants.STATE_MAIN_TIME;
 import static com.smiler.basketball_scoreboard.Constants.STATE_PERIOD;
 import static com.smiler.basketball_scoreboard.Constants.STATE_POSSESSION;
 import static com.smiler.basketball_scoreboard.Constants.STATE_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
+import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_MILLIS;
 
 
 public class Game {
@@ -69,7 +71,6 @@ public class Game {
     private String hName, gName;
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
-    private float periodViewSize, scoreViewSize;
     private boolean leftIsHome = true;
 
     private long mainTickInterval = SECOND;
@@ -121,6 +122,9 @@ public class Game {
         }
     }
 
+    public interface GameListener {
+        void onPlayHorn();
+    }
 
 //    GameListener test = new GameListener() {
 //        @Override
@@ -311,18 +315,6 @@ public class Game {
 //        setMainTimeText(mainTime);
     }
 
-    interface GameListener {
-        void onScoreChange(int team, int current, long mainTime);
-        void onFoul(int team, int current, long mainTime);
-        void onFoulsClear(int team);
-        void onTimeout(int team, int current, long mainTime);
-        void onTeamMaxFouls(int team);
-        void onTeamMaxTimeouts(int team);
-        void onTeamMaxTimeouts20(int team);
-        void onOvertime(int team);
-        void onUnder2Minutes();
-    }
-
 
     private void updateStats() {
         if (hScore == gScore) {
@@ -340,7 +332,7 @@ public class Game {
 
 
     // scores
-    public void setScores(short hValue, short gValue) {
+    private void setScores(short hValue, short gValue) {
         hScore = hValue;
         gScore = gValue;
     }
@@ -624,29 +616,22 @@ public class Game {
 
     private void timeout20(int team) {
         pauseGame();
-        switch (team) {
-            case HOME:
-                if (hTimeouts20 > 0) {
-//                    hTimeouts20View.setText(Short.toString(--hTimeouts20));
-                    if (hTimeouts20 == 0) {
-//                        setColorRed(hTimeouts20View);
-                    }
-                    if (preferences.autoShowTimeout) {
-//                        showTimeout(20, hName);
-                    }
-                }
-                break;
-            case GUEST:
-                if (gTimeouts20 > 0) {
-//                    gTimeouts20View.setText(Short.toString(--gTimeouts20));
-                    if (gTimeouts20 == 0) {
-//                        setColorRed(gTimeouts20View);
-                    }
-                    if (preferences.autoShowTimeout) {
-//                        showTimeout(20, gName);
-                    }
-                }
-                break;
+        if (team == HOME) {
+            if (hTimeouts20 > 0) {
+                layout.setHomeTimeouts20(Short.toString(--hTimeouts20), hTimeouts20 == 0);
+//                if (preferences.autoShowTimeout) {
+//                    showTimeout(20, hName);
+//                }
+            }
+
+        } else if (team == GUEST) {
+            if (gTimeouts20 > 0) {
+                layout.setGuestTimeouts20(Short.toString(--gTimeouts20), gTimeouts20 == 0);
+//                if (preferences.autoShowTimeout) {
+//                    showTimeout(20, gName);
+//                }
+            }
+
         }
         addAction(ACTION_TO20, team, 1);
     }
@@ -725,25 +710,25 @@ public class Game {
     }
 
     private void revertFoul(int team) {
-        switch (team) {
-            case HOME:
-                if (--hFouls < preferences.maxFouls) {
-                    listener.onFoul(team, hFouls, mainTime);
-                }
-                break;
-            case GUEST:
-                if (--gFouls < preferences.maxFouls) {
-                    listener.onFoul(team, gFouls, mainTime);
-                }
-                break;
-        }
+//        switch (team) {
+//            case HOME:
+//                if (--hFouls < preferences.maxFouls) {
+//                    listener.onFoul(team, hFouls, mainTime);
+//                }
+//                break;
+//            case GUEST:
+//                if (--gFouls < preferences.maxFouls) {
+//                    listener.onFoul(team, gFouls, mainTime);
+//                }
+//                break;
+//        }
     }
 
 
 
 
     // possession
-    public void switchPossession() {
+    private void switchPossession() {
         if (possession == NO_TEAM) { return; }
         possession = 1 - possession;
     }
@@ -765,7 +750,7 @@ public class Game {
         setPossession(NO_TEAM);
     }
 
-//    private void switchSides() {
+    public void switchSides() {
 //        FragmentManager fm = getFragmentManager();
 //        FragmentTransaction ft = fm.beginTransaction();
 //        ft.setCustomAnimations(R.animator.fragment_fade_in, R.animator.fragment_fade_in);
@@ -778,7 +763,6 @@ public class Game {
 //            ft.add(R.id.overlay, overlaySwitch, OverlayFragment.TAG_SWITCH);
 //        }
 //        ft.addToBackStack(null).commit();
-//
 ////        TextView _NameView = hNameView;
 ////        hNameView = gNameView;
 ////        gNameView = _NameView;
@@ -827,7 +811,7 @@ public class Game {
 //                .setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out)
 //                .hide(overlaySwitch)
 //                .commit();
-//    }
+    }
 
     private void addAction(int type, int team, int value) {
         if (preferences.playByPlay != 0) {
@@ -866,17 +850,10 @@ public class Game {
     private void setPeriod() {
         if (period <= preferences.numRegularPeriods) {
             mainTime = totalTime = preferences.mainTimePref;
-//            periodView.setText(Short.toString(period));
-            if (periodViewSize != 0) {
-//                periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize);
-            }
+            layout.setPeriod(Short.toString(period), true);
         } else {
             mainTime = totalTime = preferences.overTimePref;
-//            periodView.setText(String.format("OT%d", period - preferences.numRegularPeriods));
-//            if (periodViewSize == 0) {
-//                periodViewSize = getResources().getDimension(R.dimen.bottom_line_size);
-//            }
-//            periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize * 0.75f);
+            layout.setPeriod(Short.toString(period), false);
         }
         if (preferences.useDirectTimer) {
             mainTime = 0;
@@ -912,7 +889,7 @@ public class Game {
         layout.setGuestName(value);
     }
 
-    private void pauseGame() {
+    public void pauseGame() {
         if (preferences.useDirectTimer) {
             pauseDirectTimer();
         } else if (mainTimerOn) {
@@ -935,7 +912,34 @@ public class Game {
 //    }
 
 
-    // TIMER
+    // times
+    public void mainTimeClick() {
+        if (!mainTimerOn) {
+            if (preferences.useDirectTimer) {
+                startDirectTimer();
+            } else {
+                startMainCountDownTimer();
+            }
+        } else {
+            pauseGame();
+        }
+    }
+
+    public void shotTimeClick() {
+        shotTickInterval = SECOND;
+        if (mainTimerOn) {
+            shotTimer.cancel();
+            startShotCountDownTimer(preferences.shotTimePref);
+        } else {
+            if (shotTime == preferences.shotTimePref) {
+                shotTime = preferences.shortShotTimePref;
+            } else {
+                shotTime = preferences.shotTimePref;
+            }
+            layout.setShotTimeText(shotTime);
+        }
+    }
+
     private void under2Minutes() {
         if (preferences.timeoutRules == TO_RULES.NBA) {
             if (period == 4) {
@@ -960,7 +964,7 @@ public class Game {
             @Override
             public void onTick(long millisUntilFinished) {
                 mainTime = millisUntilFinished;
-//                setMainTimeText(mainTime);
+                layout.setMainTimeText(mainTime);
                 if (preferences.enableShotTime && mainTime < shotTime && shotTimerOn) {
                     shotTimer.cancel();
                 }
@@ -971,37 +975,37 @@ public class Game {
                 if (preferences.fractionSecondsMain && mainTime < SECONDS_60 && mainTickInterval == SECOND) {
                     cancel();
                     mainTickInterval = 100;
-//                    mainTimeFormat = TIME_FORMAT_MILLIS;
+                    layout.setMainTimeFormat(TIME_FORMAT_MILLIS);
                     startMainCountDownTimer();
                 }
-//                if (preferences.enableShotTime && mainTime < shotTime && shotTimeView.getVisibility() == View.VISIBLE) {
-////                    shotTimeView.setVisibility(View.INVISIBLE);
-//                } else if (preferences.enableShotTime && mainTime < preferences.shortShotTimePref && shotTimeSwitchView.getVisibility() == View.VISIBLE) {
-////                    shotTimeSwitchView.setVisibility(View.INVISIBLE);
-//                }
+                if (preferences.enableShotTime && mainTime < shotTime && layout.shotTimeVisible()) {
+                    layout.hideShotTime();
+                } else if (preferences.enableShotTime && mainTime < preferences.shortShotTimePref && layout.shotTimeSwitchVisible()) {
+                    layout.hideShotTimeSwitch();
+                }
             }
 
             @Override
             public void onFinish() {
                 mainTimerOn = false;
                 if (preferences.autoSound >= 2) {
-//                    playHorn();
+                    playHorn();
                 }
                 mainTickInterval = SECOND;
-//                setMainTimeText(0);
+                layout.setMainTimeText(0);
                 if (preferences.enableShotTime && shotTimerOn) {
                     shotTimer.cancel();
-//                    setShotTimeText(0);
+                    layout.setShotTimeText(0);
                 }
                 save();
-                if (period >= preferences.numRegularPeriods && hScore != gScore) {
+//                if (period >= preferences.numRegularPeriods && hScore != gScore) {
 //                    if (dontAskNewGame == 0) {
-////                        showConfirmDialog("new_game", true);
+//                        showConfirmDialog("new_game", true);
 //                    } else {
-////                        endOfGameActions(dontAskNewGame);
+//                        endOfGameActions(dontAskNewGame);
 //                    }
 //                    showTimeoutDialog = false;
-                }
+//                }
 //                if (preferences.autoShowBreak && showTimeoutDialog) {
 //                    if (period == 2) {
 ////                        showTimeout(900, "");
@@ -1017,6 +1021,12 @@ public class Game {
         }
     }
 
+    private void playHorn() {
+        if (listener != null) {
+            listener.onPlayHorn();
+        }
+    }
+
     private void startShotCountDownTimer(long startValue) {
         if (shotTimerOn) {
             shotTimer.cancel();
@@ -1026,39 +1036,39 @@ public class Game {
     }
 
     private void startShotCountDownTimer() {
-//        shotTimer = new CountDownTimer(shotTime, shotTickInterval) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                shotTime = millisUntilFinished;
-////                setShotTimeText(shotTime);
-////                if (shotTime < 5 * SECOND && shotTickInterval == SECOND) {
-////                    shotTickInterval = 100;
-////                    shotTimer.cancel();
-////                    startShotCountDownTimer();
-////                }
-////            }
-////
-////            @Override
-////            public void onFinish() {
-////                pauseGame();
-////                if (preferences.autoSound == 1 || preferences.autoSound == 3) {
-//////                    playHorn();
-////                }
-////                setShotTimeText(0);
-////                shotTimeView.startAnimation(shotTimeBlinkAnimation);
-//                shotTime = preferences.shotTimePref;
-//                shotTickInterval = SECOND;
-//            }
-//        }.start();
+        shotTimer = new CountDownTimer(shotTime, shotTickInterval) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                shotTime = millisUntilFinished;
+                layout.setShotTimeText(shotTime);
+                if (shotTime < 5 * SECOND && shotTickInterval == SECOND) {
+                    shotTickInterval = 100;
+                    shotTimer.cancel();
+                    startShotCountDownTimer();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                pauseGame();
+                if (preferences.autoSound == 1 || preferences.autoSound == 3) {
+                    playHorn();
+                }
+                layout.setShotTimeText(0);
+                layout.blinkShotTime();
+                shotTime = preferences.shotTimePref;
+                shotTickInterval = SECOND;
+            }
+        }.start();
         shotTimerOn = true;
     }
 
-    public void startDirectTimer() {
+    private void startDirectTimer() {
         startTime = SystemClock.uptimeMillis() - mainTime;
         if (directTimerStopped) {
             stopDirectTimer();
         }
-//        mainTimeFormat = TIME_FORMAT;
+        layout.setMainTimeFormat(TIME_FORMAT);
         mainTimerOn = true;
         customHandler.postDelayed(directTimerThread, 0);
         if (preferences.enableShotTime) {
@@ -1103,16 +1113,16 @@ public class Game {
         mainTime = value;
         if (preferences.fractionSecondsMain && mainTime < SECONDS_60) {
             mainTickInterval = 100;
-//            mainTimeFormat = TIME_FORMAT_MILLIS;
+            layout.setMainTimeFormat(TIME_FORMAT_MILLIS);
         } else {
-//            mainTimeFormat = TIME_FORMAT;
+            layout.setMainTimeFormat(TIME_FORMAT);
         }
 
         if (preferences.enableShotTime && mainTime > shotTime) {
-//            shotTimeView.setVisibility(View.VISIBLE);
-//            shotTimeSwitchView.setVisibility(View.VISIBLE);
+            layout.showShotTime();
+            layout.showShotTimeSwitch();
         }
-//        setMainTimeText(mainTime);
+        layout.setMainTimeText(mainTime);
     }
 
     public void changeShotTime(long value) {
@@ -1120,10 +1130,26 @@ public class Game {
         if (shotTime < 5 * SECOND) {
             shotTickInterval = 100;
         }
-//        setShotTimeText(shotTime);
+        layout.setShotTimeText(shotTime);
     }
 
-////    private void endOfGameActions(int dontAskNewGame) {
+    public void shotTimeSwitch() {
+        shotTickInterval = SECOND;
+        if (shotTimer != null && preferences.enableShotTime && shotTimerOn) {
+            shotTimer.cancel();
+        }
+        shotTime = preferences.shortShotTimePref;
+        if (mainTimerOn) {
+            startShotCountDownTimer(preferences.shortShotTimePref);
+        } else {
+            layout.setShotTimeText(shotTime);
+        }
+        if (preferences.shortShotTimePref < mainTime) {
+            layout.showShotTime();
+        }
+    }
+
+//    private void endOfGameActions(int dontAskNewGame) {
 //    TODO интерфейс
 //        switch (dontAskNewGame) {
 //            case 1:
@@ -1147,7 +1173,7 @@ public class Game {
     }
 }
 
-    public void save() {
+    private void save() {
         if (!scoreSaved) {
             // возможно, надо учитывать сброс периода
             if (gameResult.getHomeScoreByPeriod().size() == period) {
@@ -1159,7 +1185,7 @@ public class Game {
         }
     }
 
-    public void saveDb() {
+    private void saveDb() {
         if (hScore == 0 && gScore == 0) {
             return;
         }

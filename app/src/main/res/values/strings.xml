@@ -71,6 +71,7 @@
 
     <string name="toast_confirm_exit">Click again to exit</string>
     <string name="toast_select_players">Select active players</string>
+    <string name="toast_camera_fail">Camera is unavailable</string>
     <string name="timeout_format_1">%1$d minutes break</string>
     <string name="timeout_format_2">%1$s %2$d seconds timeout</string>
     <string-array name="timeout_variants">
