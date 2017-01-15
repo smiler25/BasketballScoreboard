@@ -5,11 +5,14 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,14 +20,15 @@ import android.widget.TextView;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.elements.TriangleView;
 import com.smiler.basketball_scoreboard.models.Game;
+import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static com.smiler.basketball_scoreboard.Constants.API16_TIME_REGEX;
 import static com.smiler.basketball_scoreboard.Constants.FORMAT_TWO_DIGITS;
-import static com.smiler.basketball_scoreboard.Constants.GUEST;
-import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.LEFT;
 import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
@@ -41,7 +45,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     private TextView hTimeouts20View, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
     private TriangleView leftArrow, rightArrow;
-    private boolean leftIsHome = true;
     private Game.TO_RULES timeoutRules;
     private Game.GAME_TYPE layoutType;
     private ClickListener clickListener;
@@ -51,8 +54,13 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private Vibrator vibrator;
     private long[] longClickVibrationPattern = {0, 50, 50, 50};
+    private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
+    private ArrayList<View> leftPlayersButtons = new ArrayList<>();
+    private ArrayList<View> rightPlayersButtons = new ArrayList<>();
 
     private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
+
+    private Button longClickPlayerBu;
 
     @Override
     public void onClick(View v) {
@@ -125,13 +133,12 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
                 break;
             case R.id.switchSidesView:
                 clickListener.onIconClick(ICONS.SWITCH_SIDES);
-//                switchSides();
                 break;
             case R.id.left_panel_toggle:
-                clickListener.onPanelToggleClick(LEFT);
+                clickListener.onOpenPanelClick(LEFT);
                 break;
             case R.id.right_panel_toggle:
-                clickListener.onPanelToggleClick(RIGHT);
+                clickListener.onOpenPanelClick(RIGHT);
                 break;
             case R.id.leftNameView:
             case R.id.leftArrowView:
@@ -152,7 +159,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
             vibrator.vibrate(longClickVibrationPattern, -1);
         }
 
-//        if (!mainTimerOn) {
         if (!blockLongClick) {
             switch (v.getId()) {
                 case R.id.leftScoreView:
@@ -196,13 +202,16 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         void onFoulsClick(boolean left);
         void onIconClick(ICONS icon);
         void onMainTimeClick();
-        void onPanelToggleClick(boolean left);
         void onPeriodClick();
         void onShotTimeClick();
         void onShotTimeSwitchClick();
         void onTeamClick(boolean left);
         void onTimeoutsClick(boolean left);
         void onTimeouts20Click(boolean left);
+        void onPlayerButtonClick(boolean left, SidePanelRow row);
+        void onHornAction(boolean play);
+        void onWhistleAction(boolean play);
+        void onOpenPanelClick(boolean left);
     }
 
     public interface LongClickListener {
@@ -215,6 +224,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         boolean onShotTimeLongClick();
         boolean onTimeoutsLongClick(boolean left);
         boolean onTimeouts20LongClick(boolean left);
+        boolean onPlayerButtonLongClick(boolean left);
     }
 
     public enum ICONS {
@@ -284,43 +294,42 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         View whistleView = findViewById(R.id.whistleView);
         View hornView = findViewById(R.id.hornView);
         hornView.setOnClickListener(this);
-//        hornView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_UP:
-//                    case MotionEvent.ACTION_CANCEL:
-//                        stopHorn();
-//                        hornPressed = false;
-//                        break;
-//                    case MotionEvent.ACTION_DOWN:
-//                        playHorn();
-//                        hornPressed = true;
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-//
-//        whistleView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_UP:
-//                    case MotionEvent.ACTION_CANCEL:
-//                        stopWhistle();
-//                        whistlePressed = false;
-//                        break;
-//                    case MotionEvent.ACTION_DOWN:
-//                        playWhistle();
-//                        whistlePressed = true;
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
+        hornView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        clickListener.onHornAction(false);
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        clickListener.onHornAction(true);
+                        break;
+                }
+                return true;
+            }
+        });
+
+        whistleView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        clickListener.onWhistleAction(false);
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        clickListener.onWhistleAction(true);
+                        break;
+                }
+                return true;
+            }
+        });
         initArrows();
         setColors();
+        if (preferences.spOn) {
+            initPlayersButtons();
+        }
         return this;
     }
 
@@ -385,6 +394,35 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         }
     }
 
+    private void initPlayersButtons() {
+        try {
+            findViewById(R.id.left_panel_toggle).setOnClickListener(this);
+            findViewById(R.id.right_panel_toggle).setOnClickListener(this);
+
+            ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
+            ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
+            leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons);
+            leftPlayersStub.inflate();
+            rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons);
+            rightPlayersStub.inflate();
+
+            leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
+            leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
+            for (View bu : leftPlayersButtons) {
+                attachLeftButton(bu);
+            }
+
+            rightPlayersButtonsGroup = (ViewGroup) findViewById(R.id.right_panel);
+            rightPlayersButtons = getAllButtons(rightPlayersButtonsGroup);
+            for (View bu : rightPlayersButtons) {
+                attachRightButton(bu);
+            }
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Unable to initiate side panels");
+        }
+
+    }
+
     private void initArrows() {
         try {
             leftArrow = (TriangleView) findViewById(R.id.leftArrowView);
@@ -417,220 +455,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         rightArrow.setVisibility(View.VISIBLE);
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        if (preferences.vibrationOn) {
-//            vibrator.vibrate(100);
-//        }
-//        switch (v.getId()) {
-//            case R.id.leftScoreView:
-//                changeScore(LEFT, 2);
-//                break;
-//            case R.id.rightScoreView:
-//                changeScore(RIGHT, 2);
-//                break;
-//            case R.id.mainTimeView:
-//                mainTimeClick();
-//                break;
-//            case R.id.shotTimeView:
-//                shotTimeClick();
-//                break;
-//            case R.id.shotTimeSwitch:
-//                shotTimeSwitchClick();
-//                break;
-//            case R.id.leftPlus1View:
-//                changeScore(LEFT, 1);
-//                break;
-//            case R.id.rightPlus1View:
-//                changeScore(RIGHT, 1);
-//                break;
-//            case R.id.leftPlus3View:
-//                changeScore(LEFT, 3);
-//                break;
-//            case R.id.rightPlus3View:
-//                changeScore(RIGHT, 3);
-//                break;
-//            case R.id.leftMinus1View:
-//                if (hScore > 0) { changeScore(LEFT, -1); }
-//                break;
-//            case R.id.rightMinus1View:
-//                if (gScore > 0) { changeScore(RIGHT, -1); }
-//                break;
-//            case R.id.periodView:
-//                newPeriod(true);
-//                break;
-//            case R.id.timeoutIconView:
-//                showListDialog("timeout");
-//                break;
-//            case R.id.newPeriodIconView:
-//                showListDialog("new_period");
-//                break;
-//            case R.id.leftFoulsView:
-//                foul(LEFT);
-//                break;
-//            case R.id.rightFoulsView:
-//                foul(RIGHT);
-//                break;
-//            case R.id.leftTimeoutsView:
-//                timeout(LEFT);
-//                break;
-//            case R.id.rightTimeoutsView:
-//                timeout(RIGHT);
-//                break;
-//            case R.id.leftTimeouts20View:
-//                timeout20(LEFT);
-//                break;
-//            case R.id.rightTimeouts20View:
-//                timeout20(RIGHT);
-//                break;
-//            case R.id.cameraView:
-//                if (checkCameraHardware(this)) { runCameraActivity(); }
-//                break;
-//            case R.id.switchSidesView:
-//                switchSides();
-//                break;
-//            case R.id.left_panel_toggle:
-//                showSidePanels(SIDE_PANELS_LEFT);
-//                break;
-//            case R.id.right_panel_toggle:
-//                showSidePanels(SIDE_PANELS_RIGHT);
-//                break;
-//            case R.id.leftNameView:
-//            case R.id.leftArrowView:
-//                if (preferences.arrowsOn) { toggleArrow(HOME); }
-//                break;
-//            case R.id.rightNameView:
-//            case R.id.rightArrowView:
-//                if (preferences.arrowsOn) { toggleArrow(GUEST); }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    @Override
-//    public boolean onLongClick(View v) {
-//        if (preferences.vibrationOn) { vibrator.vibrate(longClickVibrationPattern, -1); }
-//
-//        if (!mainTimerOn) {
-//            switch (v.getId()) {
-//                case R.id.leftScoreView:
-//                    nullScore(LEFT);
-//                    return true;
-//                case R.id.rightScoreView:
-//                    nullScore(RIGHT);
-//                    return true;
-//                case R.id.mainTimeView:
-//                    showMainTimePicker();
-//                    return true;
-//                case R.id.shotTimeView:
-//                    showShotTimePicker();
-//                    return true;
-//                case R.id.periodView:
-//                    newPeriod(false);
-//                    return true;
-//                case R.id.leftFoulsView:
-//                    nullFouls(LEFT);
-//                    return true;
-//                case R.id.rightFoulsView:
-//                    nullFouls(RIGHT);
-//                    return true;
-//                case R.id.leftTimeoutsView:
-//                    nullTimeouts(LEFT);
-//                    return true;
-//                case R.id.rightTimeoutsView:
-//                    nullTimeouts(RIGHT);
-//                    return true;
-//                case R.id.leftTimeouts20View:
-//                    nullTimeouts20(LEFT);
-//                    return true;
-//                case R.id.rightTimeouts20View:
-//                    nullTimeouts20(RIGHT);
-//                    return true;
-//                case R.id.leftNameView:
-//                    chooseTeamNameDialog("home", hName);
-//                    return true;
-//                case R.id.rightNameView:
-//                    chooseTeamNameDialog("guest", gName);
-//                    return true;
-//                case R.id.leftArrowView:
-//                case R.id.rightArrowView:
-//                    clearPossession();
-//                    return true;
-//                default:
-//                    return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    private void mainTimeClick() {
-//        if (!mainTimerOn) {
-//            if (preferences.useDirectTimer) {
-//                startDirectTimer();
-//            } else {
-//                startMainCountDownTimer();
-//            }
-//        } else {
-//            pauseGame();
-//        }
-//    }
-//
-//    private void shotTimeClick() {
-//        shotTickInterval = SECOND;
-//        if (mainTimerOn) {
-//            shotTimer.cancel();
-//            startShotCountDownTimer(preferences.shotTimePref);
-//        } else {
-//            if (shotTime == preferences.shotTimePref) {
-//                shotTime = preferences.shortShotTimePref;
-//            } else {
-//                shotTime = preferences.shotTimePref;
-//            }
-//            setShotTimeText(shotTime);
-//        }
-//    }
-
-//    private void shotTimeSwitchClick() {
-//        shotTickInterval = SECOND;
-//        if (shotTimer != null && preferences.enableShotTime && shotTimerOn) {
-//            shotTimer.cancel();
-//        }
-//        shotTime = preferences.shortShotTimePref;
-//        if (mainTimerOn) {
-//            startShotCountDownTimer(preferences.shortShotTimePref);
-//        } else {
-//            setShotTimeText(shotTime);
-//        }
-//        if (preferences.shortShotTimePref < mainTime) {
-//            shotTimeView.setVisibility(View.VISIBLE);
-//        }
-//    }
-
-//    private void setSavedState() {
-//        setMainTimeText(mainTime);
-//        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
-//        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
-//        setTeamNames();
-//
-//        if (preferences.layoutType == LAYOUT_FULL) {
-//            if (preferences.enableShotTime) {
-//                setShotTimeText(shotTime);
-//            }
-//            hFoulsView.setText(Short.toString(hFouls));
-//            gFoulsView.setText(Short.toString(gFouls));
-//            setPeriod();
-//            setTimeouts();
-//            hTimeoutsView.setText(Short.toString(hTimeouts));
-//            gTimeoutsView.setText(Short.toString(gTimeouts));
-//            if (preferences.timeoutRules == TO_RULES_NBA) {
-//                hTimeouts20View.setText(Short.toString(hTimeouts20));
-//                gTimeouts20View.setText(Short.toString(gTimeouts20));
-//            }
-//        }
-//        if (preferences.arrowsOn) { toggleArrow(possession); }
-//    }
-
     public void zeroState() {
         mainTimeFormat = TIME_FORMAT;
         setMainTimeText(preferences.useDirectTimer ? 0 : preferences.mainTimePref);
@@ -656,36 +480,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
             preferences.fixLandscapeChanged = false;
         }
     }
-
-//    public void newPeriod(boolean next) {
-//        pauseGame();
-//        changedUnder2Minutes = false;
-//        if (next) {
-//            period++;
-//        } else {
-//            period = 1;
-//        }
-//        setPeriod();
-//        if (preferences.enableShotTime) {
-//            shotTime = preferences.shotTimePref;
-//            setShotTimeText(shotTime);
-//            shotTimeView.setVisibility(View.VISIBLE);
-//            shotTimeSwitchView.setVisibility(View.VISIBLE);
-//            shotTickInterval = SECOND;
-//        }
-//        mainTickInterval = SECOND;
-//        mainTimeFormat = TIME_FORMAT;
-//        setMainTimeText(mainTime);
-//        if (period <= preferences.numRegularPeriods) {
-//            nullFouls();
-//        }
-//        setTimeouts();
-//        saveResult();
-//        scoreSaved = false;
-//        if (period == 3 && preferences.autoSwitchSides) {
-//            switchSides();
-//        }
-//    }
 
     public void switchSides() {
         TextView _NameView = hNameView;
@@ -720,72 +514,48 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 //        if (preferences.arrowsOn) {
 //            switchPossession();
 //        }
-
-        leftIsHome = !leftIsHome;
     }
 
-    public void switchPossession(int team) {
-        if (leftArrow != null && rightArrow != null) {
-            team = 1 - team;
-            if (team == HOME) {
-                leftArrow.setFill();
-                rightArrow.setStroke();
-            } else if (team == GUEST) {
-                rightArrow.setFill();
-                leftArrow.setStroke();
-            }
-        }
+    public void setBlockLongClick(boolean state) {
+        blockLongClick = state;
     }
-
 
     // scores
-    public void setScores(short home, short guest) {
-        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, home));
-        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, guest));
-    }
-
     public void setScores(CharSequence home, CharSequence guest) {
         hScoreView.setText(home);
         gScoreView.setText(guest);
-    }
-
-    public void setScore(boolean left, int value) {
-        if (left == leftIsHome) {
-            setHomeScore(value);
-        } else {
-            setGuestScore(value);
-        }
+        handleScoresSize();
     }
 
     public void setGuestScore(int value) {
         gScoreView.setText(String.format(FORMAT_TWO_DIGITS, value));
-        handleScoreViewSize();
+        handleScoresSize();
     }
 
     public void setHomeScore(int value) {
         hScoreView.setText(String.format(FORMAT_TWO_DIGITS, value));
-        handleScoreViewSize();
+        handleScoresSize();
     }
 
     public void nullScores() {
         hScoreView.setText("00");
         gScoreView.setText("00");
-        handleScoreViewSize();
+        handleScoresSize();
     }
 
-    public void handleScoreViewSize() {
-//        if (gScore >= 100 || hScore >= 100) {
-//            if (scoreViewSize == 0) {
-//                scoreViewSize = getResources().getDimension(R.dimen.score_size);
-//            }
-//            hScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize * 0.75f);
-//            gScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize * 0.75f);
-//        } else {
-//            if (scoreViewSize != 0) {
-//                hScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize);
-//                gScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize);
-//            }
-//        }
+    public void handleScoresSize() {
+        if (hScoreView.getText().length() >= 3 || gScoreView.getText().length() >= 3) {
+            if (scoreViewSize == 0) {
+                scoreViewSize = getResources().getDimension(R.dimen.score_size);
+            }
+            hScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize * 0.75f);
+            gScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize * 0.75f);
+        } else {
+            if (scoreViewSize != 0) {
+                hScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize);
+                gScoreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scoreViewSize);
+            }
+        }
     }
 
 
@@ -828,27 +598,21 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         setColorGreen(gFoulsView);
     }
 
-
-    // timeouts
-    public void setTimeouts(short hValue, short gValue, int hColor, int gColor) {
-        hTimeoutsView.setText(Short.toString(hValue));
-        gTimeoutsView.setText(Short.toString(gValue));
-        hTimeoutsView.setTextColor(hColor);
-        gTimeoutsView.setTextColor(gColor);
+    public void setHomeFoulsGreen() {
+        setColorGreen(hFoulsView);
     }
 
+    public void setGuestFoulsGreen() {
+        setColorGreen(gTimeoutsView);
+    }
+
+
+    // timeouts
     public void setTimeouts(CharSequence hValue, CharSequence gValue, int hColor, int gColor) {
         hTimeoutsView.setText(hValue);
         gTimeoutsView.setText(gValue);
         hTimeoutsView.setTextColor(hColor);
         gTimeoutsView.setTextColor(gColor);
-    }
-
-    public void setTimeouts20(short hValue, short gValue, int hColor, int gColor) {
-        hTimeouts20View.setText(Short.toString(hValue));
-        gTimeouts20View.setText(Short.toString(gValue));
-        hTimeouts20View.setTextColor(hColor);
-        gTimeouts20View.setTextColor(gColor);
     }
 
     public void setTimeouts20(CharSequence hValue, CharSequence gValue, int hColor, int gColor) {
@@ -913,14 +677,34 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         }
     }
 
+    public void setHomeTimeoutsGreen() {
+        setColorGreen(hTimeoutsView);
+    }
+
+    public void setGuestTimeoutsGreen() {
+        setColorGreen(gTimeoutsView);
+    }
+
+    public void setHomeTimeouts20Green() {
+        setColorGreen(hTimeouts20View);
+    }
+
+    public void setGuestTimeouts20Green() {
+        setColorGreen(gTimeouts20View);
+    }
+
     public void nullTimeouts() {
         hTimeoutsView.setText("0");
         gTimeoutsView.setText("0");
+        setColorGreen(hTimeoutsView);
+        setColorGreen(gTimeoutsView);
     }
 
     public void nullTimeouts20() {
         hTimeouts20View.setText("0");
         gTimeouts20View.setText("0");
+        setColorGreen(hTimeouts20View);
+        setColorGreen(gTimeouts20View);
     }
 
 
@@ -963,11 +747,15 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     }
 
     public void hideShotTime() {
-        shotTimeView.setVisibility(View.INVISIBLE);
+        if (shotTimeView != null) {
+            shotTimeView.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void showShotTime() {
-        shotTimeView.setVisibility(View.VISIBLE);
+        if (shotTimeView != null) {
+            shotTimeView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void blinkShotTime() {
@@ -984,11 +772,15 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     }
 
     public void hideShotTimeSwitch() {
-        shotTimeSwitchView.setVisibility(View.INVISIBLE);
+        if (shotTimeSwitchView != null) {
+            shotTimeSwitchView.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void showShotTimeSwitch() {
-        shotTimeSwitchView.setVisibility(View.VISIBLE);
+        if (shotTimeSwitchView != null) {
+            shotTimeSwitchView.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -1048,4 +840,118 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     private void setColorGreen(TextView v) {
         setColor(v, getResources().getColor(R.color.green));
     }
+
+
+    // players
+    private ArrayList<View> getAllButtons(ViewGroup group) {
+        ArrayList<View> res = new ArrayList<>();
+        View button;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            button = group.getChildAt(i);
+            if (button instanceof Button) {
+                res.add(button);
+            } else if (button instanceof ViewGroup) {
+                res.addAll(getAllButtons((ViewGroup) button));
+            }
+        }
+        return res;
+    }
+
+    private void attachLeftButton(View button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag());
+            }
+        });
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longClickPlayerBu = (Button) v;
+                longClickListener.onPlayerButtonLongClick(LEFT);
+                return false;
+            }
+        });
+    }
+
+    private void attachRightButton(View button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag());
+            }
+        });
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longClickPlayerBu = (Button) v;
+                longClickListener.onPlayerButtonLongClick(RIGHT);
+                return false;
+            }
+        });
+    }
+
+    public boolean playersButtonsInitiated() {
+        return leftPlayersButtonsGroup != null && rightPlayersButtonsGroup != null;
+    }
+
+    public void hidePlayersButtons() {
+        if (playersButtonsInitiated()) {
+            leftPlayersButtonsGroup.setVisibility(View.GONE);
+            rightPlayersButtonsGroup.setVisibility(View.GONE);
+        }
+    }
+
+    public void showPlayersButtons() {
+        if (playersButtonsInitiated()) {
+            leftPlayersButtonsGroup.setVisibility(View.GONE);
+            rightPlayersButtonsGroup.setVisibility(View.GONE);
+        }
+    }
+
+    public void setPlayersButtons(boolean left, TreeSet<SidePanelRow> rows) {
+        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
+        int pos = 0;
+        for (SidePanelRow row : rows) {
+            View bu = group.get(pos++);
+            ((Button) bu).setText(Integer.toString(row.getNumber()));
+            bu.setTag(row);
+        }
+    }
+
+    public void setPlayersButtonsEmpty(boolean left) {
+        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
+        for (View bu : group) {
+            ((Button) bu).setText(R.string.minus);
+            bu.setTag(null);
+        }
+    }
+
+    public void updatePlayerButton(boolean left, int id, int number) {
+        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
+        for (View bu : group) {
+            SidePanelRow row = (SidePanelRow) bu.getTag();
+            if (row != null && row.getId() == id) {
+                ((Button) bu).setText(Integer.toString(number));
+                break;
+            }
+        }
+    }
+
+    public void clearPlayerButton(boolean left, int id) {
+        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
+        for (View bu : group) {
+            SidePanelRow row = (SidePanelRow) bu.getTag();
+            if (row != null && row.getId() == id) {
+                ((Button) bu).setText(getResources().getString(R.string.minus));
+                bu.setTag(null);
+                break;
+            }
+        }
+    }
+
+    public Button getSelectedPlayerButton() {
+        return longClickPlayerBu;
+    }
+
 }

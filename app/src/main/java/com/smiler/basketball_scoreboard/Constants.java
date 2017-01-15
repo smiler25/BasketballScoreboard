@@ -21,12 +21,8 @@ public final class Constants {
     public static final long MINUTES_2 = 120 * SECOND;
 
     public static final int LAYOUT_FULL = 0;
-
-    static final int OVERLAY_PANELS = 0;
+    public static final int OVERLAY_PANELS = 0;
     static final int OVERLAY_SWITCH = 1;
-
-    static final int SIDE_PANELS_LEFT = 0;
-    static final int SIDE_PANELS_RIGHT = 1;
     public static final int DEFAULT_HORN_LENGTH = 3;
 
     public static final String FORMAT_TWO_DIGITS = "%02d";

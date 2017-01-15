@@ -29,7 +29,7 @@ import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
 
 public class CameraLayout extends LinearLayout implements View.OnClickListener, View.OnLongClickListener {
 
-    public static final String TAG = "BS-StandardLayout";
+    public static final String TAG = "BS-CameraLayout";
     private final Preferences preferences;
     private TextView mainTimeView, shotTimeView, shotTimeSwitchView, periodView;
     private TextView hNameView, gNameView;

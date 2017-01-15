@@ -49,14 +49,14 @@ public class OverlayFragment extends Fragment{
                 v.findViewById(R.id.left_panel_overlay_open).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listener.onOverlayOpenPanel(Constants.SIDE_PANELS_LEFT);
+                        listener.onOverlayOpenPanel(Constants.LEFT);
                     }
                 });
 
                 v.findViewById(R.id.right_panel_overlay_open).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listener.onOverlayOpenPanel(Constants.SIDE_PANELS_RIGHT);
+                        listener.onOverlayOpenPanel(Constants.RIGHT);
                     }
                 });
                 break;
@@ -69,7 +69,7 @@ public class OverlayFragment extends Fragment{
 
     interface OverlayFragmentListener {
         void onOverlayClick();
-        void onOverlayOpenPanel(int type);
+        void onOverlayOpenPanel(boolean left);
     }
 
     @Override

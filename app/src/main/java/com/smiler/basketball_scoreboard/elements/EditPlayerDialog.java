@@ -18,7 +18,7 @@ import com.smiler.basketball_scoreboard.R;
 public class EditPlayerDialog extends DialogFragment {
 
     public static String TAG = "EditPlayerDialog";
-    OnEditPlayerListener editPlayerListener;
+    OnPanelsListener editPlayerListener;
     private EditText numberView, nameView;
     private Switch captainView;
     private boolean edit, left;
@@ -45,20 +45,20 @@ public class EditPlayerDialog extends DialogFragment {
         return f;
     }
 
-    public interface OnEditPlayerListener {
-        void onEditPlayerAdd(boolean left, int number, String name, boolean captain);
-        void onEditPlayerEdit(boolean left, int id, int number, String name, boolean captain);
-        void onEditPlayerDelete(boolean left, int id);
-        int onEditPlayerCheck(boolean left, int number, boolean captain);
+    public interface OnPanelsListener {
+        void onPanelAddPlayer(boolean left, int number, String name, boolean captain);
+        void onPanelEditPlayer(boolean left, int id, int number, String name, boolean captain);
+        void onPanelDeletePlayer(boolean left, int id);
+        int onPanelCheckPlayer(boolean left, int number, boolean captain);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            editPlayerListener = (OnEditPlayerListener) activity;
+            editPlayerListener = (OnPanelsListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must OnEditPlayerListener");
+            throw new ClassCastException(activity.toString() + " must OnPanelsListener");
         }
     }
 
@@ -109,7 +109,7 @@ public class EditPlayerDialog extends DialogFragment {
             add_another_bu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    editPlayerListener.onEditPlayerDelete(left, id);
+                    editPlayerListener.onPanelDeletePlayer(left, id);
                     dismiss();
                 }
             });
@@ -135,9 +135,9 @@ public class EditPlayerDialog extends DialogFragment {
 
     private void apply() {
         if (edit) {
-            editPlayerListener.onEditPlayerEdit(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onPanelEditPlayer(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         } else {
-            editPlayerListener.onEditPlayerAdd(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+            editPlayerListener.onPanelAddPlayer(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
         }
     }
 
@@ -147,7 +147,7 @@ public class EditPlayerDialog extends DialogFragment {
             Toast.makeText(getActivity(), getResources().getString(R.string.edit_player_dialog_number_required), Toast.LENGTH_SHORT).show();
             return false;
         }
-        int status = editPlayerListener.onEditPlayerCheck(left, Integer.parseInt(numberText), captainView.isChecked());
+        int status = editPlayerListener.onPanelCheckPlayer(left, Integer.parseInt(numberText), captainView.isChecked());
         if (status != 0 && edit && editNumber == Integer.parseInt(numberView.getText().toString())) {
             status--;
         }

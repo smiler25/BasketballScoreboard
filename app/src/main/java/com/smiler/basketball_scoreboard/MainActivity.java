@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -23,8 +22,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -58,10 +55,7 @@ import java.util.TreeSet;
 
 import io.realm.Realm;
 
-import static com.smiler.basketball_scoreboard.Constants.OVERLAY_PANELS;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
-import static com.smiler.basketball_scoreboard.Constants.SIDE_PANELS_LEFT;
-import static com.smiler.basketball_scoreboard.Constants.SIDE_PANELS_RIGHT;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_APP_UPDATES;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_MAIN_TIME_PICKER;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_NAME_EDIT;
@@ -75,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
         StandardLayout.LongClickListener,
         ConfirmDialog.ConfirmDialogListener,
         Drawer.OnDrawerItemClickListener,
-        EditPlayerDialog.OnEditPlayerListener,
+        EditPlayerDialog.OnPanelsListener,
         NameEditDialog.OnChangeNameListener,
         OverlayFragment.OverlayFragmentListener,
         SidePanelFragment.SidePanelListener,
@@ -84,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements
         TimePickerFragment.OnChangeTimeListener {
 
     public static final String TAG = "BS-MainActivity";
-    private SharedPreferences statePref;
-    private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
     private Drawer.Result drawer;
     private Preferences preferences;
     private Game game;
@@ -95,15 +87,11 @@ public class MainActivity extends AppCompatActivity implements
     private FloatingCountdownTimerDialog floatingDialog;
     private SidePanelFragment leftPanel, rightPanel;
     private OverlayFragment overlayPanels, overlaySwitch;
-    private ArrayList<View> leftPlayersButtons = new ArrayList<>();
-    private ArrayList<View> rightPlayersButtons = new ArrayList<>();
 
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
     private int whistleRepeats, hornRepeats, whistleLength, hornLength;
     private boolean whistlePressed, hornPressed;
-
     private SoundPool soundPool;
-    private TreeMap<Integer, SidePanelRow> inactivePlayers;
     private static Context mainActivityContext;
 
     public static Context getContext() {
@@ -113,16 +101,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onStop() {
         super.onStop();
-        if (preferences.saveOnExit) {
-            saveCurrentState();
+        if (game != null && preferences != null) {
+            if (preferences.saveOnExit) {
+                game.saveCurrentState();
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        handleScoreViewSize();
         // System.out.println("res_type = " + getResources().getString(R.string.res_type));
+//        handleScoresSize();
 
         if (PrefActivity.prefChangedRestart) {
             showConfirmDialog("new_game", false);
@@ -133,37 +123,17 @@ public class MainActivity extends AppCompatActivity implements
                 preferences.fixLandscapeChanged = false;
             }
 
-            if (preferences.spStateChanged) {
-                if (!preferences.spOn) {
-                    leftPlayersButtonsGroup.setVisibility(View.GONE);
-                    rightPlayersButtonsGroup.setVisibility(View.GONE);
-                } else {
-                    if (leftPlayersButtonsGroup == null){
-                        initSidePanels();
-                    } else {
-                        leftPlayersButtonsGroup.setVisibility(View.VISIBLE);
-                        rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
-                    }
+            if (game != null) {
+                if (preferences.spStateChanged) {
+                    game.handlePlayersPanels();
+                }
+                if (preferences.enableShotTimeChanged) {
+                    game.handleShotTimes();
+                }
+                if (preferences.arrowsStateChanged) {
+                    game.handleArrowsVisibility();
                 }
             }
-//            if (preferences.enableShotTimeChanged && preferences.layoutType == GAME_TYPE.COMMON) {
-//                try {
-//                    if (!preferences.enableShotTime) {
-//                        shotTimeView.setVisibility(View.GONE);
-//                        shotTimeSwitchView.setVisibility(View.GONE);
-//                    } else {
-//                        shotTimeView.setVisibility(View.VISIBLE);
-//                        if (preferences.shortShotTimePref != preferences.shotTimePref) {
-//                            shotTimeSwitchView.setVisibility(View.VISIBLE);
-//                        }
-//                    }
-//                } catch (NullPointerException e) {
-//                    Log.d(TAG, e.getMessage() + (shotTimeView != null ? shotTimeView.toString() : "shotTimeView == null"));
-//                }
-//            }
-////            if (preferences.arrowsStateChanged) {
-////                handleArrowsVisibility();
-////            }
         }
     }
 
@@ -185,12 +155,6 @@ public class MainActivity extends AppCompatActivity implements
 
         preferences = Preferences.getInstance(getApplicationContext());
         preferences.read();
-//        if (hName == null || hName.equals("")) {
-//            hName = preferences.hName;
-//        }
-//        if (gName == null || gName.equals("")) {
-//            gName = preferences.gName;
-//        }
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -215,12 +179,6 @@ public class MainActivity extends AppCompatActivity implements
 
         floatingDialog = new FloatingCountdownTimerDialog();
         floatingDialog.setCancelable(false);
-//        if (preferences.saveOnExit) {
-//            getSavedState();
-//            setSavedState();
-//        } else {
-//            newGame();
-//        }
     }
 
     private void migrateToRealm() {
@@ -238,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void migrateActivityPreferences() {
-        getSavedState();
+//        getSavedState();
 //        SharedPreferences prefs = getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //        editor.putString(STATE_HOME_NAME, hName);
@@ -328,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements
     private void initGame() {
         StandardLayout layout = new StandardLayout(this, preferences, this, this);
         setContentView(layout);
-        game = Game.newGame(this, layout);
+        game = Game.newGame(this, layout, this);
     }
 
     private void startNewGame(boolean save) {
@@ -342,133 +300,8 @@ public class MainActivity extends AppCompatActivity implements
     private void initLayout() {
         overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
         overlaySwitch.setRetainInstance(true);
-//        layout = new StandardLayout(this, preferences, this, this);
-//        setContentView(layout);
-        if (preferences.spOn) {
-            initSidePanels();
-            leftPlayersButtonsGroup.setVisibility(View.VISIBLE);
-            rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
-        }
         initDrawer();
     }
-
-    private void initSidePanels() {
-        ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
-        ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
-        leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons);
-        leftPlayersStub.inflate();
-        rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons);
-        rightPlayersStub.inflate();
-
-//        leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
-//        leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
-//        for (View bu : leftPlayersButtons) {
-//            attachLeftButton(bu);
-//        }
-//
-//        rightPlayersButtonsGroup = (ViewGroup) findViewById(R.id.right_panel);
-//        rightPlayersButtons = getAllButtons(rightPlayersButtonsGroup);
-//        for (View bu : rightPlayersButtons) {
-//            attachRightButton(bu);
-//        }
-
-        leftPanel = SidePanelFragment.newInstance(true);
-        rightPanel = SidePanelFragment.newInstance(false);
-        overlayPanels = OverlayFragment.newInstance(OVERLAY_PANELS);
-        leftPanel.setRetainInstance(true);
-        rightPanel.setRetainInstance(true);
-        overlayPanels.setRetainInstance(true);
-
-//        findViewById(R.id.left_panel_toggle).setOnClickListener(this);
-//        findViewById(R.id.right_panel_toggle).setOnClickListener(this);
-        preferences.spStateChanged = false;
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.left_panel_full, leftPanel, SidePanelFragment.TAG_LEFT_PANEL);
-        ft.add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL);
-        ft.hide(leftPanel).hide(rightPanel);
-        ft.addToBackStack(null).commit();
-    }
-
-//    private ArrayList<View> getAllButtons(ViewGroup group) {
-//        ArrayList<View> res = new ArrayList<>();
-//        View button;
-//        for (int i = 0; i < group.getChildCount(); i++) {
-//            button = group.getChildAt(i);
-//            if (button instanceof Button) {
-//                res.add(button);
-//            } else if (button instanceof ViewGroup) {
-//                res.addAll(getAllButtons((ViewGroup) button));
-//            }
-//        }
-//        return res;
-//    }
-//
-//    private void attachLeftButton(View button) {
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SidePanelRow row = (SidePanelRow) v.getTag();
-//                if (row == null) {
-//                    Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                if (leftActionType != ACTION_NONE) {
-//                    if (leftActionType == ACTION_PTS) {
-//                        row.changePoints(leftActionValue);
-//                    } else if (leftActionType == ACTION_FLS) {
-//                        row.changeFouls(leftActionValue);
-//                    }
-//                    leftActionType = ACTION_NONE;
-//                    leftActionValue = 0;
-//                }
-//                if (lastAction != null) {
-//                    lastAction.setNumber(row.getNumber());
-//                }
-//            }
-//        });
-//        button.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-////                longClickPlayerBu = (Button) v;
-//                showListDialog(true);
-//                return false;
-//            }
-//        });
-//    }
-//
-//    private void attachRightButton(View button) {
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SidePanelRow row = (SidePanelRow) v.getTag();
-//                if (row == null) {
-//                    Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                if (rightActionType != ACTION_NONE) {
-//                    if (rightActionType == ACTION_PTS) {
-//                        row.changePoints(rightActionValue);
-//                    } else if (rightActionType == ACTION_FLS) {
-//                        row.changeFouls(rightActionValue);
-//                    }
-//                    rightActionType = ACTION_NONE;
-//                    rightActionValue = 0;
-//                }
-//                if (lastAction != null) {
-//                    lastAction.setNumber(row.getNumber());
-//                }
-//            }
-//        });
-//        button.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-////                longClickPlayerBu = (Button) v;
-//                showListDialog(false);
-//                return false;
-//            }
-//        });
-//    }
 
     private void initSounds() {
         int MAX_STREAMS = 5;
@@ -643,201 +476,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-//    private void mainTimeClick() {
-//        if (!mainTimerOn) {
-//            if (preferences.useDirectTimer) {
-//                startDirectTimer();
-//            } else {
-//                startMainCountDownTimer();
-//            }
-//        } else {
-////            pauseGame();
-//        }
-//    }
-
-//    private void shotTimeClick() {
-//        shotTickInterval = SECOND;
-//        if (mainTimerOn) {
-//            shotTimer.cancel();
-//            startShotCountDownTimer(preferences.shotTimePref);
-//        } else {
-//            if (shotTime == preferences.shotTimePref) {
-//                shotTime = preferences.shortShotTimePref;
-//            } else {
-//                shotTime = preferences.shotTimePref;
-//            }
-//            setShotTimeText(shotTime);
-//        }
-//    }
-
-//    private void shotTimeSwitchClick() {
-//        shotTickInterval = SECOND;
-//        if (shotTimer != null && preferences.enableShotTime && shotTimerOn) {
-//            shotTimer.cancel();
-//        }
-//        shotTime = preferences.shortShotTimePref;
-//        if (mainTimerOn) {
-//            startShotCountDownTimer(preferences.shortShotTimePref);
-//        } else {
-//            setShotTimeText(shotTime);
-//        }
-//        if (preferences.shortShotTimePref < mainTime) {
-//            shotTimeView.setVisibility(View.VISIBLE);
-//        }
-//    }
-
     private boolean checkCameraHardware(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
-    }
-
-    private void saveCurrentState() {
-//        statePref = getPreferences(MODE_PRIVATE);
-//        SharedPreferences.Editor editor = statePref.edit();
-//        editor.putString(STATE_HOME_NAME, hName);
-//        editor.putString(STATE_GUEST_NAME, gName);
-//        editor.putLong(STATE_SHOT_TIME, shotTime);
-//        editor.putLong(STATE_MAIN_TIME, mainTime);
-//        editor.putInt(STATE_PERIOD, period);
-//        editor.putInt(STATE_HOME_SCORE, hScore);
-//        editor.putInt(STATE_GUEST_SCORE, gScore);
-//        editor.putInt(STATE_HOME_FOULS, hFouls);
-//        editor.putInt(STATE_GUEST_FOULS, gFouls);
-//        if (preferences.timeoutRules == Game.TO_RULES.FIBA) {
-//            editor.putInt(STATE_HOME_TIMEOUTS, hTimeouts);
-//            editor.putInt(STATE_GUEST_TIMEOUTS, gTimeouts);
-//        } else if (preferences.timeoutRules == Game.TO_RULES.NBA) {
-//            editor.putInt(STATE_HOME_TIMEOUTS_NBA, hTimeouts);
-//            editor.putInt(STATE_GUEST_TIMEOUTS_NBA, gTimeouts);
-//            editor.putInt(STATE_HOME_TIMEOUTS20, hTimeouts20);
-//            editor.putInt(STATE_GUEST_TIMEOUTS20, gTimeouts20);
-//        }
-//        if (preferences.arrowsOn) {
-//            editor.putInt(STATE_POSSESSION, possession);
-//        }
-//        editor.apply();
-//        if (preferences.spOn) {
-//            if (leftPanel != null) {
-//                leftPanel.saveCurrentData();
-//            }
-//            if (rightPanel != null) {
-//                rightPanel.saveCurrentData();
-//            }
-//        }
-    }
-
-    private void getSavedState() {
-//        statePref = getPreferences(MODE_PRIVATE);
-//        shotTime = statePref.getLong(STATE_SHOT_TIME, 24 * SECOND);
-//        mainTime = totalTime = statePref.getLong(STATE_MAIN_TIME, 600 * SECOND);
-//        period = (short) statePref.getInt(STATE_PERIOD, 1);
-//        hScore = (short) statePref.getInt(STATE_HOME_SCORE, 0);
-//        gScore = (short) statePref.getInt(STATE_GUEST_SCORE, 0);
-//        hName = statePref.getString(STATE_HOME_NAME, getResources().getString(R.string.home_team_name_default));
-//        gName = statePref.getString(STATE_GUEST_NAME, getResources().getString(R.string.guest_team_name_default));
-//        hFouls = (short) statePref.getInt(STATE_HOME_FOULS, 0);
-//        gFouls = (short) statePref.getInt(STATE_GUEST_FOULS, 0);
-//        if (preferences.timeoutRules == Game.TO_RULES.FIBA) {
-//            hTimeouts = (short) statePref.getInt(STATE_HOME_TIMEOUTS, 0);
-//            gTimeouts = (short) statePref.getInt(STATE_GUEST_TIMEOUTS, 0);
-//        } else if (preferences.timeoutRules == Game.TO_RULES.NBA) {
-//            hTimeouts = (short) statePref.getInt(STATE_HOME_TIMEOUTS_NBA, 0);
-//            gTimeouts = (short) statePref.getInt(STATE_GUEST_TIMEOUTS_NBA, 0);
-//            hTimeouts20 = (short) statePref.getInt(STATE_HOME_TIMEOUTS20, 0);
-//            gTimeouts20 = (short) statePref.getInt(STATE_GUEST_TIMEOUTS20, 0);
-//        }
-//        if (preferences.arrowsOn) {
-//            toggleArrow(statePref.getInt(STATE_POSSESSION, possession));
-//        }
-    }
-
-    private void setSavedState() {
-        System.out.println("setSavedState(); = ");
-//        setMainTimeText(mainTime);
-//        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
-//        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
-//        setTeamNames();
-//
-//        if (preferences.layoutType == GAME_TYPE.COMMON) {
-//            if (preferences.enableShotTime) {
-//                setShotTimeText(shotTime);
-//            }
-//            hFoulsView.setText(Short.toString(hFouls));
-//            gFoulsView.setText(Short.toString(gFouls));
-//            long mainTimeTemp = mainTime;
-//            setPeriod();
-//            mainTime = mainTimeTemp;
-//            setTimeouts();
-//            hTimeoutsView.setText(Short.toString(hTimeouts));
-//            gTimeoutsView.setText(Short.toString(gTimeouts));
-//            if (preferences.timeoutRules == Game.TO_RULES.NBA) {
-//                hTimeouts20View.setText(Short.toString(hTimeouts20));
-//                gTimeouts20View.setText(Short.toString(gTimeouts20));
-//            }
-//        }
-//        if (preferences.arrowsOn) { toggleArrow(possession); }
     }
 
     private void getSettings() {
         preferences.read();
     }
-
-//    private void setColors() {
-//        if (hScoreView != null) {
-//            hScoreView.setTextColor(preferences.getColor(Preferences.Elements.HSCORE));
-//        }
-//        if (gScoreView != null) {
-//            hScoreView.setTextColor(preferences.getColor(Preferences.Elements.GSCORE));
-//        }
-//    }
-
-//    private void zeroState() {
-//        mainTimerOn = false;
-//        mainTimeFormat = TIME_FORMAT;
-//        mainTickInterval = SECOND;
-//        if (preferences.useDirectTimer) {
-//            mainTime = 0;
-//        } else {
-//            mainTime = preferences.mainTimePref;
-//        }
-//        changedUnder2Minutes = false;
-//        setMainTimeText(mainTime);
-//        hScore = gScore = 0;
-//        leftActionType = rightActionType = ACTION_NONE;
-//        leftActionValue = rightActionValue = 0;
-//        nullScore(LEFT);
-//        nullScore(RIGHT);
-//        setTeamNames();
-//        if (preferences.layoutType == GAME_TYPE.COMMON) {
-//            if (preferences.enableShotTime) {
-//                shotTimerOn = false;
-//                shotTime = preferences.shotTimePref;
-//                shotTickInterval = SECOND;
-//                setShotTimeText(shotTime);
-//                shotTimeView.setVisibility(View.VISIBLE);
-//                shotTimeSwitchView.setVisibility(View.VISIBLE);
-//            }
-//            nullTimeouts(2);
-//            nullFouls();
-//            period = 1;
-//            periodView.setText("1");
-//            if (preferences.timeoutRules == Game.TO_RULES.NBA) {
-//                nullTimeouts20(2);
-//            }
-//        }
-//        if (preferences.spOn) {
-//            try {
-//                leftPanel.clear(preferences.spClearDelete);
-//                rightPanel.clear(preferences.spClearDelete);
-//            } catch (NullPointerException e) {
-//                Log.d(TAG, "Left or right panel is null");
-//            }
-//        }
-//        if (preferences.arrowsOn) { clearPossession(); }
-//        if (preferences.fixLandscapeChanged) {
-//            handleOrientation();
-//            preferences.fixLandscapeChanged = false;
-//        }
-//    }
 
     private void switchSides() {
         FragmentManager fm = getFragmentManager();
@@ -913,60 +558,13 @@ public class MainActivity extends AppCompatActivity implements
         rightPanel.replaceRows(leftRows, leftActivePlayers, leftCaptainPlayer);
     }
 
-//    private void switchPossession() {
-//        if (leftArrow != null && rightArrow != null) {
-//            if (possession == NO_TEAM) { return; }
-//            possession = 1 - possession;
-//                if (possession == HOME) {
-//                    leftArrow.setFill();
-//                    rightArrow.setStroke();
-//                } else if (possession == GUEST) {
-//                    rightArrow.setFill();
-//                    leftArrow.setStroke();
-//            }
-//        }
-//    }
-
-    private void setPossession(int team) {
-//        if (leftArrow != null && rightArrow != null) {
-//            switch (team) {
-//                case HOME:
-//                    leftArrow.setFill();
-//                    rightArrow.setStroke();
-//                    break;
-//                case GUEST:
-//                    rightArrow.setFill();
-//                    leftArrow.setStroke();
-//                    break;
-//                case NO_TEAM:
-//                    leftArrow.setStroke();
-//                    rightArrow.setStroke();
-//                    break;
-//            }
-//        }
-//        possession = team;
-    }
-
-    private void clearPossession() {
-//        if (leftArrow != null && rightArrow != null) {
-//            leftArrow.setStroke();
-//            rightArrow.setStroke();
-//        }
-//        possession = NO_TEAM;
-    }
-
-//    private SidePanelRow getPlayer(int team, int number) {
-//        SidePanelFragment panel = leftIsHome ^ team == HOME ? rightPanel : leftPanel;
-//        return panel.getPlayer(number);
-//    }
-
     private void playWhistle() {
         playWhistle(2);
     }
 
     private void playWhistle(int repeats) {
         if (preferences.pauseOnSound) {
-//            pauseGame();
+            game.pauseGame();
         }
         soundWhistleStreamId = soundPool.play(soundWhistleId, 1, 1, 0, repeats, 1);
         whistleRepeats = repeats;
@@ -1064,17 +662,17 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         ArrayList<String> numberNameList = new ArrayList<>();
-        inactivePlayers = (left ? leftPanel : rightPanel).getInactivePlayers();
-        if (inactivePlayers.isEmpty()){
+        TreeMap<Integer, SidePanelRow> choices = game.getInactivePlayers(left);
+        if (choices == null || choices.isEmpty()){
             Toast.makeText(this, getResources().getString(R.string.side_panel_no_data), Toast.LENGTH_LONG).show();
             return;
         }
-        for (Map.Entry<Integer, SidePanelRow> entry : inactivePlayers.entrySet()) {
+        for (Map.Entry<Integer, SidePanelRow> entry : choices.entrySet()) {
             numberNameList.add(String.format("%d: %s", entry.getValue().getNumber(), entry.getValue().getName()));
         }
-//        int number = longClickPlayerBu.getTag() != null ? ((SidePanelRow)longClickPlayerBu.getTag()).getNumber() : -1;
-
-//        ListDialog.newInstance("substitute", numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
+        Button bu = game.getSelectedPlayer();
+        int number = bu.getTag() != null ? ((SidePanelRow)bu.getTag()).getNumber() : -1;
+        ListDialog.newInstance("substitute", numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
     }
 
     private void chooseTeamNameDialog(int team, String name) {
@@ -1092,70 +690,20 @@ public class MainActivity extends AppCompatActivity implements
         mainTimePicker.show(getFragmentManager(), TAG_FRAGMENT_SHOT_TIME_PICKER);
     }
 
-    private void showTimeout(long durSeconds, String team) {
+    private void showTimeout(long seconds, String team) {
         Fragment frag = getFragmentManager().findFragmentByTag(TAG_FRAGMENT_TIME);
         if (frag != null && frag.isAdded()) {
             return;
         }
         floatingDialog.show(getFragmentManager(), TAG_FRAGMENT_TIME);
-        floatingDialog.duration = durSeconds;
-        floatingDialog.duration = durSeconds * 1000;
-        if (durSeconds > 100) {
-            floatingDialog.title = String.format(getResources().getString(R.string.timeout_format_1), durSeconds / 60);
+        floatingDialog.duration = seconds;
+        floatingDialog.duration = seconds * 1000;
+        if (seconds > 100) {
+            floatingDialog.title = String.format(getResources().getString(R.string.timeout_format_1), seconds / 60);
         } else {
-            floatingDialog.title = String.format(getResources().getString(R.string.timeout_format_2), team, durSeconds).replace(" ()", "").trim();
+            floatingDialog.title = String.format(getResources().getString(R.string.timeout_format_2), team, seconds).replace(" ()", "").trim();
         }
         floatingDialog.startCountDownTimer();
-    }
-
-    private void showSidePanels(int type) {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.animator.fragment_fade_in, R.animator.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG_PANELS);
-        if (o != null) {
-            if (!o.isVisible()) {
-                ft.show(o);
-            }
-        } else {
-            ft.add(R.id.overlay, overlayPanels, OverlayFragment.TAG_PANELS);
-        }
-
-        boolean connected = preferences.spConnected && getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT;
-
-        if (type == SIDE_PANELS_LEFT || connected) {
-            ft.setCustomAnimations(R.animator.slide_left_side_show, R.animator.slide_left_side_show);
-            Fragment lpanel = fm.findFragmentByTag(SidePanelFragment.TAG_LEFT_PANEL);
-            if (lpanel != null) {
-                ft.show(lpanel);
-            } else {
-                ft.add(R.id.left_panel_full, leftPanel, SidePanelFragment.TAG_LEFT_PANEL);
-            }
-        }
-
-        if (type == SIDE_PANELS_RIGHT || connected) {
-            ft.setCustomAnimations(R.animator.slide_right_side_show, R.animator.slide_right_side_show);
-            Fragment rpanel = fm.findFragmentByTag(SidePanelFragment.TAG_RIGHT_PANEL);
-            if (rpanel != null) {
-                ft.show(rpanel);
-            } else {
-                ft.add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL);
-            }
-        }
-        ft.addToBackStack(null).commit();
-    }
-
-    private void endOfGameActions(int dontAskNewGame) {
-        switch (dontAskNewGame) {
-            case 1:
-                break;
-            case 2:
-                startNewGame(true);
-                break;
-            case 3:
-                startNewGame(false);
-                break;
-        }
     }
 
     @Override
@@ -1206,7 +754,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSubstituteListSelect(boolean left, int newNumber) {
-        SidePanelRow row = inactivePlayers.get(newNumber);
+//        SidePanelRow row = inactivePlayers.get(newNumber);
 //        (left ? leftPanel : rightPanel).substitute(row, (SidePanelRow) longClickPlayerBu.getTag());
 //        longClickPlayerBu.setTag(row);
 //        longClickPlayerBu.setText(Integer.toString(newNumber));
@@ -1221,7 +769,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConfirmDialogPositive(String type, boolean dontShow) {
-//        dontAskNewGame = dontShow ? 2 : 0;
+        game.setDontAskNewGame(dontShow ? 2 : 0);
         game = Game.newGame(this);
     }
 
@@ -1243,13 +791,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConfirmDialogNeutral(boolean dontShow) {
-//        dontAskNewGame = dontShow ? 2 : 0;
+        game.setDontAskNewGame(dontShow ? 2 : 0);
         game.saveAndNew();
     }
 
     @Override
     public void onConfirmDialogNegative(String type, boolean dontShow) {
-//        dontAskNewGame = dontShow ? 1 : 0;
+        game.setDontAskNewGame(dontShow ? 1 : 0);
     }
 
     @Override
@@ -1261,114 +809,47 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSidePanelClose(boolean left) {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (left) {
-            ft.setCustomAnimations(R.animator.slide_left_side_hide, R.animator.slide_left_side_hide).hide(leftPanel);
-        } else {
-            ft.setCustomAnimations(R.animator.slide_right_side_hide, R.animator.slide_right_side_hide).hide(rightPanel);
-        }
-        if (!(leftPanel.isVisible() && rightPanel.isVisible())) {
-            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out);
-            ft.hide(overlayPanels);
-        }
-        ft.commit();
+        game.closeSidePanel(left);
     }
 
     @Override
     public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
-        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
-        int pos = 0;
-        for (SidePanelRow row : rows) {
-            View bu = group.get(pos++);
-            ((Button) bu).setText(Integer.toString(row.getNumber()));
-            bu.setTag(row);
-        }
+        game.selectActivePlayers(rows, left);
     }
 
     @Override
     public void onSidePanelNoActive(boolean left) {
-        ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
-        for (View bu : group) {
-            ((Button) bu).setText(R.string.minus);
-            bu.setTag(null);
-        }
+        game.deleteActivePlayers(left);
     }
 
     @Override
     public void onOverlayClick() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        int toClose = 0;
-        if (leftPanel.isVisible()) {
-            toClose++;
-            if (leftPanel.selectionConfirmed()) {
-                ft.setCustomAnimations(R.animator.slide_left_side_hide, R.animator.slide_left_side_hide);
-                ft.hide(leftPanel);
-                toClose--;
-            } else {
-                Toast.makeText(this, getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
-            }
-        }
-        if (rightPanel.isVisible()) {
-            toClose++;
-            if (rightPanel.selectionConfirmed()) {
-                ft.setCustomAnimations(R.animator.slide_right_side_hide, R.animator.slide_right_side_hide);
-                ft.hide(rightPanel);
-                toClose--;
-            } else {
-                Toast.makeText(this, getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
-            }
-        }
-        if (overlayPanels.isVisible() && toClose == 0) {
-            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out);
-            ft.hide(overlayPanels);
-        }
-        ft.commit();
+        game.checkCloseSidePanels();
     }
 
     @Override
-    public void onOverlayOpenPanel(int type) {
-        showSidePanels(type);        
+    public void onOverlayOpenPanel(boolean left) {
+        game.openPanel(left);
     }
 
     @Override
-    public void onEditPlayerAdd(boolean left, int number, String name, boolean captain) {
-        (left ? leftPanel : rightPanel).addRow(number, name, captain);
+    public void onPanelAddPlayer(boolean left, int number, String name, boolean captain) {
+        game.addPlayer(left, number, name, captain);
     }
 
     @Override
-    public void onEditPlayerEdit(boolean left, int id, int number, String name, boolean captain) {
-        if ((left ? leftPanel : rightPanel).editRow(id, number, name, captain)) {
-            ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
-            for (View bu : group) {
-                SidePanelRow row = (SidePanelRow) bu.getTag();
-                if (row != null && row.getId() == id) {
-                    ((Button) bu).setText(Integer.toString(number));
-                    break;
-                }
-            }
-        }
+    public void onPanelEditPlayer(boolean left, int id, int number, String name, boolean captain) {
+        game.editPlayer(left, id, number, name, captain);
     }
 
     @Override
-    public void onEditPlayerDelete(boolean left, int id) {
-        if ((left ? leftPanel : rightPanel).deleteRow(id)) {
-            ArrayList<View> group = left ? leftPlayersButtons : rightPlayersButtons;
-            for (View bu : group) {
-                SidePanelRow row = (SidePanelRow) bu.getTag();
-                if (row != null && row.getId() == id) {
-                    ((Button) bu).setText(getResources().getString(R.string.minus));
-                    bu.setTag(null);
-                    break;
-                }
-            }
-        }
+    public void onPanelDeletePlayer(boolean left, int id) {
+        game.deletePlayer(left, id);
     }
 
     @Override
-    public int onEditPlayerCheck(boolean left, int number, boolean captain) {
-        return (left ? leftPanel : rightPanel).checkNewPlayer(number, captain);
+    public int onPanelCheckPlayer(boolean left, int number, boolean captain) {
+        return game.validatePlayer(left, number, captain);
     }
 
     @Override
@@ -1407,11 +888,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPanelToggleClick(boolean left) {
-
-    }
-
-    @Override
     public void onTimeoutsClick(boolean left) {
         game.timeout(left);
     }
@@ -1419,6 +895,39 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTimeouts20Click(boolean left) {
         game.timeout20(left);
+    }
+
+    @Override
+    public void onPlayerButtonClick(boolean left, SidePanelRow player) {
+        game.playerAction(left, player);
+    }
+
+    @Override
+    public void onHornAction(boolean play) {
+        if (play) {
+            playHorn();
+            hornPressed = true;
+        } else {
+            stopHorn();
+            hornPressed = false;
+        }
+    }
+
+    @Override
+    public void onWhistleAction(boolean play) {
+        if (play) {
+            playWhistle();
+            whistlePressed = true;
+        } else {
+            stopWhistle();
+            whistlePressed = false;
+        }
+
+    }
+
+    @Override
+    public void onOpenPanelClick(boolean left) {
+        game.openPanel(left);
     }
 
     @Override
@@ -1499,7 +1008,28 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onPlayerButtonLongClick(boolean left) {
+        showListDialog(left);
+        return false;
+    }
+
+    @Override
     public void onPlayHorn() {
         playHorn();
+    }
+
+    @Override
+    public void onNewGame(Game game) {
+        this.game = game;
+    }
+
+    @Override
+    public void onConfirmDialog(String type, boolean win) {
+        showConfirmDialog(type, win);
+    }
+
+    @Override
+    public void onShowTimeout(long seconds, String team) {
+        showTimeout(seconds, team);
     }
 }
