@@ -6,6 +6,8 @@ import java.util.Locale;
 public final class Constants {
     public static final boolean LEFT = true;
     public static final boolean RIGHT = false;
+    public static final int REGULAR_PERIOD = 0;
+    public static final int OVERTIME = 1;
     public static final int HOME = 0;
     public static final int GUEST = 1;
     public static final int NO_TEAM = 2;

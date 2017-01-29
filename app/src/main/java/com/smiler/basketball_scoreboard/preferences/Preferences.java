@@ -35,10 +35,12 @@ public class Preferences {
     public boolean layoutChanged, timeoutsRulesChanged;
     public boolean autoShowTimeout, autoShowBreak, autoSwitchSides;
     public boolean saveOnExit, pauseOnSound, vibrationOn;
-    public boolean enableShotTime, enableShotTimeChanged, restartShotTimer;
+    public boolean enableShotTime, shotTimePrefChanged, restartShotTimer;
+    public boolean enableShortShotTime;
     public boolean useDirectTimer;
     public boolean fractionSecondsMain, fractionSecondsShot;
-    public boolean spOn, spStateChanged, spConnected, spClearDelete;
+    public boolean spOn, spStateChanged, spConnected;
+    public boolean spClearDelete;
     public boolean arrowsOn, arrowsStateChanged;
     public long mainTimePref, shotTimePref, shortShotTimePref, overTimePref;
     public short maxFouls;
@@ -70,6 +72,12 @@ public class Preferences {
     }
 
     public Preferences read() {
+        readNoRestart();
+        readRestart();
+        return this;
+    }
+
+    public Preferences readNoRestart() {
         boolean fixLandscape_ = prefs.getBoolean(PrefActivity.PREF_FIX_LANDSCAPE, true);
         fixLandscapeChanged = fixLandscape != fixLandscape_;
         fixLandscape = fixLandscape_;
@@ -88,10 +96,17 @@ public class Preferences {
 
         shotTimePref = prefs.getInt(PrefActivity.PREF_SHOT_TIME, DEFAULT_SHOT_TIME) * 1000;
         boolean enableShotTime_ = prefs.getBoolean(PrefActivity.PREF_ENABLE_SHOT_TIME, true);
-        enableShotTimeChanged = enableShotTime != enableShotTime_;
+        shotTimePrefChanged = enableShotTime != enableShotTime_;
         enableShotTime = enableShotTime_;
-        boolean enableShortShotTime = prefs.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
-        shortShotTimePref = enableShortShotTime ? prefs.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
+
+        boolean enableShortShotTime_ = prefs.getBoolean(PrefActivity.PREF_ENABLE_SHORT_SHOT_TIME, true);
+        long shortShotTimePref_ = enableShortShotTime_ ? prefs.getInt(PrefActivity.PREF_SHORT_SHOT_TIME, DEFAULT_SHORT_SHOT_TIME) * 1000 : shotTimePref;
+        if (!shotTimePrefChanged && (enableShortShotTime != enableShortShotTime_ || shortShotTimePref != shortShotTimePref_)) {
+            shotTimePrefChanged = true;
+        }
+        enableShortShotTime = enableShortShotTime_;
+        shortShotTimePref = shortShotTimePref_;
+
         mainTimePref = prefs.getInt(PrefActivity.PREF_REGULAR_TIME, DEFAULT_FIBA_MAIN_TIME) * SECONDS_60;
         overTimePref = prefs.getInt(PrefActivity.PREF_OVERTIME, DEFAULT_OVERTIME) * SECONDS_60;
         numRegularPeriods = (short) prefs.getInt(PrefActivity.PREF_NUM_REGULAR, DEFAULT_NUM_REGULAR);
@@ -121,12 +136,10 @@ public class Preferences {
         if (PrefActivity.prefColorChanged) {
             PrefActivity.prefColorChanged = false;
         }
-
-        readRestart();
         return this;
     }
 
-    public Preferences readRestart() {
+    private Preferences readRestart() {
         Game.GAME_TYPE temp = Game.GAME_TYPE.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
         if (temp != layoutType) {
             layoutChanged = true;

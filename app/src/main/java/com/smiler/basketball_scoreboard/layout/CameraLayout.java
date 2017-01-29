@@ -245,7 +245,7 @@ public class CameraLayout extends LinearLayout implements View.OnClickListener, 
     }
 
     private CameraLayout init() {
-        ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
+        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
 //        stub.setLayoutResource(R.layout.board_layout);
         stub.setLayoutResource(R.layout.board_central);
         stub.inflate();
@@ -322,7 +322,7 @@ public class CameraLayout extends LinearLayout implements View.OnClickListener, 
     }
 
     private void initExtended() {
-        ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
+        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
         stub.setLayoutResource(preferences.timeoutRules == Game.TO_RULES.NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
         stub.inflate();
 

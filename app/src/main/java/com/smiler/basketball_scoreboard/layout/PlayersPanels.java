@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.widget.LinearLayout;
 
 import com.smiler.basketball_scoreboard.OverlayFragment;
@@ -15,8 +16,11 @@ import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import static com.smiler.basketball_scoreboard.Constants.LEFT;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_PANELS;
+import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 
 
 public class PlayersPanels extends LinearLayout {
@@ -35,8 +39,8 @@ public class PlayersPanels extends LinearLayout {
     }
 
     private PlayersPanels init() {
-        leftPanel = SidePanelFragment.newInstance(true);
-        rightPanel = SidePanelFragment.newInstance(false);
+        leftPanel = SidePanelFragment.newInstance(LEFT);
+        rightPanel = SidePanelFragment.newInstance(RIGHT);
         overlayPanels = OverlayFragment.newInstance(OVERLAY_PANELS);
         leftPanel.setRetainInstance(true);
         rightPanel.setRetainInstance(true);
@@ -49,6 +53,46 @@ public class PlayersPanels extends LinearLayout {
         ft.addToBackStack(null).commit();
         return this;
     };
+
+    public void saveInstanceState(Bundle outState){
+        if (overlayPanels != null && overlayPanels.isAdded()) {
+            fragmentManager.putFragment(outState, OverlayFragment.TAG_PANELS, overlayPanels);
+        }
+        if (leftPanel != null && leftPanel.isAdded()) {
+            fragmentManager.putFragment(outState, SidePanelFragment.TAG_LEFT_PANEL, leftPanel);
+        }
+        if (rightPanel != null && rightPanel.isAdded()) {
+            fragmentManager.putFragment(outState, SidePanelFragment.TAG_RIGHT_PANEL, rightPanel);
+        }
+    }
+
+    public void restoreInstanceState(Bundle inState) {
+        Fragment overlayPanels_ = fragmentManager.getFragment(inState, OverlayFragment.TAG_PANELS);
+        if (overlayPanels_ != null) {
+            overlayPanels = (OverlayFragment) overlayPanels_;
+        }
+        Fragment leftPanel_ = fragmentManager.getFragment(inState, SidePanelFragment.TAG_LEFT_PANEL);
+        if (leftPanel_ != null) {
+            leftPanel = (SidePanelFragment) leftPanel_;
+        }
+        Fragment rightPanel_ = fragmentManager.getFragment(inState, SidePanelFragment.TAG_RIGHT_PANEL);
+        if (rightPanel_ != null) {
+            rightPanel = (SidePanelFragment) rightPanel_;
+        }
+        fragmentManager.popBackStack();
+    }
+
+    public void switchSides() {
+        leftPanel.changeRowsSide();
+        rightPanel.changeRowsSide();
+        leftPanel.clearTable();
+        rightPanel.clearTable();
+        TreeMap<Integer, SidePanelRow> leftRows = leftPanel.getAllPlayers();
+        TreeSet<SidePanelRow> leftActivePlayers = leftPanel.getActivePlayers();
+        SidePanelRow leftCaptainPlayer = leftPanel.getCaptainPlayer();
+        leftPanel.replaceRows(rightPanel.getAllPlayers(), rightPanel.getActivePlayers(), rightPanel.getCaptainPlayer());
+        rightPanel.replaceRows(leftRows, leftActivePlayers, leftCaptainPlayer);
+    }
 
     public void showLeft() {
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -90,20 +134,22 @@ public class PlayersPanels extends LinearLayout {
 
     public void closeLeft() {
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.setCustomAnimations(R.animator.slide_left_side_hide, R.animator.slide_left_side_hide).hide(leftPanel);
+        ft.setCustomAnimations(R.animator.slide_left_side_hide, R.animator.slide_left_side_hide)
+          .hide(leftPanel);
         if (!(leftPanel.isVisible() && rightPanel.isVisible())) {
-            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out);
-            ft.hide(overlayPanels);
+            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out)
+              .hide(overlayPanels);
         }
         ft.commit();
     }
 
     public void closeRight() {
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.setCustomAnimations(R.animator.slide_right_side_hide, R.animator.slide_right_side_hide).hide(rightPanel);
+        ft.setCustomAnimations(R.animator.slide_right_side_hide, R.animator.slide_right_side_hide)
+          .hide(rightPanel);
         if (!(leftPanel.isVisible() && rightPanel.isVisible())) {
-            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out);
-            ft.hide(overlayPanels);
+            ft.setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out)
+              .hide(overlayPanels);
         }
         ft.commit();
     }
@@ -149,6 +195,10 @@ public class PlayersPanels extends LinearLayout {
 
     public boolean deletePlayer(boolean left, int id) {
         return (left ? leftPanel : rightPanel).deleteRow(id);
+    }
+
+    public void deletePlayers(int type, boolean left) {
+        (left ? leftPanel : rightPanel).clear(type == 0);
     }
 
     public boolean editPlayer(boolean left, int id, int number, String name, boolean captain) {

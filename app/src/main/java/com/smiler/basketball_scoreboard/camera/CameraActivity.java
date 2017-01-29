@@ -49,6 +49,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private boolean created;
     private Intent intent;
     private String hName = "Home", gName = "Guest";
+//    private Game game;
 
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
@@ -60,6 +61,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+//        game = Game.getInstance(this, this);
         camera = getCameraInstance();
         if (camera == null) {
             finish();

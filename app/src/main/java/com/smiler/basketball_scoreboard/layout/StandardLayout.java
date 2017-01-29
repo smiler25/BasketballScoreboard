@@ -239,7 +239,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         timeoutRules = preferences.timeoutRules;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        LayoutInflater.from(context).inflate(R.layout.activity_main, this);
         switch (layoutType) {
             case COMMON:
             case FIBA:
@@ -248,7 +247,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
                 initExtended();
                 break;
             case SIMPLE:
-                LayoutInflater.from(context).inflate(R.layout.activity_main, this);
+                LayoutInflater.from(context).inflate(R.layout.activity_main_simple, this);
                 initSimple();
                 break;
         }
@@ -258,11 +257,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     }
 
     private StandardLayout init() {
-        ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
-//        stub.setLayoutResource(R.layout.board_layout);
-        stub.setLayoutResource(R.layout.board_central);
-        stub.inflate();
-
         mainTimeView = (TextView) findViewById(R.id.mainTimeView);
         hScoreView = (TextView) findViewById(R.id.leftScoreView);
         gScoreView = (TextView) findViewById(R.id.rightScoreView);
@@ -334,7 +328,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     }
 
     private void initExtended() {
-        ViewStub stub = (ViewStub) findViewById(R.id.layout_stub);
+        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
         stub.setLayoutResource(preferences.timeoutRules == Game.TO_RULES.NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
         stub.inflate();
 
@@ -360,7 +354,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         } else {
             try {
                 shotTimeView.setVisibility(View.INVISIBLE);
-                shotTimeSwitchView.setVisibility(View.INVISIBLE);
+                shotTimeSwitchView.setVisibility(View.GONE);
             } catch (NullPointerException e) {
                 Log.e(TAG, "shotTimeView or shotTimeSwitchView is null");
             }
@@ -396,15 +390,14 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     private void initPlayersButtons() {
         try {
-            findViewById(R.id.left_panel_toggle).setOnClickListener(this);
-            findViewById(R.id.right_panel_toggle).setOnClickListener(this);
-
             ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
             ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
             leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons);
             leftPlayersStub.inflate();
             rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons);
             rightPlayersStub.inflate();
+            findViewById(R.id.left_panel_toggle).setOnClickListener(this);
+            findViewById(R.id.right_panel_toggle).setOnClickListener(this);
 
             leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
             leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
@@ -492,7 +485,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         gScoreView = _ScoreView;
         setScores(gScoreView.getText(), hScoreView.getText());
 
-        if (layoutType == Game.GAME_TYPE.COMMON) {
+        if (layoutType != Game.GAME_TYPE.SIMPLE) {
             TextView _FoulsView = hFoulsView;
             hFoulsView = gFoulsView;
             gFoulsView = _FoulsView;
@@ -510,15 +503,34 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
                 setTimeouts20(gTimeouts20View.getText(), hTimeouts20View.getText(), gTimeouts20View.getCurrentTextColor(), hTimeouts20View.getCurrentTextColor());
             }
         }
-
-//        if (preferences.arrowsOn) {
-//            switchPossession();
-//        }
+        setColors();
     }
 
     public void setBlockLongClick(boolean state) {
         blockLongClick = state;
     }
+
+    public void setColors() {
+        if (hScoreView != null) {
+            hScoreView.setTextColor(preferences.getColor(Preferences.Elements.HSCORE));
+        }
+        if (gScoreView != null) {
+            gScoreView.setTextColor(preferences.getColor(Preferences.Elements.GSCORE));
+        }
+    }
+
+    public void setColor(TextView v, int color) {
+        v.setTextColor(color);
+    }
+
+    public void setColorRed(TextView v) {
+        setColor(v, getResources().getColor(R.color.red));
+    }
+
+    private void setColorGreen(TextView v) {
+        setColor(v, getResources().getColor(R.color.green));
+    }
+
 
     // scores
     public void setScores(CharSequence home, CharSequence guest) {
@@ -534,12 +546,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     public void setHomeScore(int value) {
         hScoreView.setText(String.format(FORMAT_TWO_DIGITS, value));
-        handleScoresSize();
-    }
-
-    public void nullScores() {
-        hScoreView.setText("00");
-        gScoreView.setText("00");
         handleScoresSize();
     }
 
@@ -622,33 +628,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         gTimeouts20View.setTextColor(gColor);
     }
 
-    public void nullAllTimeouts() {
-        hTimeoutsView.setText("0");
-        gTimeoutsView.setText("0");
-        hTimeouts20View.setText("0");
-        gTimeouts20View.setText("0");
-    }
-
-    public void nullHomeTimeouts(String value) {
-        hTimeoutsView.setText(value);
-        setColorGreen(hTimeoutsView);
-    }
-
-    public void nullGuestTimeouts(String value) {
-        gTimeoutsView.setText(value);
-        setColorGreen(gTimeoutsView);
-    }
-
-    public void nullHomeTimeouts20(String value) {
-        hTimeouts20View.setText(value);
-        setColorGreen(hTimeouts20View);
-    }
-
-    public void nullGuestTimeouts20(String value) {
-        gTimeouts20View.setText(value);
-        setColorGreen(gTimeouts20View);
-    }
-
     public void setHomeTimeouts(String value, boolean limit) {
         hTimeoutsView.setText(value);
         if (limit) {
@@ -707,6 +686,26 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         setColorGreen(gTimeouts20View);
     }
 
+    public void nullHomeTimeouts(String value) {
+        hTimeoutsView.setText(value);
+        setColorGreen(hTimeoutsView);
+    }
+
+    public void nullGuestTimeouts(String value) {
+        gTimeoutsView.setText(value);
+        setColorGreen(gTimeoutsView);
+    }
+
+    public void nullHomeTimeouts20(String value) {
+        hTimeouts20View.setText(value);
+        setColorGreen(hTimeouts20View);
+    }
+
+    public void nullGuestTimeouts20(String value) {
+        gTimeouts20View.setText(value);
+        setColorGreen(gTimeouts20View);
+    }
+
 
     // possession
     public void toggleArrow(boolean left) {
@@ -746,6 +745,10 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         }
     }
 
+    public void setShotTimeSwitchText(long value) {
+        shotTimeSwitchView.setText(Long.toString(value));
+    }
+
     public void hideShotTime() {
         if (shotTimeView != null) {
             shotTimeView.setVisibility(View.INVISIBLE);
@@ -773,7 +776,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     public void hideShotTimeSwitch() {
         if (shotTimeSwitchView != null) {
-            shotTimeSwitchView.setVisibility(View.INVISIBLE);
+            shotTimeSwitchView.setVisibility(View.GONE);
         }
     }
 
@@ -786,27 +789,24 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     // period
     public void setPeriod(String value, boolean regular) {
-        if (regular) {
-            periodView.setText(value);
-            if (periodViewSize != 0) {
-                periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize);
+        if (periodView != null) {
+            if (regular) {
+                periodView.setText(value);
+                if (periodViewSize != 0) {
+                    periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize);
+                }
+            } else {
+                periodView.setText("OT" + value);
+                if (periodViewSize == 0) {
+                    periodViewSize = getResources().getDimension(R.dimen.bottom_line_size);
+                }
+                periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize * 0.75f);
             }
-        } else {
-            periodView.setText("OT" + value);
-            if (periodViewSize == 0) {
-                periodViewSize = getResources().getDimension(R.dimen.bottom_line_size);
-            }
-            periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize * 0.75f);
         }
     }
 
 
     // names
-    public void setTeamNames(String home, String guest) {
-        hNameView.setText(home);
-        gNameView.setText(guest);
-    }
-
     public void setTeamNames(CharSequence home, CharSequence guest) {
         hNameView.setText(home);
         gNameView.setText(guest);
@@ -818,27 +818,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     public void setGuestName(CharSequence value) {
         gNameView.setText(value);
-    }
-
-    public void setColors() {
-        if (hScoreView != null) {
-            hScoreView.setTextColor(preferences.getColor(Preferences.Elements.HSCORE));
-        }
-        if (gScoreView != null) {
-            hScoreView.setTextColor(preferences.getColor(Preferences.Elements.GSCORE));
-        }
-    }
-
-    public void setColor(TextView v, int color) {
-        v.setTextColor(color);
-    }
-
-    public void setColorRed(TextView v) {
-        setColor(v, getResources().getColor(R.color.red));
-    }
-
-    private void setColorGreen(TextView v) {
-        setColor(v, getResources().getColor(R.color.green));
     }
 
 
@@ -904,8 +883,8 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
 
     public void showPlayersButtons() {
         if (playersButtonsInitiated()) {
-            leftPlayersButtonsGroup.setVisibility(View.GONE);
-            rightPlayersButtonsGroup.setVisibility(View.GONE);
+            leftPlayersButtonsGroup.setVisibility(View.VISIBLE);
+            rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
         }
     }
 

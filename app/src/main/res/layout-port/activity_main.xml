@@ -185,7 +185,7 @@
 
 
         <ViewStub
-            android:id="@+id/layout_stub"
+            android:id="@+id/bottom_line_stub"
             android:inflatedId="@+id/full_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

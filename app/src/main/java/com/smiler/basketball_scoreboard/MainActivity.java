@@ -57,6 +57,7 @@ import io.realm.Realm;
 
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_APP_UPDATES;
+import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_CONFIRM;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_MAIN_TIME_PICKER;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_NAME_EDIT;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_SHOT_TIME_PICKER;
@@ -85,8 +86,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean doubleBackPressedFirst;
     private FloatingCountdownTimerDialog floatingDialog;
-    private SidePanelFragment leftPanel, rightPanel;
-    private OverlayFragment overlayPanels, overlaySwitch;
+    private OverlayFragment overlaySwitch;
 
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
     private int whistleRepeats, hornRepeats, whistleLength, hornLength;
@@ -101,39 +101,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onStop() {
         super.onStop();
-        if (game != null && preferences != null) {
-            if (preferences.saveOnExit) {
-                game.saveCurrentState();
-            }
+        if (game != null) {
+            game.stopGame();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // System.out.println("res_type = " + getResources().getString(R.string.res_type));
-//        handleScoresSize();
-
-        if (PrefActivity.prefChangedRestart) {
-            showConfirmDialog("new_game", false);
-        } else if (PrefActivity.prefChangedNoRestart) {
-            preferences.readRestart();
-            if (preferences.fixLandscapeChanged) {
-                handleOrientation();
-                preferences.fixLandscapeChanged = false;
-            }
-
-            if (game != null) {
-                if (preferences.spStateChanged) {
-                    game.handlePlayersPanels();
-                }
-                if (preferences.enableShotTimeChanged) {
-                    game.handleShotTimes();
-                }
-                if (preferences.arrowsStateChanged) {
-                    game.handleArrowsVisibility();
-                }
-            }
+        handleOrientation();
+//         System.out.println("res_type = " + getResources().getString(R.string.res_type));
+        if (game != null) {
+            game.resumeGame();
         }
     }
 
@@ -237,14 +216,8 @@ public class MainActivity extends AppCompatActivity implements
         if (overlaySwitch != null && overlaySwitch.isAdded()) {
             getFragmentManager().putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
         }
-        if (overlayPanels != null && overlayPanels.isAdded()) {
-            getFragmentManager().putFragment(outState, OverlayFragment.TAG_PANELS, overlayPanels);
-        }
-        if (leftPanel != null && leftPanel.isAdded()) {
-            getFragmentManager().putFragment(outState, SidePanelFragment.TAG_LEFT_PANEL, leftPanel);
-        }
-        if (rightPanel != null && rightPanel.isAdded()) {
-            getFragmentManager().putFragment(outState, SidePanelFragment.TAG_RIGHT_PANEL, rightPanel);
+        if (game != null) {
+            game.saveInstanceState(outState);
         }
     }
 
@@ -256,21 +229,8 @@ public class MainActivity extends AppCompatActivity implements
             if (overlaySwitch_ != null) {
                 overlaySwitch = (OverlayFragment) overlaySwitch_;
             }
-
-            if (preferences.spOn) {
-                Fragment overlayPanels_ = fm.getFragment(inState, OverlayFragment.TAG_PANELS);
-                if (overlayPanels_ != null) {
-                    overlayPanels = (OverlayFragment) overlayPanels_;
-                }
-                Fragment leftPanel_ = fm.getFragment(inState, SidePanelFragment.TAG_LEFT_PANEL);
-                if (leftPanel_ != null) {
-                    leftPanel = (SidePanelFragment) leftPanel_;
-                }
-                Fragment rightPanel_ = fm.getFragment(inState, SidePanelFragment.TAG_RIGHT_PANEL);
-                if (rightPanel_ != null) {
-                    rightPanel = (SidePanelFragment) rightPanel_;
-                }
-                fm.popBackStack();
+            if (game != null) {
+                game.restoreInstanceState(inState);
             }
         }
     }
@@ -284,16 +244,21 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initGame() {
+        game = Game.newGame(this, initGameLayout(), this);
+    }
+
+    private StandardLayout initGameLayout() {
         StandardLayout layout = new StandardLayout(this, preferences, this, this);
         setContentView(layout);
-        game = Game.newGame(this, layout, this);
+        initLayout();
+        return layout;
     }
 
     private void startNewGame(boolean save) {
         if (save) {
             game = game.saveAndNew();
         } else {
-            game = Game.newGame(this);
+            game = Game.newGame(this, this);
         }
     }
 
@@ -480,82 +445,26 @@ public class MainActivity extends AppCompatActivity implements
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
-    private void getSettings() {
-        preferences.read();
-    }
-
-    private void switchSides() {
+    private void showSwitchFragment(boolean show) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.animator.fragment_fade_in, R.animator.fragment_fade_in);
-        Fragment o = fm.findFragmentByTag(OverlayFragment.TAG_SWITCH);
-        if (o != null) {
-            if (!o.isVisible()) {
-                ft.show(o);
+        if (show) {
+            ft.setCustomAnimations(R.animator.fragment_fade_in, R.animator.fragment_fade_in);
+            Fragment o = fm.findFragmentByTag(OverlayFragment.TAG_SWITCH);
+            if (o != null) {
+                if (!o.isVisible()) {
+                    ft.show(o);
+                }
+            } else {
+                ft.add(R.id.overlay, overlaySwitch, OverlayFragment.TAG_SWITCH);
             }
+            ft.addToBackStack(null).commit();
         } else {
-            ft.add(R.id.overlay, overlaySwitch, OverlayFragment.TAG_SWITCH);
+            fm.beginTransaction()
+                    .setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out)
+                    .hide(overlaySwitch)
+                    .commit();
         }
-        ft.addToBackStack(null).commit();
-
-//        TextView _NameView = hNameView;
-//        hNameView = gNameView;
-//        gNameView = _NameView;
-//        setTeamNames(hName, gName);
-
-//        TextView _ScoreView = hScoreView;
-//        hScoreView = gScoreView;
-//        gScoreView = _ScoreView;
-//        setScoresText(hScore, gScore);
-
-//        if (preferences.layoutType == GAME_TYPE.COMMON) {
-//            TextView _FoulsView = hFoulsView;
-//            hFoulsView = gFoulsView;
-//            gFoulsView = _FoulsView;
-//            setFoulsText(hFouls, gFouls, gFoulsView.getCurrentTextColor(), hFoulsView.getCurrentTextColor());
-//
-//            TextView _TimeoutsView = hTimeoutsView;
-//            hTimeoutsView = gTimeoutsView;
-//            gTimeoutsView = _TimeoutsView;
-//            setTimeoutsText(hTimeouts, gTimeouts, gTimeoutsView.getCurrentTextColor(), hTimeoutsView.getCurrentTextColor());
-//
-//            if (preferences.timeoutRules == Game.TO_RULES.NBA) {
-//                TextView _Timeouts20View = hTimeouts20View;
-//                hTimeouts20View = gTimeouts20View;
-//                gTimeouts20View = _Timeouts20View;
-//                setTimeouts20Text(hTimeouts20, gTimeouts20, gTimeouts20View.getCurrentTextColor(), hTimeouts20View.getCurrentTextColor());
-//            }
-//        }
-//        setColors();
-
-        if (preferences.spOn && leftPanel != null) {
-            try {
-                switchSidePanels();
-            } catch (NullPointerException e) {
-                Log.d(TAG, "Left or right panel is null");
-            }
-        }
-
-//        if (preferences.arrowsOn) {
-//            switchPossession();
-//        }
-
-        fm.beginTransaction()
-                .setCustomAnimations(R.animator.fragment_fade_out, R.animator.fragment_fade_out)
-                .hide(overlaySwitch)
-                .commit();
-    }
-
-    private void switchSidePanels() {
-        leftPanel.changeRowsSide();
-        rightPanel.changeRowsSide();
-        leftPanel.clearTable();
-        rightPanel.clearTable();
-        TreeMap<Integer, SidePanelRow> leftRows = leftPanel.getAllPlayers();
-        TreeSet<SidePanelRow> leftActivePlayers = leftPanel.getActivePlayers();
-        SidePanelRow leftCaptainPlayer = leftPanel.getCaptainPlayer();
-        leftPanel.replaceRows(rightPanel.getAllPlayers(), rightPanel.getActivePlayers(), rightPanel.getCaptainPlayer());
-        rightPanel.replaceRows(leftRows, leftActivePlayers, leftCaptainPlayer);
     }
 
     private void playWhistle() {
@@ -633,18 +542,16 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.action_share_via)));
     }
 
-    private void showConfirmDialog(String type, boolean won) {
-//        ConfirmDialog dialog;
-//        if (won) {
-//            if (hScore > gScore) {
-//                dialog = ConfirmDialog.newInstance(type, hName, hScore, gScore);
-//            } else {
-//                dialog = ConfirmDialog.newInstance(type, gName, gScore, hScore);
-//            }
-//        } else {
-//            dialog = ConfirmDialog.newInstance(type);
-//        }
-//        dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+    private void showConfirmDialog(String type) {
+        ConfirmDialog dialog;
+        dialog = ConfirmDialog.newInstance(type);
+        dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+    }
+
+    private void showWinDialog(String type, String team, int winScore, int loseScore) {
+        ConfirmDialog dialog;
+        dialog = ConfirmDialog.newInstance(type, team, winScore, loseScore);
+        dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
     }
 
     private void showListDialog(String type) {
@@ -748,8 +655,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onClearPanelDialogItemClick(int which, boolean left) {
-        (left ? leftPanel : rightPanel).clear(which == 0);
+    public void onClearPanelDialogItemClick(int type, boolean left) {
+        game.deletePlayers(type, left);
     }
 
     @Override
@@ -770,7 +677,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConfirmDialogPositive(String type, boolean dontShow) {
         game.setDontAskNewGame(dontShow ? 2 : 0);
-        game = Game.newGame(this);
+        game = Game.newGame(this, this);
     }
 
     @Override
@@ -1024,12 +931,27 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfirmDialog(String type, boolean win) {
-        showConfirmDialog(type, win);
+    public StandardLayout onInitLayout() {
+        return initGameLayout();
+    }
+
+    @Override
+    public void onConfirmDialog(String type) {
+        showConfirmDialog(type);
+    }
+
+    @Override
+    public void onWinDialog(String type, String team, int winScore, int loseScore) {
+        showWinDialog(type, team, winScore, loseScore);
     }
 
     @Override
     public void onShowTimeout(long seconds, String team) {
         showTimeout(seconds, team);
+    }
+
+    @Override
+    public void onSwitchSides(boolean show) {
+        showSwitchFragment(show);
     }
 }
