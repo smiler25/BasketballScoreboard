@@ -49,6 +49,7 @@ public class Preferences {
     public int whistleRepeats, hornRepeats, whistleLength, hornLength, hornUserRepeats;
     private int defaultScoreColor;
     public String hName, gName;
+    public int dontAskNewGame;
 
     public enum Elements {
         HSCORE, GSCORE;
@@ -88,7 +89,7 @@ public class Preferences {
         autoShowBreak = prefs.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
         autoSwitchSides = prefs.getBoolean(PrefActivity.PREF_AUTO_SWITCH_SIDES, false);
         pauseOnSound = prefs.getBoolean(PrefActivity.PREF_PAUSE_ON_SOUND, true);
-//        vibrationOn = vibrator.hasVibrator() && sharedPref.getBoolean(PrefActivity.PREF_VIBRATION, false);
+        vibrationOn = prefs.getBoolean(PrefActivity.PREF_VIBRATION, false);
         saveOnExit = prefs.getBoolean(PrefActivity.PREF_SAVE_ON_EXIT, true);
         fractionSecondsMain = prefs.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_MAIN, true);
         fractionSecondsShot = prefs.getBoolean(PrefActivity.PREF_FRACTION_SECONDS_SHOT, true);
@@ -153,6 +154,10 @@ public class Preferences {
         }
         PrefActivity.prefChangedRestart = false;
         return this;
+    }
+
+    public void setDontAskNewGame(int value) {
+        dontAskNewGame = value;
     }
 
     public int getColor(Elements element) {

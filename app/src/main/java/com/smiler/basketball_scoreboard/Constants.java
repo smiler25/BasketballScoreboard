@@ -71,4 +71,6 @@ public final class Constants {
     public static final int DEFAULT_FIBA_PLAYER_FOULS = 5;
     public static final int DEFAULT_NBA_PLAYER_FOULS = 6;
 
+    public static long[] LONG_CLICK_VIBE_PAT = {0, 50, 50, 50};
+
 }

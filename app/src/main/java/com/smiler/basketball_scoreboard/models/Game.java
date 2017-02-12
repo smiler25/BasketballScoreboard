@@ -17,8 +17,8 @@ import com.smiler.basketball_scoreboard.db.GameDetails;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
+import com.smiler.basketball_scoreboard.layout.BaseLayout;
 import com.smiler.basketball_scoreboard.layout.PlayersPanels;
-import com.smiler.basketball_scoreboard.layout.StandardLayout;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
@@ -69,7 +69,7 @@ public class Game {
     private static Game instance;
     private Context context;
     private GameListener listener;
-    private StandardLayout layout;
+    private BaseLayout layout;
     private PlayersPanels panels;
 
     private boolean mainTimerOn, shotTimerOn;
@@ -79,7 +79,7 @@ public class Game {
     private long startTime, totalTime;
     private long timeoutFullDuration;
     private short hScore, gScore;
-    private short hScore_prev, gScore_prev;
+    private short hScorePrev, gScorePrev;
     private short hFouls, gFouls;
     private short hTimeouts, gTimeouts;
     private short hTimeouts20, gTimeouts20;
@@ -90,7 +90,6 @@ public class Game {
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
     private boolean leftIsHome = true;
-    private int dontAskNewGame;
 
     private long mainTickInterval = SECOND;
     private long shotTickInterval = SECOND;
@@ -153,35 +152,45 @@ public class Game {
     public interface GameListener {
         void onPlayHorn();
         void onNewGame(Game game);
-        StandardLayout onInitLayout();
+        BaseLayout onInitLayout();
         void onConfirmDialog(String type);
         void onWinDialog(String type, String team, int winScore, int loseScore);
         void onShowTimeout(long seconds, String team);
         void onSwitchSides(boolean show);
     }
 
-    public static Game getInstance(Context context, GameListener listener) {
+    public static Game getInstance(Context context) {
         if (instance == null) {
-//            instance = new Game(context, layout, listener);
-            instance = new Game(context, listener);
+            instance = new Game(context);
         }
         return instance;
     }
 
-    public static Game newGame(Context context, StandardLayout layout, GameListener listener) {
+    public static Game newGame(Context context, BaseLayout layout, GameListener listener) {
         instance = new Game(context, layout, listener);
         return instance;
     }
 
-    public static Game newGame(Context context, GameListener listener) {
-        instance = new Game(context, listener);
+    public Game newGame() {
+        instance = new Game(context, layout, listener);
         return instance;
     }
 
-    private Game(Context context, StandardLayout layout, GameListener listener) {
+    private Game(Context context) {
         this.context = context;
-        this.layout = layout;
-        this.listener = listener;
+        preferences = Preferences.getInstance(context);
+        preferences.read();
+        if (listener != null) {
+            if (layout != null) {
+                if (preferences.layoutChanged || preferences.timeoutsRulesChanged) {
+                    layout = listener.onInitLayout();
+                } else {
+                    layout.zeroState();
+                }
+            } else  {
+                layout = listener.onInitLayout();
+            }
+        }
         statePref = context.getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
         preferences = Preferences.getInstance(context);
         preferences.read();
@@ -192,45 +201,40 @@ public class Game {
             gName = preferences.gName;
         }
         gameResult = new Result(hName, gName);
+        if (preferences.spOn && panels == null) {
+            panels = new PlayersPanels(context, preferences);
+        }
         leftIsHome = true;
+    }
+
+    private Game(Context context, BaseLayout layout, GameListener listener) {
+        this.context = context;
+        this.layout = layout;
+        this.listener = listener;
+
+        statePref = ((Activity)context).getPreferences(Context.MODE_PRIVATE);
+        preferences = Preferences.getInstance(context);
+        preferences.read();
+        if (hName == null || hName.equals("")) {
+            hName = preferences.hName;
+        }
+        if (gName == null || gName.equals("")) {
+            gName = preferences.gName;
+        }
+        gameResult = new Result(hName, gName);
+        if (preferences.spOn && panels == null) {
+            panels = new PlayersPanels(context, preferences);
+        }
+        leftIsHome = true;
+
         if (preferences.layoutType != GAME_TYPE.SIMPLE) {
             newPeriod(false);
             setTimeouts();
         }
-        if (preferences.spOn && panels == null) {
-            panels = new PlayersPanels(context, preferences);
-        }
+
         if (preferences.saveOnExit) {
             getSavedState();
-            setSavedState();
         }
-    }
-
-    private Game(Context context, GameListener listener) {
-        this.context = context;
-        this.listener = listener;
-        preferences = Preferences.getInstance(context);
-        preferences.read();
-        if (layout == null || preferences.layoutChanged || preferences.timeoutsRulesChanged) {
-            layout = listener.onInitLayout();
-        } else {
-            layout.zeroState();
-        }
-        statePref = context.getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
-        preferences = Preferences.getInstance(context);
-        preferences.read();
-        if (hName == null || hName.equals("")) {
-            hName = preferences.hName;
-        }
-        if (gName == null || gName.equals("")) {
-            gName = preferences.gName;
-        }
-        gameResult = new Result(hName, gName);
-        if (preferences.spOn && panels == null) {
-            panels = new PlayersPanels(context, preferences);
-        }
-        leftIsHome = true;
-
     }
 
     public void saveInstanceState(Bundle outState) {
@@ -240,9 +244,6 @@ public class Game {
     }
 
     public void restoreInstanceState(Bundle inState) {
-//    public void restoreInstanceState(Bundle inState, FragmentManager fragmentManager) {
-//        if (preferences.spOn) {
-//    }
         if (panels != null) {
             restorePanelsInstanceState(inState);
         }
@@ -254,6 +255,14 @@ public class Game {
 
     private void restorePanelsInstanceState(Bundle inState) {
         panels.restoreInstanceState(inState);
+    }
+
+    public void setLayout(BaseLayout layout) {
+        this.layout = layout;
+    }
+
+    public void setListener(GameListener listener) {
+        this.listener = listener;
     }
 
     public void stopGame() {
@@ -285,7 +294,6 @@ public class Game {
     }
 
     private void saveCurrentState() {
-        statePref = ((Activity )context).getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = statePref.edit();
         editor.putString(STATE_HOME_NAME, hName);
         editor.putString(STATE_GUEST_NAME, gName);
@@ -336,10 +344,10 @@ public class Game {
         possession = statePref.getInt(STATE_POSSESSION, possession);
     }
 
-    private void setSavedState() {
+    public void setCurrentState() {
         layout.setMainTimeText(mainTime);
         layout.setHomeScore(hScore);
-        layout.setGuestScore(hScore);
+        layout.setGuestScore(gScore);
         setTeamNames();
 
         if (preferences.layoutType == GAME_TYPE.COMMON) {
@@ -402,13 +410,9 @@ public class Game {
         }
     }
 
-    public void setDontAskNewGame(int value) {
-        dontAskNewGame = value;
-    }
-
     public void newGameSave() {
         if (preferences.autoSaveResults == 0) {
-            saveAndNew();
+            saveGame();
         } else if (preferences.autoSaveResults == 2) {
             showDialog("save_result", false);
         }
@@ -494,10 +498,9 @@ public class Game {
         });
     }
 
-    public Game saveAndNew() {
+    public void saveGame() {
         save();
         saveDb();
-        return newGame(context, listener);
     }
 
     public String getShareString() {
@@ -530,7 +533,7 @@ public class Game {
     private void updateStats() {
         if (hScore == gScore) {
             timesTie++;
-        } else if (hScore > gScore != hScore_prev > gScore_prev) {
+        } else if (hScore > gScore != hScorePrev > gScorePrev) {
             timesLeadChanged++;
         }
         if (hScore - gScore > hMaxLead) {
@@ -572,7 +575,11 @@ public class Game {
 
     // scores
     public void nullScore(boolean left) {
-        if (left == leftIsHome) {
+        nullScore(left == leftIsHome ? HOME : GUEST);
+    }
+
+    public void nullScore(int team) {
+        if (team == HOME) {
             hScore = 0;
             layout.setHomeScore(0);
         } else {
@@ -582,25 +589,26 @@ public class Game {
     }
 
     public void changeScore(boolean left, int value) {
-        hScore_prev = hScore;
-        gScore_prev = gScore;
-        if (left == leftIsHome) {
+        changeScore(left == leftIsHome ? HOME : GUEST, value);
+    }
+
+    public void changeScore(int team, int value) {
+        if (team == HOME) {
+            hScorePrev = hScore;
             if (!changeHomeScore(value)) {
                 return;
             }
+            hActionType = ACTION_PTS;
+            hActionValue += value;
             addAction(ACTION_PTS, HOME, value);
         } else {
+            gScorePrev = gScore;
             if (!changeGuestScore(value)) {
                 return;
             }
-            addAction(ACTION_PTS, GUEST, value);
-        }
-        if (left) {
-            hActionType = ACTION_PTS;
-            hActionValue += value;
-        } else {
             gActionType = ACTION_PTS;
             gActionValue += value;
+            addAction(ACTION_PTS, GUEST, value);
         }
         updateStats();
     }
@@ -721,10 +729,10 @@ public class Game {
                 }
                 save();
                 if (period >= preferences.numRegularPeriods && hScore != gScore) {
-                    if (dontAskNewGame == 0) {
+                    if (preferences.dontAskNewGame == 0) {
                         showDialog("new_game", true);
                     } else {
-                        endOfGameActions(dontAskNewGame);
+                        endOfGameActions(preferences.dontAskNewGame);
                     }
                     showTimeoutDialog = false;
                 }
@@ -810,14 +818,14 @@ public class Game {
                 if (hTimeouts == 2 || hTimeouts == 3) {
                     hTimeouts = 1;
                     hTimeouts20++;
-//                    hTimeoutsView.setText("1");
-//                    hTimeouts20View.setText(Short.toString(hTimeouts20));
+                    layout.setHomeTimeouts("1", noTimeouts(hTimeouts));
+                    layout.setHomeTimeouts20(Short.toString(hTimeouts20), noTimeouts(hTimeouts20));
                 }
                 if (gTimeouts == 2 || gTimeouts == 3) {
                     gTimeouts = 1;
                     gTimeouts20++;
-//                    gTimeoutsView.setText("1");
-//                    gTimeouts20View.setText(Short.toString(gTimeouts20));
+                    layout.setGuestTimeouts("1", noTimeouts(gTimeouts));
+                    layout.setGuestTimeouts20(Short.toString(gTimeouts20), noTimeouts(gTimeouts20));
                 }
             }
         }
@@ -1204,7 +1212,7 @@ public class Game {
         foul(left == leftIsHome ? HOME : GUEST);
     }
 
-    public void foul(int team) {
+    private void foul(int team) {
         if (preferences.actualTime > 0) {
             pauseGame();
         }
@@ -1326,6 +1334,14 @@ public class Game {
 
     public String getName(boolean left) {
         if (left == leftIsHome) {
+            return hName;
+        } else {
+            return gName;
+        }
+    }
+
+    public String getName(int team) {
+        if (team == HOME) {
             return hName;
         } else {
             return gName;

@@ -39,6 +39,9 @@ import com.smiler.basketball_scoreboard.elements.ListDialog;
 import com.smiler.basketball_scoreboard.elements.NameEditDialog;
 import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 import com.smiler.basketball_scoreboard.help.HelpActivity;
+import com.smiler.basketball_scoreboard.layout.BaseLayout;
+import com.smiler.basketball_scoreboard.layout.ClickListener;
+import com.smiler.basketball_scoreboard.layout.LongClickListener;
 import com.smiler.basketball_scoreboard.layout.StandardLayout;
 import com.smiler.basketball_scoreboard.models.Game;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
@@ -66,8 +69,8 @@ import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_TIME;
 
 public class MainActivity extends AppCompatActivity implements
         Game.GameListener,
-        StandardLayout.ClickListener,
-        StandardLayout.LongClickListener,
+        ClickListener,
+        LongClickListener,
         ConfirmDialog.ConfirmDialogListener,
         Drawer.OnDrawerItemClickListener,
         EditPlayerDialog.OnPanelsListener,
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean doubleBackPressedFirst;
     private FloatingCountdownTimerDialog floatingDialog;
     private OverlayFragment overlaySwitch;
+    private BaseLayout layout;
 
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
     private int whistleRepeats, hornRepeats, whistleLength, hornLength;
@@ -113,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements
 //         System.out.println("res_type = " + getResources().getString(R.string.res_type));
         if (game != null) {
             game.resumeGame();
+            game.setListener(this);
+            game.setLayout(layout != null ? layout : initGameLayout());
+            game.setCurrentState();
         }
     }
 
@@ -147,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements
 
         handleOrientation();
         initGame();
-        initLayout();
+        initElements();
 
         if (sharedPref.getBoolean("first_launch", true)) {
             drawer.openDrawer();
@@ -247,22 +254,20 @@ public class MainActivity extends AppCompatActivity implements
         game = Game.newGame(this, initGameLayout(), this);
     }
 
-    private StandardLayout initGameLayout() {
-        StandardLayout layout = new StandardLayout(this, preferences, this, this);
+    private BaseLayout initGameLayout() {
+        layout = new StandardLayout(this, preferences, this, this);
         setContentView(layout);
-        initLayout();
         return layout;
     }
 
     private void startNewGame(boolean save) {
         if (save) {
-            game = game.saveAndNew();
-        } else {
-            game = Game.newGame(this, this);
+            game.saveGame();
         }
+        initGame();
     }
 
-    private void initLayout() {
+    private void initElements() {
         overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
         overlaySwitch.setRetainInstance(true);
         initDrawer();
@@ -354,39 +359,11 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
         Intent intent = new Intent(this, CameraActivity.class);
-//        intent.putExtra("layoutType", preferences.layoutType);
-//        intent.putExtra("hName", hName);
-//        intent.putExtra("gName", gName);
-//        intent.putExtra("hScore", hScore);
-//        intent.putExtra("gScore", gScore);
-//        intent.putExtra("mainTime", mainTime);
-//        if (preferences.layoutType == GAME_TYPE.COMMON) {
-//            intent.putExtra("shotTime", shotTime);
-//            intent.putExtra("period", period);
-//        }
-        startActivityForResult(intent, 1);
+        startActivity(intent);
     }
 
     private void runHelpActivity() {
         startActivity(new Intent(this, HelpActivity.class));
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null || resultCode != RESULT_OK) { return; }
-//        hScore = data.getShortExtra("hScore", hScore);
-//        gScore = data.getShortExtra("gScore", gScore);
-//        mainTime = data.getLongExtra("mainTime", mainTime);
-//        hScoreView.setText(String.format(FORMAT_TWO_DIGITS, hScore));
-//        gScoreView.setText(String.format(FORMAT_TWO_DIGITS, gScore));
-//        setMainTimeText(mainTime);
-
-//        if (preferences.layoutType == GAME_TYPE.COMMON) {
-//            period = data.getShortExtra("period", period);
-//            shotTime = data.getLongExtra("shotTime", shotTime);
-////            setPeriod();
-////            setShotTimeText(shotTime);
-//        }
     }
 
     @Override
@@ -498,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void playHorn(int repeats) {
         if (preferences.pauseOnSound) {
-//            pauseGame();
+            game.pauseGame();
         }
         soundHornStreamId = soundPool.play(soundHornId, 1, 1, 0, repeats, 1);
         hornRepeats = repeats;
@@ -676,8 +653,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConfirmDialogPositive(String type, boolean dontShow) {
-        game.setDontAskNewGame(dontShow ? 2 : 0);
-        game = Game.newGame(this, this);
+        preferences.setDontAskNewGame(dontShow ? 2 : 0);
+        initGame();
     }
 
     @Override
@@ -698,13 +675,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConfirmDialogNeutral(boolean dontShow) {
-        game.setDontAskNewGame(dontShow ? 2 : 0);
-        game.saveAndNew();
+        preferences.setDontAskNewGame(dontShow ? 2 : 0);
+        game.saveGame();
     }
 
     @Override
     public void onConfirmDialogNegative(String type, boolean dontShow) {
-        game.setDontAskNewGame(dontShow ? 1 : 0);
+        preferences.setDontAskNewGame(dontShow ? 1 : 0);
     }
 
     @Override
@@ -863,13 +840,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onArrowLongClick() {
         game.clearPossession();
-        return false;
+        return true;
     }
 
     @Override
     public boolean onFoulsLongClick(boolean left) {
         game.nullFouls(left);
-        return false;
+        return true;
     }
 
     @Override
@@ -881,19 +858,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onNameLongClick(boolean left) {
         chooseTeamNameDialog(game.getTeam(left), game.getName(left));
-        return false;
+        return true;
     }
 
     @Override
     public boolean onPeriodLongClick() {
         game.newPeriod(false);
-        return false;
+        return true;
     }
 
     @Override
     public boolean onScoreLongClick(boolean left) {
         game.nullScore(left);
-        return false;
+        return true;
     }
 
     @Override
@@ -905,19 +882,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onTimeoutsLongClick(boolean left) {
         game.nullTimeouts(left);
-        return false;
+        return true;
     }
 
     @Override
     public boolean onTimeouts20LongClick(boolean left) {
         game.nullTimeouts20(left);
-        return false;
+        return true;
     }
 
     @Override
     public boolean onPlayerButtonLongClick(boolean left) {
         showListDialog(left);
-        return false;
+        return true;
     }
 
     @Override
@@ -931,7 +908,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public StandardLayout onInitLayout() {
+    public BaseLayout onInitLayout() {
         return initGameLayout();
     }
 

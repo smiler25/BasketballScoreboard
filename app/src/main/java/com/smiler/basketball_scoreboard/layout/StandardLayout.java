@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
@@ -30,11 +29,12 @@ import java.util.TreeSet;
 import static com.smiler.basketball_scoreboard.Constants.API16_TIME_REGEX;
 import static com.smiler.basketball_scoreboard.Constants.FORMAT_TWO_DIGITS;
 import static com.smiler.basketball_scoreboard.Constants.LEFT;
+import static com.smiler.basketball_scoreboard.Constants.LONG_CLICK_VIBE_PAT;
 import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
 
-public class StandardLayout extends LinearLayout implements View.OnClickListener, View.OnLongClickListener {
+public class StandardLayout extends BaseLayout implements View.OnClickListener, View.OnLongClickListener {
 
     public static final String TAG = "BS-StandardLayout";
     private final Preferences preferences;
@@ -53,7 +53,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     private float periodViewSize, scoreViewSize;
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private Vibrator vibrator;
-    private long[] longClickVibrationPattern = {0, 50, 50, 50};
     private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
     private ArrayList<View> leftPlayersButtons = new ArrayList<>();
     private ArrayList<View> rightPlayersButtons = new ArrayList<>();
@@ -65,6 +64,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (preferences.vibrationOn) {
+//            && vibrator.hasVibrator()
             vibrator.vibrate(100);
         }
         switch (v.getId()) {
@@ -156,7 +156,7 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
     @Override
     public boolean onLongClick(View v) {
         if (preferences.vibrationOn) {
-            vibrator.vibrate(longClickVibrationPattern, -1);
+            vibrator.vibrate(LONG_CLICK_VIBE_PAT, -1);
         }
 
         if (!blockLongClick) {
@@ -195,36 +195,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
             }
         }
         return false;
-    }
-
-    public interface ClickListener {
-        void onChangeScoreClick(boolean left, int value);
-        void onFoulsClick(boolean left);
-        void onIconClick(ICONS icon);
-        void onMainTimeClick();
-        void onPeriodClick();
-        void onShotTimeClick();
-        void onShotTimeSwitchClick();
-        void onTeamClick(boolean left);
-        void onTimeoutsClick(boolean left);
-        void onTimeouts20Click(boolean left);
-        void onPlayerButtonClick(boolean left, SidePanelRow row);
-        void onHornAction(boolean play);
-        void onWhistleAction(boolean play);
-        void onOpenPanelClick(boolean left);
-    }
-
-    public interface LongClickListener {
-        boolean onArrowLongClick();
-        boolean onFoulsLongClick(boolean left);
-        boolean onMainTimeLongClick();
-        boolean onNameLongClick(boolean left);
-        boolean onPeriodLongClick();
-        boolean onScoreLongClick(boolean left);
-        boolean onShotTimeLongClick();
-        boolean onTimeoutsLongClick(boolean left);
-        boolean onTimeouts20LongClick(boolean left);
-        boolean onPlayerButtonLongClick(boolean left);
     }
 
     public enum ICONS {
@@ -413,7 +383,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         } catch (NullPointerException e) {
             Log.e(TAG, "Unable to initiate side panels");
         }
-
     }
 
     private void initArrows() {
@@ -517,18 +486,6 @@ public class StandardLayout extends LinearLayout implements View.OnClickListener
         if (gScoreView != null) {
             gScoreView.setTextColor(preferences.getColor(Preferences.Elements.GSCORE));
         }
-    }
-
-    public void setColor(TextView v, int color) {
-        v.setTextColor(color);
-    }
-
-    public void setColorRed(TextView v) {
-        setColor(v, getResources().getColor(R.color.red));
-    }
-
-    private void setColorGreen(TextView v) {
-        setColor(v, getResources().getColor(R.color.green));
     }
 
 
