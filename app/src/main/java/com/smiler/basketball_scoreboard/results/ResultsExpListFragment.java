@@ -109,7 +109,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
 
     @Override
     public void deleteSelection() {
-        RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
+        RealmController.with().deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
         adapter.deleteSelection();
     }
@@ -118,7 +118,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
         int pos = 0;
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
 
-        realmData = RealmController.with(this).getResults();
+        realmData = RealmController.with().getResults();
         try {
             for (Results results : realmData) {
                 items.put(pos, new ResultsExpListParent(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),

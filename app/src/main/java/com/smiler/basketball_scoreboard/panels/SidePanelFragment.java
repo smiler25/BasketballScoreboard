@@ -13,7 +13,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.smiler.basketball_scoreboard.Constants;
-import com.smiler.basketball_scoreboard.MainActivity;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
@@ -343,9 +342,9 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         }
 
         final String team = Boolean.toString(left);
-        RealmController.with(MainActivity.getContext()).deleteTmpPlayers(team);
-        final Results tmpResult = RealmController.with(MainActivity.getContext()).getTmpResult();
-        Realm realm = RealmController.with(MainActivity.getContext()).getRealm();
+        RealmController.with().deleteTmpPlayers(team);
+        final Results tmpResult = RealmController.with().getTmpResult();
+        Realm realm = RealmController.with().getRealm();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -367,12 +366,12 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     }
 
     public static void clearCurrentData() {
-        RealmController.with(MainActivity.getContext()).deletePlayerResults(-1);
+        RealmController.with().deletePlayerResults(-1);
     }
 
     private void restoreCurrentData() {
         activePlayers = new TreeSet<>();
-        RealmResults<PlayersResults> players = RealmController.with(MainActivity.getContext()).getPlayers(-1, Boolean.toString(left));
+        RealmResults<PlayersResults> players = RealmController.with().getPlayers(-1, Boolean.toString(left));
         if (players.size() > 0) {
             for (PlayersResults player : players) {
                 SidePanelRow row = addRow(player.getNumber(), player.getPlayerName(), player.getCaptain());

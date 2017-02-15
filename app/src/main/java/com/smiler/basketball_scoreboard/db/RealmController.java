@@ -1,10 +1,5 @@
 package com.smiler.basketball_scoreboard.db;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
-import android.support.v4.app.Fragment;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -17,8 +12,7 @@ public class RealmController {
     private final Realm realm;
     public static String realmName = "main.realm";
 
-    private RealmController(Application application) {
-        Realm.init(application);
+    private RealmController() {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
                 .name(realmName)
                 .schemaVersion(0)
@@ -26,46 +20,12 @@ public class RealmController {
         realm = Realm.getInstance(realmConfig);
     }
 
-    private RealmController(Context context) {
-        Realm.init(context);
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder()
-                .name(realmName)
-                .schemaVersion(0)
-                .build();
-        realm = Realm.getInstance(realmConfig);
-    }
-
-    public static RealmController with(Fragment fragment) {
+    public static RealmController with() {
         if (instance == null) {
-            instance = new RealmController(fragment.getActivity().getApplication());
+            instance = new RealmController();
         }
         return instance;
     }
-
-    public static RealmController with(Activity activity) {
-        if (instance == null) {
-            instance = new RealmController(activity.getApplication());
-        }
-        return instance;
-    }
-
-    public static RealmController with(Application application) {
-        if (instance == null) {
-            instance = new RealmController(application);
-        }
-        return instance;
-    }
-
-    public static RealmController with(Context context) {
-        if (instance == null) {
-            instance = new RealmController(context);
-        }
-        return instance;
-    }
-
-//    public static RealmController getInstance() {
-//        return instance;
-//    }
 
     public Realm getRealm() {
         return realm;

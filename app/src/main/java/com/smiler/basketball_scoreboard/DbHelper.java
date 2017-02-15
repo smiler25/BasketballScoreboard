@@ -18,7 +18,7 @@ import java.util.Date;
 
 import io.realm.Realm;
 
-public class DbHelper extends SQLiteOpenHelper {
+class DbHelper extends SQLiteOpenHelper {
 
     private String TAG = "BS-DbHelper";
     private SQLiteDatabase db;
@@ -27,16 +27,14 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 4;
     static final String DATABASE_NAME = "scoreboard_results.db";
     private Realm realm;
-    private Context context;
 
-    public static synchronized DbHelper getInstance(Context context) {
+    static synchronized DbHelper getInstance(Context context) {
         if (instance == null) { instance = new DbHelper(context.getApplicationContext()); }
         return instance;
     }
 
     private DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "onUpgrade: " + oldVersion + " -> " + newVersion);
-        realm = RealmController.with(context).getRealm();
+        realm = RealmController.with().getRealm();
         switch (oldVersion) {
             case 1:
                 // db.execSQL(DbScheme.ResultsPlayersTable.CREATE_TABLE);

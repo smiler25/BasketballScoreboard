@@ -26,7 +26,7 @@ public class BaseResultsListFragment extends Fragment {
     }
 
     private void initDataset() {
-        realmData = RealmController.with(this).getResults();
+        realmData = RealmController.with().getResults();
     }
 
     public void setListener(ListListener listener) {

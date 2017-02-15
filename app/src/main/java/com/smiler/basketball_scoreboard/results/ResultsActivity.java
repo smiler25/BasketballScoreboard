@@ -149,7 +149,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultsExpList
         String mime_type = "text/plain";
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_TEXT, RealmController.with(this).getShareString(selected))
+                .putExtra(Intent.EXTRA_TEXT, RealmController.with().getShareString(selected))
                 .setType(mime_type);
         startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.action_share_via)));
     }
@@ -157,7 +157,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultsExpList
     private void menuDelete() {
         menu.setGroupVisible(R.id.group, false);
         if (selected == -1) { return; }
-        RealmController.with(this).deleteResult(selected);
+        RealmController.with().deleteResult(selected);
 
         RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
         if (list != null) {

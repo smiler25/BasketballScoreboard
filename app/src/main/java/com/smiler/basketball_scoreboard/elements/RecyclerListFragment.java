@@ -68,7 +68,7 @@ public class RecyclerListFragment extends BaseResultsListFragment {
 
     @Override
     public void deleteSelection() {
-        RealmController.with(this).deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
+        RealmController.with().deleteResults(adapter.selectedIds.toArray(new Integer[adapter.selectedIds.size()]));
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.cab_success), Toast.LENGTH_LONG).show();
         adapter.deleteSelection();
     }

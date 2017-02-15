@@ -2,7 +2,7 @@ package com.smiler.basketball_scoreboard;
 
 import android.provider.BaseColumns;
 
-public class DbScheme {
+class DbScheme {
     private static final String COMMA = ",";
     private static final String INT_TYPE = " INTEGER";
     private static final String LONG_TYPE = " LONG";
@@ -10,18 +10,18 @@ public class DbScheme {
 
     public DbScheme() {}
 
-    public static abstract class ResultsTable implements BaseColumns {
-        public static final String TABLE_NAME = "results";
-        public static final String COLUMN_DATE = "date";
-        public static final String COLUMN_HOME_TEAM = "home_team";
-        public static final String COLUMN_GUEST_TEAM = "guest_team";
-        public static final String COLUMN_HOME_SCORE = "home_score";
-        public static final String COLUMN_GUEST_SCORE = "guest_score";
-        public static final String COLUMN_HOME_PERIODS = "home_periods";
-        public static final String COLUMN_GUEST_PERIODS = "guest_periods";
-        public static final String COLUMN_SHARE_STRING = "share_string";
-        public static final String COLUMN_REGULAR_PERIODS = "regular_periods";
-        public static final String COLUMN_COMPLETE = "complete";
+    static abstract class ResultsTable implements BaseColumns {
+        static final String TABLE_NAME = "results";
+        static final String COLUMN_DATE = "date";
+        static final String COLUMN_HOME_TEAM = "home_team";
+        static final String COLUMN_GUEST_TEAM = "guest_team";
+        static final String COLUMN_HOME_SCORE = "home_score";
+        static final String COLUMN_GUEST_SCORE = "guest_score";
+        static final String COLUMN_HOME_PERIODS = "home_periods";
+        static final String COLUMN_GUEST_PERIODS = "guest_periods";
+        static final String COLUMN_SHARE_STRING = "share_string";
+        static final String COLUMN_REGULAR_PERIODS = "regular_periods";
+        static final String COLUMN_COMPLETE = "complete";
 
         static final String CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -42,15 +42,15 @@ public class DbScheme {
 
     }
 
-    public static abstract class ResultsPlayersTable implements BaseColumns {
-        public static final String TABLE_NAME = "results_players";
-        public static final String COLUMN_GAME_ID = "game_id";
-        public static final String COLUMN_PLAYER_TEAM = "player_team";
-        public static final String COLUMN_PLAYER_NUMBER = "player_number";
-        public static final String COLUMN_PLAYER_NAME = "player_name";
-        public static final String COLUMN_PLAYER_POINTS = "player_points";
-        public static final String COLUMN_PLAYER_FOULS = "player_fouls";
-        public static final String COLUMN_PLAYER_CAPTAIN = "captain";
+    static abstract class ResultsPlayersTable implements BaseColumns {
+        static final String TABLE_NAME = "results_players";
+        static final String COLUMN_GAME_ID = "game_id";
+        static final String COLUMN_PLAYER_TEAM = "player_team";
+        static final String COLUMN_PLAYER_NUMBER = "player_number";
+        static final String COLUMN_PLAYER_NAME = "player_name";
+        static final String COLUMN_PLAYER_POINTS = "player_points";
+        static final String COLUMN_PLAYER_FOULS = "player_fouls";
+        static final String COLUMN_PLAYER_CAPTAIN = "captain";
 
         static final String CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -68,14 +68,14 @@ public class DbScheme {
         static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    public static abstract class GameDetailsTable implements BaseColumns {
-        public static final String TABLE_NAME = "results_detail";
-        public static final String COLUMN_GAME_ID = "game_id";
-        public static final String COLUMN_PLAY_BY_PLAY = "play_by_play";
-        public static final String COLUMN_LEADER_CHANGED = "lead_changed";
-        public static final String COLUMN_HOME_MAX_LEAD = "home_max_lead";
-        public static final String COLUMN_GUEST_MAX_LEAD = "guest_max_lead";
-        public static final String COLUMN_TIE = "tie";
+    static abstract class GameDetailsTable implements BaseColumns {
+        static final String TABLE_NAME = "results_detail";
+        static final String COLUMN_GAME_ID = "game_id";
+        static final String COLUMN_PLAY_BY_PLAY = "play_by_play";
+        static final String COLUMN_LEADER_CHANGED = "lead_changed";
+        static final String COLUMN_HOME_MAX_LEAD = "home_max_lead";
+        static final String COLUMN_GUEST_MAX_LEAD = "guest_max_lead";
+        static final String COLUMN_TIE = "tie";
 
         static final String CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +

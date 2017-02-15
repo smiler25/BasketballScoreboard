@@ -28,7 +28,7 @@ public class BaseMultiChoice implements AbsListView.MultiChoiceModeListener {
         this.activity = activity;
         this.listView = listView;
         this.listener = listener;
-        realmController = RealmController.with(activity);
+        realmController = RealmController.with();
     }
 
 //    public void close() {

@@ -35,7 +35,7 @@ class ResultView extends LinearLayout {
 
     ResultView(Context context, int itemId) {
         super(context);
-        realmController = RealmController.with(context);
+        realmController = RealmController.with();
         if(!isInEditMode()) {
             this.itemId = itemId;
             init();

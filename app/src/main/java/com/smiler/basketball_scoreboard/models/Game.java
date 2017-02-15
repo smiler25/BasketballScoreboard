@@ -440,7 +440,7 @@ public class Game {
             gameResult.setComplete(true);
         }
 
-        realm = RealmController.with(context).getRealm();
+        realm = RealmController.with().getRealm();
         Number lastId = realm.where(Results.class).max("id");
         final long nextID = lastId != null ? (long) lastId + 1 : 0;
         realm.executeTransaction(new Realm.Transaction() {
