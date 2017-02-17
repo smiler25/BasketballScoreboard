@@ -10,7 +10,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.CountDownTimer;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.GameDetails;
@@ -67,7 +66,6 @@ import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_MILLIS;
 public class Game {
     public static final String TAG = "BS-Game";
     private static Game instance;
-    private Context context;
     private GameListener listener;
     private BaseLayout layout;
     private PlayersPanels panels;
@@ -103,7 +101,6 @@ public class Game {
 
     private Preferences preferences;
     private Result gameResult;
-    private Realm realm;
     private SharedPreferences statePref;
     private boolean showTimeoutDialog;
 
@@ -151,12 +148,13 @@ public class Game {
 
     public interface GameListener {
         void onPlayHorn();
-        void onNewGame(Game game);
+        void onNewGame();
         BaseLayout onInitLayout();
         void onConfirmDialog(String type);
         void onWinDialog(String type, String team, int winScore, int loseScore);
         void onShowTimeout(long seconds, String team);
         void onSwitchSides(boolean show);
+        void onShowToast(int resId, int len);
     }
 
     public static Game getInstance(Context context) {
@@ -166,20 +164,30 @@ public class Game {
         return instance;
     }
 
-    public static Game newGame(Context context, BaseLayout layout, GameListener listener) {
-        instance = new Game(context, layout, listener);
-        return instance;
-    }
-
-    public Game newGame() {
-        instance = new Game(context, layout, listener);
-        return instance;
-    }
+//    private void reset() {
+//        mainTimerOn = shotTimerOn = false;
+//        directTimerStopped = true;
+//        possession = NO_TEAM;
+//        mainTime = preferences.mainTimePref;
+//        shotTime = preferences.shotTimePref;
+//        nullScores();
+//        nullFouls();
+//        nullTimeouts(true);
+//        nullTimeouts(false);
+//        clearPossession();
+//        period = 1;
+//        leftIsHome = true;
+//        mainTickInterval = shotTickInterval = SECOND;
+//        changedUnder2Minutes = false;
+//        scoreSaved = false;
+//        timesTie = 1;
+//        timesLeadChanged = 0;
+//        hMaxLead = gMaxLead = 0;
+//        hActionType = gActionType = ACTION_NONE;
+//        hActionValue = gActionValue = 0;
+//    }
 
     private Game(Context context) {
-        this.context = context;
-        preferences = Preferences.getInstance(context);
-        preferences.read();
         if (listener != null) {
             if (layout != null) {
                 if (preferences.layoutChanged || preferences.timeoutsRulesChanged) {
@@ -191,42 +199,13 @@ public class Game {
                 layout = listener.onInitLayout();
             }
         }
-        statePref = context.getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
-        preferences = Preferences.getInstance(context);
-        preferences.read();
-        if (hName == null || hName.equals("")) {
-            hName = preferences.hName;
-        }
-        if (gName == null || gName.equals("")) {
-            gName = preferences.gName;
-        }
-        gameResult = new Result(hName, gName);
-        if (preferences.spOn && panels == null) {
-            panels = new PlayersPanels(context, preferences);
-        }
-        leftIsHome = true;
+        init(context);
     }
 
-    private Game(Context context, BaseLayout layout, GameListener listener) {
-        this.context = context;
+    public Game(Context context, BaseLayout layout, GameListener listener) {
         this.layout = layout;
         this.listener = listener;
-
-        statePref = ((Activity)context).getPreferences(Context.MODE_PRIVATE);
-        preferences = Preferences.getInstance(context);
-        preferences.read();
-        if (hName == null || hName.equals("")) {
-            hName = preferences.hName;
-        }
-        if (gName == null || gName.equals("")) {
-            gName = preferences.gName;
-        }
-        gameResult = new Result(hName, gName);
-        if (preferences.spOn && panels == null) {
-            panels = new PlayersPanels(context, preferences);
-        }
-        leftIsHome = true;
-
+        init(context);
         if (preferences.layoutType != GAME_TYPE.SIMPLE) {
             newPeriod(false);
             setTimeouts();
@@ -235,6 +214,18 @@ public class Game {
         if (preferences.saveOnExit) {
             getSavedState();
         }
+    }
+
+    private void init(Context context) {
+        statePref = ((Activity)context).getPreferences(Context.MODE_PRIVATE);
+        preferences = Preferences.getInstance(context);
+        preferences.read();
+        handleNames();
+        gameResult = new Result(hName, gName);
+        if (preferences.spOn && panels == null) {
+            panels = new PlayersPanels(context, preferences);
+        }
+        leftIsHome = true;
     }
 
     public void saveInstanceState(Bundle outState) {
@@ -413,6 +404,7 @@ public class Game {
     public void newGameSave() {
         if (preferences.autoSaveResults == 0) {
             saveGame();
+            listener.onNewGame();
         } else if (preferences.autoSaveResults == 2) {
             showDialog("save_result", false);
         }
@@ -440,7 +432,7 @@ public class Game {
             gameResult.setComplete(true);
         }
 
-        realm = RealmController.with().getRealm();
+        Realm realm = RealmController.with().getRealm();
         Number lastId = realm.where(Results.class).max("id");
         final long nextID = lastId != null ? (long) lastId + 1 : 0;
         realm.executeTransaction(new Realm.Transaction() {
@@ -587,6 +579,12 @@ public class Game {
             layout.setGuestScore(0);
         }
     }
+
+//    private void nullScores() {
+//        hScore = gScore = hScorePrev = gScorePrev = 0;
+//        layout.setHomeScore(0);
+//        layout.setGuestScore(0);
+//    }
 
     public void changeScore(boolean left, int value) {
         changeScore(left == leftIsHome ? HOME : GUEST, value);
@@ -1303,6 +1301,15 @@ public class Game {
 
 
     // names
+    private void handleNames() {
+        if (hName == null || hName.equals("")) {
+            hName = preferences.hName;
+        }
+        if (gName == null || gName.equals("")) {
+            gName = preferences.gName;
+        }
+    }
+
     private void setTeamNames(String home, String guest) {
         gameResult.setHomeName(home);
         gameResult.setGuestName(guest);
@@ -1352,7 +1359,7 @@ public class Game {
     // players
     public void playerAction(boolean left, SidePanelRow player) {
         if (player == null) {
-            Toast.makeText(context, context.getResources().getString(R.string.toast_select_players), Toast.LENGTH_SHORT).show();
+            listener.onShowToast(R.string.toast_select_players, Toast.LENGTH_SHORT);
             return;
         }
         if (left == leftIsHome) {
@@ -1447,7 +1454,7 @@ public class Game {
 
     public void checkCloseSidePanels() {
         if (!panels.closePanels()) {
-            Toast.makeText(context, context.getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
+            listener.onShowToast(R.string.side_panel_confirm, Toast.LENGTH_LONG);
         }
     }
 

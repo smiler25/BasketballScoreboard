@@ -107,88 +107,6 @@ public class CameraActivity extends AppCompatActivity implements
         }
     };
 
-    @Override
-    public void onPlayHorn() {
-
-    }
-
-    @Override
-    public void onNewGame(Game game) {
-
-    }
-
-    @Override
-    public BaseLayout onInitLayout() {
-        return null;
-    }
-
-    @Override
-    public void onConfirmDialog(String type) {
-
-    }
-
-    @Override
-    public void onWinDialog(String type, String team, int winScore, int loseScore) {
-
-    }
-
-    @Override
-    public void onShowTimeout(long seconds, String team) {
-
-    }
-
-    @Override
-    public void onSwitchSides(boolean show) {
-
-    }
-
-    @Override
-    public void onChangeScoreClick(int team) {
-        game.changeScore(team, 1);
-    }
-
-    @Override
-    public void onMainTimeClick() {
-        game.mainTimeClick();
-    }
-
-    @Override
-    public void onPeriodClick() {
-        game.newPeriod(true);
-    }
-
-    @Override
-    public void onShotTimeClick() {
-        game.shotTimeClick();
-    }
-
-    @Override
-    public void onTakePictureClick() {
-        camera.takePicture(null, null, picture);
-    }
-
-    @Override
-    public boolean onScoreLongClick(int team) {
-        game.nullScore(team);
-        return true;
-    }
-
-    @Override
-    public boolean onMainTimeLongClick() {
-        return true;
-    }
-
-    @Override
-    public boolean onPeriodLongClick() {
-        game.newPeriod(false);
-        return true;
-    }
-
-    @Override
-    public boolean onShotTimeLongClick() {
-        return true;
-    }
-
     private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         int degree, overlayW, overlayBottomMargin;
         ViewGroup view;
@@ -282,5 +200,92 @@ public class CameraActivity extends AppCompatActivity implements
             Toast.makeText(getApplication(), "Saved to " + path, Toast.LENGTH_LONG).show();
 //            camera.startPreview();
         }
+    }
+
+    @Override
+    public void onPlayHorn() {
+
+    }
+
+    @Override
+    public void onNewGame() {
+
+    }
+
+    @Override
+    public BaseLayout onInitLayout() {
+        return null;
+    }
+
+    @Override
+    public void onConfirmDialog(String type) {
+
+    }
+
+    @Override
+    public void onWinDialog(String type, String team, int winScore, int loseScore) {
+
+    }
+
+    @Override
+    public void onShowTimeout(long seconds, String team) {
+
+    }
+
+    @Override
+    public void onSwitchSides(boolean show) {
+
+    }
+
+    @Override
+    public void onChangeScoreClick(int team) {
+        game.changeScore(team, 1);
+    }
+
+    @Override
+    public void onMainTimeClick() {
+        game.mainTimeClick();
+    }
+
+    @Override
+    public void onPeriodClick() {
+        game.newPeriod(true);
+    }
+
+    @Override
+    public void onShotTimeClick() {
+        game.shotTimeClick();
+    }
+
+    @Override
+    public void onTakePictureClick() {
+        camera.takePicture(null, null, picture);
+    }
+
+    @Override
+    public boolean onScoreLongClick(int team) {
+        game.nullScore(team);
+        return true;
+    }
+
+    @Override
+    public boolean onMainTimeLongClick() {
+        return true;
+    }
+
+    @Override
+    public boolean onPeriodLongClick() {
+        game.newPeriod(false);
+        return true;
+    }
+
+    @Override
+    public boolean onShotTimeLongClick() {
+        return true;
+    }
+
+    @Override
+    public void onShowToast(int resId, int len) {
+        Toast.makeText(this, getResources().getString(resId), len).show();
     }
 }

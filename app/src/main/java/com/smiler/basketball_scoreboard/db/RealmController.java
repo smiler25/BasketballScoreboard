@@ -27,6 +27,12 @@ public class RealmController {
         return instance;
     }
 
+    public static void close() {
+        if (instance != null) {
+            instance.realm.close();
+        }
+    }
+
     public Realm getRealm() {
         return realm;
     }

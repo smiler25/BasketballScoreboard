@@ -56,8 +56,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import io.realm.Realm;
-
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_APP_UPDATES;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_CONFIRM;
@@ -85,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements
     private Drawer.Result drawer;
     private Preferences preferences;
     private Game game;
-    private Realm realm;
 
     private boolean doubleBackPressedFirst;
     private FloatingCountdownTimerDialog floatingDialog;
@@ -96,11 +93,6 @@ public class MainActivity extends AppCompatActivity implements
     private int whistleRepeats, hornRepeats, whistleLength, hornLength;
     private boolean whistlePressed, hornPressed;
     private SoundPool soundPool;
-    private static Context mainActivityContext;
-
-    public static Context getContext() {
-        return mainActivityContext;
-    }
 
     @Override
     public void onStop() {
@@ -126,15 +118,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (realm != null) {
-            realm.close();
-        }
+        RealmController.close();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainActivityContext = getApplicationContext();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         initSounds();
@@ -251,7 +240,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initGame() {
-        game = Game.newGame(this, initGameLayout(), this);
+        game = new Game(this, initGameLayout(), this);
+//        game = Game.newGame(this, initGameLayout(), this);
     }
 
     private BaseLayout initGameLayout() {
@@ -903,8 +893,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewGame(Game game) {
-        this.game = game;
+    public void onNewGame() {
+        initGame();
     }
 
     @Override
@@ -930,5 +920,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSwitchSides(boolean show) {
         showSwitchFragment(show);
+    }
+
+    @Override
+    public void onShowToast(int resId, int len) {
+        Toast.makeText(this, getResources().getString(resId), len).show();
     }
 }
