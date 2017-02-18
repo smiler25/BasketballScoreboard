@@ -30,6 +30,7 @@ public class RealmController {
     public static void close() {
         if (instance != null) {
             instance.realm.close();
+            instance = null;
         }
     }
 

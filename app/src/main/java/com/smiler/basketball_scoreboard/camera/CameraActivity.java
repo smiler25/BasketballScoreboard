@@ -19,12 +19,15 @@ import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
 import com.smiler.basketball_scoreboard.layout.CameraLayout;
 import com.smiler.basketball_scoreboard.models.Game;
+import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
+import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.TreeSet;
 
 import static com.smiler.basketball_scoreboard.Constants.GUEST;
 import static com.smiler.basketball_scoreboard.Constants.HOME;
@@ -32,7 +35,9 @@ import static com.smiler.basketball_scoreboard.Constants.HOME;
 public class CameraActivity extends AppCompatActivity implements
         Game.GameListener,
         CameraLayout.ClickListener,
-        CameraLayout.LongClickListener {
+        CameraLayout.LongClickListener,
+        SidePanelFragment.SidePanelListener
+{
 
     public static String TAG = "BS-CameraActivity";
     private Camera camera;
@@ -106,6 +111,21 @@ public class CameraActivity extends AppCompatActivity implements
             camera.startPreview();
         }
     };
+
+    @Override
+    public void onSidePanelClose(boolean left) {
+
+    }
+
+    @Override
+    public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
+
+    }
+
+    @Override
+    public void onSidePanelNoActive(boolean left) {
+
+    }
 
     private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         int degree, overlayW, overlayBottomMargin;
@@ -263,6 +283,11 @@ public class CameraActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onPlayerButtonClick(boolean left, SidePanelRow player) {
+        game.playerAction(left, player);
+    }
+
+    @Override
     public boolean onScoreLongClick(int team) {
         game.nullScore(team);
         return true;
@@ -281,6 +306,11 @@ public class CameraActivity extends AppCompatActivity implements
 
     @Override
     public boolean onShotTimeLongClick() {
+        return true;
+    }
+
+    public boolean onPlayerButtonLongClick(boolean left) {
+//        showListDialog(left);
         return true;
     }
 
