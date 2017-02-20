@@ -273,6 +273,9 @@ public class Game {
         if (PrefActivity.prefChangedRestart) {
             showDialog("new_game", false);
         } else if (PrefActivity.prefChangedNoRestart) {
+            if (PrefActivity.prefColorChanged && layout != null) {
+                layout.setColors();
+            }
             preferences.readNoRestart();
             if (preferences.fixLandscapeChanged) {
                 layout.handleScoresSize();

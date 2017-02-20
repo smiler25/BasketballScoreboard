@@ -47,12 +47,12 @@ public class Preferences {
     public short numRegularPeriods;
     private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
     public int whistleRepeats, hornRepeats, whistleLength, hornLength, hornUserRepeats;
-    private int defaultScoreColor;
+    private int defaultScoreColor, defaultTimeColor;
     public String hName, gName;
     public int dontAskNewGame;
 
     public enum Elements {
-        HSCORE, GSCORE;
+        HSCORE, GSCORE, MAIN_TIME, BACKGROUND;
     }
 
     private static Preferences instance;
@@ -70,6 +70,7 @@ public class Preferences {
         whistleLength = 190;
         hornLength = 850;
         defaultScoreColor = context.getResources().getColor(R.color.orange);
+        defaultTimeColor = context.getResources().getColor(R.color.red);
     }
 
     public Preferences read() {
@@ -166,6 +167,8 @@ public class Preferences {
                 return prefs.getInt(ColorPickerPreference.getKeyName(0), defaultScoreColor);
             case GSCORE:
                 return prefs.getInt(ColorPickerPreference.getKeyName(1), defaultScoreColor);
+            case MAIN_TIME:
+                return prefs.getInt(ColorPickerPreference.getKeyName(2), defaultTimeColor);
         }
         return Color.RED;
     }

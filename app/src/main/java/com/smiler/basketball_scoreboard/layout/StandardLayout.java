@@ -486,6 +486,9 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         if (gScoreView != null) {
             gScoreView.setTextColor(preferences.getColor(Preferences.Elements.GSCORE));
         }
+        if (mainTimeView != null) {
+            mainTimeView.setTextColor(preferences.getColor(Preferences.Elements.MAIN_TIME));
+        }
     }
 
 

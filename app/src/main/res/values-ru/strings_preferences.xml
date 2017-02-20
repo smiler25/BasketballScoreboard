@@ -110,6 +110,7 @@
     <string-array name="pref_custom_color_elements">
         <item>Счёт хозяев</item>
         <item>Счёт гостей</item>
+        <item>Основное время</item>
     </string-array>
 
     <!-- настройки звука -->

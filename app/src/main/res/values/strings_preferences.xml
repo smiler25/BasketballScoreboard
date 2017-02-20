@@ -82,6 +82,7 @@
     <string-array name="pref_custom_color_elements">
         <item>Home score</item>
         <item>Guest score</item>
+        <item>Main time</item>
     </string-array>
 
     <string name="pref_auto_save_save_results">Save result before start new game</string>
