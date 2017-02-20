@@ -1,5 +1,6 @@
 package com.smiler.basketball_scoreboard.camera;
 
+import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,80 +10,76 @@ import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
 import com.smiler.basketball_scoreboard.layout.CameraLayout;
 import com.smiler.basketball_scoreboard.models.Game;
-import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
-import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.TreeSet;
 
 import static com.smiler.basketball_scoreboard.Constants.GUEST;
 import static com.smiler.basketball_scoreboard.Constants.HOME;
 
-public class CameraActivity extends AppCompatActivity implements
-        Game.GameListener,
-        CameraLayout.ClickListener,
-        CameraLayout.LongClickListener,
-        SidePanelFragment.SidePanelListener {
+public class CameraViewFragment extends Fragment implements
+        CameraLayout.ClickListener, CameraLayout.LongClickListener {
 
-    public static String TAG = "BS-CameraActivity";
+    public static String TAG = "BS-CameraViewFragment";
+    private Preferences preferences;
+    private CameraView cameraView;
     private Camera camera;
     private Game game;
+    private BaseLayout layout;
+    private CameraFragmentListener listener;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        camera = getCameraInstance();
-        if (camera == null) {
-            Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
-            finish();
-        }
+    public interface CameraFragmentListener {
+        void onViewCreated(BaseLayout layout);
+        void onCameraPause();
+    }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        game = Game.getInstance(this);
-        game.setListener(this);
-        Preferences preferences = Preferences.getInstance(getApplicationContext());
-        preferences.read();
-        CameraView cameraView = new CameraView(this, camera);
-        BaseLayout layout = new CameraLayout(this, preferences, cameraView, this, this);
-        setContentView(layout);
-        game.setLayout(layout);
-        game.setCurrentState();
+    public static CameraViewFragment newInstance() {
+        return new CameraViewFragment();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (camera == null) {
-            finish();
-        }
-    }
-
-    @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         releaseCamera();
+        if (listener != null) {
+            listener.onCameraPause();
+        }
+
+    }
+
+    private void releaseCamera(){
+        if (camera != null){
+            camera.release();
+            camera = null;
+        }
     }
 
     @Override
-    public void finish() {
-        releaseCamera();
-        super.finish();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        camera = getCameraInstance();
+        cameraView = new CameraView(getActivity(), camera);
+        layout = new CameraLayout(getActivity(), preferences, cameraView, this, this);
+        return layout;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (listener != null) {
+            listener.onViewCreated(layout);
+        }
     }
 
     public static Camera getCameraInstance() {
@@ -95,36 +92,14 @@ public class CameraActivity extends AppCompatActivity implements
         return c;
     }
 
-    private void releaseCamera(){
-        if (camera != null){
-            camera.release();
-            camera = null;
-        }
-    }
-
     private Camera.PictureCallback picture = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 //            android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
-            new SaveImageTask(getWindowManager().getDefaultDisplay().getRotation()).execute(data);
+            new SaveImageTask(getActivity().getWindowManager().getDefaultDisplay().getRotation()).execute(data);
             camera.startPreview();
         }
     };
-
-    @Override
-    public void onSidePanelClose(boolean left) {
-
-    }
-
-    @Override
-    public void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left) {
-
-    }
-
-    @Override
-    public void onSidePanelNoActive(boolean left) {
-
-    }
 
     private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         int degree, overlayW, overlayBottomMargin;
@@ -152,7 +127,7 @@ public class CameraActivity extends AppCompatActivity implements
         @Override
         protected void onPreExecute() {
             String res_type = getResources().getString(R.string.res_type);
-            view = (ViewGroup) findViewById(R.id.camera_line);
+            view = (ViewGroup) layout.findViewById(R.id.camera_line);
             overlayW = view.getWidth();
             int h = view.getHeight();
             if (res_type.equals("port") && (degree == 90 || degree == 270)) {
@@ -173,7 +148,7 @@ public class CameraActivity extends AppCompatActivity implements
             mtx.setRotate(degree);
 
             Point size = new Point();
-            getWindowManager().getDefaultDisplay().getSize(size);
+            getActivity().getWindowManager().getDefaultDisplay().getSize(size);
             int h = size.x > size.y ? size.y : size.x;
             int w = (int)((float) cameraBitmap.getWidth() / cameraBitmap.getHeight() * h);
 
@@ -205,7 +180,7 @@ public class CameraActivity extends AppCompatActivity implements
                 finalImage.compress(Bitmap.CompressFormat.JPEG, 95, fos);
                 fos.close();
             } catch (IOException e) {
-                Toast.makeText(getApplication(), "Can't save picture", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplication(), "Can't save picture", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "Error while saving picture: " + e.getMessage());
                 return null;
             }
@@ -216,44 +191,18 @@ public class CameraActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(Void result) {
-            Toast.makeText(getApplication(), "Saved to " + path, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Saved to " + path, Toast.LENGTH_LONG).show();
 //            camera.startPreview();
         }
     }
 
-    @Override
-    public void onPlayHorn() {
 
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 
-    @Override
-    public void onNewGame() {
-
-    }
-
-    @Override
-    public BaseLayout onInitLayout() {
-        return null;
-    }
-
-    @Override
-    public void onConfirmDialog(String type) {
-
-    }
-
-    @Override
-    public void onWinDialog(String type, String team, int winScore, int loseScore) {
-
-    }
-
-    @Override
-    public void onShowTimeout(long seconds, String team) {
-
-    }
-
-    @Override
-    public void onSwitchSides(boolean show) {
-
+    public void setCameraView(CameraView view) {
+        cameraView = view;
     }
 
     @Override
@@ -303,8 +252,11 @@ public class CameraActivity extends AppCompatActivity implements
         return true;
     }
 
-    @Override
-    public void onShowToast(int resId, int len) {
-        Toast.makeText(this, getResources().getString(resId), len).show();
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public void setListener(CameraFragmentListener listener) {
+        this.listener = listener;
     }
 }

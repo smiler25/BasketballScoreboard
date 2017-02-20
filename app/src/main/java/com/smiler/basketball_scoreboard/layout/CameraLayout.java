@@ -2,31 +2,23 @@ package com.smiler.basketball_scoreboard.layout;
 
 import android.content.Context;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.camera.CameraView;
-import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import static com.smiler.basketball_scoreboard.Constants.API16_TIME_REGEX;
 import static com.smiler.basketball_scoreboard.Constants.FORMAT_TWO_DIGITS;
 import static com.smiler.basketball_scoreboard.Constants.GUEST;
 import static com.smiler.basketball_scoreboard.Constants.HOME;
-import static com.smiler.basketball_scoreboard.Constants.LEFT;
 import static com.smiler.basketball_scoreboard.Constants.LONG_CLICK_VIBE_PAT;
-import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
 import static com.smiler.basketball_scoreboard.models.Game.GAME_TYPE.SIMPLE;
@@ -42,10 +34,6 @@ public class CameraLayout extends BaseLayout implements
     private TextView hNameView, gNameView;
     private TextView hScoreView, gScoreView;
     private Vibrator vibrator;
-    private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
-    private ArrayList<View> leftPlayersButtons = new ArrayList<>();
-    private ArrayList<View> rightPlayersButtons = new ArrayList<>();
-    private Button longClickPlayerBu;
 
     private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
 
@@ -55,7 +43,6 @@ public class CameraLayout extends BaseLayout implements
         void onPeriodClick();
         void onShotTimeClick();
         void onTakePictureClick();
-        void onPlayerButtonClick(boolean left, SidePanelRow row);
     }
 
     public interface LongClickListener {
@@ -63,7 +50,6 @@ public class CameraLayout extends BaseLayout implements
         boolean onMainTimeLongClick();
         boolean onPeriodLongClick();
         boolean onShotTimeLongClick();
-        boolean onPlayerButtonLongClick(boolean left);
     }
 
     @Override
@@ -169,87 +155,7 @@ public class CameraLayout extends BaseLayout implements
         hNameView.setOnLongClickListener(this);
         gNameView.setOnLongClickListener(this);
 
-        if (preferences.spOn) {
-            initPlayersButtons();
-        }
-
         return this;
-    }
-
-
-    private void initPlayersButtons() {
-        try {
-            ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
-            ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
-            leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons);
-            leftPlayersStub.inflate();
-            rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons);
-            rightPlayersStub.inflate();
-            findViewById(R.id.left_panel_toggle).setOnClickListener(this);
-            findViewById(R.id.right_panel_toggle).setOnClickListener(this);
-
-            leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
-            leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
-            for (View bu : leftPlayersButtons) {
-                attachLeftButton(bu);
-            }
-
-            rightPlayersButtonsGroup = (ViewGroup) findViewById(R.id.right_panel);
-            rightPlayersButtons = getAllButtons(rightPlayersButtonsGroup);
-            for (View bu : rightPlayersButtons) {
-                attachRightButton(bu);
-            }
-        } catch (NullPointerException e) {
-            Log.e(TAG, "Unable to initiate side panels");
-        }
-    }
-
-    private ArrayList<View> getAllButtons(ViewGroup group) {
-        ArrayList<View> res = new ArrayList<>();
-        View button;
-        for (int i = 0; i < group.getChildCount(); i++) {
-            button = group.getChildAt(i);
-            if (button instanceof Button) {
-                res.add(button);
-            } else if (button instanceof ViewGroup) {
-                res.addAll(getAllButtons((ViewGroup) button));
-            }
-        }
-        return res;
-    }
-
-    private void attachLeftButton(View button) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag());
-            }
-        });
-        button.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                longClickPlayerBu = (Button) v;
-                longClickListener.onPlayerButtonLongClick(LEFT);
-                return false;
-            }
-        });
-    }
-
-    private void attachRightButton(View button) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag());
-            }
-        });
-        button.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                longClickPlayerBu = (Button) v;
-                longClickListener.onPlayerButtonLongClick(RIGHT);
-                return false;
-            }
-        });
     }
 
 

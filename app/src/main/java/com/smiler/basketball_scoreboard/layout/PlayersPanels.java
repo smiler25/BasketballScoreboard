@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.widget.LinearLayout;
 
 import com.smiler.basketball_scoreboard.OverlayFragment;
 import com.smiler.basketball_scoreboard.R;
@@ -23,16 +22,16 @@ import static com.smiler.basketball_scoreboard.Constants.OVERLAY_PANELS;
 import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 
 
-public class PlayersPanels extends LinearLayout {
-
+public class PlayersPanels {
     public static final String TAG = "BS-PlayersPanels";
     private final Preferences preferences;
     private SidePanelFragment leftPanel, rightPanel;
     private OverlayFragment overlayPanels;
     private FragmentManager fragmentManager;
+    private Context context;
 
     public PlayersPanels(Context context, Preferences preferences) {
-        super(context);
+        this.context = context;
         this.preferences = preferences;
         fragmentManager = ((Activity) context).getFragmentManager();
         init();
@@ -107,7 +106,7 @@ public class PlayersPanels extends LinearLayout {
         }
 
         addLeftToTransaction(ft);
-        if (preferences.spConnected && getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+        if (preferences.spConnected && context.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
             addRightToTransaction(ft);
         }
         ft.addToBackStack(null).commit();
@@ -126,7 +125,7 @@ public class PlayersPanels extends LinearLayout {
         }
 
         addRightToTransaction(ft);
-        if (preferences.spConnected && getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+        if (preferences.spConnected && context.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
             addLeftToTransaction(ft);
         }
         ft.addToBackStack(null).commit();
@@ -255,6 +254,9 @@ public class PlayersPanels extends LinearLayout {
         if (rightPanel != null) {
             rightPanel.saveCurrentData();
         }
+    }
 
+    public void clearSavedState() {
+        SidePanelFragment.clearCurrentData();
     }
 }

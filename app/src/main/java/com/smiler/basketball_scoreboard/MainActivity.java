@@ -32,6 +32,7 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.camera.CameraActivity;
+import com.smiler.basketball_scoreboard.camera.CameraViewFragment;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
         Game.GameListener,
         ClickListener,
         LongClickListener,
+        CameraViewFragment.CameraFragmentListener,
         ConfirmDialog.ConfirmDialogListener,
         Drawer.OnDrawerItemClickListener,
         EditPlayerDialog.OnPanelsListener,
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         handleOrientation();
-//         System.out.println("res_type = " + getResources().getString(R.string.res_type));
+//        System.out.println("res_type = " + getResources().getString(R.string.res_type));
         if (game != null) {
             game.resumeGame();
             game.setListener(this);
@@ -240,13 +242,21 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initGame() {
-        game = new Game(this, initGameLayout(), this);
-//        game = Game.newGame(this, initGameLayout(), this);
+        game = Game.newGame(this, initGameLayout(), this);
+        initDrawer();
     }
 
     private BaseLayout initGameLayout() {
         layout = new StandardLayout(this, preferences, this, this);
         setContentView(layout);
+//        setContentView(R.layout.activity_main);
+//        StandardViewFragment frag = StandardViewFragment.newInstance(R.layout.help_main_fragment);
+//        frag.setPreferences(preferences);
+//        frag.setLayout(layout);
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        ft.add(R.id.board_central_stub, frag)
+//          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//          .commit();
         return layout;
     }
 
@@ -352,6 +362,23 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
+    private void addCameraView() {
+        if (!checkCameraHardware(this)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
+            return;
+        }
+        CameraViewFragment cameraFrag = CameraViewFragment.newInstance();
+        cameraFrag.setPreferences(preferences);
+        cameraFrag.setGame(game);
+        cameraFrag.setListener(this);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.layout, cameraFrag)
+//                .add(R.id.board_central, cameraFrag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+    }
+
     private void runHelpActivity() {
         startActivity(new Intent(this, HelpActivity.class));
     }
@@ -362,6 +389,11 @@ public class MainActivity extends AppCompatActivity implements
             drawer.closeDrawer();
             return;
         }
+        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+            getFragmentManager().popBackStack();
+            return;
+        }
+
 
         if (preferences.playByPlay != 0 && game != null && game.cancelLastAction()) {
             return;
@@ -808,7 +840,8 @@ public class MainActivity extends AppCompatActivity implements
     public void onIconClick(StandardLayout.ICONS icon) {
         switch (icon) {
             case CAMERA:
-                runCameraActivity();
+                addCameraView();
+//                runCameraActivity();
                 break;
             case HORN:
                 playHorn();
@@ -925,5 +958,15 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onShowToast(int resId, int len) {
         Toast.makeText(this, getResources().getString(resId), len).show();
+    }
+
+    @Override
+    public void onViewCreated(BaseLayout layout) {
+        game.setLayout(layout);
+    }
+
+    @Override
+    public void onCameraPause() {
+        game.setLayout(layout);
     }
 }

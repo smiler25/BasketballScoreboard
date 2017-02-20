@@ -202,7 +202,12 @@ public class Game {
         init(context);
     }
 
-    public Game(Context context, BaseLayout layout, GameListener listener) {
+    public static Game newGame(Context context, BaseLayout layout, GameListener listener) {
+        instance = new Game(context, layout, listener);
+        return instance;
+    }
+
+    private Game(Context context, BaseLayout layout, GameListener listener) {
         this.layout = layout;
         this.listener = listener;
         init(context);
@@ -213,6 +218,7 @@ public class Game {
 
         if (preferences.saveOnExit) {
             getSavedState();
+            setCurrentState();
         }
     }
 
@@ -250,6 +256,7 @@ public class Game {
 
     public void setLayout(BaseLayout layout) {
         this.layout = layout;
+        setCurrentState();
     }
 
     public void setListener(GameListener listener) {
@@ -313,9 +320,16 @@ public class Game {
         }
     }
 
+    private void clearSavedState() {
+        statePref.edit().clear().apply();
+        if (preferences.spOn && panels != null) {
+            panels.clearSavedState();
+        }
+    }
+
     private void getSavedState() {
-        shotTime = statePref.getLong(STATE_SHOT_TIME, 24 * SECOND);
-        mainTime = totalTime = statePref.getLong(STATE_MAIN_TIME, 600 * SECOND);
+        shotTime = statePref.getLong(STATE_SHOT_TIME, preferences.shotTimePref);
+        mainTime = totalTime = statePref.getLong(STATE_MAIN_TIME, preferences.mainTimePref);
         period = (short) statePref.getInt(STATE_PERIOD, 1);
         hScore = (short) statePref.getInt(STATE_HOME_SCORE, 0);
         gScore = (short) statePref.getInt(STATE_GUEST_SCORE, 0);
@@ -336,10 +350,9 @@ public class Game {
     }
 
     public void setCurrentState() {
-        layout.setMainTimeText(mainTime);
+        setTeamNames();
         layout.setHomeScore(hScore);
         layout.setGuestScore(gScore);
-        setTeamNames();
 
         if (preferences.layoutType == GAME_TYPE.COMMON) {
             if (preferences.enableShotTime) {
@@ -358,6 +371,7 @@ public class Game {
                 layout.setGuestTimeouts20(Short.toString(gTimeouts20), noTimeouts(gTimeouts20));
             }
         }
+        layout.setMainTimeText(mainTime);
         if (preferences.arrowsOn) { setPossession(possession); }
     }
 
@@ -408,6 +422,7 @@ public class Game {
         } else if (preferences.autoSaveResults == 2) {
             showDialog("save_result", false);
         }
+        clearSavedState();
     }
 
     private void save() {
