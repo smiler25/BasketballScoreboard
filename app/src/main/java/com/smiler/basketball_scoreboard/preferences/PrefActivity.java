@@ -14,9 +14,6 @@ import android.widget.LinearLayout;
 import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class PrefActivity extends Activity implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         SetDefaultPreference.SetDefaultDialogListener,
@@ -81,7 +78,7 @@ public class PrefActivity extends Activity implements
 
     private SharedPreferences prefs;
     private Toolbar toolbar;
-    private final List<String> restartPrefs = Arrays.asList(PREF_TIMEOUTS_RULES, PREF_LAYOUT, PREF_DIRECT_TIMER);
+//    private final List<String> restartPrefs = Arrays.asList(PREF_DIRECT_TIMER);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,17 +117,21 @@ public class PrefActivity extends Activity implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (restartPrefs.contains(key)) {
-            prefChangedRestart = true;
-        } else if (key.equals(PREF_OFFICIAL_RULES)){
-            setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
-        } else {
-            prefChangedNoRestart = true;
-            if (key.equals(PREF_SIDE_PANELS_FOULS_MAX) && !playerRulesDefault) {
-                setPlayerCustomFoulsRules();
-            } else if (key.equals(PREF_SIDE_PANELS_FOULS_RULES)) {// && prefs.getString(PREF_SIDE_PANELS_FOULS_RULES, DEFAULT_SIDE_PANEL_FOULS_RULES).equals(DEFAULT_SIDE_PANEL_FOULS_RULES)) {
-                setPlayerDefaultFouls();
-            }
+        switch (key) {
+            case PREF_DIRECT_TIMER:
+                prefChangedRestart = true;
+                break;
+            case PREF_OFFICIAL_RULES:
+                setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
+                break;
+            default:
+                prefChangedNoRestart = true;
+                if (key.equals(PREF_SIDE_PANELS_FOULS_MAX) && !playerRulesDefault) {
+                    setPlayerCustomFoulsRules();
+                } else if (key.equals(PREF_SIDE_PANELS_FOULS_RULES)) {// && prefs.getString(PREF_SIDE_PANELS_FOULS_RULES, DEFAULT_SIDE_PANEL_FOULS_RULES).equals(DEFAULT_SIDE_PANEL_FOULS_RULES)) {
+                    setPlayerDefaultFouls();
+                }
+                break;
         }
     }
 

@@ -42,25 +42,30 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.2.6:\n
+          - technical update (contact me in case of problems);\n
+          - change layout or timeout rules does not require starting new game;\n
+          - custom color for main time;\n
+          - application left navigation panel in camera mode.\n
         v.2.5:\n
-            - updated library which caused app (v.2.4) crash;\n
-            - custom colours (yet only team scores) (open settings);\n
-            - fixed possession arrows state after restart or rotation.\n
+          - updated library which caused app (v.2.4) crash;\n
+          - custom colors (yet only team scores) (open settings);\n
+          - fixed possession arrows state after restart or rotation.\n
         v.2.4:\n
-            - save data storage format changed (contact me if you lost games results);\n
-            - fixed setting maximum team fouls.\n
-            - some other bug fixes and improvements.\n
+          - save data storage format changed (contact me if you lost games results);\n
+          - fixed setting maximum team fouls.\n
+          - some other bug fixes and improvements.\n
         v.2.3:\n
-            - Undo last actions and save play-by-play history (open settings).\n
+          - Undo last actions and save play-by-play history (open settings).\n
         v.2.2:\n
-            - portrait orientation;\n
-            - possession arrows;\n
-            - fix the bug of non-closing panels.\n
+          - portrait orientation;\n
+          - possession arrows;\n
+          - fix the bug of non-closing panels.\n
         v.2.1:\n
-            - switch sides.\n
+          - switch sides.\n
         v.2.0:\n
-            - new help;\n
-            - players panels (see help).\n
+          - new help;\n
+          - players panels (see help).\n
     </string>
 
     <string-array name="help_activity_values">

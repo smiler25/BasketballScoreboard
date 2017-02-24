@@ -243,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void initGame() {
         game = Game.newGame(this, initGameLayout(), this);
-        initDrawer();
     }
 
     private BaseLayout initGameLayout() {
@@ -257,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements
 //        ft.add(R.id.board_central_stub, frag)
 //          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 //          .commit();
+        initDrawer();
         return layout;
     }
 

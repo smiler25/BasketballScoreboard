@@ -188,17 +188,6 @@ public class Game {
 //    }
 
     private Game(Context context) {
-        if (listener != null) {
-            if (layout != null) {
-                if (preferences.layoutChanged || preferences.timeoutsRulesChanged) {
-                    layout = listener.onInitLayout();
-                } else {
-                    layout.zeroState();
-                }
-            } else  {
-                layout = listener.onInitLayout();
-            }
-        }
         init(context);
     }
 
@@ -226,6 +215,17 @@ public class Game {
         statePref = ((Activity)context).getPreferences(Context.MODE_PRIVATE);
         preferences = Preferences.getInstance(context);
         preferences.read();
+        if (listener != null) {
+            if (layout != null) {
+                if (preferences.layoutChanged || preferences.timeoutsRulesChanged) {
+                    layout = listener.onInitLayout();
+                } else {
+                    layout.zeroState();
+                }
+            } else  {
+                layout = listener.onInitLayout();
+            }
+        }
         handleNames();
         gameResult = new Result(hName, gName);
         if (preferences.spOn && panels == null) {
@@ -277,6 +277,14 @@ public class Game {
                 layout.setColors();
             }
             preferences.readNoRestart();
+            if ((preferences.layoutChanged || preferences.timeoutsRulesChanged)&& listener != null) {
+                layout = listener.onInitLayout();
+                if (preferences.timeoutsRulesChanged) {
+                    setTimeouts();
+                }
+                preferences.layoutChanged = false;
+                preferences.timeoutsRulesChanged = false;
+            }
             if (preferences.fixLandscapeChanged) {
                 layout.handleScoresSize();
                 preferences.fixLandscapeChanged = false;

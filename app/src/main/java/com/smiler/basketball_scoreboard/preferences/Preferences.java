@@ -134,25 +134,26 @@ public class Preferences {
             arrowsOn = arrowsOn_;
         }
 
-        PrefActivity.prefChangedNoRestart = false;
-        if (PrefActivity.prefColorChanged) {
-            PrefActivity.prefColorChanged = false;
-        }
-        return this;
-    }
-
-    private Preferences readRestart() {
         Game.GAME_TYPE temp = Game.GAME_TYPE.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
         if (temp != layoutType) {
             layoutChanged = true;
             layoutType = temp;
         }
-        useDirectTimer = prefs.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         Game.TO_RULES temp_rules = Game.TO_RULES.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, "0")));
         if (temp_rules != timeoutRules) {
             timeoutsRulesChanged = true;
             timeoutRules = temp_rules;
         }
+        PrefActivity.prefChangedNoRestart = false;
+        if (PrefActivity.prefColorChanged) {
+            PrefActivity.prefColorChanged = false;
+        }
+
+        return this;
+    }
+
+    private Preferences readRestart() {
+        useDirectTimer = prefs.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         PrefActivity.prefChangedRestart = false;
         return this;
     }
