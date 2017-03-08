@@ -213,11 +213,11 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             case COMMON:
             case FIBA:
             case NBA:
-                LayoutInflater.from(context).inflate(R.layout.activity_main, this);
+                LayoutInflater.from(context).inflate(R.layout.board_layout, this);
                 initExtended();
                 break;
             case SIMPLE:
-                LayoutInflater.from(context).inflate(R.layout.activity_main_simple, this);
+                LayoutInflater.from(context).inflate(R.layout.board_layout_simple, this);
                 initSimple();
                 break;
         }

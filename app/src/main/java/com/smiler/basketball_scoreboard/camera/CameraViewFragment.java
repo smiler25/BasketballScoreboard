@@ -34,6 +34,7 @@ public class CameraViewFragment extends Fragment implements
         CameraLayout.ClickListener, CameraLayout.LongClickListener {
 
     public static String TAG = "BS-CameraViewFragment";
+    public static final String FRAGMENT_TAG = "CameraFragment";
     private Preferences preferences;
     private CameraView cameraView;
     private Camera camera;

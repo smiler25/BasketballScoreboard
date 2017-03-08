@@ -11,7 +11,8 @@ import com.smiler.basketball_scoreboard.preferences.Preferences;
 public class StandardViewFragment extends Fragment implements
         CameraLayout.ClickListener, CameraLayout.LongClickListener {
 
-    public static String TAG = "BS-CameraViewFragment";
+    public static String TAG = "BS-StandardFragment";
+    public static final String FRAGMENT_TAG = "StandardFragment";
     private Preferences preferences;
     private BaseLayout layout;
 

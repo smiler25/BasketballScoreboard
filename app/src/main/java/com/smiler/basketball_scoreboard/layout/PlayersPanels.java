@@ -46,12 +46,15 @@ public class PlayersPanels {
         overlayPanels.setRetainInstance(true);
         preferences.spStateChanged = false;
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.left_panel_full, leftPanel, SidePanelFragment.TAG_LEFT_PANEL);
-        ft.add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL);
-        ft.hide(leftPanel).hide(rightPanel);
-        ft.addToBackStack(null).commit();
+        ft
+          .add(R.id.left_panel_full, leftPanel, SidePanelFragment.TAG_LEFT_PANEL)
+          .add(R.id.right_panel_full, rightPanel, SidePanelFragment.TAG_RIGHT_PANEL)
+          .hide(leftPanel)
+          .hide(rightPanel)
+          .addToBackStack(null)
+          .commit();
         return this;
-    };
+    }
 
     public void saveInstanceState(Bundle outState){
         if (overlayPanels != null && overlayPanels.isAdded()) {

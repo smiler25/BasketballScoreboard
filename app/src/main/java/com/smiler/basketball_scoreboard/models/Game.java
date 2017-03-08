@@ -164,41 +164,28 @@ public class Game {
         return instance;
     }
 
-//    private void reset() {
-//        mainTimerOn = shotTimerOn = false;
-//        directTimerStopped = true;
-//        possession = NO_TEAM;
-//        mainTime = preferences.mainTimePref;
-//        shotTime = preferences.shotTimePref;
-//        nullScores();
-//        nullFouls();
-//        nullTimeouts(true);
-//        nullTimeouts(false);
-//        clearPossession();
-//        period = 1;
-//        leftIsHome = true;
-//        mainTickInterval = shotTickInterval = SECOND;
-//        changedUnder2Minutes = false;
-//        scoreSaved = false;
-//        timesTie = 1;
-//        timesLeadChanged = 0;
-//        hMaxLead = gMaxLead = 0;
-//        hActionType = gActionType = ACTION_NONE;
-//        hActionValue = gActionValue = 0;
-//    }
-
     private Game(Context context) {
         init(context);
     }
 
-    public static Game newGame(Context context, BaseLayout layout, GameListener listener) {
-        instance = new Game(context, layout, listener);
+    public static Game newGame(Context context, GameListener listener, BaseLayout layout) {
+        instance = new Game(context, listener, layout);
         return instance;
     }
 
-    private Game(Context context, BaseLayout layout, GameListener listener) {
+    public static Game newGame(Context context, GameListener listener, BaseLayout layout, PlayersPanels panels) {
+        instance = new Game(context, listener, layout, panels);
+        return instance;
+    }
+
+    private Game(Context context, GameListener listener, BaseLayout layout) {
+        this(context, listener, layout, null);
+    }
+
+    private Game(Context context, GameListener listener, BaseLayout layout, PlayersPanels panels) {
         this.layout = layout;
         this.listener = listener;
+        this.panels = panels;
         init(context);
         if (preferences.layoutType != GAME_TYPE.SIMPLE) {
             newPeriod(false);
@@ -228,9 +215,6 @@ public class Game {
         }
         handleNames();
         gameResult = new Result(hName, gName);
-        if (preferences.spOn && panels == null) {
-            panels = new PlayersPanels(context, preferences);
-        }
         leftIsHome = true;
     }
 

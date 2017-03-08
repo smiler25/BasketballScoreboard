@@ -3,17 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:id="@+id/layout"
     >
-    <include
-        android:id="@+id/board_layout"
-        layout="@layout/board_layout"
-        />
+
+    <FrameLayout
+        android:id="@+id/board_layout_place"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <include
         android:id="@+id/side_panels_and_overlay"
         layout="@layout/side_panels_and_overlay"
         />
-
 </RelativeLayout>

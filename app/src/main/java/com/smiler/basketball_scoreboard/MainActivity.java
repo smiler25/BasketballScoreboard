@@ -31,7 +31,6 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.smiler.basketball_scoreboard.camera.CameraActivity;
 import com.smiler.basketball_scoreboard.camera.CameraViewFragment;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
@@ -43,7 +42,9 @@ import com.smiler.basketball_scoreboard.help.HelpActivity;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
 import com.smiler.basketball_scoreboard.layout.ClickListener;
 import com.smiler.basketball_scoreboard.layout.LongClickListener;
+import com.smiler.basketball_scoreboard.layout.PlayersPanels;
 import com.smiler.basketball_scoreboard.layout.StandardLayout;
+import com.smiler.basketball_scoreboard.layout.StandardViewFragment;
 import com.smiler.basketball_scoreboard.models.Game;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
@@ -85,12 +86,12 @@ public class MainActivity extends AppCompatActivity implements
     private Drawer.Result drawer;
     private Preferences preferences;
     private Game game;
-
-    private boolean doubleBackPressedFirst;
+    private BaseLayout layout;
+    private PlayersPanels panels;
     private FloatingCountdownTimerDialog floatingDialog;
     private OverlayFragment overlaySwitch;
-    private BaseLayout layout;
 
+    private boolean doubleBackPressedFirst;
     private int soundWhistleId, soundHornId, soundWhistleStreamId, soundHornStreamId;
     private int whistleRepeats, hornRepeats, whistleLength, hornLength;
     private boolean whistlePressed, hornPressed;
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_main);
         initSounds();
 
         preferences = Preferences.getInstance(getApplicationContext());
@@ -211,8 +213,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
+        FragmentManager fm = getFragmentManager();
         if (overlaySwitch != null && overlaySwitch.isAdded()) {
-            getFragmentManager().putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
+            fm.putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
+        }
+
+        Fragment layout = fm.getFragment(outState, StandardViewFragment.FRAGMENT_TAG);
+        Fragment cameraLayout = fm.getFragment(outState, CameraViewFragment.FRAGMENT_TAG);
+
+        if (layout != null && layout.isAdded()) {
+            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, layout);
+        }
+        if (cameraLayout != null && cameraLayout.isAdded()) {
+            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, cameraLayout);
         }
         if (game != null) {
             game.saveInstanceState(outState);
@@ -242,22 +255,32 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initGame() {
-        game = Game.newGame(this, initGameLayout(), this);
+        if (preferences.spOn) {
+            if (panels == null) {
+                initPlayersPanels();
+            }
+            game = Game.newGame(this, this, initGameLayout(), panels);
+        } else {
+            game = Game.newGame(this, this, initGameLayout());
+        }
     }
 
     private BaseLayout initGameLayout() {
         layout = new StandardLayout(this, preferences, this, this);
-        setContentView(layout);
-//        setContentView(R.layout.activity_main);
-//        StandardViewFragment frag = StandardViewFragment.newInstance(R.layout.help_main_fragment);
-//        frag.setPreferences(preferences);
-//        frag.setLayout(layout);
-//        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//        ft.add(R.id.board_central_stub, frag)
-//          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//          .commit();
-        initDrawer();
+        StandardViewFragment frag = StandardViewFragment.newInstance(R.layout.help_main_fragment);
+        frag.setRetainInstance(true);
+        frag.setPreferences(preferences);
+        frag.setLayout(layout);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.board_layout_place, frag, StandardViewFragment.FRAGMENT_TAG)
+          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+          .commit();
         return layout;
+    }
+
+    private PlayersPanels initPlayersPanels() {
+        panels = new PlayersPanels(this, preferences);
+        return panels;
     }
 
     private void startNewGame(boolean save) {
@@ -268,9 +291,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initElements() {
+        initDrawer();
         overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
         overlaySwitch.setRetainInstance(true);
-        initDrawer();
     }
 
     private void initSounds() {
@@ -353,28 +376,19 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
-    private void runCameraActivity() {
-        if (!checkCameraHardware(this)) {
-            Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
-            return;
-        }
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivity(intent);
-    }
-
     private void addCameraView() {
         if (!checkCameraHardware(this)) {
             Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
             return;
         }
         CameraViewFragment cameraFrag = CameraViewFragment.newInstance();
+        cameraFrag.setRetainInstance(true);
         cameraFrag.setPreferences(preferences);
         cameraFrag.setGame(game);
         cameraFrag.setListener(this);
         getFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .add(R.id.layout, cameraFrag)
-//                .add(R.id.board_central, cameraFrag)
+                .add(R.id.board_layout_place, cameraFrag, CameraViewFragment.FRAGMENT_TAG)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
@@ -393,7 +407,6 @@ public class MainActivity extends AppCompatActivity implements
             getFragmentManager().popBackStack();
             return;
         }
-
 
         if (preferences.playByPlay != 0 && game != null && game.cancelLastAction()) {
             return;
@@ -704,13 +717,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConfirmDialogNegative(String type, boolean dontShow) {
         preferences.setDontAskNewGame(dontShow ? 1 : 0);
+        startNewGame(false);
     }
 
     @Override
     public void onConfirmDialogNegative(String type) {
-//        if (type.equals("save_result")) {
-//            newGame();
-//        }
+        if (type.equals("save_result")) {
+            startNewGame(false);
+        }
     }
 
     @Override
@@ -967,6 +981,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onCameraPause() {
+        getFragmentManager().popBackStack();
         game.setLayout(layout);
     }
 }
