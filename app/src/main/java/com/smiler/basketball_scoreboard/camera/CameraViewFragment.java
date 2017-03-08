@@ -54,15 +54,18 @@ public class CameraViewFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+        finish();
+    }
+
+    private void finish() {
         releaseCamera();
         if (listener != null) {
             listener.onCameraPause();
         }
-
     }
-
     private void releaseCamera(){
         if (camera != null){
+            camera.stopPreview();
             camera.release();
             camera = null;
         }
@@ -71,6 +74,12 @@ public class CameraViewFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         camera = getCameraInstance();
+        if (camera == null) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
+            finish();
+            return null;
+        }
+
         cameraView = new CameraView(getActivity(), camera);
         layout = new CameraLayout(getActivity(), preferences, cameraView, this, this);
         return layout;
@@ -84,13 +93,12 @@ public class CameraViewFragment extends Fragment implements
     }
 
     public static Camera getCameraInstance() {
-        Camera c = null;
         try {
-            c = Camera.open();
+            return Camera.open();
         } catch (Exception e) {
-            Log.d(TAG, "getCameraInstance error" + e);
+            Log.d(TAG, "getCameraInstance error: " + e);
         }
-        return c;
+        return null;
     }
 
     private Camera.PictureCallback picture = new Camera.PictureCallback() {
@@ -200,10 +208,6 @@ public class CameraViewFragment extends Fragment implements
 
     public void setPreferences(Preferences preferences) {
         this.preferences = preferences;
-    }
-
-    public void setCameraView(CameraView view) {
-        cameraView = view;
     }
 
     @Override

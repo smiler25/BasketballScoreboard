@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.smiler.basketball_scoreboard" >
 
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
 
     <application
         android:name=".ScoreboardApplication"
@@ -50,11 +51,6 @@
             android:theme="@style/SecondaryTheme" >
         </activity>
 
-        <activity
-            android:name=".camera.CameraActivity"
-            android:label="CameraActivity"
-            >
-        </activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
              com.smiler.basketball_scoreboard.App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

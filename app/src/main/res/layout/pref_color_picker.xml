@@ -57,8 +57,8 @@
                 android:text="@string/action_reset"
                 style="?android:attr/buttonStyleSmall"
                 />
-
         </LinearLayout>
+
         <com.smiler.basketball_scoreboard.elements.CustomFontTextView
             android:id="@+id/color_picker_preview"
             style="@style/ledDigits"
@@ -81,12 +81,10 @@
                 />
             <SeekBar
                 android:id="@+id/seekbar_red"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="10"
-                android:layout_gravity="center_horizontal"
+                style="@style/colorPreferenceSeekbar"
                 />
         </LinearLayout>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -99,12 +97,10 @@
                 />
             <SeekBar
                 android:id="@+id/seekbar_green"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="10"
-                android:layout_gravity="center_horizontal"
+                style="@style/colorPreferenceSeekbar"
                 />
         </LinearLayout>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -117,10 +113,7 @@
                 />
             <SeekBar
                 android:id="@+id/seekbar_blue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="10"
-                android:layout_gravity="center_horizontal"
+                style="@style/colorPreferenceSeekbar"
                 />
         </LinearLayout>
     </LinearLayout>

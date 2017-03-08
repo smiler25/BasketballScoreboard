@@ -33,7 +33,8 @@ public class Preferences {
     public int playByPlay;
     public boolean fixLandscape, fixLandscapeChanged;
     public boolean layoutChanged, timeoutsRulesChanged;
-    public boolean autoShowTimeout, autoShowBreak, autoSwitchSides;
+    public boolean autoShowTimeout, autoShowBreak;
+    public boolean autoSwitchSides;
     public boolean saveOnExit, pauseOnSound, vibrationOn;
     public boolean enableShotTime, shotTimePrefChanged, restartShotTimer;
     public boolean enableShortShotTime;

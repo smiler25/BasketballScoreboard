@@ -72,8 +72,9 @@
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
         v.2.6.1:\n
-          - fixed some problems related to camera mode;\n
-          - added privacy policy (see help).\n
+          - fixed some problems with camera mode;\n
+          - added privacy policy (see help);\n
+          - changed horn sound.\n
         v.2.6:\n
           - technical update (contact me in case of problems);\n
           - change layout or timeout rules does not require starting new game;\n

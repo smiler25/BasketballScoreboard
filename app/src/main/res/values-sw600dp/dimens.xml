@@ -3,8 +3,8 @@
     <dimen name="led_weight2_font_size">180dp</dimen>
     <dimen name="no_led_font_size">30sp</dimen>
     <dimen name="label_font_size">20sp</dimen>
-    <dimen name="team_name_font_size">30sp</dimen>
-    <dimen name="team_name_max_width">100dp</dimen>
+    <dimen name="team_name_font_size">40sp</dimen>
+    <dimen name="team_name_max_width">150dp</dimen>
     <dimen name="shot_time_max_width">110dp</dimen>
     <dimen name="period_view_padding">1dp</dimen>
     <dimen name="drawer_header_height">100dp</dimen>

@@ -312,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements
                 return super.onOptionsItemSelected(item);
         }
     }
+
     @Override
     public void onBackPressed() {
         if (drawer != null && drawer.isDrawerOpen()) {
@@ -357,6 +358,23 @@ public class MainActivity extends AppCompatActivity implements
 
     private void runHelpActivity() {
         startActivity(new Intent(this, HelpActivity.class));
+    }
+
+    private void addCameraView() {
+        if (!checkCameraHardware(this)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
+            return;
+        }
+        CameraViewFragment cameraFrag = CameraViewFragment.newInstance();
+        cameraFrag.setRetainInstance(true);
+        cameraFrag.setPreferences(preferences);
+        cameraFrag.setGame(game);
+        cameraFrag.setListener(this);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.board_layout_place, cameraFrag, CameraViewFragment.FRAGMENT_TAG)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
     }
 
     private boolean checkCameraHardware(Context context) {
@@ -437,23 +455,6 @@ public class MainActivity extends AppCompatActivity implements
                 .addDrawerItems(initDrawerItems())
                 .withOnDrawerItemClickListener(this)
                 .build();
-    }
-
-    private void addCameraView() {
-        if (!checkCameraHardware(this)) {
-            Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
-            return;
-        }
-        CameraViewFragment cameraFrag = CameraViewFragment.newInstance();
-        cameraFrag.setRetainInstance(true);
-        cameraFrag.setPreferences(preferences);
-        cameraFrag.setGame(game);
-        cameraFrag.setListener(this);
-        getFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .add(R.id.board_layout_place, cameraFrag, CameraViewFragment.FRAGMENT_TAG)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
     }
 
     private void showSwitchFragment(boolean show) {

@@ -25,7 +25,7 @@ public final class Constants {
     public static final int LAYOUT_FULL = 0;
     public static final int OVERLAY_PANELS = 0;
     static final int OVERLAY_SWITCH = 1;
-    public static final int DEFAULT_HORN_LENGTH = 3;
+    public static final int DEFAULT_HORN_LENGTH = 1;
 
     public static final String FORMAT_TWO_DIGITS = "%02d";
     public static final String TIME_FORMAT_SHORT = "%d.%d";

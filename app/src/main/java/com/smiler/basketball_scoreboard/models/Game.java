@@ -261,10 +261,14 @@ public class Game {
                 layout.setColors();
             }
             preferences.readNoRestart();
-            if ((preferences.layoutChanged || preferences.timeoutsRulesChanged)&& listener != null) {
+            if ((preferences.layoutChanged || preferences.timeoutsRulesChanged) && listener != null) {
                 layout = listener.onInitLayout();
                 if (preferences.timeoutsRulesChanged) {
-                    setTimeouts();
+                    try {
+                        setTimeouts();
+                    } catch (NullPointerException e) {
+                        Log.d(TAG, "resumeGame -> setTimeouts error: " + e);
+                    }
                 }
                 preferences.layoutChanged = false;
                 preferences.timeoutsRulesChanged = false;
