@@ -106,6 +106,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RealmController.close();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         handleOrientation();
@@ -119,9 +125,39 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        RealmController.close();
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        FragmentManager fm = getFragmentManager();
+        if (overlaySwitch != null && overlaySwitch.isAdded()) {
+            fm.putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
+        }
+
+        Fragment layout = fm.getFragment(outState, StandardViewFragment.FRAGMENT_TAG);
+        Fragment cameraLayout = fm.getFragment(outState, CameraViewFragment.FRAGMENT_TAG);
+
+        if (layout != null && layout.isAdded()) {
+            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, layout);
+        }
+        if (cameraLayout != null && cameraLayout.isAdded()) {
+            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, cameraLayout);
+        }
+        if (game != null) {
+            game.saveInstanceState(outState);
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle inState){
+        if (inState != null) {
+            FragmentManager fm = getFragmentManager();
+            Fragment overlaySwitch_ = fm.getFragment(inState, OverlayFragment.TAG_SWITCH);
+            if (overlaySwitch_ != null) {
+                overlaySwitch = (OverlayFragment) overlaySwitch_;
+            }
+            if (game != null) {
+                game.restoreInstanceState(inState);
+            }
+        }
     }
 
     @Override
@@ -210,48 +246,127 @@ public class MainActivity extends AppCompatActivity implements
 //        }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        FragmentManager fm = getFragmentManager();
-        if (overlaySwitch != null && overlaySwitch.isAdded()) {
-            fm.putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
-        }
-
-        Fragment layout = fm.getFragment(outState, StandardViewFragment.FRAGMENT_TAG);
-        Fragment cameraLayout = fm.getFragment(outState, CameraViewFragment.FRAGMENT_TAG);
-
-        if (layout != null && layout.isAdded()) {
-            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, layout);
-        }
-        if (cameraLayout != null && cameraLayout.isAdded()) {
-            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, cameraLayout);
-        }
-        if (game != null) {
-            game.saveInstanceState(outState);
-        }
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle inState){
-        if (inState != null) {
-            FragmentManager fm = getFragmentManager();
-            Fragment overlaySwitch_ = fm.getFragment(inState, OverlayFragment.TAG_SWITCH);
-            if (overlaySwitch_ != null) {
-                overlaySwitch = (OverlayFragment) overlaySwitch_;
-            }
-            if (game != null) {
-                game.restoreInstanceState(inState);
-            }
-        }
-    }
-
     private void handleOrientation() {
         if (preferences.fixLandscape) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
+    }
+
+    private AccountHeader.Result createDrawerHeader() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return new AccountHeader()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.drawer_header)
+                .build();
+    }
+
+    private IDrawerItem[] initDrawerItems() {
+        return new IDrawerItem[]{
+                new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(getResources().getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_resluts).withIcon(getResources().getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
+        };
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+        switch (i) {
+            case 0:
+                game.newGameSave();
+                break;
+            case 1:
+                runResultsActivity();
+                break;
+            case 2:
+                runSettingsActivity();
+                break;
+            case 3:
+                shareResult();
+                break;
+            case 4:
+                runHelpActivity();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                runSettingsActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        if (drawer != null && drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
+            return;
+        }
+        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+            getFragmentManager().popBackStack();
+            return;
+        }
+
+        if (preferences.playByPlay != 0 && game != null && game.cancelLastAction()) {
+            return;
+        }
+
+        if (doubleBackPressedFirst) {
+            super.onBackPressed();
+            return;
+        }
+        doubleBackPressedFirst = true;
+        Toast.makeText(this, getResources().getString(R.string.toast_confirm_exit), Toast.LENGTH_LONG).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackPressedFirst = false;
+            }
+        }, 3000);
+    }
+
+    @Override
+    public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+    }
+
+    private void runResultsActivity() {
+        Intent intent = new Intent(this, ResultsActivity.class);
+        startActivity(intent);
+    }
+
+    private void runSettingsActivity() {
+        Intent intent = new Intent(this, PrefActivity.class);
+        startActivity(intent);
+    }
+
+    private void runHelpActivity() {
+        startActivity(new Intent(this, HelpActivity.class));
+    }
+
+    private boolean checkCameraHardware(Context context) {
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+    }
+
+    private void initElements() {
+        initDrawer();
+        overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
+        overlaySwitch.setRetainInstance(true);
     }
 
     private void initGame() {
@@ -290,12 +405,6 @@ public class MainActivity extends AppCompatActivity implements
         initGame();
     }
 
-    private void initElements() {
-        initDrawer();
-        overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
-        overlaySwitch.setRetainInstance(true);
-    }
-
     private void initSounds() {
         int MAX_STREAMS = 5;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -330,52 +439,6 @@ public class MainActivity extends AppCompatActivity implements
                 .build();
     }
 
-    private AccountHeader.Result createDrawerHeader() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return new AccountHeader()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.drawer_header)
-                .build();
-    }
-
-    private IDrawerItem[] initDrawerItems() {
-        return new IDrawerItem[]{
-                new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(getResources().getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_resluts).withIcon(getResources().getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
-        };
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                runSettingsActivity();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void runResultsActivity() {
-        Intent intent = new Intent(this, ResultsActivity.class);
-        startActivity(intent);
-    }
-
-    private void runSettingsActivity() {
-        Intent intent = new Intent(this, PrefActivity.class);
-        startActivity(intent);
-    }
-
     private void addCameraView() {
         if (!checkCameraHardware(this)) {
             Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
@@ -391,70 +454,6 @@ public class MainActivity extends AppCompatActivity implements
                 .add(R.id.board_layout_place, cameraFrag, CameraViewFragment.FRAGMENT_TAG)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
-    }
-
-    private void runHelpActivity() {
-        startActivity(new Intent(this, HelpActivity.class));
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawer != null && drawer.isDrawerOpen()) {
-            drawer.closeDrawer();
-            return;
-        }
-        if (getFragmentManager().getBackStackEntryCount() > 0 ){
-            getFragmentManager().popBackStack();
-            return;
-        }
-
-        if (preferences.playByPlay != 0 && game != null && game.cancelLastAction()) {
-            return;
-        }
-
-        if (doubleBackPressedFirst) {
-            super.onBackPressed();
-            return;
-        }
-        doubleBackPressedFirst = true;
-        Toast.makeText(this, getResources().getString(R.string.toast_confirm_exit), Toast.LENGTH_LONG).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackPressedFirst = false;
-            }
-        }, 3000);
-    }
-
-    @Override
-    public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
-        switch (i) {
-            case 0:
-                game.newGameSave();
-                break;
-            case 1:
-                runResultsActivity();
-                break;
-            case 2:
-                runSettingsActivity();
-                break;
-            case 3:
-                shareResult();
-                break;
-            case 4:
-                runHelpActivity();
-                break;
-            default:
-                break;
-        }
-    }
-
-    private boolean checkCameraHardware(Context context) {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
     private void showSwitchFragment(boolean show) {

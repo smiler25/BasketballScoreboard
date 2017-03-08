@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.smiler.basketball_scoreboard.R;
 
 public class HelpListFragment extends ListFragment {
+    HelpListListener listener;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -26,10 +27,9 @@ public class HelpListFragment extends ListFragment {
         v.setSelected(true);
     }
 
-    public interface HelpListListener {
+    interface HelpListListener {
         void onHelpListItemClick(int position);
     }
-    HelpListListener listener;
 
     @Override
     public void onAttach(Activity activity) {

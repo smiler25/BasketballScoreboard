@@ -65,6 +65,9 @@ public class HelpActivity extends AppCompatActivity implements HelpListFragment.
                 selectedFrag = new HelpRulesFragment();
                 break;
             case 3:
+                selectedFrag = HelpFragment.newInstance(R.layout.help_policy_fragment);
+                break;
+            case 4:
                 new AppUpdatesFragment().show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
                 return;
         }

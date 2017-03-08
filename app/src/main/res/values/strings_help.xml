@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="help_activity_values">
+        <item>Main interface</item>
+        <item>Side panels</item>
+        <item>Basketball rules in app</item>
+        <item>Privacy policy</item>
+        <item>About update</item>
+    </string-array>
 
     <string name="help_main_text">
         All numbers are clickable.\n
@@ -19,6 +26,28 @@
         \n
         Back button:\n
         if \"Play-by-play history\" setting is selected to keep, then canceled one last action of the press (excluding the time), otherwise, after double-clicking the application closing occurs.
+    </string>
+
+    <string name="help_privacy_text">
+        Privacy policy\n
+        \n
+        Current version https://www.dropbox.com/s/nugu370maifwb10/BasketballScoreboard.txt?dl=0\n
+        \n
+        Last modified: March 4, 2017\n
+        \n
+        What information we collect\n
+            To use the application, you do not need to create an account.\n
+            The app does not collect any personal information and does not transmit any information to other devices or services.\n
+            The local store contains data related only application functionality.\n
+            No information about the device is not going.\n
+            The required permissions (to use the camera, record to local storage) are used to maintain the history in the app.\n
+        \n
+        Changes to this provision on the protection of personal data\n
+        \n
+            We may change this policy from time to time, and if we do we’ll post any changes in the update information in the application and the website that hosts the application. If you continue to use application after those changes are in effect, you agree to the revised policy. If the changes are significant, we may provide more prominent notice or get your consent as required by law.\n
+            \n
+        Contact Information\n
+            Questions, suggestions, comments and reviews about the current state of the protection of personal inform at: kolosmiler@gmail.com.\n
     </string>
 
     <string name="help_side_panels_enable">Enable side panels</string>
@@ -42,6 +71,9 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.2.6.1:\n
+          - fixed some problems related to camera mode;\n
+          - added privacy policy (see help).\n
         v.2.6:\n
           - technical update (contact me in case of problems);\n
           - change layout or timeout rules does not require starting new game;\n
@@ -49,14 +81,14 @@
           - application left navigation panel in camera mode.\n
         v.2.5:\n
           - updated library which caused app (v.2.4) crash;\n
-          - custom colors (yet only team scores) (open settings);\n
+          - custom colors (open settings);\n
           - fixed possession arrows state after restart or rotation.\n
         v.2.4:\n
-          - save data storage format changed (contact me if you lost games results);\n
+          - save data storage format changed;\n
           - fixed setting maximum team fouls.\n
           - some other bug fixes and improvements.\n
         v.2.3:\n
-          - Undo last actions and save play-by-play history (open settings).\n
+          - Undo last actions and save play-by-play history.\n
         v.2.2:\n
           - portrait orientation;\n
           - possession arrows;\n
@@ -65,14 +97,7 @@
           - switch sides.\n
         v.2.0:\n
           - new help;\n
-          - players panels (see help).\n
+          - players panels.\n
     </string>
-
-    <string-array name="help_activity_values">
-        <item>Main interface</item>
-        <item>Side panels</item>
-        <item>Basketball rules in app</item>
-        <item>About update</item>
-    </string-array>
 
 </resources>

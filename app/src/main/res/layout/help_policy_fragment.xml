@@ -4,16 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/floating_fragment"
-    android:id="@+id/scrollView" >
+    android:background="@color/light_grey_background"
+    android:id="@+id/help_main_scroll_view" >
 
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="@string/help_main_text"
+        android:text="@string/help_privacy_text"
         android:textSize="@dimen/help_text_size"
+        android:autoLink="web"
         />
 
 </ScrollView>
