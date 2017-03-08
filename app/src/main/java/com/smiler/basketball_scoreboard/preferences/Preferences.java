@@ -68,7 +68,7 @@ public class Preferences {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         resources = context.getResources();
         whistleLength = 190;
-        hornLength = 850;
+        hornLength = 1000;
         defaultScoreColor = context.getResources().getColor(R.color.orange);
         defaultTimeColor = context.getResources().getColor(R.color.red);
     }

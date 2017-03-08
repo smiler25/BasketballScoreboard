@@ -421,8 +421,8 @@ public class MainActivity extends AppCompatActivity implements
         }
         soundWhistleId = soundPool.load(this, R.raw.whistle, 1);
         whistleLength = 190;
-        soundHornId = soundPool.load(this, R.raw.airhorn, 1);
-        hornLength = 850;
+        soundHornId = soundPool.load(this, R.raw.buzzer, 1);
+        hornLength = 1000;
     }
 
     private void initDrawer() {
@@ -511,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements
         if (preferences.pauseOnSound) {
             game.pauseGame();
         }
-        soundHornStreamId = soundPool.play(soundHornId, 1, 1, 0, repeats, 1);
+        soundHornStreamId = soundPool.play(soundHornId, 1, 1, 0, repeats-1, 1);
         hornRepeats = repeats;
         if (repeats != -1) {
             new Handler().postDelayed(
