@@ -72,6 +72,7 @@
     <string name="toast_confirm_exit">Click again to exit</string>
     <string name="toast_select_players">Select active players</string>
     <string name="toast_camera_fail">Camera is unavailable</string>
+    <string name="toast_result_delete_error">Failed to delete result (%1$d)</string>
     <string name="toast_storage_folder_fail">Failed to create directory %1$s</string>
     <string name="toast_storage_permission_fail">Writing to storage not allowed</string>
     <string name="toast_storage_save_ok">Saved to %1$s</string>

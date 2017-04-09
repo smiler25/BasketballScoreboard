@@ -76,14 +76,18 @@ public class RealmController {
         return realm.where(PlayersResults.class).equalTo("game.id", gameId).equalTo("team", team).findAll();
     }
 
-    public void deleteResult(final int id) {
+    public boolean deleteResult(final int id) {
         final Results result = realm.where(Results.class).equalTo("id", id).findFirst();
+        if (result == null){
+            return false;
+        }
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 result.deleteFromRealm();
             }
         });
+        return true;
     }
 
     public void deleteTmpPlayers(String team) {

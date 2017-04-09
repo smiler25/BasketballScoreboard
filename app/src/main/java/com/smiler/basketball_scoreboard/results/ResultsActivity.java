@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.CAB;
 import com.smiler.basketball_scoreboard.CABListener;
@@ -157,7 +158,9 @@ public class ResultsActivity extends AppCompatActivity implements ResultsExpList
     private void menuDelete() {
         menu.setGroupVisible(R.id.group, false);
         if (selected == -1) { return; }
-        RealmController.with().deleteResult(selected);
+        if (!RealmController.with().deleteResult(selected)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_result_delete_error), Toast.LENGTH_SHORT).show();
+        }
 
         RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
         if (list != null) {
