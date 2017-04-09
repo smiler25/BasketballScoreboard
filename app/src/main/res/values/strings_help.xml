@@ -71,6 +71,9 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.2.6.2:\n
+          - permissions requests for using camera and storage;\n
+          - applying orientation preference without restarting app.\n
         v.2.6.1:\n
           - fixed some problems with camera mode;\n
           - added privacy policy (see help);\n
