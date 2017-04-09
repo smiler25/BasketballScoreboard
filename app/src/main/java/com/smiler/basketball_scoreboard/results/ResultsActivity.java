@@ -159,7 +159,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultsExpList
         menu.setGroupVisible(R.id.group, false);
         if (selected == -1) { return; }
         if (!RealmController.with().deleteResult(selected)) {
-            Toast.makeText(this, getResources().getString(R.string.toast_result_delete_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, String.format(getResources().getString(R.string.toast_result_delete_error), selected), Toast.LENGTH_SHORT).show();
         }
 
         RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
