@@ -31,7 +31,12 @@ public final class Constants {
     public static final String TIME_FORMAT_SHORT = "%d.%d";
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("mm:ss");
     public static final SimpleDateFormat TIME_FORMAT_MILLIS = new SimpleDateFormat("ss.S", Locale.ENGLISH);
+    public static final SimpleDateFormat TIME_FORMAT_PHOTO = new SimpleDateFormat("d MMM yyyy HH:mm:ss");
     public static String API16_TIME_REGEX = "(\\d{2}\\.\\d)(\\d{1,3})";
+
+    public static final int PERMISSION_CODE_CAMERA = 1;
+    public static final int PERMISSION_CODE_STORAGE = 2;
+    public static final String MEDIA_FOLDER = "Basketball scoreboard";
 
     public static final String STATE_PREFERENCES = "GAME_STATE";
     public static final String STATE_MAIN_TIME = "mainTime";

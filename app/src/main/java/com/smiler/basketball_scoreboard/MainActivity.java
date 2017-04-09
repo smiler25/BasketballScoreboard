@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -31,7 +32,8 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.smiler.basketball_scoreboard.camera.CameraViewFragment;
+import com.smiler.basketball_scoreboard.camera.CameraFragment;
+import com.smiler.basketball_scoreboard.camera.CameraUtils;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
@@ -59,6 +61,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
+import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_CAMERA;
+import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_STORAGE;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_APP_UPDATES;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_CONFIRM;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_MAIN_TIME_PICKER;
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
         Game.GameListener,
         ClickListener,
         LongClickListener,
-        CameraViewFragment.CameraFragmentListener,
+        CameraFragment.CameraFragmentListener,
         ConfirmDialog.ConfirmDialogListener,
         Drawer.OnDrawerItemClickListener,
         EditPlayerDialog.OnPanelsListener,
@@ -114,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        handleOrientation();
 //        System.out.println("res_type = " + getResources().getString(R.string.res_type));
         if (game != null) {
             game.resumeGame();
@@ -122,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements
             game.setLayout(layout != null ? layout : initGameLayout());
             game.setCurrentState();
         }
+        handleOrientation();
     }
 
     @Override
@@ -133,13 +137,13 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Fragment layout = fm.getFragment(outState, StandardViewFragment.FRAGMENT_TAG);
-        Fragment cameraLayout = fm.getFragment(outState, CameraViewFragment.FRAGMENT_TAG);
+        Fragment cameraLayout = fm.getFragment(outState, CameraFragment.FRAGMENT_TAG);
 
         if (layout != null && layout.isAdded()) {
-            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, layout);
+            fm.putFragment(outState, CameraFragment.FRAGMENT_TAG, layout);
         }
         if (cameraLayout != null && cameraLayout.isAdded()) {
-            fm.putFragment(outState, CameraViewFragment.FRAGMENT_TAG, cameraLayout);
+            fm.putFragment(outState, CameraFragment.FRAGMENT_TAG, cameraLayout);
         }
         if (game != null) {
             game.saveInstanceState(outState);
@@ -346,6 +350,23 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_CODE_CAMERA: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    addCameraView();
+                }
+            }
+            case PERMISSION_CODE_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    CameraUtils.enableSaving();
+                }
+            }
+        }
+    }
+
     private void runResultsActivity() {
         Intent intent = new Intent(this, ResultsActivity.class);
         startActivity(intent);
@@ -365,14 +386,14 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, getResources().getString(R.string.toast_camera_fail), Toast.LENGTH_LONG).show();
             return;
         }
-        CameraViewFragment cameraFrag = CameraViewFragment.newInstance();
+        CameraFragment cameraFrag = CameraFragment.newInstance();
         cameraFrag.setRetainInstance(true);
         cameraFrag.setPreferences(preferences);
         cameraFrag.setGame(game);
         cameraFrag.setListener(this);
         getFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .add(R.id.board_layout_place, cameraFrag, CameraViewFragment.FRAGMENT_TAG)
+                .add(R.id.board_layout_place, cameraFrag, CameraFragment.FRAGMENT_TAG)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }

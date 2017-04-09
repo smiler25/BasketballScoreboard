@@ -48,6 +48,10 @@
     <string name="toast_confirm_exit">Нажмите ещё раз, чтобы выйти</string>
     <string name="toast_select_players">Выберите активных игроков</string>
     <string name="toast_camera_fail">Камера недоступна</string>
+    <string name="toast_storage_folder_fail">Не удалось создать папку %1$s</string>
+    <string name="toast_storage_permission_fail">Сохранение не разрешено</string>
+    <string name="toast_storage_save_ok">Сохранено в %1$s</string>
+    <string name="toast_storage_save_fail">Не удалось сохранить изображение</string>
 
     <string-array name="new_period_variants">
         <item>Регулярный период</item>
