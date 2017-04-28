@@ -2,11 +2,16 @@
 <resources>
 
     <string name="title_activity_settings">Settings</string>
-    <string name="time_category">Time settings</string>
-    <string name="default_category">Default values</string>
-    <string name="side_panels_category">Players panels</string>
-    <string name="app_category">App behavior</string>
-    <string name="sounds_screen">Sounds</string>
+
+    <string name="category_time">Time settings</string>
+    <string name="category_app">App behavior</string>
+    <string name="category_common">Common settings</string>
+    <string name="category_default">Default values</string>
+    <string name="category_layout">Layout settings</string>
+    <string name="category_side_panels">Players panels</string>
+    <string name="screen_sounds">Sounds</string>
+    <string name="screen_sp">Players panels settings</string>
+    <string name="screen_time">Time settings</string>
 
     <string name="main_time_length">Main period duration (minutes)</string>
     <string name="main_time_length_default" translatable="false">10</string>
@@ -47,8 +52,6 @@
     <string name="pref_auto_switch_sides">Switch sides after second quarter</string>
     <string name="pref_save_on_exit">Save current state on exit</string>
     <string name="set_default_dialog_message">Set values according to official rules.</string>
-    <string name="fiba" translatable="false">FIBA</string>
-    <string name="nba" translatable="false">NBA</string>
     <string name="vibration">Vibration on click</string>
 
     <string name="fraction_seconds_main">Main time fractional seconds</string>
@@ -83,6 +86,7 @@
         <item>Home score</item>
         <item>Guest score</item>
         <item>Main time</item>
+        <item>Shot time</item>
     </string-array>
 
     <string name="pref_auto_save_save_results">Save result before start new game</string>
@@ -97,18 +101,21 @@
         <item>Don\'t use</item>
         <item>FIBA</item>
         <item>NBA</item>
+        <item>Streetball</item>
     </string-array>
 
     <string name="pref_default_prefs">Settings according to rules</string>
-    <string-array name="pref_default_prefs_titles" translatable="false">
+    <string-array name="pref_default_prefs_titles">
         <item>FIBA</item>
         <item>NBA</item>
+        <item>Streetball</item>
     </string-array>
 
     <string name="pref_layout">Layout</string>
     <string-array name="pref_layout_titles">
         <item>Full with shot clock, period, fouls and timeouts</item>
         <item>Simple without shot clock, period, fouls and timeouts</item>
+        <item>Streetball</item>
     </string-array>
 
     <string-array name="pref_values_0_1" translatable="false">
@@ -130,35 +137,32 @@
     </string-array>
 
     <string name="pref_choose_sound">Choose sound</string>
-    <string name="time_screen">Time settings</string>
-    <string name="side_panels_screen">Players panels settings</string>
-    <string name="side_panels_interaction">Interaction with players buttons</string>
-    <string name="side_panels_connection">Connection between panels</string>
-    <string name="side_panels_connection_descr">Show/hide panels synchronously</string>
-    <string name="side_panels_fouls_rules">Personal fouls tracking</string>
-    <string name="side_panels_clear">New game behavior</string>
-    <string name="side_panels_max_fouls">Maximum personal fouls</string>
-    <string name="side_panels_interaction_time">Waiting time for action (seconds)</string>
-    <string name="side_panels_interaction_time_value" translatable="false">5</string>
-    <string name="side_panels_activate">Use players panels</string>
+    <string name="sp_interaction">Interaction with players buttons</string>
+    <string name="sp_connection">Connection between panels</string>
+    <string name="sp_connection_descr">Show/hide panels synchronously</string>
+    <string name="sp_fouls_rules">Personal fouls tracking</string>
+    <string name="sp_clear">New game behavior</string>
+    <string name="sp_max_fouls">Maximum personal fouls</string>
+    <string name="sp_interaction_time">Waiting time for action (seconds)</string>
+    <string name="sp_interaction_time_value" translatable="false">5</string>
+    <string name="sp_activate">Use players panels</string>
 
-    <string-array name="side_panels_fouls_rules_titles">
+    <string-array name="sp_fouls_rules_titles">
         <item>Do not track</item>
         <item>According to rules</item>
         <item>Same as team</item>
         <item>Custom</item>
     </string-array>
 
-    <string-array name="side_panels_clear_titles">
+    <string-array name="sp_clear_titles">
         <item>Delete all players</item>
         <item>Clear points and fouls</item>
     </string-array>
 
-    <string-array name="side_panels_interaction_titles">
+    <string-array name="sp_interaction_titles">
         <item>Apply during the time. Write to captain if late</item>
         <item>Apply during the time. Write to invisible player if late</item>
         <item>Accumulate actions until player\'s button not clicked</item>
     </string-array>
-
 
 </resources>

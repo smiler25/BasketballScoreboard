@@ -18,11 +18,14 @@ public final class Constants {
     public static final int ACTION_TO20 = 3;
 //    public static final String ACTION_FORMAT = "%d;%d;%d";
 
+    public static final int PANEL_DELETE_TYPE_FULL = 0;
+//    public static final int PANEL_DELETE_TYPE_DATA = 1;
+
     public static final long SECOND = 1000;
     public static final long SECONDS_60 = 60 * SECOND;
     public static final long MINUTES_2 = 120 * SECOND;
 
-    public static final int LAYOUT_FULL = 0;
+//    public static final int LAYOUT_FULL = 0;
     public static final int OVERLAY_PANELS = 0;
     static final int OVERLAY_SWITCH = 1;
     public static final int DEFAULT_HORN_LENGTH = 1;
@@ -38,7 +41,7 @@ public final class Constants {
     public static final int PERMISSION_CODE_STORAGE = 2;
     public static final String MEDIA_FOLDER = "Basketball scoreboard";
 
-    public static final String STATE_PREFERENCES = "GAME_STATE";
+//    public static final String STATE_PREFERENCES = "GAME_STATE";
     public static final String STATE_MAIN_TIME = "mainTime";
     public static final String STATE_SHOT_TIME = "shotTime";
     public static final String STATE_HOME_SCORE = "homeScore";
@@ -49,13 +52,11 @@ public final class Constants {
     public static final String STATE_HOME_TIMEOUTS = "homeTimeouts";
     public static final String STATE_HOME_TIMEOUTS_NBA = "homeTimeoutsNBA";
     public static final String STATE_HOME_TIMEOUTS20 = "homeTimeouts20";
-    public static final String STATE_GUEST_FOULS = "homeFouls";
+    public static final String STATE_GUEST_FOULS = "guestFouls";
     public static final String STATE_GUEST_TIMEOUTS = "guestTimeouts";
     public static final String STATE_GUEST_TIMEOUTS_NBA = "guestTimeoutsNBA";
     public static final String STATE_GUEST_TIMEOUTS20 = "guestTimeouts20";
     public static final String STATE_PERIOD = "period";
-    public static final String STATE_HOME_ACTIVE_PLAYERS = "home_active_players";
-    public static final String STATE_GUEST_ACTIVE_PLAYERS = "guest_active_players";
     public static final String STATE_POSSESSION = "possession";
 
     public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesFragment";
@@ -65,16 +66,13 @@ public final class Constants {
     static final String TAG_FRAGMENT_MAIN_TIME_PICKER = "MainTimePicker";
     static final String TAG_FRAGMENT_SHOT_TIME_PICKER = "ShotTimePicker";
 
-    public static final int MAX_PLAYERS = 12;
-    public static final int DEFAULT_SHOT_TIME = 24;
-    public static final int DEFAULT_SHORT_SHOT_TIME = 14;
-    public static final int DEFAULT_NUM_REGULAR = 4;
-    public static final int DEFAULT_OVERTIME = 5;
-    public static final int DEFAULT_MAX_FOULS = 5;
-    public static final int DEFAULT_FIBA_MAIN_TIME = 10;
-    public static final int DEFAULT_NBA_MAIN_TIME = 12;
-    public static final int DEFAULT_FIBA_PLAYER_FOULS = 5;
-    public static final int DEFAULT_NBA_PLAYER_FOULS = 6;
+    public static final String DIALOG_CLEAR_PANEL = "clear_panel";
+    public static final String DIALOG_EDIT_CAPTAIN = "edit_player_captain";
+    public static final String DIALOG_NEW_GAME = "new_game";
+    public static final String DIALOG_NEW_PERIOD = "new_period";
+    public static final String DIALOG_SAVE_RESULT = "save_result";
+    public static final String DIALOG_SUBSTITUTE = "substitute";
+    public static final String DIALOG_TIMEOUT = "timeout";
 
     public static long[] LONG_CLICK_VIBE_PAT = {0, 50, 50, 50};
 

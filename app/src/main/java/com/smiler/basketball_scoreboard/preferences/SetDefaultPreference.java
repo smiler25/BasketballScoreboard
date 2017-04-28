@@ -18,13 +18,13 @@ public class SetDefaultPreference extends DialogPreference implements DialogInte
         attachListener(context);
     }
 
-    public interface SetDefaultDialogListener {
+    interface SetDefaultDialogListener {
         void onSetPositive();
         void onSetNegative();
     }
-    SetDefaultDialogListener mListener;
+    private SetDefaultDialogListener mListener;
 
-    public void attachListener(Context activity) {
+    private void attachListener(Context activity) {
         try {
             mListener = (SetDefaultDialogListener) activity;
         } catch (ClassCastException e) {

@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.smiler.basketball_scoreboard.Level;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 
@@ -15,6 +16,24 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class BaseLayout extends LinearLayout {
+    public enum GAME_LAYOUT {
+        COMMON,
+        SIMPLE,
+        STREETBALL;
+
+        public static GAME_LAYOUT fromInteger(int x) {
+            switch (x) {
+                case 0:
+                    return COMMON;
+                case 1:
+                    return SIMPLE;
+                case 2:
+                    return STREETBALL;
+            }
+            return null;
+        }
+    }
+
     public BaseLayout(Context context) {
         super(context);
     }
@@ -26,9 +45,6 @@ public class BaseLayout extends LinearLayout {
     }
 
     public void showArrows() {
-    }
-
-    public void zeroState() {
     }
 
     public void switchSides() {
@@ -46,6 +62,10 @@ public class BaseLayout extends LinearLayout {
 
     public void setColorRed(TextView v) {
         setColor(v, getResources().getColor(R.color.red));
+    }
+
+    public void setColorOrange(TextView v) {
+        setColor(v, getResources().getColor(R.color.light_red));
     }
 
     public void setColorGreen(TextView v) {
@@ -71,10 +91,10 @@ public class BaseLayout extends LinearLayout {
     public void setFouls(CharSequence hValue, CharSequence gValue, int hColor, int gColor) {
     }
 
-    public void setHomeFoul(String value, boolean limit) {
+    public void setHomeFoul(String value, Level level) {
     }
 
-    public void setGuestFoul(String value, boolean limit) {
+    public void setGuestFoul(String value, Level level) {
     }
 
     public void nullFouls() {
@@ -206,8 +226,18 @@ public class BaseLayout extends LinearLayout {
 
 
     // players
-    private ArrayList<View> getAllButtons(ViewGroup group) {
-        return null;
+    public ArrayList<View> getAllButtons(ViewGroup group) {
+        ArrayList<View> res = new ArrayList<>();
+        View button;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            button = group.getChildAt(i);
+            if (button instanceof Button) {
+                res.add(button);
+            } else if (button instanceof ViewGroup) {
+                res.addAll(getAllButtons((ViewGroup) button));
+            }
+        }
+        return res;
     }
 
     private void attachLeftButton(View button) {
@@ -239,6 +269,10 @@ public class BaseLayout extends LinearLayout {
     }
 
     public Button getSelectedPlayerButton() {
+        return null;
+    }
+
+    public SidePanelRow substitutePlayer(SidePanelRow newTag, int newNumber) {
         return null;
     }
 

@@ -41,6 +41,10 @@
     <string name="description_close_panel">Close panel</string>
     <string name="description_clear_panel">Clear panel</string>
 
+    <string name="fiba" translatable="false">FIBA</string>
+    <string name="nba" translatable="false">NBA</string>
+    <string name="streetball">Streetball</string>
+
     <string name="final_result">Final</string>
     <string name="team">Team</string>
     <string name="timeout_clock" translatable="false">60.0</string>
@@ -53,6 +57,7 @@
     <string name="two_zeros" translatable="false">00</string>
     <string name="minus" translatable="false">-</string>
     <string name="plus1" translatable="false">+1</string>
+    <string name="plus2" translatable="false">+2</string>
     <string name="plus3" translatable="false">+3</string>
     <string name="minus1" translatable="false">-1</string>
     <string name="set_main_time">Set time</string>
@@ -84,6 +89,7 @@
         <item>2 minutes break</item>
         <item>15 minutes break</item>
         <item>20 seconds timeout</item>
+        <item>30 seconds timeout</item>
         <item>60 seconds timeout</item>
         <item>100 seconds timeout</item>
     </string-array>
@@ -120,7 +126,6 @@
         <item quantity="other">%d points</item>
     </plurals>
 
-
     <string name="side_panel_number" translatable="false">№</string>
     <string name="side_panel_name">Player</string>
     <string name="side_panel_points_short">P</string>
@@ -134,7 +139,7 @@
     <string name="side_panel_few">Too few players (%1$d)</string>
     <string name="side_panel_many">Too many players (%1$d)</string>
     <string name="side_panel_player_name">Player №%1$d</string>
-    <string name="side_panel_players_limit">You can add only 12 players</string>
+    <string name="side_panel_players_limit">You can add only %1$d players</string>
     <string name="side_panel_fouls_limit_home">Home player №%1$d (%2$s) reached fouls limit</string>
     <string name="side_panel_fouls_limit_guest">Guest player №%1$d (%2$s) reached fouls limit</string>
     <string name="side_panel_no_save_data">No saved data</string>

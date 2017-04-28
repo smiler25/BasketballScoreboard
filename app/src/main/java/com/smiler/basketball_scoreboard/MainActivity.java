@@ -43,10 +43,11 @@ import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
 import com.smiler.basketball_scoreboard.help.HelpActivity;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
 import com.smiler.basketball_scoreboard.layout.ClickListener;
+import com.smiler.basketball_scoreboard.layout.LayoutFactory;
 import com.smiler.basketball_scoreboard.layout.LongClickListener;
 import com.smiler.basketball_scoreboard.layout.PlayersPanels;
 import com.smiler.basketball_scoreboard.layout.StandardLayout;
-import com.smiler.basketball_scoreboard.layout.StandardViewFragment;
+import com.smiler.basketball_scoreboard.layout.BoardFragment;
 import com.smiler.basketball_scoreboard.models.Game;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
@@ -60,6 +61,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_EDIT_CAPTAIN;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_NEW_GAME;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_NEW_PERIOD;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_SAVE_RESULT;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_SUBSTITUTE;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_TIMEOUT;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
 import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_CAMERA;
 import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_STORAGE;
@@ -123,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements
             game.resumeGame();
             game.setListener(this);
             game.setLayout(layout != null ? layout : initGameLayout());
-            game.setCurrentState();
+            game.setSavedState();
         }
         handleOrientation();
     }
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements
             fm.putFragment(outState, OverlayFragment.TAG_SWITCH, overlaySwitch);
         }
 
-        Fragment layout = fm.getFragment(outState, StandardViewFragment.FRAGMENT_TAG);
+        Fragment layout = fm.getFragment(outState, BoardFragment.FRAGMENT_TAG);
         Fragment cameraLayout = fm.getFragment(outState, CameraFragment.FRAGMENT_TAG);
 
         if (layout != null && layout.isAdded()) {
@@ -174,6 +181,14 @@ public class MainActivity extends AppCompatActivity implements
 
         preferences = Preferences.getInstance(getApplicationContext());
         preferences.read();
+
+        handleOrientation();
+        initElements();
+        initGame(true);
+        handleLaunch();
+    }
+
+    private void handleLaunch() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getInt("app_version", 1) < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -184,20 +199,12 @@ public class MainActivity extends AppCompatActivity implements
             migrateToRealm();
             migrateActivityPreferences();
         }
-
-        handleOrientation();
-        initGame();
-        initElements();
-
         if (sharedPref.getBoolean("first_launch", true)) {
             drawer.openDrawer();
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean("first_launch", false);
             editor.apply();
         }
-
-        floatingDialog = new FloatingCountdownTimerDialog();
-        floatingDialog.setCancelable(false);
     }
 
     private void migrateToRealm() {
@@ -281,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
         switch (i) {
             case 0:
-                game.newGameSave();
+                game.newGame();
                 break;
             case 1:
                 runResultsActivity();
@@ -323,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements
             drawer.closeDrawer();
             return;
         }
-        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+        if (getFragmentManager().getBackStackEntryCount() > 0){
             getFragmentManager().popBackStack();
             return;
         }
@@ -406,27 +413,29 @@ public class MainActivity extends AppCompatActivity implements
         initDrawer();
         overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
         overlaySwitch.setRetainInstance(true);
+        floatingDialog = new FloatingCountdownTimerDialog();
+        floatingDialog.setCancelable(false);
     }
 
-    private void initGame() {
+    private void initGame(boolean restore) {
+        initGameLayout();
         if (preferences.spOn) {
             if (panels == null) {
                 initPlayersPanels();
             }
-            game = Game.newGame(this, this, initGameLayout(), panels);
+            game = Game.newGame(this, this, layout, panels, restore);
         } else {
-            game = Game.newGame(this, this, initGameLayout());
+            game = Game.newGame(this, this, layout, restore);
         }
     }
 
     private BaseLayout initGameLayout() {
-        layout = new StandardLayout(this, preferences, this, this);
-        StandardViewFragment frag = StandardViewFragment.newInstance(R.layout.help_main_fragment);
+        layout = LayoutFactory.getLayout(this, preferences, this, this);
+        BoardFragment frag = BoardFragment.newInstance();
         frag.setRetainInstance(true);
-        frag.setPreferences(preferences);
         frag.setLayout(layout);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.board_layout_place, frag, StandardViewFragment.FRAGMENT_TAG)
+        ft.replace(R.id.board_layout_place, frag, BoardFragment.FRAGMENT_TAG)
           .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
           .commit();
         return layout;
@@ -439,9 +448,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private void startNewGame(boolean save) {
         if (save) {
-            game.saveGame();
+            game.newGameSave();
+        } else {
+            initGame(false);
         }
-        initGame();
     }
 
     private void initSounds() {
@@ -612,7 +622,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         Button bu = game.getSelectedPlayer();
         int number = bu.getTag() != null ? ((SidePanelRow)bu.getTag()).getNumber() : -1;
-        ListDialog.newInstance("substitute", numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance(DIALOG_SUBSTITUTE, numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
     }
 
     private void chooseTeamNameDialog(int team, String name) {
@@ -670,9 +680,12 @@ public class MainActivity extends AppCompatActivity implements
                 duration = 20;
                 break;
             case 3:
-                duration = 60;
+                duration = 30;
                 break;
             case 4:
+                duration = 60;
+                break;
+            case 5:
                 duration = 100;
                 break;
             default:
@@ -694,10 +707,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSubstituteListSelect(boolean left, int newNumber) {
-//        SidePanelRow row = inactivePlayers.get(newNumber);
-//        (left ? leftPanel : rightPanel).substitute(row, (SidePanelRow) longClickPlayerBu.getTag());
-//        longClickPlayerBu.setTag(row);
-//        longClickPlayerBu.setText(Integer.toString(newNumber));
+        game.substitutePlayer(left, newNumber);
     }
 
     @Override
@@ -710,19 +720,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConfirmDialogPositive(String type, boolean dontShow) {
         preferences.setDontAskNewGame(dontShow ? 2 : 0);
-        initGame();
+        initGame(false);
     }
 
     @Override
     public void onConfirmDialogPositive(String type) {
         switch (type) {
-            case "new_game":
-                startNewGame(false);
-                break;
-            case "save_result":
+            case DIALOG_NEW_GAME:
+            case DIALOG_SAVE_RESULT:
+//                startNewGame(false);
                 startNewGame(true);
                 break;
-            case "edit_player_captain":
+            case DIALOG_EDIT_CAPTAIN:
                 EditPlayerDialog f = (EditPlayerDialog) getFragmentManager().findFragmentByTag(EditPlayerDialog.TAG);
                 if (f != null) {f.changeCaptainConfirmed();}
                 break;
@@ -732,18 +741,17 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConfirmDialogNeutral(boolean dontShow) {
         preferences.setDontAskNewGame(dontShow ? 2 : 0);
-        game.saveGame();
+        startNewGame(true);
     }
 
     @Override
     public void onConfirmDialogNegative(String type, boolean dontShow) {
         preferences.setDontAskNewGame(dontShow ? 1 : 0);
-        startNewGame(false);
     }
 
     @Override
     public void onConfirmDialogNegative(String type) {
-        if (type.equals("save_result")) {
+        if (type.equals(DIALOG_SAVE_RESULT)) {
             startNewGame(false);
         }
     }
@@ -882,13 +890,13 @@ public class MainActivity extends AppCompatActivity implements
                 playHorn();
                 break;
             case NEW_PERIOD:
-                showListDialog("new_period");
+                showListDialog(DIALOG_NEW_PERIOD);
                 break;
             case SWITCH_SIDES:
                 game.switchSides();
                 break;
             case TIMEOUT:
-                showListDialog("timeout");
+                showListDialog(DIALOG_TIMEOUT);
                 break;
             case WHISTLE:
                 break;
@@ -962,12 +970,20 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNewGame() {
-        initGame();
+        initGame(false);
     }
 
     @Override
     public BaseLayout onInitLayout() {
         return initGameLayout();
+    }
+
+    @Override
+    public PlayersPanels onInitPanels() {
+        if (panels == null) {
+            initPlayersPanels();
+        }
+        return panels;
     }
 
     @Override

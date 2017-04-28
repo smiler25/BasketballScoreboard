@@ -13,8 +13,9 @@
         \n
         Single click provides expected action:\n
         - main clock: start/pause;\n
+        * in \"Streetball\" mode when main time ends main clock switches to direct timer;\n
         - shot clock: start new or switch to short possession (if enabled in settings);\n
-        - score: increase value by 2;\n
+        - score: increase value by 2 (by 1 for streetball);\n
         - period: set new period and set to default corresponding values;\n
         - fouls and timeouts: increase value by one.\n
         \n
@@ -71,12 +72,16 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.2.7:\n
+          - streetball layout and rules (settings, rules in help);\n
+          - custom color for shot clock;\n
+          - save team names when starting a new game (done through the default in settings).\n
         v.2.6.2:\n
           - permissions requests for using camera and storage;\n
           - applying orientation preference without restarting app.\n
         v.2.6.1:\n
           - fixed some problems with camera mode;\n
-          - added privacy policy (see help);\n
+          - added privacy policy;\n
           - changed horn sound.\n
         v.2.6:\n
           - technical update (contact me in case of problems);\n
@@ -85,7 +90,7 @@
           - application left navigation panel in camera mode.\n
         v.2.5:\n
           - updated library which caused app (v.2.4) crash;\n
-          - custom colors (open settings);\n
+          - custom colors;\n
           - fixed possession arrows state after restart or rotation.\n
         v.2.4:\n
           - save data storage format changed;\n

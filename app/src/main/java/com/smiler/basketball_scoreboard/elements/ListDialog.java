@@ -12,6 +12,11 @@ import com.smiler.basketball_scoreboard.R;
 
 import java.util.ArrayList;
 
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_CLEAR_PANEL;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_NEW_PERIOD;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_SUBSTITUTE;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_TIMEOUT;
+
 
 public class ListDialog extends DialogFragment {
 
@@ -53,7 +58,7 @@ public class ListDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         switch (type) {
-            case "timeout":
+            case DIALOG_TIMEOUT:
                 builder.setItems(R.array.timeout_variants, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -61,7 +66,7 @@ public class ListDialog extends DialogFragment {
                     }
                 });
                 break;
-            case "new_period":
+            case DIALOG_NEW_PERIOD:
                 builder.setItems(R.array.new_period_variants, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -69,16 +74,16 @@ public class ListDialog extends DialogFragment {
                     }
                 });
                 break;
-            case "clear_panel":
+            case DIALOG_CLEAR_PANEL:
                 left = args.getBoolean("left", true);
-                builder.setItems(R.array.side_panels_clear_titles, new DialogInterface.OnClickListener() {
+                builder.setItems(R.array.sp_clear_titles, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onClearPanelDialogItemClick(which, left);
                     }
                 });
                 break;
-            case "substitute":
+            case DIALOG_SUBSTITUTE:
                 left = args.getBoolean("left", true);
                 ArrayList<String> values = args.getStringArrayList("values");
                 if (values == null) { values = new ArrayList<>(); }

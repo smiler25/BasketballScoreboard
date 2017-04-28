@@ -18,6 +18,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
+
         <uses-library android:name="com.sec.android.app.multiwindow" android:required="false"/>
         <meta-data android:name="com.sec.android.support.multiwindow" android:value="true"/>
         <meta-data android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W" android:value="632.0dip"/>

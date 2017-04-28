@@ -152,15 +152,9 @@
             >
 
             <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                android:id="@+id/leftPlus1View"
+                android:id="@+id/leftPlus2View"
                 style="@style/scoreChangers"
-                android:text="@string/plus1"
-                />
-
-            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                android:id="@+id/leftPlus3View"
-                style="@style/scoreChangers"
-                android:text="@string/plus3"
+                android:text="@string/plus2"
                 />
 
             <com.smiler.basketball_scoreboard.elements.CustomFontTextView
@@ -199,17 +193,6 @@
                 android:minWidth="@dimen/shot_clock_size"
                 />
 
-            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                android:id="@+id/shotTimeSwitch"
-                style="@style/ledDigits"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:text="@string/short_shot_clock"
-                android:layout_marginTop="@dimen/short_shot_clock_margin"
-                android:textSize="@dimen/short_shot_clock_size"
-                android:textColor="@color/light_red"
-                />
-
         </LinearLayout>
 
         <Space
@@ -223,21 +206,16 @@
             style="@style/scoreStyle"
             android:text="@string/two_zeros"
             />
+
         <LinearLayout
             android:orientation="vertical"
             style="@style/matchParentCenter"
             >
 
             <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                android:id="@+id/rightPlus1View"
+                android:id="@+id/rightPlus2View"
                 style="@style/scoreChangers"
-                android:text="@string/plus1"
-                />
-
-            <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-                android:id="@+id/rightPlus3View"
-                style="@style/scoreChangers"
-                android:text="@string/plus3"
+                android:text="@string/plus2"
                 />
 
             <com.smiler.basketball_scoreboard.elements.CustomFontTextView

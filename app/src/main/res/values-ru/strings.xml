@@ -35,6 +35,7 @@
     <string name="edit_home_name">Введите название команды хозяев</string>
     <string name="edit_guest_name">Введите название команды гостей</string>
 
+    <string name="streetball">Стритбол</string>
     <string name="label_fouls">фолы</string>
     <string name="label_period">период</string>
     <string name="label_timeouts">таймауты</string>
@@ -117,7 +118,7 @@
     <string name="side_panel_few">Слишком мало игроков (%1$d)</string>
     <string name="side_panel_many">Слишком много игроков (%1$d)</string>
     <string name="side_panel_player_name">Игрок №%1$d</string>
-    <string name="side_panel_players_limit">Можно добавить только 12 игроков</string>
+    <string name="side_panel_players_limit">Можно добавить только %1$d игроков</string>
     <string name="side_panel_fouls_limit_home">Игрок хозяев №%1$d (%2$s) достиг предела фолов</string>
     <string name="side_panel_fouls_limit_guest">Игрок гостей №%1$d (%2$s) достиг предела фолов</string>
     <string name="side_panel_no_save_data">Нет сохранённых данных</string>

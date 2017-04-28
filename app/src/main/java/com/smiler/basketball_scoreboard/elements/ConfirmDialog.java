@@ -11,6 +11,10 @@ import android.widget.CheckBox;
 
 import com.smiler.basketball_scoreboard.R;
 
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_EDIT_CAPTAIN;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_NEW_GAME;
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_SAVE_RESULT;
+
 public class ConfirmDialog extends DialogFragment implements DialogInterface.OnClickListener {
 
     private String type;
@@ -46,7 +50,7 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
 
         int titleId;
         switch (type) {
-            case "new_game":
+            case DIALOG_NEW_GAME:
                 String msg;
                 titleId = R.string.action_confirm_new_game;
                 String team = args.getString("team", null);
@@ -65,10 +69,10 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                 }
                 builder.setMessage(msg);
                 break;
-            case "save_result":
+            case DIALOG_SAVE_RESULT:
                 titleId = R.string.action_save_result;
                 break;
-            case "edit_player_captain":
+            case DIALOG_EDIT_CAPTAIN:
                 titleId = R.string.edit_player_dialog_captain_confirm;
                 break;
             default:

@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
 
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_EDIT_CAPTAIN;
+
 public class EditPlayerDialog extends DialogFragment {
 
     public static String TAG = "EditPlayerDialog";
@@ -154,7 +156,7 @@ public class EditPlayerDialog extends DialogFragment {
         if (status == 1 || status == 3) {
             Toast.makeText(getActivity(), getResources().getString(R.string.edit_player_dialog_number_warning), Toast.LENGTH_LONG).show();
         } else if (status == 2) {
-            ConfirmDialog.newInstance("edit_player_captain").show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
+            ConfirmDialog.newInstance(DIALOG_EDIT_CAPTAIN).show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
         }
         return status == 0;
     }

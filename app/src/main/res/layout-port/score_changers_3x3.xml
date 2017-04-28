@@ -8,17 +8,16 @@
     style="@style/matchParentCenter"
     >
 
-    <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-        android:id="@+id/leftPlus1View"
-        style="@style/scoreChangers"
-        android:text="@string/plus1"
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         />
 
     <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-        android:id="@+id/leftPlus3View"
+        android:id="@+id/leftPlus2View"
         style="@style/scoreChangers"
-        android:layout_weight="1"
-        android:text="@string/plus3"
+        android:text="@string/plus2"
         />
 
     <com.smiler.basketball_scoreboard.elements.CustomFontTextView
@@ -28,21 +27,15 @@
         />
 
     <Space
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         />
 
     <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-        android:id="@+id/rightPlus1View"
+        android:id="@+id/rightPlus2View"
         style="@style/scoreChangers"
-        android:text="@string/plus1"
-        />
-
-    <com.smiler.basketball_scoreboard.elements.CustomFontTextView
-        android:id="@+id/rightPlus3View"
-        style="@style/scoreChangers"
-        android:text="@string/plus3"
+        android:text="@string/plus2"
         />
 
     <com.smiler.basketball_scoreboard.elements.CustomFontTextView
@@ -50,4 +43,11 @@
         style="@style/scoreChangers"
         android:text="@string/minus1"
         />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+
 </LinearLayout>

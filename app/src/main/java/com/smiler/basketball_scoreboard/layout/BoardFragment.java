@@ -6,33 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.smiler.basketball_scoreboard.preferences.Preferences;
-
-public class StandardViewFragment extends Fragment implements
+public class BoardFragment extends Fragment implements
         CameraLayout.ClickListener, CameraLayout.LongClickListener {
 
-    public static String TAG = "BS-StandardFragment";
-    public static final String FRAGMENT_TAG = "StandardFragment";
-    private Preferences preferences;
+    public static String TAG = "BS-BoardFragment";
+    public static final String FRAGMENT_TAG = "BoardFragment";
     private BaseLayout layout;
 
-    public static StandardViewFragment newInstance(int layout) {
-        StandardViewFragment f = new StandardViewFragment();
-        Bundle args = new Bundle();
-        args.putInt("layout", layout);
-        f.setArguments(args);
-        return f;
+    public static BoardFragment newInstance() {
+        return new BoardFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        Bundle args = getArguments();
-//        int layoutId = args != null ? args.getInt("layout", R.layout.help_main_fragment) : R.layout.help_main_fragment;
         return layout;
-    }
-
-    public void setPreferences(Preferences preferences) {
-        this.preferences = preferences;
     }
 
     public void setLayout(BaseLayout layout) {

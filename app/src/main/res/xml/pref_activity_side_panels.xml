@@ -7,17 +7,17 @@
 
     <CheckBoxPreference
         android:key="side_panels_dependency"
-        android:title="@string/side_panels_connection"
-        android:summary="@string/side_panels_connection_descr"
+        android:title="@string/sp_connection"
+        android:summary="@string/sp_connection_descr"
         android:defaultValue="false"
         />
 
     <ListPreference
         android:key="side_panels_clear"
-        android:title="@string/side_panels_clear"
+        android:title="@string/sp_clear"
         android:defaultValue="0"
         android:summary="%s"
-        android:entries="@array/side_panels_clear_titles"
+        android:entries="@array/sp_clear_titles"
         android:entryValues="@array/pref_values_0_1"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
@@ -25,10 +25,10 @@
 
     <ListPreference
         android:key="side_panels_player_fouls_rules"
-        android:title="@string/side_panels_fouls_rules"
+        android:title="@string/sp_fouls_rules"
         android:defaultValue="1"
         android:summary="%s"
-        android:entries="@array/side_panels_fouls_rules_titles"
+        android:entries="@array/sp_fouls_rules_titles"
         android:entryValues="@array/pref_values_0_3"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
@@ -36,7 +36,7 @@
 
     <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
         android:key="side_panels_player_max_fouls"
-        android:title="@string/side_panels_max_fouls"
+        android:title="@string/sp_max_fouls"
         android:defaultValue="@string/overtime_length_default"
         min="-1"
         max="10"

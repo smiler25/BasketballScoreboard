@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/right_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="5"
+    android:rowCount="2"
+    android:layout_gravity="center"
+    android:stretchMode="spacingWidth"
+    >
+
+    <TableRow android:gravity="center">
+        <Button
+            android:id="@+id/guest_player1"
+            style="@style/playersButtonsRight"
+            android:text="@string/minus"
+            />
+        <Button
+            android:id="@+id/guest_player2"
+            style="@style/playersButtonsRight"
+            android:text="@string/minus"
+            />
+        <Button
+            android:id="@+id/guest_player3"
+            style="@style/playersButtonsRight"
+            android:text="@string/minus"
+            />
+    </TableRow>
+    <TableRow android:gravity="center">
+        <ImageButton
+            android:id="@+id/right_panel_toggle"
+            style="@style/playersButtonsRight"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/description_close_panel"
+            android:src="@drawable/ic_action_back"
+            android:adjustViewBounds="false"
+            android:baselineAlignBottom="false"
+            android:padding="@dimen/side_panel_open_icon_padding"
+            />
+    </TableRow>
+
+</TableLayout>

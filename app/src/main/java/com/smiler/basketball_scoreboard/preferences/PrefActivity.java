@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.Rules;
+
+import static com.smiler.basketball_scoreboard.Rules.RULES_FIBA;
 
 public class PrefActivity extends Activity implements
         SharedPreferences.OnSharedPreferenceChangeListener,
@@ -21,8 +23,8 @@ public class PrefActivity extends Activity implements
         ColorPickerPreference.ColorPickerListener,
         PrefFragment.OnSelectNestedScreenPreference {
 
-    public static boolean prefChangedRestart = false;
     public static boolean prefChangedNoRestart = false;
+    public static boolean prefChangedRestart = false;
     public static boolean prefColorChanged = false;
 
     public static final String PREF_REGULAR_TIME = "regular_time_length";
@@ -39,6 +41,7 @@ public class PrefActivity extends Activity implements
 
     public static final String PREF_NUM_REGULAR = "number_of_regular_periods";
     public static final String PREF_MAX_FOULS = "max_fouls";
+    public static final String PREF_MAX_FOULS_WARN = "max_fouls_warn";
     public static final String PREF_TIMEOUTS_RULES = "list_timeout_rules";
     public static final String PREF_HOME_NAME = "home_team_name";
     public static final String PREF_GUEST_NAME = "guest_team_name";
@@ -47,7 +50,7 @@ public class PrefActivity extends Activity implements
     public static final String PREF_ENABLE_SIDE_PANELS = "side_panels_activate";
     public static final String PREF_SIDE_PANELS_CLEAR = "side_panels_clear";
     public static final String PREF_SIDE_PANELS_CONNECTED = "side_panels_dependency";
-    private static final String PREF_SIDE_PANELS_FOULS_RULES = "side_panels_player_fouls_rules";
+    public static final String PREF_SIDE_PANELS_FOULS_RULES = "side_panels_player_fouls_rules";
     public static final String PREF_SIDE_PANELS_FOULS_MAX = "side_panels_player_max_fouls";
 
     public static final String PREF_LAYOUT = "list_layout";
@@ -65,13 +68,7 @@ public class PrefActivity extends Activity implements
     public static final String PREF_FIX_LANDSCAPE = "fix_landscape";
     public static final String PREF_PLAY_BY_PLAY = "play_by_play";
 
-    private static final boolean DEFAULT_ENABLE_SHOT_TIME = true;
-    private static final boolean DEFAULT_ENABLE_SHORT_SHOT_TIME = true;
-
-    private static final String DEFAULT_FIBA_TIMEOUTS = "1";
-    private static final String DEFAULT_NBA_TIMEOUTS = "2";
-
-    private static final String SIDE_PANEL_FOULS_RULES_STRICT = "1";
+    public static final String SIDE_PANEL_FOULS_RULES_STRICT = "1";
 //    private static final String DEFAULT_SIDE_PANEL_FOULS_RULES = "2";
     private static final String CUSTOM_SIDE_PANEL_FOULS_RULES = "3";
     private boolean playerRulesDefault = false;
@@ -122,13 +119,14 @@ public class PrefActivity extends Activity implements
                 prefChangedRestart = true;
                 break;
             case PREF_OFFICIAL_RULES:
-                setDefault(prefs.getInt(PREF_OFFICIAL_RULES, 0));
+                setDefault(Integer.parseInt(prefs.getString(PREF_OFFICIAL_RULES, Integer.toString(RULES_FIBA))));
                 break;
             default:
                 prefChangedNoRestart = true;
                 if (key.equals(PREF_SIDE_PANELS_FOULS_MAX) && !playerRulesDefault) {
                     setPlayerCustomFoulsRules();
-                } else if (key.equals(PREF_SIDE_PANELS_FOULS_RULES)) {// && prefs.getString(PREF_SIDE_PANELS_FOULS_RULES, DEFAULT_SIDE_PANEL_FOULS_RULES).equals(DEFAULT_SIDE_PANEL_FOULS_RULES)) {
+                } else if (key.equals(PREF_SIDE_PANELS_FOULS_RULES)) {
+                    // && prefs.getString(PREF_SIDE_PANELS_FOULS_RULES, DEFAULT_SIDE_PANEL_FOULS_RULES).equals(DEFAULT_SIDE_PANEL_FOULS_RULES)) {
                     setPlayerDefaultFouls();
                 }
                 break;
@@ -136,25 +134,7 @@ public class PrefActivity extends Activity implements
     }
 
     private void setDefault(int type) {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(PREF_NUM_REGULAR, Constants.DEFAULT_NUM_REGULAR);
-        editor.putInt(PREF_OVERTIME, Constants.DEFAULT_OVERTIME);
-        editor.putInt(PREF_SHOT_TIME, Constants.DEFAULT_SHOT_TIME);
-        editor.putInt(PREF_ENABLE_SHORT_SHOT_TIME, Constants.DEFAULT_SHORT_SHOT_TIME);
-        editor.putInt(PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS);
-        editor.putBoolean(PREF_ENABLE_SHOT_TIME, DEFAULT_ENABLE_SHOT_TIME);
-        editor.putBoolean(PREF_ENABLE_SHORT_SHOT_TIME, DEFAULT_ENABLE_SHORT_SHOT_TIME);
-        editor.putString(PREF_SIDE_PANELS_FOULS_RULES, SIDE_PANEL_FOULS_RULES_STRICT);
-        if (type == 0) {
-            editor.putInt(PREF_REGULAR_TIME, Constants.DEFAULT_FIBA_MAIN_TIME);
-            editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_FIBA_PLAYER_FOULS);
-            editor.putString(PREF_TIMEOUTS_RULES, DEFAULT_FIBA_TIMEOUTS);
-        } else {
-            editor.putInt(PREF_REGULAR_TIME, Constants.DEFAULT_NBA_MAIN_TIME);
-            editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, Constants.DEFAULT_NBA_PLAYER_FOULS);
-            editor.putString(PREF_TIMEOUTS_RULES, DEFAULT_NBA_TIMEOUTS);
-        }
-        editor.apply();
+        Rules.setDefaultRules(prefs, type);
         prefChangedRestart = true;
         restartActivity();
     }
@@ -168,7 +148,7 @@ public class PrefActivity extends Activity implements
 
     private void setPlayerDefaultFouls() {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, prefs.getInt(PREF_MAX_FOULS, Constants.DEFAULT_MAX_FOULS));
+        editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, prefs.getInt(PREF_MAX_FOULS, Rules.DEFAULT_MAX_FOULS));
         playerRulesDefault = true;
         editor.apply();
     }
@@ -226,7 +206,7 @@ public class PrefActivity extends Activity implements
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
-        toolbar.setTitle(R.string.time_screen);
+        toolbar.setTitle(R.string.screen_time);
     }
 
     private void openSidePanelsSettings() {
@@ -235,7 +215,7 @@ public class PrefActivity extends Activity implements
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
-        toolbar.setTitle(R.string.side_panels_screen);
+        toolbar.setTitle(R.string.screen_sp);
     }
 
     private void openSoundsSettings() {
@@ -244,7 +224,7 @@ public class PrefActivity extends Activity implements
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
-        toolbar.setTitle(R.string.sounds_screen);
+        toolbar.setTitle(R.string.screen_sounds);
     }
 
     @Override

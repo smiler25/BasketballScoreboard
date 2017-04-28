@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import static com.smiler.basketball_scoreboard.Constants.LEFT;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_PANELS;
+import static com.smiler.basketball_scoreboard.Constants.PANEL_DELETE_TYPE_FULL;
 import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 
 
@@ -200,7 +201,11 @@ public class PlayersPanels {
     }
 
     public void deletePlayers(int type, boolean left) {
-        (left ? leftPanel : rightPanel).clear(type == 0);
+        (left ? leftPanel : rightPanel).clear(type == PANEL_DELETE_TYPE_FULL);
+    }
+
+    public void deletePlayers(boolean left) {
+        (left ? leftPanel : rightPanel).clear(preferences.spClearDelete);
     }
 
     public boolean editPlayer(boolean left, int id, int number, String name, boolean captain) {
@@ -261,5 +266,9 @@ public class PlayersPanels {
 
     public void clearSavedState() {
         SidePanelFragment.clearCurrentData();
+    }
+
+    public void substitute(boolean left, SidePanelRow in, SidePanelRow out) {
+        (left ? leftPanel : rightPanel).substitute(in, out);
     }
 }

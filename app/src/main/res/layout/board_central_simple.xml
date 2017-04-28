@@ -171,29 +171,20 @@
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/leftPlus1View"
                     style="@style/scoreChangers"
-                    android:textSize="@dimen/simple_score_changer_size"
-                    android:padding="@dimen/simple_score_changer_padding"
-                    android:layout_weight="1"
                     android:text="@string/plus1"
                     />
 
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/leftPlus3View"
                     style="@style/scoreChangers"
-                    android:textSize="@dimen/simple_score_changer_size"
-                    android:padding="@dimen/simple_score_changer_padding"
-                    android:layout_weight="1"
                     android:text="@string/plus3"
                     />
 
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/leftMinus1View"
                     style="@style/scoreChangers"
-                    android:textSize="@dimen/simple_score_changer_size"
-                    android:padding="@dimen/simple_score_changer_padding"
-                    android:layout_weight="1"
                     android:text="@string/minus1"
-                    android:textAppearance="?android:attr/textAppearanceMedium"/>
+                    />
             </LinearLayout>
 
              <com.smiler.basketball_scoreboard.elements.CustomFontTextView
@@ -225,27 +216,18 @@
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/rightPlus1View"
                     style="@style/scoreChangers"
-                    android:textSize="@dimen/simple_score_changer_size"
-                    android:padding="@dimen/simple_score_changer_padding"
-                    android:layout_weight="1"
                     android:text="@string/plus1"
                     />
 
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/rightPlus3View"
                     style="@style/scoreChangers"
-                    android:textSize="@dimen/simple_score_changer_size"
-                    android:padding="@dimen/simple_score_changer_padding"
-                    android:layout_weight="1"
                     android:text="@string/plus3"
                     />
 
                 <com.smiler.basketball_scoreboard.elements.CustomFontTextView
                     android:id="@+id/rightMinus1View"
                     style="@style/scoreChangers"
-                    android:textSize="@dimen/simple_score_changer_size"
-                    android:padding="@dimen/simple_score_changer_padding"
-                    android:layout_weight="1"
                     android:text="@string/minus1"
                     />
             </LinearLayout>

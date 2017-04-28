@@ -21,7 +21,6 @@ import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.LONG_CLICK_VIBE_PAT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
-import static com.smiler.basketball_scoreboard.models.Game.GAME_TYPE.SIMPLE;
 
 public class CameraLayout extends BaseLayout implements
         View.OnClickListener, View.OnLongClickListener {
@@ -114,11 +113,18 @@ public class CameraLayout extends BaseLayout implements
         this.longClickListener = longClickListener;
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-        if (preferences.layoutType == SIMPLE) {
-            LayoutInflater.from(context).inflate(R.layout.camera_layout_simple, this);
-        } else {
-            LayoutInflater.from(context).inflate(R.layout.camera_layout_full, this);
-            initFull();
+        switch (preferences.layoutType) {
+            case SIMPLE:
+                LayoutInflater.from(context).inflate(R.layout.camera_layout_simple, this);
+                break;
+            case STREETBALL:
+                LayoutInflater.from(context).inflate(R.layout.camera_layout_3x3, this);
+                init3X3();
+                break;
+            default:
+                LayoutInflater.from(context).inflate(R.layout.camera_layout_full, this);
+                initFull();
+                break;
         }
         init();
         FrameLayout view = (FrameLayout) findViewById(R.id.camera_preview);
@@ -127,9 +133,17 @@ public class CameraLayout extends BaseLayout implements
 
     private void initFull() {
         periodView = (TextView) findViewById(R.id.camera_period);
-        shotTimeView = (TextView) findViewById(R.id.camera_shot_clock);
         periodView.setOnClickListener(this);
         periodView.setOnLongClickListener(this);
+        initShotTime();
+    }
+
+    private void init3X3() {
+        initShotTime();
+    }
+
+    private void initShotTime() {
+        shotTimeView = (TextView) findViewById(R.id.camera_shot_clock);
         shotTimeView.setOnClickListener(this);
         shotTimeView.setOnLongClickListener(this);
     }

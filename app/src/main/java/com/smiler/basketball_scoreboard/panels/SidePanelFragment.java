@@ -12,7 +12,6 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
@@ -29,10 +28,13 @@ import java.util.TreeSet;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
+import static com.smiler.basketball_scoreboard.Constants.DIALOG_CLEAR_PANEL;
+
 public class SidePanelFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     public static final String TAG_LEFT_PANEL = "LeftSidePanel";
     public static final String TAG_RIGHT_PANEL = "RightSidePanel";
+    private static int maxPlayers;
 
     private SidePanelListener listener;
     private TableLayout table;
@@ -174,6 +176,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         return false;
     }
 
+    public static void setMaxPlayers(int number) {
+        maxPlayers = number;
+    }
+
     private void handleSelection() {
         if (panelSelect.isChecked() || activePlayers.size() <= 5) {
             View.OnClickListener l = panelSelect.isChecked() ? this : null;
@@ -233,9 +239,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         int count = playersNumbers.size();
         int number = 1;
         String name = getResources().getString(R.string.side_panel_player_name);
-        while (count < Constants.MAX_PLAYERS) {
+        Activity activity = getActivity();
+        while (count < maxPlayers) {
             while (playersNumbers.contains(number)) { number++; }
-            SidePanelRow row = new SidePanelRow(getActivity(), number, String.format(name, number), false, left);
+            SidePanelRow row = new SidePanelRow(activity, number, String.format(name, number), false, left);
             playersNumbers.add(number);
             table.addView(row);
             rows.put(row.getId(), row);
@@ -249,10 +256,6 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (!(!captain || captainNotAssigned())) { status |= 2; }
         return status;
     }
-
-//    public int count() {
-//        return rows.size();
-//    }
 
     private boolean captainNotAssigned() {
         return captainPlayer == null;
@@ -293,10 +296,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     }
 
     private boolean checkAddAvailable() {
-        if (playersNumbers.size() < Constants.MAX_PLAYERS) {
+        if (playersNumbers.size() < maxPlayers) {
             return true;
         }
-        Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_players_limit), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), String.format(getResources().getString(R.string.side_panel_players_limit), maxPlayers), Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -317,7 +320,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (frag != null && frag.isAdded()) {
             return;
         }
-        ListDialog.newInstance("clear_panel", left).show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance(DIALOG_CLEAR_PANEL, left).show(getFragmentManager(), ListDialog.TAG);
     }
 
     public void clear(boolean delete) {

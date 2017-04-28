@@ -1,6 +1,7 @@
 package com.smiler.basketball_scoreboard.help;
 
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
@@ -25,31 +26,31 @@ public class HelpRulesFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.expandable_list, container, false);
         ExpandableListView expListView = (ExpandableListView) rootView.findViewById(R.id.expListView);
 
+        Resources resources = getResources();
+        final String[] titles = resources.getStringArray(R.array.help_rules_titles);
+        final String[] texts = new String[] {
+                resources.getString(R.string.help_rules_fiba),
+                resources.getString(R.string.help_rules_nba),
+                resources.getString(R.string.help_rules_3x3),
+        };
         List<Map<String, String>> groupData = new ArrayList<Map<String, String>>() {{
-            add(new HashMap<String, String>() {{
-                put("ROOT_NAME", getResources().getString(R.string.fiba));
-            }});
-            add(new HashMap<String, String>() {{
-                put("ROOT_NAME", getResources().getString(R.string.nba));
-            }});
+            for (final String title : titles){
+                add(new HashMap<String, String>() {{
+                    put("ROOT_NAME", title);
+                }});
+            }
         }};
 
-
-        List<List<Map<String, String>>> listOfChildGroups = new ArrayList<>();
-
-        List<Map<String, String>> childGroupForFirstGroupRow = new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>() {{
-                put("CHILD_NAME", getResources().getString(R.string.help_fiba_rules));
-            }});
+        List<List<Map<String, String>>> listOfChildGroups = new ArrayList<List<Map<String, String>>>() {{
+            for (final String text : texts){
+                add(new ArrayList<Map<String, String>>(){{
+                    add(new HashMap<String, String>() {{
+                        put("CHILD_NAME", text);
+                    }});
+                }});
+            }
         }};
-        listOfChildGroups.add(childGroupForFirstGroupRow);
 
-        List<Map<String, String>> childGroupForSecondGroupRow = new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>() {{
-                put("CHILD_NAME", getResources().getString(R.string.help_nba_rules));
-            }});
-        }};
-        listOfChildGroups.add(childGroupForSecondGroupRow);
         ExpandableListAdapter listAdapter = new SimpleExpandableListAdapter(
                 getActivity(),
 
@@ -66,8 +67,8 @@ public class HelpRulesFragment extends Fragment{
         expListView.setAdapter(listAdapter);
         Display newDisplay = getActivity().getWindowManager().getDefaultDisplay();
         int width = newDisplay.getWidth();
-        int margin = getResources().getDimensionPixelSize(R.dimen.indicator_margin);
-        int margin2 = getResources().getDimensionPixelSize(R.dimen.indicator_margin2);
+        int margin = resources.getDimensionPixelSize(R.dimen.indicator_margin);
+        int margin2 = resources.getDimensionPixelSize(R.dimen.indicator_margin2);
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             expListView.setIndicatorBounds(width-margin, width-margin2);
         } else {

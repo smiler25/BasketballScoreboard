@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_activity_settings">Настройки</string>
-    <string name="time_category">Настройки времени</string>
-    <string name="time_screen">Настройки времени</string>
-    <string name="sounds_screen">Звуки</string>
-    <string name="side_panels_category">Панели игроков</string>
-    <string name="side_panels_screen">Настройки панелей игроков</string>
+
+    <string name="category_app">Настройки приложения</string>
+    <string name="category_common">Общие настройки</string>
+    <string name="category_default">Значения по умолчанию</string>
+    <string name="category_layout">Настройки макета</string>
+    <string name="category_side_panels">Панели игроков</string>
+    <string name="category_time">Настройки времени</string>
+    <string name="screen_sounds">Звуки</string>
+    <string name="screen_sp">Настройки панелей игроков</string>
+    <string name="screen_time">Настройки времени</string>
 
     <string name="pref_auto_break">Показывать перерывы</string>
     <string name="pref_auto_break_descr">Начинать отсчет времени перерыва по окончании периода</string>
@@ -20,8 +25,6 @@
     <string name="pref_save_on_exit">Сохранять текущее состояние при выходе</string>
     <string name="pref_timeouts_rules">Правила таймаутов</string>
 
-    <string name="app_category">Настройки приложения</string>
-    <string name="default_category">Значения по умолчанию</string>
     <string name="direct_timer">Использовать прямой осчёт времени</string>
     <string name="enable_short_shot_time">Использовать укороченное время на атаку</string>
     <string name="enable_shot_time">Использовать время на атаку</string>
@@ -45,26 +48,28 @@
     <string name="fraction_seconds_shot">Доли секунд в времени на атаку</string>
     <string name="fraction_seconds_shot_descr">Если время меньше 5 секунд, показывать доли секунды</string>
 
-    <string name="side_panels_activate">Использовать панели игроков</string>
-    <string name="side_panels_clear">Поведение при новой игре</string>
-    <string name="side_panels_connection">Связь между панелями</string>
-    <string name="side_panels_connection_descr">Показывать/скрывать панели синхронно</string>
-    <string name="side_panels_fouls_rules">Отслеживание персональных фолов</string>
-    <string name="side_panels_interaction">Взаимодействие с кнопками игроков</string>
-    <string name="side_panels_interaction_time">Время ожидания действия (секунды)</string>
-    <string name="side_panels_max_fouls">Количество персональных фолов</string>
+    <string name="sp_activate">Использовать панели игроков</string>
+    <string name="sp_clear">Поведение при новой игре</string>
+    <string name="sp_connection">Связь между панелями</string>
+    <string name="sp_connection_descr">Показывать/скрывать панели синхронно</string>
+    <string name="sp_fouls_rules">Отслеживание персональных фолов</string>
+    <string name="sp_interaction">Взаимодействие с кнопками игроков</string>
+    <string name="sp_interaction_time">Время ожидания действия (секунды)</string>
+    <string name="sp_max_fouls">Количество персональных фолов</string>
 
-    <string-array name="side_panels_fouls_rules_titles">
+    <string-array name="sp_fouls_rules_titles">
         <item>Не отслеживать</item>
         <item>Согласно правилам</item>
         <item>Совпадает с командными</item>
         <item>Настроить</item>
     </string-array>
-    <string-array name="side_panels_clear_titles">
+
+    <string-array name="sp_clear_titles">
         <item>Удалить всех игроков</item>
         <item>Обнулить значния очков и фолов</item>
     </string-array>
-    <string-array name="side_panels_interaction_titles">
+
+    <string-array name="sp_interaction_titles">
         <item>Применить в течение времени. Приписать капитану по истечению</item>
         <item>Применить в течение времени. Приписать невидимому игроку по истечению</item>
         <item>Запоминать действия пока кнопка игрока не будет нажата</item>
@@ -80,11 +85,13 @@
     <string-array name="pref_layout_titles">
         <item>Полный, с временем на атаку, периодом, фолами и таймаутами</item>
         <item>Простой, без времени на атаку, периода, фолов и таймаутов</item>
+        <item>Стритбол</item>
     </string-array>
     <string-array name="timeout_variants">
         <item>2-х минутный перерыв</item>
         <item>15-ти минутный перерыв</item>
         <item>20-ти секундный таймаут</item>
+        <item>30-ти секундный таймаут</item>
         <item>60-ти секундный таймаут</item>
         <item>100 секундный таймаут</item>
     </string-array>
@@ -97,7 +104,15 @@
         <item>Не использовать</item>
         <item>FIBA</item>
         <item>NBA</item>
+        <item>Стритбол</item>
     </string-array>
+
+    <string-array name="pref_default_prefs_titles">
+        <item>FIBA</item>
+        <item>NBA</item>
+        <item>Стритбол</item>
+    </string-array>
+
     <string-array name="pref_clear_time_titles">
         <item>Не использовать</item>
         <item>Пауза при фоле</item>
@@ -111,6 +126,7 @@
         <item>Счёт хозяев</item>
         <item>Счёт гостей</item>
         <item>Основное время</item>
+        <item>Время на атаку</item>
     </string-array>
 
     <!-- настройки звука -->

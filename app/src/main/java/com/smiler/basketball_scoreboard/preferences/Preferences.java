@@ -7,29 +7,36 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.models.Game;
+import com.smiler.basketball_scoreboard.Rules;
+import com.smiler.basketball_scoreboard.layout.BaseLayout;
+import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 
 import java.text.SimpleDateFormat;
 
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_FIBA_MAIN_TIME;
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_FIBA_PLAYER_FOULS;
 import static com.smiler.basketball_scoreboard.Constants.DEFAULT_HORN_LENGTH;
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_MAX_FOULS;
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_NUM_REGULAR;
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_OVERTIME;
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_SHORT_SHOT_TIME;
-import static com.smiler.basketball_scoreboard.Constants.DEFAULT_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.SECONDS_60;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_FIBA_MAIN_TIME;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_FIBA_PLAYER_FOULS;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_MAX_FOULS;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_MAX_FOULS_WARN;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_NUM_REGULAR;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_OVERTIME;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_SHORT_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_SHOT_TIME;
+import static com.smiler.basketball_scoreboard.Rules.DEFAULT_TIMEOUTS;
+import static com.smiler.basketball_scoreboard.Rules.MAX_PLAYERS;
+import static com.smiler.basketball_scoreboard.Rules.MAX_PLAYERS_3X3;
 
 public class Preferences {
     private final SharedPreferences prefs;
     private final Resources resources;
 
     public int autoSaveResults, autoSound, actualTime;
-    public Game.TO_RULES timeoutRules;
-    public Game.GAME_TYPE layoutType;
+    public Rules.TO_RULES timeoutRules;
+    public BaseLayout.GAME_LAYOUT layoutType;
     public int playByPlay;
     public boolean fixLandscape, fixLandscapeChanged;
     public boolean layoutChanged, timeoutsRulesChanged;
@@ -44,7 +51,7 @@ public class Preferences {
     public boolean spClearDelete;
     public boolean arrowsOn, arrowsStateChanged;
     public long mainTimePref, shotTimePref, shortShotTimePref, overTimePref;
-    public short maxFouls;
+    public short maxFouls, maxFoulsWarn;
     public short numRegularPeriods;
     private SimpleDateFormat mainTimeFormat = TIME_FORMAT;
     public int whistleRepeats, hornRepeats, whistleLength, hornLength, hornUserRepeats;
@@ -53,7 +60,11 @@ public class Preferences {
     public int dontAskNewGame;
 
     public enum Elements {
-        HSCORE, GSCORE, MAIN_TIME, BACKGROUND;
+        HSCORE,
+        GSCORE,
+        MAIN_TIME,
+        SHOT_TIME,
+        BACKGROUND;
     }
 
     private static Preferences instance;
@@ -117,6 +128,7 @@ public class Preferences {
         gName = prefs.getString(PrefActivity.PREF_GUEST_NAME, resources.getString(R.string.guest_team_name_default));
         actualTime = Integer.parseInt(prefs.getString(PrefActivity.PREF_ACTUAL_TIME, "1"));
         maxFouls = (short) prefs.getInt(PrefActivity.PREF_MAX_FOULS, DEFAULT_MAX_FOULS);
+        maxFoulsWarn = (short) prefs.getInt(PrefActivity.PREF_MAX_FOULS_WARN, DEFAULT_MAX_FOULS_WARN);
         boolean sidePanelsOn_ = prefs.getBoolean(PrefActivity.PREF_ENABLE_SIDE_PANELS, false);
         if (sidePanelsOn_ != spOn) {
             spOn = sidePanelsOn_;
@@ -135,15 +147,16 @@ public class Preferences {
             arrowsOn = arrowsOn_;
         }
 
-        Game.GAME_TYPE temp = Game.GAME_TYPE.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
+        BaseLayout.GAME_LAYOUT temp = BaseLayout.GAME_LAYOUT.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
         if (temp != layoutType) {
             layoutChanged = true;
             layoutType = temp;
         }
-        Game.TO_RULES temp_rules = Game.TO_RULES.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, "0")));
+        Rules.TO_RULES temp_rules = Rules.TO_RULES.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, DEFAULT_TIMEOUTS)));
         if (temp_rules != timeoutRules) {
             timeoutsRulesChanged = true;
             timeoutRules = temp_rules;
+            SidePanelFragment.setMaxPlayers(temp_rules == Rules.TO_RULES.STREETBALL ? MAX_PLAYERS_3X3 : MAX_PLAYERS);
         }
         PrefActivity.prefChangedNoRestart = false;
         if (PrefActivity.prefColorChanged) {
@@ -171,7 +184,21 @@ public class Preferences {
                 return prefs.getInt(ColorPickerPreference.getKeyName(1), defaultScoreColor);
             case MAIN_TIME:
                 return prefs.getInt(ColorPickerPreference.getKeyName(2), defaultTimeColor);
+            case SHOT_TIME:
+                return prefs.getInt(ColorPickerPreference.getKeyName(3), defaultTimeColor);
         }
         return Color.RED;
+    }
+
+    public void setTeamName(int team, String value) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (team == HOME) {
+            hName = value;
+            editor.putString(PrefActivity.PREF_HOME_NAME, value);
+        } else {
+            gName = value;
+            editor.putString(PrefActivity.PREF_GUEST_NAME, value);
+        }
+        editor.apply();
     }
 }

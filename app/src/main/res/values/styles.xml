@@ -78,10 +78,12 @@
     </style>
 
     <style name="scoreChangers" parent="ledDigits">
+        <item name="android:layout_weight">1</item>
         <item name="android:textSize">@dimen/score_changer_size</item>
-        <item name="android:textColor">@color/red</item>
         <item name="android:padding">@dimen/score_changer_padding</item>
         <item name="android:layout_margin">@dimen/score_changer_margin</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
 
     <style name="label" parent="matchParentCenter">

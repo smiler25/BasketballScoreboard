@@ -4,9 +4,10 @@
     <string-array name="help_rules_titles">
         <item>FIBA</item>
         <item>NBA</item>
+        <item>Streetball (FIBA)</item>
     </string-array>
 
-    <string name="help_fiba_rules">
+    <string name="help_rules_fiba">
         full version: https://www.fiba.com/downloads/Rules/2014/Official_Basketball_Rules_2014_Y.pdf\n
         \n
         Art. 4 Teams\n
@@ -38,7 +39,7 @@
         41.1.1. A team foul is a personal, technical, unsportsmanlike or disqualifying foul committed by a player. A team is in the team foul penalty situation when it has committed 4 team fouls in a period.
     </string>
 
-    <string name="help_nba_rules">
+    <string name="help_rules_nba">
         full version: https://turnernbahangtime.files.wordpress.com/2015/11/official-nba-rule-book-2015-16.pdf\n
         \n
         RULE NO. 5—SCORING AND TIMING\n
@@ -78,6 +79,31 @@
         B. Personal Foul\n
         Section V-Free Throw Penalty Situations\n
         a. Each team is limited to four team fouls per regulation period without additional penalties. Common fouls charged as team fouls, in excess of four, will be penalized by one free throw attempt plus a penalty free throw attempt.
+    </string>
+
+    <string name="help_rules_3x3" formatted="false">
+        full version: http://www.fiba.com/documents/2016/01/29/3x3%20Rules%20of%20the%20game%202016%20table.pdf\n
+        or\n
+        http://www.fiba.com/documents/2016/01/29/3x3%20Rules%20of%20the%20game%202016%20text.pdf\n
+        \n
+        Art. 2 Teams\n
+            Each team shall consist of 4 players (3 players on the court and 1 substitute).\n
+        Art. 5 Scoring\n
+            5.1. Every shot inside the arc shall be awarded one 1 point.\n
+            5.2. Every shot behind the arc shall be awarded 2 points.\n
+            5.3. Every successful free throw shall be awarded 1 point.\n
+        Art. 6 Playing time/Winner of a Game\n
+            6.1. The regular playing time shall be as follows: one period of 10 minutes playing time. The clock shall be stopped during dead ball situations and free throws. The clock shall be restarted after the exchange of the ball is completed (as soon as it is in the offensive team’s hands).\n
+            6.2. However the first team which scores 21 points or more wins the game if it happens before the end of regular playing time. This rule applies to regular playing time only (not in a potential overtime).\n
+            6.3. If the score is tied at the end of playing time, an extra period of time will be played. There shall be an interval of 1 minute before the overtime starts. The first team to score 2 points in the overtime wins the game.\n
+        Art.7 Fouls/Free throws\n
+            7.1. A team is in a penalty situation after it has committed 6 fouls.\n
+            7.4. Team fouls 7, 8 and 9 shall always be awarded with 2 free throws. The 10th and any subsequent team foul will be awarded with 2 free throws and ball possession.\n
+        Art. 9 Stalling\n
+            9.2. If the court is equipped with a shot clock, a team must attempt a shot within 12 seconds.\n
+        Art. 11 Time-outs\n
+            11.1. Each te am is granted one team time-out.\n
+            11.3. All time-outs have a length of 30 seconds .\n
     </string>
 
 </resources>

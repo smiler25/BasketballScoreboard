@@ -71,11 +71,6 @@
                     android:text="@string/two_zeros" />
 
                 <TextView
-                    android:id="@+id/camera_period"
-                    style="@style/cameraLineView"
-                    android:text="@string/quarter_one" />
-
-                <TextView
                     android:id="@+id/camera_shot_clock"
                     style="@style/cameraLineView"
                     android:text="@string/shot_time" />

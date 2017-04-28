@@ -5,91 +5,31 @@
     android:layout_width="match_parent"
     >
 
-    <PreferenceScreen
-        android:key="time_screen"
-        android:title="@string/time_screen"
-        >
-    </PreferenceScreen>
+    <PreferenceCategory android:title="@string/category_default">
 
-    <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
-        android:key="number_of_regular_periods"
-        android:title="@string/number_of_regular_periods"
-        android:defaultValue="@string/number_of_regular_periods_default"
-        max="10"
-        min="1" />
-
-    <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
-        android:key="max_fouls"
-        android:title="@string/max_fouls"
-        android:defaultValue="@string/max_fouls_default"
-        max="10"
-        min="1" />
-
-    <ListPreference
-        android:key="list_timeout_rules"
-        android:title="@string/pref_timeouts_rules"
-        android:defaultValue="0"
-        android:summary="%s"
-        android:entries="@array/pref_timeouts_rules_titles"
-        android:entryValues="@array/pref_values_0_2"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
-
-    <com.smiler.basketball_scoreboard.preferences.EditTextPreference
-        android:key="home_team_name"
-        android:title="@string/home_team_name"
-        android:defaultValue="@string/home_team_name_default"
-        android:selectAllOnFocus="true"
-        android:inputType="textCapWords"
-        android:singleLine="true"
-        android:maxLength="25"
-        android:maxLines="1" />
-
-    <com.smiler.basketball_scoreboard.preferences.EditTextPreference
-        android:key="guest_team_name"
-        android:title="@string/guest_team_name"
-        android:defaultValue="@string/guest_team_name_default"
-        android:selectAllOnFocus="true"
-        android:inputType="text"
-        android:singleLine="true"
-        android:maxLength="25"
-        android:maxLines="1" />
-
-    <PreferenceCategory
-        android:key="@string/default_category"
-        android:title="@string/default_category"
-        >
-
-        <com.smiler.basketball_scoreboard.preferences.SetDefaultPreference
-            android:key="set_official_rules"
+        <ListPreference
+            android:key="list_official_rules"
             android:title="@string/pref_default_prefs"
-            android:dialogMessage="@string/set_default_dialog_message"
-            android:positiveButtonText="@string/nba"
-            android:negativeButtonText="@string/fiba"
-            />
+            android:defaultValue="0"
+            android:summary="%s"
+            android:entries="@array/pref_default_prefs_titles"
+            android:entryValues="@array/pref_values_0_2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <ListPreference
+            android:key="list_timeout_rules"
+            android:title="@string/pref_timeouts_rules"
+            android:defaultValue="0"
+            android:summary="%s"
+            android:entries="@array/pref_timeouts_rules_titles"
+            android:entryValues="@array/pref_values_0_3"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/side_panels_category"
-        >
-
-        <CheckBoxPreference
-            android:key="side_panels_activate"
-            android:title="@string/side_panels_activate"
-            android:defaultValue="false" />
-
-        <PreferenceScreen
-            android:key="side_panels_screen"
-            android:dependency="side_panels_activate"
-            android:title="@string/side_panels_screen"
-            >
-        </PreferenceScreen>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="@string/app_category">
+    <PreferenceCategory android:title="@string/category_layout">
 
         <ListPreference
             android:key="list_layout"
@@ -97,9 +37,83 @@
             android:defaultValue="0"
             android:summary="%s"
             android:entries="@array/pref_layout_titles"
-            android:entryValues="@array/pref_values_0_1"
+            android:entryValues="@array/pref_values_0_2"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
+
+        <CheckBoxPreference
+            android:key="possession_arrows"
+            android:title="@string/pref_possession_arrows"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="fix_landscape"
+            android:title="@string/pref_fix_landscape"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_side_panels">
+
+        <CheckBoxPreference
+            android:key="side_panels_activate"
+            android:title="@string/sp_activate"
+            android:defaultValue="false" />
+
+        <PreferenceScreen
+            android:key="side_panels_screen"
+            android:dependency="side_panels_activate"
+            android:title="@string/screen_sp"
+            >
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_common">
+
+        <PreferenceScreen
+            android:key="time_screen"
+            android:title="@string/screen_time"
+            >
+        </PreferenceScreen>
+
+        <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
+            android:key="number_of_regular_periods"
+            android:title="@string/number_of_regular_periods"
+            android:defaultValue="@string/number_of_regular_periods_default"
+            max="10"
+            min="1" />
+
+        <com.smiler.basketball_scoreboard.preferences.NumberPickerPreference
+            android:key="max_fouls"
+            android:title="@string/max_fouls"
+            android:defaultValue="@string/max_fouls_default"
+            max="10"
+            min="1" />
+
+        <com.smiler.basketball_scoreboard.preferences.EditTextPreference
+            android:key="home_team_name"
+            android:title="@string/home_team_name"
+            android:defaultValue="@string/home_team_name_default"
+            android:selectAllOnFocus="true"
+            android:inputType="textCapWords"
+            android:singleLine="true"
+            android:maxLength="25"
+            android:maxLines="1" />
+
+        <com.smiler.basketball_scoreboard.preferences.EditTextPreference
+            android:key="guest_team_name"
+            android:title="@string/guest_team_name"
+            android:defaultValue="@string/guest_team_name_default"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLength="25"
+            android:maxLines="1" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_app">
 
         <ListPreference
             android:key="play_by_play"
@@ -111,11 +125,6 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
 
-        <CheckBoxPreference
-            android:key="possession_arrows"
-            android:title="@string/pref_possession_arrows"
-            android:defaultValue="false" />
-
         <com.smiler.basketball_scoreboard.preferences.ColorPickerPreference
             android:key="color"
             android:title="@string/pref_custom_colors"
@@ -124,7 +133,7 @@
 
         <PreferenceScreen
             android:key="sounds_screen"
-            android:title="@string/sounds_screen"
+            android:title="@string/screen_sounds"
             >
         </PreferenceScreen>
 
@@ -142,11 +151,6 @@
             android:key="auto_show_break"
             android:title="@string/pref_auto_break"
             android:summary="@string/pref_auto_break_descr"
-            android:defaultValue="true" />
-
-        <CheckBoxPreference
-            android:key="fix_landscape"
-            android:title="@string/pref_fix_landscape"
             android:defaultValue="true" />
 
         <CheckBoxPreference
@@ -169,6 +173,7 @@
             android:key="save_on_exit"
             android:title="@string/pref_save_on_exit"
             android:defaultValue="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

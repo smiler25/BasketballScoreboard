@@ -13,12 +13,10 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.Level;
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.Rules;
 import com.smiler.basketball_scoreboard.elements.TriangleView;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
@@ -35,23 +33,21 @@ import static com.smiler.basketball_scoreboard.Constants.RIGHT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT_SHORT;
 
-public class StandardLayout extends BaseLayout implements View.OnClickListener, View.OnLongClickListener {
+public class StreetballLayout extends BaseLayout implements View.OnClickListener, View.OnLongClickListener {
 
-    public static final String TAG = "BS-StandardLayout";
+    public static final String TAG = "BS-StreetballLayout";
     private final Preferences preferences;
-    private TextView mainTimeView, shotTimeView, shotTimeSwitchView, periodView;
+    private TextView mainTimeView, shotTimeView;
     private TextView hNameView, gNameView;
     private TextView hScoreView, gScoreView;
     private TextView hTimeoutsView, gTimeoutsView;
-    private TextView hTimeouts20View, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
     private TriangleView leftArrow, rightArrow;
-    private Rules.TO_RULES timeoutRules;
     private GAME_LAYOUT layoutType;
     private ClickListener clickListener;
     private LongClickListener longClickListener;
     private boolean blockLongClick;
-    private float periodViewSize, scoreViewSize;
+    private float scoreViewSize;
     private Animation shotTimeBlinkAnimation = new AlphaAnimation(1, 0);
     private Vibrator vibrator;
     private ViewGroup leftPlayersButtonsGroup, rightPlayersButtonsGroup;
@@ -70,10 +66,10 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         }
         switch (v.getId()) {
             case R.id.leftScoreView:
-                clickListener.onChangeScoreClick(LEFT, 2);
+                clickListener.onChangeScoreClick(LEFT, 1);
                 break;
             case R.id.rightScoreView:
-                clickListener.onChangeScoreClick(RIGHT, 2);
+                clickListener.onChangeScoreClick(RIGHT, 1);
                 break;
             case R.id.mainTimeView:
                 clickListener.onMainTimeClick();
@@ -81,20 +77,11 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             case R.id.shotTimeView:
                 clickListener.onShotTimeClick();
                 break;
-            case R.id.shotTimeSwitch:
-                clickListener.onShotTimeSwitchClick();
+            case R.id.leftPlus2View:
+                clickListener.onChangeScoreClick(LEFT, 2);
                 break;
-            case R.id.leftPlus1View:
-                clickListener.onChangeScoreClick(LEFT, 1);
-                break;
-            case R.id.rightPlus1View:
-                clickListener.onChangeScoreClick(RIGHT, 1);
-                break;
-            case R.id.leftPlus3View:
-                clickListener.onChangeScoreClick(LEFT, 3);
-                break;
-            case R.id.rightPlus3View:
-                clickListener.onChangeScoreClick(RIGHT, 3);
+            case R.id.rightPlus2View:
+                clickListener.onChangeScoreClick(RIGHT, 2);
                 break;
             case R.id.leftMinus1View:
                 clickListener.onChangeScoreClick(LEFT, -1);
@@ -102,14 +89,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             case R.id.rightMinus1View:
                 clickListener.onChangeScoreClick(RIGHT, -1);
                 break;
-            case R.id.periodView:
-                clickListener.onPeriodClick();
-                break;
             case R.id.timeoutIconView:
-                clickListener.onIconClick(ICONS.TIMEOUT);
-                break;
-            case R.id.newPeriodIconView:
-                clickListener.onIconClick(ICONS.NEW_PERIOD);
+                clickListener.onIconClick(StandardLayout.ICONS.TIMEOUT);
                 break;
             case R.id.leftFoulsView:
                 clickListener.onFoulsClick(LEFT);
@@ -123,17 +104,11 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             case R.id.rightTimeoutsView:
                 clickListener.onTimeoutsClick(RIGHT);
                 break;
-            case R.id.leftTimeouts20View:
-                clickListener.onTimeouts20Click(LEFT);
-                break;
-            case R.id.rightTimeouts20View:
-                clickListener.onTimeouts20Click(RIGHT);
-                break;
             case R.id.cameraView:
-                clickListener.onIconClick(ICONS.CAMERA);
+                clickListener.onIconClick(StandardLayout.ICONS.CAMERA);
                 break;
             case R.id.switchSidesView:
-                clickListener.onIconClick(ICONS.SWITCH_SIDES);
+                clickListener.onIconClick(StandardLayout.ICONS.SWITCH_SIDES);
                 break;
             case R.id.left_panel_toggle:
                 clickListener.onOpenPanelClick(LEFT);
@@ -172,8 +147,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
                 return longClickListener.onMainTimeLongClick();
             case R.id.shotTimeView:
                 return longClickListener.onShotTimeLongClick();
-            case R.id.periodView:
-                return longClickListener.onPeriodLongClick();
             case R.id.leftFoulsView:
                 return longClickListener.onFoulsLongClick(LEFT);
             case R.id.rightFoulsView:
@@ -182,10 +155,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
                 return longClickListener.onTimeoutsLongClick(LEFT);
             case R.id.rightTimeoutsView:
                 return longClickListener.onTimeoutsLongClick(RIGHT);
-            case R.id.leftTimeouts20View:
-                return longClickListener.onTimeouts20LongClick(LEFT);
-            case R.id.rightTimeouts20View:
-                return longClickListener.onTimeouts20LongClick(RIGHT);
             case R.id.leftNameView:
                 return longClickListener.onNameLongClick(LEFT);
             case R.id.rightNameView:
@@ -198,52 +167,30 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         }
     }
 
-    public enum ICONS {
-        HORN, WHISTLE, CAMERA, TIMEOUT, NEW_PERIOD, SWITCH_SIDES
-    }
-
-    public StandardLayout(Context context, Preferences preferences,
-                          ClickListener clickListener, LongClickListener longClickListener) {
+    public StreetballLayout(Context context, Preferences preferences,
+                            ClickListener clickListener, LongClickListener longClickListener) {
         super(context);
         this.preferences = preferences;
         layoutType = preferences.layoutType;
-        timeoutRules = preferences.timeoutRules;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        switch (layoutType) {
-            case COMMON:
-                LayoutInflater.from(context).inflate(R.layout.board_layout, this);
-                initExtended();
-                break;
-            case SIMPLE:
-                LayoutInflater.from(context).inflate(R.layout.board_layout_simple, this);
-                initSimple();
-                break;
-        }
+        LayoutInflater.from(context).inflate(R.layout.board_layout_3x3, this);
         init();
         shotTimeBlinkAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    private StandardLayout init() {
-        mainTimeView = (TextView) findViewById(R.id.mainTimeView);
-        hScoreView = (TextView) findViewById(R.id.leftScoreView);
-        gScoreView = (TextView) findViewById(R.id.rightScoreView);
-        hNameView = (TextView) findViewById(R.id.leftNameView);
-        gNameView = (TextView) findViewById(R.id.rightNameView);
+    private StreetballLayout init() {
+        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
+        stub.setLayoutResource(R.layout.bottom_line_3x3);
+        stub.inflate();
 
-        mainTimeView.setOnClickListener(this);
-        mainTimeView.setOnLongClickListener(this);
-        hScoreView.setOnClickListener(this);
-        hScoreView.setOnLongClickListener(this);
-        gScoreView.setOnClickListener(this);
-        gScoreView.setOnLongClickListener(this);
-        hNameView.setOnClickListener(this);
-        hNameView.setOnLongClickListener(this);
-        gNameView.setOnClickListener(this);
-        gNameView.setOnLongClickListener(this);
-
+        initTimes();
+        initScores();
+        initNames();
         initScoreChangers();
+        initFouls();
+        initTimeouts();
         initIcons();
         initArrows();
         setColors();
@@ -253,39 +200,46 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         return this;
     }
 
-    private void initExtended() {
-        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
-        stub.setLayoutResource(preferences.timeoutRules == Rules.TO_RULES.NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
-        stub.inflate();
+    private void initScores() {
+        hScoreView = (TextView) findViewById(R.id.leftScoreView);
+        gScoreView = (TextView) findViewById(R.id.rightScoreView);
+        hScoreView.setOnClickListener(this);
+        hScoreView.setOnLongClickListener(this);
+        gScoreView.setOnClickListener(this);
+        gScoreView.setOnLongClickListener(this);
+    }
 
+    private void initTimes() {
         shotTimeView = (TextView) findViewById(R.id.shotTimeView);
-        shotTimeSwitchView = (TextView) findViewById(R.id.shotTimeSwitch);
         if (preferences.enableShotTime) {
             shotTimeView.setOnClickListener(this);
             shotTimeView.setOnLongClickListener(this);
-            shotTimeSwitchView.setOnClickListener(this);
-            shotTimeSwitchView.setText(Long.toString(preferences.shortShotTimePref / 1000));
         } else {
             try {
                 shotTimeView.setVisibility(View.INVISIBLE);
-                shotTimeSwitchView.setVisibility(View.GONE);
             } catch (NullPointerException e) {
-                Log.e(TAG, "shotTimeView or shotTimeSwitchView is null");
+                Log.e(TAG, "shotTimeView is null");
             }
         }
-
-        periodView = (TextView) findViewById(R.id.periodView);
-        periodView.setOnClickListener(this);
-        periodView.setOnLongClickListener(this);
-
-        initFouls();
-        initTimeouts();
+        mainTimeView = (TextView) findViewById(R.id.mainTimeView);
+        mainTimeView.setOnClickListener(this);
+        mainTimeView.setOnLongClickListener(this);
     }
 
-    private void initSimple() {
-        ImageView startNewPeriodView = (ImageView) findViewById(R.id.newPeriodIconView);
-        startNewPeriodView.setOnClickListener(this);
-        preferences.enableShotTime = false;
+    private void initNames() {
+        hNameView = (TextView) findViewById(R.id.leftNameView);
+        gNameView = (TextView) findViewById(R.id.rightNameView);
+        hNameView.setOnClickListener(this);
+        hNameView.setOnLongClickListener(this);
+        gNameView.setOnClickListener(this);
+        gNameView.setOnLongClickListener(this);
+    }
+
+    private void initScoreChangers() {
+        findViewById(R.id.leftMinus1View).setOnClickListener(this);
+        findViewById(R.id.rightMinus1View).setOnClickListener(this);
+        findViewById(R.id.leftPlus2View).setOnClickListener(this);
+        findViewById(R.id.rightPlus2View).setOnClickListener(this);
     }
 
     private void initFouls() {
@@ -304,17 +258,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         gTimeoutsView.setOnClickListener(this);
         hTimeoutsView.setOnLongClickListener(this);
         gTimeoutsView.setOnLongClickListener(this);
-        if (preferences.timeoutRules == Rules.TO_RULES.NONE) {
-            ((TextView) findViewById(R.id.leftTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
-            ((TextView) findViewById(R.id.rightTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
-        } else if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
-            hTimeouts20View = (TextView) findViewById(R.id.leftTimeouts20View);
-            gTimeouts20View = (TextView) findViewById(R.id.rightTimeouts20View);
-            hTimeouts20View.setOnClickListener(this);
-            hTimeouts20View.setOnLongClickListener(this);
-            gTimeouts20View.setOnClickListener(this);
-            gTimeouts20View.setOnLongClickListener(this);
-        }
     }
 
     private void initIcons() {
@@ -358,22 +301,13 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         });
     }
 
-    private void initScoreChangers() {
-        findViewById(R.id.leftMinus1View).setOnClickListener(this);
-        findViewById(R.id.rightMinus1View).setOnClickListener(this);
-        findViewById(R.id.leftPlus1View).setOnClickListener(this);
-        findViewById(R.id.rightPlus1View).setOnClickListener(this);
-        findViewById(R.id.leftPlus3View).setOnClickListener(this);
-        findViewById(R.id.rightPlus3View).setOnClickListener(this);
-    }
-
     private void initPlayersButtons() {
         try {
             ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
             ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
-            leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons);
+            leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons_3x3);
             leftPlayersStub.inflate();
-            rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons);
+            rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons_3x3);
             rightPlayersStub.inflate();
             findViewById(R.id.left_panel_toggle).setOnClickListener(this);
             findViewById(R.id.right_panel_toggle).setOnClickListener(this);
@@ -447,13 +381,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             hTimeoutsView = gTimeoutsView;
             gTimeoutsView = _TimeoutsView;
             setTimeouts(gTimeoutsView.getText(), hTimeoutsView.getText(), gTimeoutsView.getCurrentTextColor(), hTimeoutsView.getCurrentTextColor());
-
-            if (timeoutRules == Rules.TO_RULES.NBA) {
-                TextView _Timeouts20View = hTimeouts20View;
-                hTimeouts20View = gTimeouts20View;
-                gTimeouts20View = _Timeouts20View;
-                setTimeouts20(gTimeouts20View.getText(), hTimeouts20View.getText(), gTimeouts20View.getCurrentTextColor(), hTimeouts20View.getCurrentTextColor());
-            }
         }
         setColors();
     }
@@ -474,6 +401,20 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         }
         if (shotTimeView != null) {
             shotTimeView.setTextColor(preferences.getColor(Preferences.Elements.SHOT_TIME));
+        }
+    }
+
+    private void setLevelColor(Level level, TextView view) {
+        switch (level) {
+            case OK:
+                setColorGreen(view);
+                break;
+            case WARN:
+                setColorOrange(view);
+                break;
+            case LIMIT:
+                setColorRed(view);
+                break;
         }
     }
 
@@ -521,20 +462,12 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
 
     public void setHomeFoul(String value, Level level) {
         hFoulsView.setText(value);
-        if (level == Level.LIMIT) {
-            setColorRed(hFoulsView);
-        } else if (level == Level.WARN) {
-            setColorOrange(hFoulsView);
-        }
+        setLevelColor(level, hFoulsView);
     }
 
     public void setGuestFoul(String value, Level level) {
         gFoulsView.setText(value);
-        if (level == Level.LIMIT) {
-            setColorRed(gFoulsView);
-        } else if (level == Level.WARN) {
-            setColorOrange(gFoulsView);
-        }
+        setLevelColor(level, gFoulsView);
     }
 
     public void nullFouls() {
@@ -571,13 +504,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         gTimeoutsView.setTextColor(gColor);
     }
 
-    public void setTimeouts20(CharSequence hValue, CharSequence gValue, int hColor, int gColor) {
-        hTimeouts20View.setText(hValue);
-        gTimeouts20View.setText(gValue);
-        hTimeouts20View.setTextColor(hColor);
-        gTimeouts20View.setTextColor(gColor);
-    }
-
     public void setHomeTimeouts(String value, boolean limit) {
         hTimeoutsView.setText(value);
         if (limit) {
@@ -592,20 +518,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         }
     }
 
-    public void setHomeTimeouts20(String value, boolean limit) {
-        hTimeouts20View.setText(value);
-        if (limit) {
-            setColorRed(hTimeouts20View);
-        }
-    }
-
-    public void setGuestTimeouts20(String value, boolean limit) {
-        gTimeouts20View.setText(value);
-        if (limit) {
-            setColorRed(gTimeouts20View);
-        }
-    }
-
     public void setHomeTimeoutsGreen() {
         setColorGreen(hTimeoutsView);
     }
@@ -614,26 +526,11 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         setColorGreen(gTimeoutsView);
     }
 
-    public void setHomeTimeouts20Green() {
-        setColorGreen(hTimeouts20View);
-    }
-
-    public void setGuestTimeouts20Green() {
-        setColorGreen(gTimeouts20View);
-    }
-
     public void nullTimeouts() {
         hTimeoutsView.setText("0");
         gTimeoutsView.setText("0");
         setColorGreen(hTimeoutsView);
         setColorGreen(gTimeoutsView);
-    }
-
-    public void nullTimeouts20() {
-        hTimeouts20View.setText("0");
-        gTimeouts20View.setText("0");
-        setColorGreen(hTimeouts20View);
-        setColorGreen(gTimeouts20View);
     }
 
     public void nullHomeTimeouts(String value) {
@@ -644,16 +541,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     public void nullGuestTimeouts(String value) {
         gTimeoutsView.setText(value);
         setColorGreen(gTimeoutsView);
-    }
-
-    public void nullHomeTimeouts20(String value) {
-        hTimeouts20View.setText(value);
-        setColorGreen(hTimeouts20View);
-    }
-
-    public void nullGuestTimeouts20(String value) {
-        gTimeouts20View.setText(value);
-        setColorGreen(gTimeouts20View);
     }
 
 
@@ -695,10 +582,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         }
     }
 
-    public void setShotTimeSwitchText(long value) {
-        shotTimeSwitchView.setText(Long.toString(value));
-    }
-
     public void hideShotTime() {
         if (shotTimeView != null) {
             shotTimeView.setVisibility(View.INVISIBLE);
@@ -720,41 +603,6 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         return shotTimeView.getVisibility() == View.VISIBLE;
     }
 
-    public boolean shotTimeSwitchVisible() {
-        return shotTimeSwitchView.getVisibility() == View.VISIBLE;
-    }
-
-    public void hideShotTimeSwitch() {
-        if (shotTimeSwitchView != null) {
-            shotTimeSwitchView.setVisibility(View.GONE);
-        }
-    }
-
-    public void showShotTimeSwitch() {
-        if (shotTimeSwitchView != null) {
-            shotTimeSwitchView.setVisibility(View.VISIBLE);
-        }
-    }
-
-
-    // period
-    public void setPeriod(String value, boolean regular) {
-        if (periodView != null) {
-            if (regular) {
-                periodView.setText(value);
-                if (periodViewSize != 0) {
-                    periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize);
-                }
-            } else {
-                periodView.setText("OT" + value);
-                if (periodViewSize == 0) {
-                    periodViewSize = getResources().getDimension(R.dimen.bottom_line_size);
-                }
-                periodView.setTextSize(TypedValue.COMPLEX_UNIT_PX, periodViewSize * 0.75f);
-            }
-        }
-    }
-
 
     // names
     public void setTeamNames(CharSequence home, CharSequence guest) {
@@ -773,13 +621,13 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
 
     // players
     private void attachLeftButton(View button) {
-        button.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag());
             }
         });
-        button.setOnLongClickListener(new View.OnLongClickListener() {
+        button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 longClickPlayerBu = (Button) v;
@@ -790,13 +638,13 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     }
 
     private void attachRightButton(View button) {
-        button.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag());
             }
         });
-        button.setOnLongClickListener(new View.OnLongClickListener() {
+        button.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 longClickPlayerBu = (Button) v;
