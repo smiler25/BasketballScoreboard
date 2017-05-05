@@ -72,6 +72,8 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.2.7.1:\n
+          - fixed crash when trying to access settings on some devices.\n
         v.2.7:\n
           - streetball layout and rules (settings, rules in help);\n
           - custom color for shot clock;\n
