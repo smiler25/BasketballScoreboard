@@ -3,6 +3,7 @@ package com.smiler.basketball_scoreboard.camera;
 import android.app.Fragment;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,12 @@ public class CameraFragment extends Fragment implements
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             if (CameraUtils.canSave) {
-                new CameraUtils.SaveImageTask(getActivity(), layout, game).execute(data);
+                try {
+                    new CameraUtils.SaveImageTask(getActivity(), layout, game).execute(data);
+                } catch (RuntimeException e){
+                    Toast.makeText(getActivity(), getResources().getString(R.string.toast_storage_save_fail), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error saving image");
+                }
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.toast_storage_permission_fail), Toast.LENGTH_LONG).show();
                 CameraUtils.requestStoragePermission(getActivity());
