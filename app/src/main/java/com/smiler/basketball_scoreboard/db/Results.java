@@ -9,16 +9,18 @@ public class Results extends RealmObject {
     @PrimaryKey
     private int id;
     private Date date;
-    private String home_team;
-    private String guest_team;
-    private int home_score;
-    private int guest_score;
-    private String home_periods;
-    private String guest_periods;
-    private String share_string;
-    private int regular_periods;
+    private String firstTeamName;
+    private String secondTeamName;
+    private int firstScore;
+    private int secondScore;
+    private String firstPeriods;
+    private String secondPeriods;
+    private String shareString;
+    private int regularPeriods;
     private boolean complete;
     private GameDetails details;
+    private Team firstTeam;
+    private Team secondTeam;
 
     public int getId() { return id; }
     public Results setId(int id) {
@@ -30,54 +32,54 @@ public class Results extends RealmObject {
         this.date = date;
         return this;
     }
-    public String getHomeTeam() { return home_team; }
-    public Results setHomeTeam(String home_team) {
-        this.home_team = home_team;
+    public String getFirstTeamName() { return firstTeamName; }
+    public Results setFirstTeamName(String value) {
+        firstTeamName = value;
         return this;
     }
-    public String getGuestTeam() { return guest_team; }
-    public Results setGuestTeam(String guest_team) {
-        this.guest_team = guest_team;
+    public String getSecondTeamName() { return secondTeamName; }
+    public Results setSecondTeamName(String value) {
+        secondTeamName = value;
         return this;
     }
-    public int getHomeScore() { return home_score; }
-    public Results setHomeScore(int home_score) {
-        this.home_score = home_score;
+    public int getFirstScore() { return firstScore; }
+    public Results setFirstScore(int value) {
+        firstScore = value;
         return this;
     }
-    public int getGuestScore() { return guest_score; }
-    public Results setGuestScore(int guest_score) {
-        this.guest_score = guest_score;
+    public int getSecondScore() { return secondScore; }
+    public Results setSecondScore(int value) {
+        secondScore = value;
         return this;
     }
-    public String getHomePeriods() { return home_periods; }
-    public Results setHomePeriods(String home_periods) {
-        this.home_periods = home_periods;
+    public String getFirstPeriods() { return firstPeriods; }
+    public Results setFirstPeriods(String value) {
+        firstPeriods = value;
         return this;
     }
-    public String getGuestPeriods() { return guest_periods; }
-    public Results setGuestPeriods(String guest_periods) {
-        this.guest_periods = guest_periods;
+    public String getSecondPeriods() { return secondPeriods; }
+    public Results setSecondPeriods(String value) {
+        secondPeriods = value;
         return this;
     }
-    public String getShareString() { return share_string; }
-    public Results setShareString(String share_string) {
-        this.share_string = share_string;
+    public String getShareString() { return shareString; }
+    public Results setShareString(String value) {
+        shareString = value;
         return this;
     }
-    public int getRegularPeriods() { return regular_periods; }
-    public Results setRegularPeriods(int regular_periods) {
-        this.regular_periods = regular_periods;
+    public int getRegularPeriods() { return regularPeriods; }
+    public Results setRegularPeriods(int value) {
+        regularPeriods = value;
         return this;
     }
     public boolean getComplete() { return complete; }
-    public Results setComplete(boolean complete) {
-        this.complete = complete;
+    public Results setComplete(boolean value) {
+        complete = value;
         return this;
     }
     public GameDetails getDetails() { return details; }
-    public Results setDetails(GameDetails details) {
-        this.details = details;
+    public Results setDetails(GameDetails value) {
+        details = value;
         return this;
     }
 }

@@ -27,7 +27,7 @@ public final class Constants {
 
 //    public static final int LAYOUT_FULL = 0;
     public static final int OVERLAY_PANELS = 0;
-    static final int OVERLAY_SWITCH = 1;
+    public static final int OVERLAY_SWITCH = 1;
     public static final int DEFAULT_HORN_LENGTH = 1;
 
     public static final String FORMAT_TWO_DIGITS = "%02d";
@@ -59,20 +59,12 @@ public final class Constants {
     public static final String STATE_PERIOD = "period";
     public static final String STATE_POSSESSION = "possession";
 
-    public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesFragment";
+    public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesDialog";
     static final String TAG_FRAGMENT_TIME = "TimeDialog";
     public static final String TAG_FRAGMENT_CONFIRM = "ConfirmDialog";
     static final String TAG_FRAGMENT_NAME_EDIT = "NameEditDialog";
     static final String TAG_FRAGMENT_MAIN_TIME_PICKER = "MainTimePicker";
     static final String TAG_FRAGMENT_SHOT_TIME_PICKER = "ShotTimePicker";
-
-    public static final String DIALOG_CLEAR_PANEL = "clear_panel";
-    public static final String DIALOG_EDIT_CAPTAIN = "edit_player_captain";
-    public static final String DIALOG_NEW_GAME = "new_game";
-    public static final String DIALOG_NEW_PERIOD = "new_period";
-    public static final String DIALOG_SAVE_RESULT = "save_result";
-    public static final String DIALOG_SUBSTITUTE = "substitute";
-    public static final String DIALOG_TIMEOUT = "timeout";
 
     public static long[] LONG_CLICK_VIBE_PAT = {0, 50, 50, 50};
 

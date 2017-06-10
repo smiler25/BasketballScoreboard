@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/right_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    >
+    <Button
+        android:id="@+id/guest_player1"
+        style="@style/playersButtonsRight"
+        android:text="@string/minus"
+        />
+    <Button
+        android:id="@+id/guest_player2"
+        style="@style/playersButtonsRight"
+        android:text="@string/minus"
+        />
+    <Button
+        android:id="@+id/guest_player3"
+        style="@style/playersButtonsRight"
+        android:text="@string/minus"
+        />
+    <ImageButton
+        android:id="@+id/right_panel_toggle"
+        style="@style/playersButtonsRight"
+        android:scaleType="centerInside"
+        android:contentDescription="@string/action_close_panel"
+        android:src="@drawable/ic_action_back"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:padding="@dimen/side_panel_open_icon_padding"
+        />
+
+</LinearLayout>

@@ -3,43 +3,53 @@
     <string name="res_type" translatable="false">-</string>
 
     <string name="app_name">Basketball Scoreboard</string>
+    <string name="title_activity_results">Results history</string>
+    <string name="title_activity_help">Help</string>
+    <string name="title_activity_profiles">Teams</string>
+
     <string name="text24" translatable="false">24</string>
     <string name="r" translatable="false">r</string>
     <string name="g" translatable="false">g</string>
     <string name="b" translatable="false">b</string>
+
     <string name="action_apply">Apply</string>
     <string name="action_ok" translatable="false">OK</string>
     <string name="action_confirm">Confirm action</string>
     <string name="action_confirm_new_game">Start new game?</string>
     <string name="action_close">Close</string>
+    <string name="action_help">Help</string>
     <string name="action_new_game">New game</string>
     <string name="action_reset">Reset</string>
     <string name="action_save">Save</string>
     <string name="action_save_continue">Save and continue</string>
     <string name="action_save_result">Save game result?</string>
+    <string name="action_select">Select</string>
     <string name="action_settings">Settings</string>
     <string name="action_share">Share</string>
     <string name="action_share_via">Share via</string>
+    <string name="action_start_camera">Start camera</string>
     <string name="action_rate">Rate</string>
-    <string name="action_resluts">Results</string>
-    <string name="action_help">Help</string>
+    <string name="action_results">Results</string>
+    <string name="action_profiles">Teams</string>
     <string name="action_whats_new">What new</string>
-    <string name="dont_ask">Don\'t ask again</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+
     <string name="confirm_new_neutral_option">Yes (Save result)</string>
     <string name="confirm_new_game_message_win">Team %1$s won %2$d-%3$d.</string>
     <string name="confirm_new_game_message_settings">Settings changed. Changes will take effect at the start of a new game.</string>
-    <string name="description_switch_sides">Switch sides</string>
-    <string name="description_edit">Edit</string>
-    <string name="description_horn">Horn</string>
-    <string name="description_new_period">New period</string>
-    <string name="description_start_camera">Start camera</string>
-    <string name="description_whistle">Whistle</string>
-    <string name="description_add_multiple">Add several players</string>
-    <string name="description_add_one">Add player</string>
-    <string name="description_close_panel">Close panel</string>
-    <string name="description_clear_panel">Clear panel</string>
+
+    <string name="switch_sides">Switch sides</string>
+    <string name="edit">Edit</string>
+    <string name="horn">Horn</string>
+    <string name="new_period">New period</string>
+    <string name="whistle">Whistle</string>
+    <string name="action_add_player_multi">Add several players</string>
+    <string name="action_add_player">Add player</string>
+    <string name="action_close_panel">Close panel</string>
+    <string name="action_clear_panel">Clear panel</string>
+
+    <string name="dont_ask">Don\'t ask again</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="fiba" translatable="false">FIBA</string>
     <string name="nba" translatable="false">NBA</string>
@@ -98,8 +108,6 @@
         <item>Regular period</item>
         <item>Overtime</item>
     </string-array>
-    <string name="title_activity_results">Results history</string>
-    <string name="title_activity_help">Help</string>
     <string name="choose_game">Choose game</string>
     <string name="save_picture">save picture</string>
     <string name="camera_take_picture">Take picture</string>
@@ -110,6 +118,8 @@
     <string name="results_detail">Detail:</string>
     <string name="results_boxscore">Boxscore:</string>
     <string name="results_play_by_play">Play-by-play:</string>
+    <string name="profile_stats">Statistics:</string>
+    <string name="profile_players">Players:</string>
     <string name="tie">Score tie</string>
     <string name="lead_changed">Lead changed</string>
     <string name="home_max_lead">Home max lead</string>
@@ -126,16 +136,15 @@
         <item quantity="other">%d points</item>
     </plurals>
 
-    <string name="side_panel_number" translatable="false">№</string>
-    <string name="side_panel_name">Player</string>
-    <string name="side_panel_points_short">P</string>
-    <string name="side_panel_points">PTS</string>
-    <string name="side_panel_fouls_short">F</string>
-    <string name="side_panel_fouls">PF</string>
+    <string name="text_number" translatable="false">№</string>
+    <string name="text_name">Player</string>
+    <string name="text_points_short">P</string>
+    <string name="text_points">PTS</string>
+    <string name="text_fouls_short">F</string>
+    <string name="text_fouls">PF</string>
+
     <string name="side_panel_no_data">Players are not yet added</string>
     <string name="side_panel_confirm">Confirm selection</string>
-    <string name="side_panel_select_on">Apply</string>
-    <string name="side_panel_select_off">Select</string>
     <string name="side_panel_few">Too few players (%1$d)</string>
     <string name="side_panel_many">Too many players (%1$d)</string>
     <string name="side_panel_player_name">Player №%1$d</string>

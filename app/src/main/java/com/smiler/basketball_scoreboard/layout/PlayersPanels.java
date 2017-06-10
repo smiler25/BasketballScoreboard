@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
-import com.smiler.basketball_scoreboard.OverlayFragment;
+import com.smiler.basketball_scoreboard.elements.OverlayFragment;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;

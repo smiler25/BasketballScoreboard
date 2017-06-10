@@ -190,7 +190,7 @@
         <item name="android:paddingBottom">@dimen/side_panel_row_padding</item>
     </style>
 
-    <style name="resultPlayersTableRowChild">
+    <style name="detailViewTableRowChild">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>

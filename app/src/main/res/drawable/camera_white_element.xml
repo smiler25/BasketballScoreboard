@@ -6,7 +6,7 @@
         />
 
     <stroke
-        android:color="@color/result_table_header"
+        android:color="@color/dve_table_header"
         android:width="1dp"
         />
 </shape>

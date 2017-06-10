@@ -12,14 +12,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smiler.basketball_scoreboard.CAB;
-import com.smiler.basketball_scoreboard.CABListener;
+import com.smiler.basketball_scoreboard.elements.CAB;
+import com.smiler.basketball_scoreboard.elements.CABListener;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
-import com.smiler.basketball_scoreboard.elements.BaseResultsListFragment;
-import com.smiler.basketball_scoreboard.elements.RecyclerListFragment;
+import com.smiler.basketball_scoreboard.elements.lists.ExpandableListListener;
+import com.smiler.basketball_scoreboard.elements.lists.ListListener;
+import com.smiler.basketball_scoreboard.elements.lists.RecyclerListFragment;
+import com.smiler.basketball_scoreboard.results.views.ResultViewFragment;
 
-public class ResultsActivity extends AppCompatActivity implements ResultsExpListListener {
+public class ResultsActivity extends AppCompatActivity implements ExpandableListListener {
 
     private Menu menu;
     private int selected = -1;

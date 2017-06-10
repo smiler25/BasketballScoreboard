@@ -305,9 +305,9 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
         try {
             ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
             ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
-            leftPlayersStub.setLayoutResource(R.layout.side_panel_left_buttons_3x3);
+            leftPlayersStub.setLayoutResource(R.layout.sp_left_buttons_3x3);
             leftPlayersStub.inflate();
-            rightPlayersStub.setLayoutResource(R.layout.side_panel_right_buttons_3x3);
+            rightPlayersStub.setLayoutResource(R.layout.sp_right_buttons_3x3);
             rightPlayersStub.inflate();
             findViewById(R.id.left_panel_toggle).setOnClickListener(this);
             findViewById(R.id.right_panel_toggle).setOnClickListener(this);

@@ -2,7 +2,7 @@ package com.smiler.basketball_scoreboard.results;
 
 import android.text.TextUtils;
 
-import com.smiler.basketball_scoreboard.models.ActionRecord;
+import com.smiler.basketball_scoreboard.game.ActionRecord;
 
 import org.json.JSONArray;
 
@@ -27,9 +27,9 @@ public class Result {
         this.gName = gName;
     }
 
-    Result(String hName, String gName, int hScore, int gScore,
-           ArrayList<Integer> hScorePeriods, ArrayList<Integer> gScorePeriods,
-           boolean complete, long date, int numRegular) {
+    public Result(String hName, String gName, int hScore, int gScore,
+                  ArrayList<Integer> hScorePeriods, ArrayList<Integer> gScorePeriods,
+                  boolean complete, long date, int numRegular) {
         this.hName = hName;
         this.gName = gName;
         this.hScore = hScore;
@@ -41,19 +41,19 @@ public class Result {
         this.numRegular = numRegular;
     }
 
-    int getHomeScore() {
+    public int getHomeScore() {
         return hScore;
     }
 
-    int getGuestScore() {
+    public int getGuestScore() {
         return gScore;
     }
 
-    String getHomeName() {
+    public String getHomeName() {
         return hName;
     }
 
-    String getGuestName() {
+    public String getGuestName() {
         return gName;
     }
 
@@ -61,7 +61,7 @@ public class Result {
         return hScorePeriods;
     }
 
-    ArrayList<Integer> getGuestScoreByPeriod() {
+    public ArrayList<Integer> getGuestScoreByPeriod() {
         return gScorePeriods;
     }
 
@@ -130,11 +130,11 @@ public class Result {
         return String.format("%s (%s)", result, TextUtils.join(", ", periodResult));
     }
 
-    long getDate() {
+    public long getDate() {
         return date;
     }
 
-    int getNumRegular() {
+    public int getNumRegular() {
         return numRegular;
     }
 

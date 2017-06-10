@@ -7,7 +7,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
     android:stretchColumns="*"
-    android:background="@drawable/result_table_shape"
+    android:background="@drawable/dve_table_shape"
     >
     <TableRow
         android:id="@+id/res_score_table_title_row"

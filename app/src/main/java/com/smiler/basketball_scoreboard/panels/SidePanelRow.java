@@ -9,8 +9,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
-import com.smiler.basketball_scoreboard.models.Player;
+import com.smiler.basketball_scoreboard.elements.dialogs.EditPlayerDialog;
+import com.smiler.basketball_scoreboard.game.Player;
 
 public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
 
@@ -47,7 +47,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         this.context = context;
         View edit;
         if (left) {
-            inflate(context, R.layout.side_panel_row_left, this);
+            inflate(context, R.layout.sp_row_left, this);
             numberView = (TextView) findViewById(R.id.left_panel_number);
             nameView = (TextView) findViewById(R.id.left_panel_name);
             pointsView = (TextView) findViewById(R.id.left_panel_points);
@@ -55,7 +55,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
             edit = findViewById(R.id.left_panel_edit);
 
         } else {
-            inflate(context, R.layout.side_panel_row_right, this);
+            inflate(context, R.layout.sp_row_right, this);
             numberView = (TextView) findViewById(R.id.right_panel_number);
             nameView = (TextView) findViewById(R.id.right_panel_name);
             pointsView = (TextView) findViewById(R.id.right_panel_points);
@@ -72,7 +72,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
     }
 
     private void createHeaderRow(Context context) {
-        inflate(context, left ? R.layout.side_panel_header_left : R.layout.side_panel_header_right, this);
+        inflate(context, left ? R.layout.sp_header_left : R.layout.sp_header_right, this);
     }
 
     @Override

@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Баскетбольное табло</string>
+    <string name="title_activity_results">История результатов</string>
+    <string name="title_activity_help">Помощь</string>
+    <string name="title_activity_profiles">Команды</string>
+
     <string name="action_apply">Применить</string>
+    <string name="action_add_player_multi">Добавить несколько игроков</string>
+    <string name="action_add_player">Добавить игрока</string>
+    <string name="action_close_panel">Закрыть панель</string>
+    <string name="action_clear_panel">Очистить панель</string>
     <string name="action_close">Закрыть</string>
     <string name="action_confirm">Подтвердите действие</string>
     <string name="action_confirm_new_game">Начать новую игру?</string>
-    <string name="confirm_new_game_message_settings">Настройки изменились. Изменения вступят в силу при старте новой игры.</string>
-    <string name="confirm_new_game_message_win">Команда %1$s выиграла со счетом %2$d-%3$d.</string>
-    <string name="confirm_new_neutral_option">Да (Сохранить результат)</string>
     <string name="action_help">Помощь</string>
-    <string name="action_whats_new">Что нового</string>
     <string name="action_new_game">Новая игра</string>
     <string name="action_rate">Оценить</string>
     <string name="action_reset">Сбросить</string>
     <string name="action_save">Сохранить</string>
     <string name="action_save_continue">Сохранить и продолжить</string>
+    <string name="action_select">Выбрать</string>
     <string name="action_settings">Настройки</string>
     <string name="action_share">Поделиться</string>
     <string name="action_share_via">Поделиться</string>
-    <string name="action_resluts">Результаты</string>
-    <string name="description_edit">Редактировать</string>
-    <string name="description_switch_sides">Поменять стороны</string>
-    <string name="description_horn">Сирена</string>
-    <string name="description_new_period">Новый период</string>
-    <string name="description_start_camera">Запустить камеру</string>
-    <string name="description_whistle">Свисток</string>
+    <string name="action_results">Результаты</string>
+    <string name="action_profiles">Команды</string>
+    <string name="action_whats_new">Что нового</string>
+
+    <string name="edit">Редактировать</string>
+    <string name="switch_sides">Поменять стороны</string>
+    <string name="horn">Сирена</string>
+    <string name="new_period">Новый период</string>
+    <string name="action_start_camera">Запустить камеру</string>
+    <string name="whistle">Свисток</string>
+
     <string name="dont_ask">Не спрашивать снова</string>
-    <string name="description_add_multiple">Добавить несколько игроков</string>
-    <string name="description_add_one">Добавить игрока</string>
-    <string name="description_close_panel">Закрыть панель</string>
-    <string name="description_clear_panel">Очистить панель</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <string name="confirm_new_game_message_settings">Настройки изменились. Изменения вступят в силу при старте новой игры.</string>
+    <string name="confirm_new_game_message_win">Команда %1$s выиграла со счетом %2$d-%3$d.</string>
+    <string name="confirm_new_neutral_option">Да (Сохранить результат)</string>
 
     <string name="edit_name">Введите название</string>
     <string name="edit_home_name">Введите название команды хозяев</string>
@@ -40,11 +51,9 @@
     <string name="label_period">период</string>
     <string name="label_timeouts">таймауты</string>
     <string name="label_timeouts_left">ТО осталось</string>
-    <string name="no">Нет</string>
     <string name="team">Команда</string>
     <string name="final_result">Итог</string>
     <string name="timeout_title">Таймаут</string>
-    <string name="yes">Да</string>
     <string name="set_main_time">Установить время</string>
     <string name="toast_confirm_exit">Нажмите ещё раз, чтобы выйти</string>
     <string name="toast_select_players">Выберите активных игроков</string>
@@ -76,8 +85,6 @@
     <string name="timeout_format_1">%1$d-минутный перерыв</string>
     <string name="timeout_format_2">%2$d-секундный таймаут (%1$s)</string>
 
-    <string name="title_activity_results">История результатов</string>
-    <string name="title_activity_help">Помощь</string>
     <string name="choose_game">Выберите игру</string>
     <string name="save_picture">Сохранить картинку</string>
     <string name="action_delete">Удалить</string>
@@ -90,6 +97,9 @@
     <string name="results_boxscore">Протокол:</string>
     <string name="results_detail">Подробно:</string>
     <string name="results_play_by_play">Ход игры:</string>
+    <string name="profile_stats">Статистика:</string>
+    <string name="profile_players">Игроки:</string>
+
     <string name="tie">Равный счёт</string>
     <string name="lead_changed">Смена лидера</string>
     <string name="home_max_lead">Максимальное преимущество хозяев</string>
@@ -106,15 +116,13 @@
         <item quantity="other">%d очков</item>
     </plurals>
 
-    <string name="side_panel_name">Игрок</string>
-    <string name="side_panel_points">Очки</string>
-    <string name="side_panel_fouls">Фолы</string>
-    <string name="side_panel_points_short">О</string>
-    <string name="side_panel_fouls_short">Ф</string>
+    <string name="text_name">Игрок</string>
+    <string name="text_points">Очки</string>
+    <string name="text_fouls">Фолы</string>
+    <string name="text_points_short">О</string>
+    <string name="text_fouls_short">Ф</string>
     <string name="side_panel_no_data">Игроки ещё не добавлены</string>
     <string name="side_panel_confirm">Подтвердите выбор</string>
-    <string name="side_panel_select_on">Применить</string>
-    <string name="side_panel_select_off">Выбрать</string>
     <string name="side_panel_few">Слишком мало игроков (%1$d)</string>
     <string name="side_panel_many">Слишком много игроков (%1$d)</string>
     <string name="side_panel_player_name">Игрок №%1$d</string>

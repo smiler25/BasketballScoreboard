@@ -16,8 +16,9 @@ import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
-import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
-import com.smiler.basketball_scoreboard.elements.ListDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.DialogTypes;
+import com.smiler.basketball_scoreboard.elements.dialogs.EditPlayerDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.ListDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,6 @@ import java.util.TreeSet;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_CLEAR_PANEL;
 
 public class SidePanelFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
@@ -95,7 +94,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     private View initView(LayoutInflater inflater, ViewGroup container) {
         int layout_id, table_layout_id, close_bu_id, clear_bu_id, add_bu_id, add_auto_bu_id, toggle_bu_id;
         if (left) {
-            layout_id = R.layout.side_panel_full_left;
+            layout_id = R.layout.sp_full_left;
             close_bu_id = R.id.left_panel_close;
             table_layout_id = R.id.left_panel_table;
             add_bu_id = R.id.left_panel_add;
@@ -103,7 +102,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
             toggle_bu_id = R.id.left_panel_select_active;
             clear_bu_id = R.id.left_panel_clear;
         } else {
-            layout_id = R.layout.side_panel_full_right;
+            layout_id = R.layout.sp_full_right;
             close_bu_id = R.id.right_panel_close;
             table_layout_id = R.id.right_panel_table;
             add_bu_id = R.id.right_panel_add;
@@ -320,7 +319,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (frag != null && frag.isAdded()) {
             return;
         }
-        ListDialog.newInstance(DIALOG_CLEAR_PANEL, left).show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance(DialogTypes.TIMEOUT, left).show(getFragmentManager(), ListDialog.TAG);
     }
 
     public void clear(boolean delete) {

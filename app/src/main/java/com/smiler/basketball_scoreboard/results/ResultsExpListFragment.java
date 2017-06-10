@@ -12,22 +12,25 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.smiler.basketball_scoreboard.BaseMultiChoice;
-import com.smiler.basketball_scoreboard.CABListener;
-import com.smiler.basketball_scoreboard.ExpListMultiChoice;
+import com.smiler.basketball_scoreboard.elements.lists.BaseMultiChoice;
+import com.smiler.basketball_scoreboard.elements.CABListener;
+import com.smiler.basketball_scoreboard.elements.lists.ExpListMultiChoice;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
-import com.smiler.basketball_scoreboard.elements.BaseResultsListFragment;
+import com.smiler.basketball_scoreboard.elements.lists.ExpandableListAdapter;
+import com.smiler.basketball_scoreboard.elements.lists.ExpandableListParent;
+import com.smiler.basketball_scoreboard.elements.lists.ListListener;
+import com.smiler.basketball_scoreboard.results.views.ResultView;
 
 import java.text.DateFormat;
 import java.util.List;
 
 public class ResultsExpListFragment extends BaseResultsListFragment {
     public static String TAG = "BS-ResultsExpListFragment";
-    private ResultsExpListAdapter adapter;
+    private ExpandableListAdapter adapter;
     private ExpandableListView expListView;
-    private SparseArray<ResultsExpListParent> items = new SparseArray<>();
+    private SparseArray<ExpandableListParent> items = new SparseArray<>();
     private SparseIntArray idPositions = new SparseIntArray();
     private ListListener listener;
     private BaseMultiChoice cab;
@@ -40,7 +43,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
             return rootView;
 //            listener.onListEmpty();
         }
-        adapter = new ResultsExpListAdapter(getActivity(), items, idPositions);
+        adapter = new ExpandableListAdapter(getActivity(), items, idPositions);
         expListView = (ExpandableListView) rootView.findViewById(R.id.expListView);
         expListView.setAdapter(adapter);
         expListView.setChildDivider(getResources().getDrawable(android.R.color.transparent));
@@ -59,7 +62,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
             @Override
             public void onGroupExpand(int groupPosition) {
                 listener.onListElementClick(groupPosition);
-                ResultsExpListParent parent = adapter.getParent().get(groupPosition);
+                ExpandableListParent parent = adapter.getParent().get(groupPosition);
                 if (parent.getChild() == null) {
                     parent.setChild(new ResultView(getActivity(), parent.getItemId()));
                     adapter.notifyDataSetChanged();
@@ -121,8 +124,8 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
         realmData = RealmController.with().getResults();
         try {
             for (Results results : realmData) {
-                items.put(pos, new ResultsExpListParent(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
-                        results.getHomeTeam(), results.getGuestTeam()), results.getId()));
+                items.put(pos, new ExpandableListParent(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
+                        results.getFirstTeamName(), results.getSecondTeamName()), results.getId()));
                 idPositions.put(results.getId(), pos++);
             }
         } catch (NullPointerException e) {

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.Results;
-import com.smiler.basketball_scoreboard.results.ListListener;
+import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Results results = dataSet.get(position);
         viewHolder.setTextView(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
-                results.getHomeTeam(), results.getGuestTeam()));
+                results.getFirstTeamName(), results.getSecondTeamName()));
         viewHolder.setId(results.getId());
         viewHolder.setSelected(selectedIds.indexOf(results.getId()) != -1);
         viewHolder.setCallback(callback);

@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
-import com.smiler.basketball_scoreboard.models.Game;
+import com.smiler.basketball_scoreboard.game.Game;
 
 import java.io.File;
 import java.io.FileOutputStream;

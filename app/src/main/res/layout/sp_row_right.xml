@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="right"
+    android:layout_gravity="center"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:clickable="false"
+    android:longClickable="false">
+
+    <ImageView
+        android:id="@+id/right_panel_edit"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_edit_width"
+        android:adjustViewBounds="true"
+        android:maxHeight="@dimen/side_panel_edit_size"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/edit"
+        android:src="@drawable/ic_action_edit_right"
+        />
+    <TextView
+        android:id="@+id/right_panel_fouls"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_fouls_width"
+        android:text="@string/one_zero"
+        />
+    <TextView
+        android:id="@+id/right_panel_points"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_points_width"
+        android:text="@string/one_zero"
+        />
+    <TextView
+        android:id="@+id/right_panel_name"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_name_width"
+        />
+    <TextView
+        android:id="@+id/right_panel_number"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_number_width"
+        />
+
+</TableRow>

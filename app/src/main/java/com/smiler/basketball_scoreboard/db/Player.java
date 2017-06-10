@@ -1,13 +1,23 @@
 package com.smiler.basketball_scoreboard.db;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class Player extends RealmObject {
+    @PrimaryKey
     private int id;
     private Team team;
+    @Required
     private String name;
     private int number;
     private boolean captain;
+
+    public int getId() { return id; }
+    public Player setId(int value) {
+        id = value;
+        return this;
+    }
 
     public String getName() { return name; }
     public Player setName(String value) {

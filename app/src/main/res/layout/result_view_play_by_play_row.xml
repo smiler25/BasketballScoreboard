@@ -10,17 +10,17 @@
 
     <TextView
         android:id="@+id/results_play_by_play_left"
-        style="@style/resultPlayersTableRowChild"
+        style="@style/detailViewTableRowChild"
         android:layout_weight="1"
         />
     <TextView
         android:id="@+id/results_play_by_play_center"
-        style="@style/resultPlayersTableRowChild"
+        style="@style/detailViewTableRowChild"
         android:layout_weight="1.5"
         />
     <TextView
         android:id="@+id/results_play_by_play_right"
-        style="@style/resultPlayersTableRowChild"
+        style="@style/detailViewTableRowChild"
         android:layout_weight="1"
         />
 </TableRow>

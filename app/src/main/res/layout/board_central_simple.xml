@@ -26,7 +26,7 @@
             <ImageView
                 android:id="@+id/switchSidesView"
                 style="@style/matchParentCenter"
-                android:contentDescription="@string/description_switch_sides"
+                android:contentDescription="@string/switch_sides"
                 android:padding="@dimen/icons_padding"
                 android:layout_weight="1"
                 android:scaleType="center"
@@ -36,7 +36,7 @@
             <ImageView
                 android:id="@+id/hornView"
                 style="@style/matchParentCenter"
-                android:contentDescription="@string/description_horn"
+                android:contentDescription="@string/horn"
                 android:padding="@dimen/icons_padding"
                 android:layout_weight="1"
                 android:scaleType="center"
@@ -45,7 +45,7 @@
             <ImageView
                 android:id="@+id/whistleView"
                 style="@style/matchParentCenter"
-                android:contentDescription="@string/description_whistle"
+                android:contentDescription="@string/whistle"
                 android:padding="@dimen/icons_padding"
                 android:layout_weight="1"
                 android:scaleType="center"
@@ -72,7 +72,7 @@
                 style="@style/matchParentCenter"
                 android:layout_weight="1"
                 android:padding="@dimen/icons_padding"
-                android:contentDescription="@string/description_start_camera"
+                android:contentDescription="@string/action_start_camera"
                 android:scaleType="center"
                 android:src="@drawable/ic_action_dock" />
 
@@ -81,7 +81,7 @@
                 style="@style/matchParentCenter"
                 android:layout_weight="1"
                 android:padding="@dimen/icons_padding"
-                android:contentDescription="@string/description_new_period"
+                android:contentDescription="@string/new_period"
                 android:scaleType="center"
                 android:src="@drawable/ic_new_period" />
 

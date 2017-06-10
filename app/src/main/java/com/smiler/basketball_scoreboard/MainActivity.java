@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,30 +28,35 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.camera.CameraFragment;
 import com.smiler.basketball_scoreboard.camera.CameraUtils;
 import com.smiler.basketball_scoreboard.db.RealmController;
-import com.smiler.basketball_scoreboard.elements.ConfirmDialog;
-import com.smiler.basketball_scoreboard.elements.EditPlayerDialog;
-import com.smiler.basketball_scoreboard.elements.ListDialog;
-import com.smiler.basketball_scoreboard.elements.NameEditDialog;
-import com.smiler.basketball_scoreboard.elements.TimePickerFragment;
+import com.smiler.basketball_scoreboard.db.deprecated.DbHelper;
+import com.smiler.basketball_scoreboard.elements.dialogs.AppUpdatesDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.ConfirmDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.DialogTypes;
+import com.smiler.basketball_scoreboard.elements.dialogs.EditPlayerDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.FloatingCountdownTimerDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.ListDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.NameEditDialog;
+import com.smiler.basketball_scoreboard.elements.NavigationDrawer;
+import com.smiler.basketball_scoreboard.elements.OverlayFragment;
+import com.smiler.basketball_scoreboard.elements.dialogs.TimePickerDialog;
+import com.smiler.basketball_scoreboard.game.Game;
 import com.smiler.basketball_scoreboard.help.HelpActivity;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
+import com.smiler.basketball_scoreboard.layout.BoardFragment;
 import com.smiler.basketball_scoreboard.layout.ClickListener;
 import com.smiler.basketball_scoreboard.layout.LayoutFactory;
 import com.smiler.basketball_scoreboard.layout.LongClickListener;
 import com.smiler.basketball_scoreboard.layout.PlayersPanels;
 import com.smiler.basketball_scoreboard.layout.StandardLayout;
-import com.smiler.basketball_scoreboard.layout.BoardFragment;
-import com.smiler.basketball_scoreboard.models.Game;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
+import com.smiler.basketball_scoreboard.profiles.ProfilesActivity;
 import com.smiler.basketball_scoreboard.results.ResultsActivity;
 
 import java.io.File;
@@ -61,12 +65,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_EDIT_CAPTAIN;
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_NEW_GAME;
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_NEW_PERIOD;
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_SAVE_RESULT;
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_SUBSTITUTE;
-import static com.smiler.basketball_scoreboard.Constants.DIALOG_TIMEOUT;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
 import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_CAMERA;
 import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_STORAGE;
@@ -90,11 +88,11 @@ public class MainActivity extends AppCompatActivity implements
         OverlayFragment.OverlayFragmentListener,
         SidePanelFragment.SidePanelListener,
         SoundPool.OnLoadCompleteListener,
-        ListDialog.NewTimeoutDialogListener,
-        TimePickerFragment.OnChangeTimeListener {
+        ListDialog.ListDialogListener,
+        TimePickerDialog.OnChangeTimeListener {
 
     public static final String TAG = "BS-MainActivity";
-    private Drawer.Result drawer;
+    private NavigationDrawer drawer;
     private Preferences preferences;
     private Game game;
     private BaseLayout layout;
@@ -195,12 +193,11 @@ public class MainActivity extends AppCompatActivity implements
             editor.putInt("app_version", BuildConfig.VERSION_CODE);
             editor.apply();
 
-            new AppUpdatesFragment().show(getFragmentManager(), TAG_FRAGMENT_APP_UPDATES);
+            new AppUpdatesDialog().show(getFragmentManager(), TAG_FRAGMENT_APP_UPDATES);
             migrateToRealm();
-            migrateActivityPreferences();
         }
         if (sharedPref.getBoolean("first_launch", true)) {
-            drawer.openDrawer();
+            drawer.open();
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean("first_launch", false);
             editor.apply();
@@ -221,67 +218,12 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void migrateActivityPreferences() {
-//        getSavedState();
-//        SharedPreferences prefs = getSharedPreferences(Constants.STATE_PREFERENCES, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = prefs.edit();
-//        editor.putString(STATE_HOME_NAME, hName);
-//        editor.putString(STATE_GUEST_NAME, gName);
-//        editor.putLong(STATE_SHOT_TIME, shotTime);
-//        editor.putLong(STATE_MAIN_TIME, mainTime);
-//        editor.putInt(STATE_PERIOD, period);
-//        editor.putInt(STATE_HOME_SCORE, hScore);
-//        editor.putInt(STATE_GUEST_SCORE, gScore);
-//        editor.putInt(STATE_HOME_FOULS, hFouls);
-//        editor.putInt(STATE_GUEST_FOULS, gFouls);
-//        if (preferences.timeoutRules == Game.TO_RULES.FIBA) {
-//            editor.putInt(STATE_HOME_TIMEOUTS, hTimeouts);
-//            editor.putInt(STATE_GUEST_TIMEOUTS, gTimeouts);
-//        } else if (preferences.timeoutRules == Game.TO_RULES.NBA) {
-//            editor.putInt(STATE_HOME_TIMEOUTS_NBA, hTimeouts);
-//            editor.putInt(STATE_GUEST_TIMEOUTS_NBA, gTimeouts);
-//            editor.putInt(STATE_HOME_TIMEOUTS20, hTimeouts20);
-//            editor.putInt(STATE_GUEST_TIMEOUTS20, gTimeouts20);
-//        }
-//        if (preferences.arrowsOn) {
-//            editor.putInt(STATE_POSSESSION, possession);
-//        }
-//        editor.apply();
-//        if (preferences.spOn) {
-//            if (leftPanel != null) {
-//                leftPanel.saveCurrentData();
-//            }
-//            if (rightPanel != null) {
-//                rightPanel.saveCurrentData();
-//            }
-//        }
-    }
-
     private void handleOrientation() {
         if (preferences.fixLandscape) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
-    }
-
-    private AccountHeader.Result createDrawerHeader() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return new AccountHeader()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.drawer_header)
-                .build();
-    }
-
-    private IDrawerItem[] initDrawerItems() {
-        return new IDrawerItem[]{
-                new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(getResources().getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_resluts).withIcon(getResources().getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(getResources().getDrawable(R.drawable.ic_action_settings)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_share).withIcon(getResources().getDrawable(R.drawable.ic_action_share)).withCheckable(false),
-                new SecondaryDrawerItem().withName(R.string.action_help).withIcon(getResources().getDrawable(R.drawable.ic_action_about)).withCheckable(false),
-        };
     }
 
     @Override
@@ -294,12 +236,15 @@ public class MainActivity extends AppCompatActivity implements
                 runResultsActivity();
                 break;
             case 2:
-                runSettingsActivity();
+                runProfilesActivity();
                 break;
             case 3:
-                shareResult();
+                runSettingsActivity();
                 break;
             case 4:
+                shareResult();
+                break;
+            case 5:
                 runHelpActivity();
                 break;
             default:
@@ -326,8 +271,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (drawer != null && drawer.isDrawerOpen()) {
-            drawer.closeDrawer();
+        if (drawer.isOpen()) {
+            drawer.close();
             return;
         }
         if (getFragmentManager().getBackStackEntryCount() > 0){
@@ -380,12 +325,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void runSettingsActivity() {
-        Intent intent = new Intent(this, PrefActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, PrefActivity.class));
     }
 
     private void runHelpActivity() {
         startActivity(new Intent(this, HelpActivity.class));
+    }
+
+    private void runProfilesActivity() {
+        Intent intent = new Intent(this, ProfilesActivity.class);
+        startActivity(intent);
     }
 
     private void addCameraView() {
@@ -410,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initElements() {
-        initDrawer();
+        drawer = new NavigationDrawer(this);
         overlaySwitch = OverlayFragment.newInstance(OVERLAY_SWITCH);
         overlaySwitch.setRetainInstance(true);
         floatingDialog = new FloatingCountdownTimerDialog();
@@ -472,20 +421,6 @@ public class MainActivity extends AppCompatActivity implements
         whistleLength = 190;
         soundHornId = soundPool.load(this, R.raw.buzzer, 1);
         hornLength = 1000;
-    }
-
-    private void initDrawer() {
-        AccountHeader.Result drawerHeader = createDrawerHeader();
-        drawer = new Drawer()
-                .withActivity(this)
-                .withTranslucentStatusBar(true)
-                .withFullscreen(true)
-                .withDrawerWidthPx(getResources().getDimensionPixelSize(R.dimen.drawer_width))
-                .withAccountHeader(drawerHeader)
-                .withActionBarDrawerToggleAnimated(true)
-                .addDrawerItems(initDrawerItems())
-                .withOnDrawerItemClickListener(this)
-                .build();
     }
 
     private void showSwitchFragment(boolean show) {
@@ -585,19 +520,19 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.action_share_via)));
     }
 
-    private void showConfirmDialog(String type) {
+    private void showConfirmDialog(DialogTypes type) {
         ConfirmDialog dialog;
         dialog = ConfirmDialog.newInstance(type);
         dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
     }
 
-    private void showWinDialog(String type, String team, int winScore, int loseScore) {
+    private void showWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
         ConfirmDialog dialog;
         dialog = ConfirmDialog.newInstance(type, team, winScore, loseScore);
         dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
     }
 
-    private void showListDialog(String type) {
+    private void showListDialog(DialogTypes type) {
         Fragment frag = getFragmentManager().findFragmentByTag(ListDialog.TAG);
         if (frag != null && frag.isAdded()) {
             return;
@@ -622,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         Button bu = game.getSelectedPlayer();
         int number = bu.getTag() != null ? ((SidePanelRow)bu.getTag()).getNumber() : -1;
-        ListDialog.newInstance(DIALOG_SUBSTITUTE, numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance(DialogTypes.SUBSTITUTE, numberNameList, left, number).show(getFragmentManager(), ListDialog.TAG);
     }
 
     private void chooseTeamNameDialog(int team, String name) {
@@ -631,12 +566,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showMainTimePicker() {
-        DialogFragment mainTimePicker = TimePickerFragment.newInstance(game.mainTime, true);
+        DialogFragment mainTimePicker = TimePickerDialog.newInstance(game.mainTime, true);
         mainTimePicker.show(getFragmentManager(), TAG_FRAGMENT_MAIN_TIME_PICKER);
     }
 
     private void showShotTimePicker() {
-        DialogFragment mainTimePicker = TimePickerFragment.newInstance(game.shotTime, false);
+        DialogFragment mainTimePicker = TimePickerDialog.newInstance(game.shotTime, false);
         mainTimePicker.show(getFragmentManager(), TAG_FRAGMENT_SHOT_TIME_PICKER);
     }
 
@@ -718,20 +653,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfirmDialogPositive(String type, boolean dontShow) {
+    public void onConfirmDialogPositive(DialogTypes type, boolean dontShow) {
         preferences.setDontAskNewGame(dontShow ? 2 : 0);
         initGame(false);
     }
 
     @Override
-    public void onConfirmDialogPositive(String type) {
+    public void onConfirmDialogPositive(DialogTypes type) {
         switch (type) {
-            case DIALOG_NEW_GAME:
-            case DIALOG_SAVE_RESULT:
-//                startNewGame(false);
+            case NEW_GAME:
+            case RESULT_SAVE:
                 startNewGame(true);
                 break;
-            case DIALOG_EDIT_CAPTAIN:
+            case EDIT_CAPTAIN:
                 EditPlayerDialog f = (EditPlayerDialog) getFragmentManager().findFragmentByTag(EditPlayerDialog.TAG);
                 if (f != null) {f.changeCaptainConfirmed();}
                 break;
@@ -745,13 +679,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfirmDialogNegative(String type, boolean dontShow) {
+    public void onConfirmDialogNegative(DialogTypes type, boolean dontShow) {
         preferences.setDontAskNewGame(dontShow ? 1 : 0);
     }
 
     @Override
-    public void onConfirmDialogNegative(String type) {
-        if (type.equals(DIALOG_SAVE_RESULT)) {
+    public void onConfirmDialogNegative(DialogTypes type) {
+        if (type == DialogTypes.RESULT_SAVE) {
             startNewGame(false);
         }
     }
@@ -884,19 +818,18 @@ public class MainActivity extends AppCompatActivity implements
         switch (icon) {
             case CAMERA:
                 addCameraView();
-//                runCameraActivity();
                 break;
             case HORN:
                 playHorn();
                 break;
             case NEW_PERIOD:
-                showListDialog(DIALOG_NEW_PERIOD);
+                showListDialog(DialogTypes.NEW_PERIOD);
                 break;
             case SWITCH_SIDES:
                 game.switchSides();
                 break;
             case TIMEOUT:
-                showListDialog(DIALOG_TIMEOUT);
+                showListDialog(DialogTypes.TIMEOUT);
                 break;
             case WHISTLE:
                 break;
@@ -987,12 +920,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfirmDialog(String type) {
+    public void onConfirmDialog(DialogTypes type) {
         showConfirmDialog(type);
     }
 
     @Override
-    public void onWinDialog(String type, String team, int winScore, int loseScore) {
+    public void onWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
         showWinDialog(type, team, winScore, loseScore);
     }
 

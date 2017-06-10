@@ -14,12 +14,12 @@
         >
 
        <fragment
-            class="com.smiler.basketball_scoreboard.elements.RecyclerListFragment"
+            class="com.smiler.basketball_scoreboard.elements.lists.RecyclerListFragment"
             android:id="@+id/list_frag"
             android:layout_width="@dimen/list_width"
             android:layout_height="match_parent"/>
        <fragment
-            class="com.smiler.basketball_scoreboard.results.ResultViewFragment"
+            class="com.smiler.basketball_scoreboard.results.views.ResultViewFragment"
             android:id="@+id/details_frag"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

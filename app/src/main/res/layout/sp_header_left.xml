@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="left"
+    android:layout_gravity="center"
+    >
+    <TextView
+        android:id="@+id/left_panel_number"
+        style="@style/sidePanelTableRowChild"
+        android:text="@string/text_number"
+        android:layout_width="@dimen/side_panel_number_width"
+        />
+    <TextView
+        android:id="@+id/left_panel_name"
+        style="@style/sidePanelTableRowChild"
+        android:text="@string/text_name"
+        android:layout_width="@dimen/side_panel_name_width"
+        />
+    <TextView
+        android:id="@+id/left_panel_points"
+        style="@style/sidePanelTableRowChild"
+        android:text="@string/text_points_short"
+        android:layout_width="@dimen/side_panel_points_width"
+        />
+    <TextView
+        android:id="@+id/left_panel_fouls"
+        style="@style/sidePanelTableRowChild"
+        android:text="@string/text_fouls_short"
+        android:layout_width="@dimen/side_panel_fouls_width"
+        />
+    <TextView
+        android:id="@+id/left_panel_edit"
+        style="@style/sidePanelTableRowChild"
+        android:layout_width="@dimen/side_panel_edit_width"
+        />
+</TableRow>

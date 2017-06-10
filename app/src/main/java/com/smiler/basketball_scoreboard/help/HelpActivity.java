@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.smiler.basketball_scoreboard.AppUpdatesFragment;
+import com.smiler.basketball_scoreboard.elements.dialogs.AppUpdatesDialog;
 import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
 
@@ -68,7 +68,7 @@ public class HelpActivity extends AppCompatActivity implements HelpListFragment.
                 selectedFrag = HelpFragment.newInstance(R.layout.help_policy_fragment);
                 break;
             case 4:
-                new AppUpdatesFragment().show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
+                new AppUpdatesDialog().show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
                 return;
         }
         if (selectedFrag != null) {

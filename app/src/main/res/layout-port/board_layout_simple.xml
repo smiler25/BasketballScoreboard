@@ -21,14 +21,14 @@
             android:id="@+id/switchSidesView"
             style="@style/matchParentCenter"
             android:scaleType="center"
-            android:contentDescription="@string/description_switch_sides"
+            android:contentDescription="@string/switch_sides"
             android:layout_weight="1"
             android:src="@drawable/ic_action_repeat" />
 
         <ImageView
             android:id="@+id/hornView"
             style="@style/matchParentCenter"
-            android:contentDescription="@string/description_horn"
+            android:contentDescription="@string/horn"
             android:scaleType="center"
             android:layout_weight="1"
             android:src="@drawable/ic_bullhorn" />
@@ -36,7 +36,7 @@
         <ImageView
             android:id="@+id/whistleView"
             style="@style/matchParentCenter"
-            android:contentDescription="@string/description_whistle"
+            android:contentDescription="@string/whistle"
             android:scaleType="center"
             android:layout_weight="1"
             android:src="@drawable/ic_whistle" />
@@ -44,7 +44,7 @@
         <ImageView
             android:id="@+id/cameraView"
             style="@style/matchParentCenter"
-            android:contentDescription="@string/description_start_camera"
+            android:contentDescription="@string/action_start_camera"
             android:scaleType="center"
             android:layout_weight="1"
             android:src="@drawable/ic_action_dock" />
@@ -52,7 +52,7 @@
         <ImageView
             android:id="@+id/newPeriodIconView"
             style="@style/matchParentCenter"
-            android:contentDescription="@string/description_new_period"
+            android:contentDescription="@string/new_period"
             android:scaleType="center"
             android:layout_weight="1"
             android:src="@drawable/ic_new_period" />

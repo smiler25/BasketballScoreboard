@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.smiler.basketball_scoreboard.panels.SlidingRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/side_panel_width"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="true"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:background="@color/light_grey_background"
+        android:layout_weight="3"
+        >
+
+        <TableLayout
+            android:id="@+id/left_panel_table"
+            style="@style/sidePanelTable"
+            />
+
+    </ScrollView>
+
+    <include layout="@layout/sp_full_left_toolbar"/>
+
+</com.smiler.basketball_scoreboard.panels.SlidingRelativeLayout>

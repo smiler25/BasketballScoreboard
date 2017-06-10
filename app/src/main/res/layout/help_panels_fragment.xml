@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
                 android:scaleType="fitCenter"
-                android:contentDescription="@string/description_close_panel"
+                android:contentDescription="@string/action_close_panel"
                 android:src="@drawable/ic_action_back_dark"
                 android:background="@drawable/side_panel_toolbar_button"
                 />
@@ -91,7 +91,7 @@
             >
 
             <include
-                layout="@layout/side_panel_full_left_toolbar"
+                layout="@layout/sp_full_left_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/help_side_panel_toolbar_height"
                 android:layout_margin="@dimen/help_side_panels_toolbar_margin"
@@ -112,7 +112,7 @@
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@string/description_add_one"
+                    android:contentDescription="@string/action_add_player"
                     android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
                     android:src="@drawable/ic_action_add_person_dark"
                     android:background="@drawable/side_panel_toolbar_button"
@@ -132,7 +132,7 @@
                     android:layout_width="match_parent"
                     android:scaleType="fitCenter"
                     android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
-                    android:contentDescription="@string/description_add_multiple"
+                    android:contentDescription="@string/action_add_player_multi"
                     android:src="@drawable/ic_action_add_group_dark"
                     android:background="@drawable/side_panel_toolbar_button"
                     />
@@ -151,8 +151,8 @@
                     android:layout_width="match_parent"
                     android:padding="@dimen/side_panel_toolbar_icon_padding"
                     android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
-                    android:textOff="@string/side_panel_select_off"
-                    android:textOn="@string/side_panel_select_on"
+                    android:textOff="@string/action_select"
+                    android:textOn="@string/action_apply"
                     />
                 <TextView
                     android:layout_width="match_parent"
@@ -169,7 +169,7 @@
                     android:layout_width="match_parent"
                     android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@string/description_close_panel"
+                    android:contentDescription="@string/action_close_panel"
                     android:src="@drawable/ic_action_back_dark"
                     android:background="@drawable/side_panel_toolbar_button"
                     />
@@ -189,7 +189,7 @@
                     android:layout_width="match_parent"
                     android:layout_marginLeft="@dimen/side_panel_toolbar_icon_padding"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@string/description_clear_panel"
+                    android:contentDescription="@string/action_clear_panel"
                     android:src="@drawable/ic_action_discard"
                     android:background="@drawable/side_panel_toolbar_button"
                     />

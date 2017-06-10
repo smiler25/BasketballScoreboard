@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:contentDescription="@string/description_switch_sides"
+        android:contentDescription="@string/switch_sides"
         android:src="@drawable/ic_action_repeat"
         android:adjustViewBounds="false"
         android:baselineAlignBottom="false"

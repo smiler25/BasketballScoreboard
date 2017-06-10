@@ -18,7 +18,7 @@
     <color name="floating_fragment">#ff2a2a2a</color>
     <color name="pref_system_bars">#ff252525</color>
     <color name="result_table_item">#97249eff</color>
-    <color name="result_table_header">@color/colorPrimaryLight</color>
+    <color name="dve_table_header">@color/colorPrimaryLight</color>
     <color name="result_table_delimiter">#ffcc80</color>
     <color name="pressed_color">#fff3e0</color>
     <color name="cab_color">#757575</color>

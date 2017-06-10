@@ -11,11 +11,13 @@ public class RealmController {
     private static RealmController instance;
     private final Realm realm;
     public static String realmName = "main.realm";
+    private final int dbVersion = 1;
 
     private RealmController() {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
                 .name(realmName)
-                .schemaVersion(0)
+                .schemaVersion(dbVersion)
+                .migration(new Migration())
                 .build();
         realm = Realm.getInstance(realmConfig);
     }
@@ -130,4 +132,9 @@ public class RealmController {
     public String getShareString(int id) {
         return realm.where(Results.class).equalTo("id", id).findFirst().getShareString();
     }
+
+    public Team getTeam(String name) {
+        return realm.where(Team.class).equalTo("name", name).findFirst();
+    }
+
 }

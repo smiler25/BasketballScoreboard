@@ -11,7 +11,7 @@
         android:id="@+id/result_view_players_table_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/res_players_table_title_underline"
+        android:background="@drawable/dve_title_underline"
         android:layout_marginLeft="10dp"
         />
 
@@ -24,7 +24,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:stretchColumns="*"
-        android:background="@drawable/result_table_shape"
+        android:background="@drawable/dve_table_shape"
         >
     </TableLayout>
 </LinearLayout>

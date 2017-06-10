@@ -48,6 +48,11 @@
             android:theme="@style/SecondaryTheme">
         </activity>
         <activity
+            android:name=".profiles.ProfilesActivity"
+            android:label="@string/title_activity_profiles"
+            android:theme="@style/SecondaryTheme">
+        </activity>
+        <activity
             android:name=".help.HelpActivity"
             android:configChanges="screenSize|orientation"
             android:label="@string/title_activity_help"

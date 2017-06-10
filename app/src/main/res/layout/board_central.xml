@@ -27,7 +27,7 @@
             <ImageView
                 android:id="@+id/switchSidesView"
                 style="@style/matchParentCenter"
-                android:contentDescription="@string/description_switch_sides"
+                android:contentDescription="@string/switch_sides"
                 android:padding="@dimen/icons_padding"
                 android:layout_weight="1"
                 android:scaleType="center"
@@ -40,7 +40,7 @@
                 android:layout_weight="1"
                 android:padding="@dimen/icons_padding"
                 android:scaleType="center"
-                android:contentDescription="@string/description_horn"
+                android:contentDescription="@string/horn"
                 android:src="@drawable/ic_bullhorn"
                 />
 
@@ -50,7 +50,7 @@
                 android:layout_weight="1"
                 android:scaleType="center"
                 android:padding="@dimen/icons_padding"
-                android:contentDescription="@string/description_whistle"
+                android:contentDescription="@string/whistle"
                 android:src="@drawable/ic_whistle"
                 />
 
@@ -116,7 +116,7 @@
                 style="@style/matchParentCenter"
                 android:layout_weight="1"
                 android:padding="@dimen/icons_padding"
-                android:contentDescription="@string/description_start_camera"
+                android:contentDescription="@string/action_start_camera"
                 android:scaleType="center"
                 android:src="@drawable/ic_action_dock" />
 

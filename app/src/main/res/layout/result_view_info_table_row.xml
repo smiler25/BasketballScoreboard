@@ -10,26 +10,26 @@
 
     <TextView
         android:id="@+id/results_player_number"
-        style="@style/resultPlayersTableRowChild"
-        android:text="@string/side_panel_number"
+        style="@style/detailViewTableRowChild"
+        android:text="@string/text_number"
         android:layout_weight="1.1"
         />
     <TextView
         android:id="@+id/results_player_name"
-        style="@style/resultPlayersTableRowChild"
-        android:text="@string/side_panel_name"
+        style="@style/detailViewTableRowChild"
+        android:text="@string/text_name"
         android:layout_weight=".92"
         />
     <TextView
         android:id="@+id/results_player_points"
-        style="@style/resultPlayersTableRowChild"
-        android:text="@string/side_panel_points"
+        style="@style/detailViewTableRowChild"
+        android:text="@string/text_points"
         android:layout_weight="1"
         />
     <TextView
         android:id="@+id/results_player_fouls"
-        style="@style/resultPlayersTableRowChild"
-        android:text="@string/side_panel_fouls"
+        style="@style/detailViewTableRowChild"
+        android:text="@string/text_fouls"
         android:layout_weight="1.1"
         />
 </TableRow>
