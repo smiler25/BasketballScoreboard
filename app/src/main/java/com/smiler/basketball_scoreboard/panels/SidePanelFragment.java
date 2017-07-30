@@ -158,7 +158,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
                     break;
                 case R.id.left_panel_add_auto:
                 case R.id.right_panel_add_auto:
-                    addRowsAuto();
+                    askAddRows();
                     break;
             }
         }
@@ -233,7 +233,14 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         return row;
     }
 
-    private void addRowsAuto() {
+    public void askAddRows() {
+        if (listener != null) {
+            ListDialog.newInstance(DialogTypes.SELECT_ADD_PLAYERS, left)
+                    .show(getFragmentManager(), ListDialog.TAG);
+        }
+    }
+
+    public void addRowsAuto() {
         if (!checkAddAvailable()) {return;}
         int count = playersNumbers.size();
         int number = 1;

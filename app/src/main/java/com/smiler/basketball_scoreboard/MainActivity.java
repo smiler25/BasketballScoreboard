@@ -646,6 +646,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onSelectAddPlayers(int which, boolean left) {
+        if (which == 0) {
+        } else {
+            game.addPlayers(left);
+        }
+    }
+
+    @Override
     public void onNameChanged(String value, int team) {
         if (value.length() > 0) {
             game.setTeamName(value, team);

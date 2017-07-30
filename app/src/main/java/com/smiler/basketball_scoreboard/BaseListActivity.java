@@ -1,22 +1,27 @@
-package com.smiler.basketball_scoreboard.profiles;
+package com.smiler.basketball_scoreboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smiler.basketball_scoreboard.BaseListActivity;
-import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.elements.CAB;
+import com.smiler.basketball_scoreboard.elements.CABListener;
 import com.smiler.basketball_scoreboard.elements.lists.BaseListFragment;
+import com.smiler.basketball_scoreboard.elements.lists.ExpandableListListener;
+import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 import com.smiler.basketball_scoreboard.elements.lists.RecyclerListFragment;
 import com.smiler.basketball_scoreboard.results.views.ResultViewFragment;
 
-//public class ProfilesActivity extends AppCompatActivity implements ExpandableListListener {
-public class ProfilesActivity extends BaseListActivity {
+abstract public class BaseListActivity extends AppCompatActivity implements ExpandableListListener {
 
     private Menu menu;
     private int selected = -1;
@@ -29,9 +34,6 @@ public class ProfilesActivity extends BaseListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profiles);
-        initToolbar();
-        initList();
     }
 
     @Override
@@ -56,6 +58,68 @@ public class ProfilesActivity extends BaseListActivity {
                 setListeners(list);
             }
         }
+    }
+
+    protected void setListeners(final BaseListFragment list) {
+        final String cabString = getResources().getString(R.string.cab_subtitle);
+
+        final CABListener cabListener = new CABListener() {
+            @Override
+            public void onFinish() { list.clearSelection(); }
+
+            @Override
+            public void onMenuClick() {}
+
+            @Override
+            public void onMenuDelete() {
+                list.deleteSelection();
+            }
+        };
+        if (list != null) {
+            list.setMode(cabListener);
+            list.setListener(new ListListener() {
+                @Override
+                public void onListElementClick(int value) {
+                    if (!actionModeActive) {
+                        menu.setGroupVisible(R.id.group, true);
+                        selected = value;
+                        if (wide && detailViewFrag != null) {
+                            detailViewFrag.updateContent(value);
+                        }
+                    } else {
+                        actionModeText.setText(String.format(cabString, value));
+                    }
+                }
+
+                @Override
+                public void onListElementLongClick(int count) {
+                    actionMode = startSupportActionMode(new CAB(BaseListActivity.this, cabListener));
+                    actionModeText = (TextView) (actionMode != null ? actionMode.getCustomView() : new TextView(BaseListActivity.this));
+                    actionModeText.setText(String.format(cabString, 1));
+                    actionModeActive = true;
+                }
+
+                @Override
+                public void onListEmpty() {
+                }
+            });
+        }
+    }
+
+    protected void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setDisplayShowHomeEnabled(true);
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -119,6 +183,23 @@ public class ProfilesActivity extends BaseListActivity {
                 setEmptyLayout();
             }
             selected = -1;
+        }
+    }
+
+    @Override
+    public void onListEmpty() {
+        setEmptyLayout();
+    }
+
+    @Override
+    public void onExpListItemSelected() {
+        //menu.setGroupVisible(R.id.group, true);
+    }
+
+    @Override
+    public void onExpListItemDeleted(boolean empty) {
+        if (empty){
+            setEmptyLayout();
         }
     }
 

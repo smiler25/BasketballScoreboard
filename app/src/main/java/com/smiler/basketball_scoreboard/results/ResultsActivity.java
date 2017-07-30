@@ -12,10 +12,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smiler.basketball_scoreboard.elements.CAB;
-import com.smiler.basketball_scoreboard.elements.CABListener;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.elements.CAB;
+import com.smiler.basketball_scoreboard.elements.CABListener;
 import com.smiler.basketball_scoreboard.elements.lists.ExpandableListListener;
 import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 import com.smiler.basketball_scoreboard.elements.lists.RecyclerListFragment;
@@ -47,10 +47,10 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
 
     private void initList() {
         detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-        BaseResultsListFragment list;
+        ResultsListFragment list;
         if (detailViewFrag != null && detailViewFrag.isAdded()) {
             wide = true;
-            list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+            list = (ResultsListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
             if (list != null) {
                 setListeners(list);
             }
@@ -63,7 +63,7 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
         }
     }
 
-    private void setListeners(final BaseResultsListFragment list) {
+    private void setListeners(final ResultsListFragment list) {
         final String cabString = getResources().getString(R.string.cab_subtitle);
 
         final CABListener cabListener = new CABListener() {

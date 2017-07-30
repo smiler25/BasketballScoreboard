@@ -67,8 +67,11 @@ public class ListDialog extends DialogFragment {
                 case SUBSTITUTE:
                     initSubstitute(builder, args);
                     break;
-                case TEAM_SELECT:
-                    initTeamSelect(builder);
+                case SELECT_TEAM:
+                    initTeamSelect(builder, args);
+                    break;
+                case SELECT_ADD_PLAYERS:
+                    initAddPlayersSelect(builder, args);
                     break;
             }
         }
@@ -124,7 +127,18 @@ public class ListDialog extends DialogFragment {
         builder.setTitle(title);
     }
 
-    private void initTeamSelect(AlertDialog.Builder builder) {
+    private void initTeamSelect(AlertDialog.Builder builder, Bundle args) {
+        left = args.getBoolean("left", true);
+    }
+
+    private void initAddPlayersSelect(AlertDialog.Builder builder, Bundle args) {
+        left = args.getBoolean("left", true);
+        builder.setItems(R.array.select_add_players, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onSelectAddPlayers(which, left);
+            }
+        });
     }
 
     DialogInterface.OnClickListener listClickListener = new DialogInterface.OnClickListener() {
@@ -140,6 +154,7 @@ public class ListDialog extends DialogFragment {
         void onNewPeriodDialogItemClick(int which);
         void onClearPanelDialogItemClick(int which, boolean left);
         void onSubstituteListSelect(boolean left, int newNumber);
+        void onSelectAddPlayers(int which, boolean left);
     }
 
     private ListDialogListener listener;

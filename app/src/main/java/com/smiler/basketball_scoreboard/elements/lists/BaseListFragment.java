@@ -4,24 +4,38 @@ package com.smiler.basketball_scoreboard.elements.lists;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.smiler.basketball_scoreboard.adapters.RealmRecyclerAdapter;
 import com.smiler.basketball_scoreboard.elements.CABListener;
 
 abstract public class BaseListFragment extends Fragment {
+
+    protected RealmRecyclerAdapter adapter;
+    private ListListener listener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initDataset();
+        initData();
     }
 
-    abstract public void initDataset();
+    abstract public void initData();
 
-    abstract public void setListener(ListListener listener);
+    public void setListener(ListListener listener) {
+        this.listener = listener;
+        adapter.setListener(listener);
+    }
 
-    abstract public boolean updateList();
+    public boolean updateList() {
+        adapter.notifyDataSetChanged();
+        return adapter.getItemCount() == 0;
+    }
 
-    abstract public void clearSelection();
+    public void clearSelection() {
+        adapter.clearSelection();
+    }
 
-    abstract public void deleteSelection();
+    public void deleteSelection() {
+    }
 
-    abstract public void setMode(CABListener listener);
+    public void setMode(CABListener listener) {}
 }

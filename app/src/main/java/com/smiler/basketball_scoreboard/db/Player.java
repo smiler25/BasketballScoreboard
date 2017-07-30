@@ -40,8 +40,8 @@ public class Player extends RealmObject {
         return this;
     }
 
-//    public RealmList<Results> getGames() { return games; }
-//    public Player setGames(RealmList<Results> value) {
+//    public RealmListFragment<Results> getGames() { return games; }
+//    public Player setGames(RealmListFragment<Results> value) {
 //        games = value;
 //        return this;
 //    }

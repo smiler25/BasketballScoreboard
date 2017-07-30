@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.elements.lists.BaseMultiChoice;
 import com.smiler.basketball_scoreboard.elements.CABListener;
-import com.smiler.basketball_scoreboard.elements.lists.ExpListMultiChoice;
+import com.smiler.basketball_scoreboard.elements.lists.ExpandableListMultiChoice;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
@@ -26,7 +26,7 @@ import com.smiler.basketball_scoreboard.results.views.ResultView;
 import java.text.DateFormat;
 import java.util.List;
 
-public class ResultsExpListFragment extends BaseResultsListFragment {
+public class ResultsExpListFragment extends ResultsListFragment {
     public static String TAG = "BS-ResultsExpListFragment";
     private ExpandableListAdapter adapter;
     private ExpandableListView expListView;
@@ -105,7 +105,7 @@ public class ResultsExpListFragment extends BaseResultsListFragment {
     public void setMode(CABListener listener) {
         if (expListView != null) {
             expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            cab = new ExpListMultiChoice(expListView, getActivity(), listener);
+            cab = new ExpandableListMultiChoice(expListView, getActivity(), listener);
             expListView.setMultiChoiceModeListener(cab);
         }
     }

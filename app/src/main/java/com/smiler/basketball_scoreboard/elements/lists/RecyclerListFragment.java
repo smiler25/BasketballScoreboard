@@ -10,25 +10,27 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.adapters.ResultsRecyclerAdapter;
+import com.smiler.basketball_scoreboard.adapters.RealmRecyclerAdapter;
 import com.smiler.basketball_scoreboard.db.RealmController;
-import com.smiler.basketball_scoreboard.results.BaseResultsListFragment;
+import com.smiler.basketball_scoreboard.db.Team;
 
-public class RecyclerListFragment extends BaseResultsListFragment {
+import io.realm.RealmResults;
+
+abstract public class RecyclerListFragment extends BaseListFragment {
     public static final String TAG = "BS-RecyclerListFragment";
     protected RecyclerView recyclerView;
-    protected ResultsRecyclerAdapter adapter;
+    protected RealmRecyclerAdapter adapter;
     protected RecyclerView.LayoutManager layoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.results_recycler_view, container, false);
+        View rootView = inflater.inflate(R.layout.recycler_view, container, false);
         rootView.setTag(TAG);
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.results_recycler_view);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new ResultsRecyclerAdapter(realmData);
+        initAdapter();
         recyclerView.setAdapter(adapter);
         setRecyclerViewLayoutManager();
         return rootView;
@@ -54,6 +56,8 @@ public class RecyclerListFragment extends BaseResultsListFragment {
             adapter.setListener(listener);
         }
     }
+
+    abstract public void initAdapter();
 
     @Override
     public boolean updateList() {

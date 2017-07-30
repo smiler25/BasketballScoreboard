@@ -57,7 +57,7 @@ public class PlayersPanels {
         return this;
     }
 
-    public void saveInstanceState(Bundle outState){
+    public void saveInstanceState(Bundle outState) {
         if (overlayPanels != null && overlayPanels.isAdded()) {
             fragmentManager.putFragment(outState, OverlayFragment.TAG_PANELS, overlayPanels);
         }
@@ -186,6 +186,10 @@ public class PlayersPanels {
         }
         ft.commit();
         return true;
+    }
+
+    public void addPlayers(boolean left) {
+        (left ? leftPanel : rightPanel).addRowsAuto();
     }
 
     public void addPlayer(boolean left, int number, String name, boolean captain) {

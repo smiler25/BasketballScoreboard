@@ -7,11 +7,11 @@ import android.widget.ExpandableListView;
 
 import com.smiler.basketball_scoreboard.elements.CABListener;
 
-public class ExpListMultiChoice extends BaseMultiChoice {
+public class ExpandableListMultiChoice extends BaseMultiChoice {
 
     private ExpandableListAdapter adapter;
 
-    public ExpListMultiChoice(AbsListView listView, Activity activity, CABListener listener) {
+    public ExpandableListMultiChoice(AbsListView listView, Activity activity, CABListener listener) {
         super(listView, activity, listener);
         adapter = (ExpandableListAdapter)((ExpandableListView)listView).getExpandableListAdapter();
     }

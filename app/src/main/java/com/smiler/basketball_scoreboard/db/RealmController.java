@@ -119,6 +119,16 @@ public class RealmController {
         });
     }
 
+    public void deleteTeams(final Integer[] ids) {
+        final RealmResults<Team> teams = realm.where(Team.class).in("id", ids).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                teams.deleteAllFromRealm();
+            }
+        });
+    }
+
     public void deletePlayerResults(final int gameId) {
         final RealmResults<Results> results = realm.where(Results.class).equalTo("id", gameId).findAll();
         realm.executeTransaction(new Realm.Transaction() {
@@ -131,6 +141,10 @@ public class RealmController {
 
     public String getShareString(int id) {
         return realm.where(Results.class).equalTo("id", id).findFirst().getShareString();
+    }
+
+    public RealmResults<Team> getTeams() {
+        return realm.where(Team.class).findAll().sort("name", Sort.ASCENDING);
     }
 
     public Team getTeam(String name) {

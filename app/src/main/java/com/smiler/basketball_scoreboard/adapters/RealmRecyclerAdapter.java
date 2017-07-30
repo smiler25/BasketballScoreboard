@@ -7,22 +7,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 
-import io.realm.RealmResults;
+abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRecyclerAdapter.ViewHolder> {
 
-public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecyclerAdapter.ViewHolder> {
-    private static final String TAG = "BS-ResultsAdapter";
+    private static final String TAG = "BS-RealmRecyclerAdapter";
     private ListListener listener;
-    private RealmResults<Results> dataSet;
-    private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
     private boolean multiSelection = false;
     private View selectedItem;
-    private ItemsCallback callback;
+    protected ItemsCallback callback;
     public ArrayList<Integer> selectedIds = new ArrayList<>();
 
     private interface ItemsCallback {
@@ -30,8 +25,7 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
         void onElementLongClick(View view);
     }
 
-    public ResultsRecyclerAdapter(RealmResults<Results> dataSet) {
-        this.dataSet = dataSet;
+    public RealmRecyclerAdapter() {
         callback = new ItemsCallback() {
             @Override
             public void onElementLongClick(View view) {
@@ -78,25 +72,16 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Results results = dataSet.get(position);
-        viewHolder.setTextView(String.format("%s\n%s - %s", dateFormat.format(results.getDate()),
-                results.getFirstTeamName(), results.getSecondTeamName()));
-        viewHolder.setId(results.getId());
-        viewHolder.setSelected(selectedIds.indexOf(results.getId()) != -1);
-        viewHolder.setCallback(callback);
-    }
+    abstract public void onBindViewHolder(ViewHolder viewHolder, final int position);
 
     @Override
-    public int getItemCount() {
-        return dataSet.size();
-    }
+    abstract public int getItemCount();
 
     public void setListener(ListListener listener) {
         this.listener = listener;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    protected static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private final View root;
         private ItemsCallback callback;
@@ -124,10 +109,10 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
             textView = (TextView) v.findViewById(R.id.textView);
         }
 
-        void setTextView(String text) { textView.setText(text); }
-        void setId(int id) { root.setTag(id); }
-        void setCallback(ItemsCallback callback) { this.callback = callback; }
-        void setSelected(boolean selected) {
+        public void setTextView(String text) { textView.setText(text); }
+        public void setId(int id) { root.setTag(id); }
+        public void setCallback(ItemsCallback callback) { this.callback = callback; }
+        public void setSelected(boolean selected) {
             root.setSelected(selected);
         }
     }

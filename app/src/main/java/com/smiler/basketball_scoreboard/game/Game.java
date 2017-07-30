@@ -1600,6 +1600,10 @@ public class Game {
         layout.setPlayersButtonsEmpty(left);
     }
 
+    public void addPlayers(boolean left) {
+        panels.addPlayers(left);
+    }
+
     public void addPlayer(boolean left, int number, String name, boolean captain) {
         panels.addPlayer(left, number, name, captain);
     }

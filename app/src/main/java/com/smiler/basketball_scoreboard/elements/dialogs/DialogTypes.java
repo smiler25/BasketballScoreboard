@@ -6,7 +6,8 @@ public enum DialogTypes {
     NEW_PERIOD,
     PANEL_CLEAR,
     SUBSTITUTE,
-    TEAM_SELECT,
+    SELECT_TEAM,
+    SELECT_ADD_PLAYERS,
     EDIT_CAPTAIN,
     RESULT_SAVE
 }
