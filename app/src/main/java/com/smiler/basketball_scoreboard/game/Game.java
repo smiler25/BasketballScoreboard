@@ -18,6 +18,7 @@ import com.smiler.basketball_scoreboard.db.GameDetails;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
+import com.smiler.basketball_scoreboard.db.Team;
 import com.smiler.basketball_scoreboard.elements.dialogs.DialogTypes;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
 import com.smiler.basketball_scoreboard.layout.PlayersPanels;
@@ -91,6 +92,7 @@ public class Game {
     private short maxTimeouts, maxTimeouts20, maxTimeouts100;
     private short period;
     private String hName, gName;
+    private Team hTeam, gTeam;
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
     private boolean leftIsHome = true;
@@ -111,15 +113,15 @@ public class Game {
     private boolean showTimeoutDialog;
 
     public interface GameListener {
-        void onPlayHorn();
-        void onNewGame();
         BaseLayout onInitLayout();
         PlayersPanels onInitPanels();
         void onConfirmDialog(DialogTypes type);
-        void onWinDialog(DialogTypes type, String team, int winScore, int loseScore);
+        void onNewGameDialog();
+        void onPlayHorn();
         void onShowTimeout(long seconds, String team);
-        void onSwitchSides(boolean show);
         void onShowToast(int resId, int len);
+        void onSwitchSides(boolean show);
+        void onWinDialog(DialogTypes type, String team, int winScore, int loseScore);
     }
 
     public static Game newGame(Context context, GameListener listener, BaseLayout layout, boolean restore) {
@@ -144,6 +146,7 @@ public class Game {
             initRestore(context);
         } else {
             init(context);
+            clearSavedState();
         }
     }
 
@@ -174,7 +177,7 @@ public class Game {
             }
         }
         setZeroState();
-        handleNames();
+        handleTeams();
         leftIsHome = true;
     }
 
@@ -454,17 +457,7 @@ public class Game {
     }
 
     public void newGame() {
-        if (preferences.autoSaveResults == 0) {
-            newGameSave();
-        } else if (preferences.autoSaveResults == 2) {
-            showDialog(DialogTypes.RESULT_SAVE, false);
-        }
-        clearSavedState();
-    }
-
-    public void newGameSave() {
-        saveGame();
-        listener.onNewGame();
+        listener.onNewGameDialog();
         clearSavedState();
     }
 
@@ -507,6 +500,14 @@ public class Game {
                         .setShareString(gameResult.getResultString(period > preferences.numRegularPeriods))
                         .setRegularPeriods(preferences.numRegularPeriods)
                         .setComplete(gameResult.isComplete());
+                if (hTeam != null) {
+                    result.setFirstTeam(hTeam);
+                    handleHomeTeamDb(result);
+                }
+                if (gTeam != null) {
+                    result.setSecondTeam(gTeam);
+                    handleGuestTeamDb(result);
+                }
 
                 GameDetails details = realm.createObject(GameDetails.class);
                 details.setLeadChanged(timesLeadChanged)
@@ -546,6 +547,24 @@ public class Game {
                 }
             }
         });
+    }
+
+    private void handleHomeTeamDb(Results result) {
+        hTeam.addGame(result);
+        if (hScore > gScore) {
+            hTeam.incrementWins();
+        } else {
+            hTeam.incrementLoses();
+        }
+    }
+
+    private void handleGuestTeamDb(Results result) {
+        gTeam.addGame(result);
+        if (gScore > hScore) {
+            gTeam.incrementWins();
+        } else {
+            gTeam.incrementLoses();
+        }
     }
 
     public void saveGame() {
@@ -1415,15 +1434,65 @@ public class Game {
     }
 
 
-    // names
-    private void handleNames() {
-        if (hName == null || hName.equals("")) {
+    // teams
+    private void handleTeams() {
+        if (hTeam != null) {
+            hName = hTeam.getName();
+        } else if (hName == null || hName.equals("")) {
             hName = preferences.hName;
         }
-        if (gName == null || gName.equals("")) {
+        if (gTeam != null) {
+            hName = gTeam.getName();
+        } else if (gName == null || gName.equals("")) {
             gName = preferences.gName;
         }
         setTeamNames();
+    }
+
+    public void setTeam(Team value, int team) {
+        if (team == HOME) {
+            setHomeTeam(value);
+        } else {
+            setGuestTeam(value);
+        }
+    }
+
+    public Game setHomeTeam(Team value) {
+        hTeam = value;
+        if (value != null) {
+            hName = value.getName();
+        } else {
+            hName = preferences.hName;
+        }
+        gameResult.setHomeName(hName);
+        layout.setHomeName(hName);
+        if (panels != null) {
+            if (leftIsHome) {
+                panels.setLeftTeam(hTeam);
+            } else {
+                panels.setRightTeam(hTeam);
+            }
+        }
+        return this;
+}
+
+    public Game setGuestTeam(Team value) {
+        gTeam = value;
+        if (value != null) {
+            gName = value.getName();
+        } else {
+            gName = preferences.gName;
+        }
+        gameResult.setGuestName(gName);
+        layout.setGuestName(gName);
+        if (panels != null) {
+            if (leftIsHome) {
+                panels.setRightTeam(gTeam);
+            } else {
+                panels.setLeftTeam(gTeam);
+            }
+        }
+        return this;
     }
 
     private void setTeamNames(String home, String guest) {
@@ -1577,7 +1646,7 @@ public class Game {
 
     public void checkCloseSidePanels() {
         if (!panels.closePanels()) {
-            listener.onShowToast(R.string.side_panel_confirm, Toast.LENGTH_LONG);
+            listener.onShowToast(R.string.sp_confirm, Toast.LENGTH_LONG);
         }
     }
 

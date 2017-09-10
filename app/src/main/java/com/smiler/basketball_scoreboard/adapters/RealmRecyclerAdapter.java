@@ -7,12 +7,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 
 import java.util.ArrayList;
 
 abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRecyclerAdapter.ViewHolder> {
-
     private static final String TAG = "BS-RealmRecyclerAdapter";
     private ListListener listener;
     private boolean multiSelection = false;
@@ -35,10 +35,7 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
                     if (selectedItem != null) {
                         selectedItem.setSelected(false);
                     }
-                    // TODO проверить, что onClick происходит всегда после onLongClick
-//                    selectedIds.add((Integer) view.getTag());
                     listener.onListElementLongClick(0);
-//                    view.setSelected(!view.isSelected());
                 }
             }
 
@@ -86,7 +83,7 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
         private final View root;
         private ItemsCallback callback;
 
-        ViewHolder(View v) {
+        public ViewHolder(View v) {
             super(v);
             root = v;
             v.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +125,7 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
     }
 
     public void deleteSelection() {
+        RealmController.with().deleteTeams(selectedIds.toArray(new Integer[selectedIds.size()]));
         selectedItem = null;
         selectedIds.clear();
         multiSelection = false;

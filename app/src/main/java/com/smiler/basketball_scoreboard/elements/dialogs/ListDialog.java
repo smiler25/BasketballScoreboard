@@ -9,14 +9,31 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.adapters.TeamsListAdapter;
+import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.db.Team;
 
 import java.util.ArrayList;
+
+import static com.smiler.basketball_scoreboard.Constants.GUEST;
+import static com.smiler.basketball_scoreboard.Constants.HOME;
 
 
 public class ListDialog extends DialogFragment {
 
     public static final String TAG = "ListDialog";
     private boolean left;
+    private int team;
+    private ListDialogListener listener;
+
+    public interface ListDialogListener {
+        void onTimeoutDialogItemClick(int which);
+        void onNewPeriodDialogItemClick(int which);
+        void onClearPanelDialogItemClick(int which, boolean left);
+        void onSubstituteListSelect(boolean left, int newNumber);
+        void onSelectAddPlayers(int which, boolean left);
+        void onSelectTeam(int type, Team team);
+    }
 
     public static ListDialog newInstance(DialogTypes type) {
         ListDialog f = new ListDialog();
@@ -43,6 +60,15 @@ public class ListDialog extends DialogFragment {
         args.putStringArrayList("values", values);
         args.putBoolean("left", left);
         args.putInt("number", number);
+        f.setArguments(args);
+        return f;
+    }
+
+    public static ListDialog newInstance(DialogTypes type, int team) {
+        ListDialog f = new ListDialog();
+        Bundle args = new Bundle();
+        args.putSerializable("type", type);
+        args.putInt("team", team);
         f.setArguments(args);
         return f;
     }
@@ -111,7 +137,7 @@ public class ListDialog extends DialogFragment {
         left = args.getBoolean("left", true);
         ArrayList<String> values = args.getStringArrayList("values");
         if (values == null) { values = new ArrayList<>(); }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.substitute_dialog_list_item, values);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.dialog_list_item, values);
         builder.setAdapter(adapter, listClickListener);
         int number = args.getInt("number", -1);
         String title;
@@ -128,7 +154,19 @@ public class ListDialog extends DialogFragment {
     }
 
     private void initTeamSelect(AlertDialog.Builder builder, Bundle args) {
-        left = args.getBoolean("left", true);
+        team = args.getInt("team", -1);
+        int titleResId;
+        if (team == HOME) {
+            titleResId = R.string.select_home_team;
+        } else if (team == GUEST) {
+            titleResId = R.string.select_guest_team;
+        } else {
+            titleResId = R.string.select_team;
+        }
+        TeamsListAdapter adapter = new TeamsListAdapter(getActivity(), RealmController.with().getTeams());
+        builder.setAdapter(adapter, selectTeamListener);
+        String title = getResources().getString(titleResId);
+        builder.setTitle(title);
     }
 
     private void initAddPlayersSelect(AlertDialog.Builder builder, Bundle args) {
@@ -149,15 +187,12 @@ public class ListDialog extends DialogFragment {
         }
     };
 
-    public interface ListDialogListener {
-        void onTimeoutDialogItemClick(int which);
-        void onNewPeriodDialogItemClick(int which);
-        void onClearPanelDialogItemClick(int which, boolean left);
-        void onSubstituteListSelect(boolean left, int newNumber);
-        void onSelectAddPlayers(int which, boolean left);
-    }
-
-    private ListDialogListener listener;
+    DialogInterface.OnClickListener selectTeamListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            listener.onSelectTeam(team, (Team) ((AlertDialog) dialog).getListView().getAdapter().getItem(which));
+        }
+    };
 
     @Override
     public void onAttach(Activity activity) {

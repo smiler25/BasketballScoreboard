@@ -13,11 +13,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.db.Player;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
+import com.smiler.basketball_scoreboard.db.Team;
 import com.smiler.basketball_scoreboard.elements.dialogs.DialogTypes;
-import com.smiler.basketball_scoreboard.elements.dialogs.EditPlayerDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.PlayerEditDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.ListDialog;
 
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     private SidePanelRow captainPlayer;
     private ToggleButton panelSelect;
     private boolean left = true;
+    private Team team;
 
     public static SidePanelFragment newInstance(boolean left) {
         Bundle args = new Bundle();
@@ -144,13 +147,15 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
                     if (!panelSelect.isChecked()) {
                         listener.onSidePanelClose(left);
                     } else {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_confirm), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.sp_confirm), Toast.LENGTH_LONG).show();
                     }
                     break;
                 case R.id.left_panel_add:
                 case R.id.right_panel_add:
                     if (!checkAddAvailable()) { return; }
-                    EditPlayerDialog.newInstance(left).show(getFragmentManager(), EditPlayerDialog.TAG);
+                    PlayerEditDialog.newInstance(left)
+                            .setListenerInGame((PlayerEditDialog.EditPlayerInGameListener) getActivity())
+                            .show(getFragmentManager(), PlayerEditDialog.TAG);
                     break;
                 case R.id.left_panel_clear:
                 case R.id.right_panel_clear:
@@ -190,7 +195,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
             panelSelect.setChecked(true);
             Toast.makeText(getActivity(),
                     String.format(activePlayers.size() < 5
-                            ? getResources().getString(R.string.side_panel_few) : getResources().getString(R.string.side_panel_many),
+                            ? getResources().getString(R.string.sp_few) : getResources().getString(R.string.sp_many),
                             activePlayers.size()),
                     Toast.LENGTH_SHORT).show();
         }
@@ -203,7 +208,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     public boolean editRow(int id, int number, String name, boolean captain) {
         SidePanelRow row = rows.get(id);
         int old_number = row.getNumber();
-        row.edit(number, name, captain);
+        row.setRow(number, name, captain);
         if (old_number != number) {
             playersNumbers.remove(Integer.valueOf(old_number));
             playersNumbers.add(number);
@@ -244,7 +249,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (!checkAddAvailable()) {return;}
         int count = playersNumbers.size();
         int number = 1;
-        String name = getResources().getString(R.string.side_panel_player_name);
+        String name = getResources().getString(R.string.sp_player_name);
         Activity activity = getActivity();
         while (count < maxPlayers) {
             while (playersNumbers.contains(number)) { number++; }
@@ -253,6 +258,17 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
             table.addView(row);
             rows.put(row.getId(), row);
             count++;
+        }
+    }
+
+    public void addRowsTeam() {
+        if (!checkAddAvailable()) {return;}
+        Activity activity = getActivity();
+        for (Player player : team.getPlayers()) {
+            SidePanelRow row = new SidePanelRow(activity, player, left);
+            playersNumbers.add(player.getNumber());
+            table.addView(row);
+            rows.put(row.getId(), row);
         }
     }
 
@@ -305,7 +321,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (playersNumbers.size() < maxPlayers) {
             return true;
         }
-        Toast.makeText(getActivity(), String.format(getResources().getString(R.string.side_panel_players_limit), maxPlayers), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), String.format(getResources().getString(R.string.sp_players_limit), maxPlayers), Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -326,7 +342,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (frag != null && frag.isAdded()) {
             return;
         }
-        ListDialog.newInstance(DialogTypes.TIMEOUT, left).show(getFragmentManager(), ListDialog.TAG);
+        ListDialog.newInstance(DialogTypes.PANEL_CLEAR, left).show(getFragmentManager(), ListDialog.TAG);
     }
 
     public void clear(boolean delete) {
@@ -393,7 +409,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
             }
             listener.onSidePanelActiveSelected(activePlayers, left);
         } else {
-            Toast.makeText(getActivity(), getResources().getString(R.string.side_panel_no_save_data), Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.sp_no_saved_data), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -437,5 +453,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
             table.removeAllViews();
             addHeader();
         }
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+        addRowsTeam();
     }
 }

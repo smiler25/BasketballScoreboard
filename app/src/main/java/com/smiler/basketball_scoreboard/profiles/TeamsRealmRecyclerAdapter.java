@@ -1,14 +1,19 @@
 package com.smiler.basketball_scoreboard.profiles;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.adapters.RealmRecyclerAdapter;
 import com.smiler.basketball_scoreboard.db.Team;
 
 import io.realm.RealmResults;
 
-public class ProfilesRealmRecyclerAdapter extends RealmRecyclerAdapter {
-    private final RealmResults<Team> data;
+class TeamsRealmRecyclerAdapter extends RealmRecyclerAdapter {
+    protected final RealmResults<Team> data;
 
-    public ProfilesRealmRecyclerAdapter(RealmResults<Team> data) {
+    TeamsRealmRecyclerAdapter(RealmResults<Team> data) {
         super();
         this.data = data;
     }
@@ -23,8 +28,14 @@ public class ProfilesRealmRecyclerAdapter extends RealmRecyclerAdapter {
     }
 
     @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View v = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.list_row_item, viewGroup, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
     public int getItemCount() {
         return data.size();
     }
-
 }

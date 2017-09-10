@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:text="."/>
 
-        <!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
         <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
             android:id="@+id/pickerMillis"
             style="@style/numberPicker"
@@ -44,7 +43,9 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonApply"
-        android:text="@string/action_apply"/>
+        android:id="@+id/dialog_apply"
+        android:text="@string/action_apply"
+        style="?android:attr/buttonBarButtonStyle"
+        />
 
 </LinearLayout>

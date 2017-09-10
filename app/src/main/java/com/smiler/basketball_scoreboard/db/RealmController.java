@@ -9,11 +9,11 @@ import io.realm.Sort;
 public class RealmController {
 
     private static RealmController instance;
-    private final Realm realm;
+    protected final Realm realm;
     public static String realmName = "main.realm";
-    private final int dbVersion = 1;
+    private final int dbVersion = 2;
 
-    private RealmController() {
+    protected RealmController() {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()
                 .name(realmName)
                 .schemaVersion(dbVersion)
@@ -55,10 +55,6 @@ public class RealmController {
         }
         return createTmpResult();
     }
-
-//    public void deleteTmpResult() {
-//        deleteResult(-1);
-//    }
 
     private Results createTmpResult() {
         realm.executeTransaction(new Realm.Transaction() {
@@ -147,8 +143,60 @@ public class RealmController {
         return realm.where(Team.class).findAll().sort("name", Sort.ASCENDING);
     }
 
-    public Team getTeam(String name) {
-        return realm.where(Team.class).equalTo("name", name).findFirst();
+    public Team getTeam(int id) {
+        return realm.where(Team.class).equalTo("id", id).findFirst();
+    }
+
+    public void createTeam(final String name, final boolean active) {
+        Number lastId = realm.where(Team.class).max("id");
+        final long nextId = lastId != null ? (long) lastId + 1 : 0;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Team result = realm.createObject(Team.class, nextId);
+                result.setName(name)
+                      .setActive(active);
+            }
+        });
+    }
+
+    public Player createPlayer(int teamId, final int number, final String name, final boolean captain) {
+        final Team team = realm.where(Team.class).equalTo("id", teamId).findFirst();
+        Number lastId = realm.where(Player.class).max("id");
+        final long nextId = lastId != null ? (long) lastId + 1 : 0;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Player player = realm.createObject(Player.class, nextId);
+                player.setName(name).setNumber(number).setCaptain(captain).setTeam(team);
+                team.addPlayer(player);
+            }
+        });
+        return realm.where(Player.class).equalTo("id", nextId).findFirst();
+    }
+
+    public void editPlayer(int playerId, final int number, final String name, final boolean captain) {
+        final Player player = realm.where(Player.class).equalTo("id", playerId).findFirst();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                player.setName(name).setNumber(number).setCaptain(captain);
+            }
+        });
+    }
+
+    public void deletePlayer(int playerId) {
+        final Player player = realm.where(Player.class).equalTo("id", playerId).findFirst();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                player.deleteFromRealm();
+            }
+        });
+    }
+
+    public Player getPlayer(int id) {
+        return realm.where(Player.class).equalTo("id", id).findFirst();
     }
 
 }

@@ -16,7 +16,7 @@
     <TextView
         android:id="@+id/left_panel_name"
         style="@style/sidePanelTableRowChild"
-        android:text="@string/text_name"
+        android:text="@string/text_player"
         android:layout_width="@dimen/side_panel_name_width"
         />
     <TextView

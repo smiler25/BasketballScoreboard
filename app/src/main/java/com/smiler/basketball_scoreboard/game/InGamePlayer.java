@@ -1,23 +1,36 @@
 package com.smiler.basketball_scoreboard.game;
 
-@SuppressWarnings("UnnecessaryThis")
-public class Player {
+import com.smiler.basketball_scoreboard.db.Player;
+
+public class InGamePlayer {
 
     private String name;
     private int points;
     private int number;
     private int fouls;
     private boolean captain;
+    private Player dbRecord;
 
-    public Player() {
+    public InGamePlayer() {
     }
 
-    public Player(int number, String name, int points, int fouls, boolean captain) {
+    public InGamePlayer(Player dbRecord) {
+        setDbRecord(dbRecord);
+    }
+
+    public InGamePlayer(int number, String name, int points, int fouls, boolean captain) {
         this.number = number;
         this.name = name;
         this.points = points;
         this.fouls = fouls;
         this.captain = captain;
+    }
+
+    public InGamePlayer setDbRecord(Player value) {
+        dbRecord = value;
+        name = value.getName();
+        number = value.getNumber();
+        return this;
     }
 
     public void setInfo(int number, String name, boolean captain) {
@@ -73,4 +86,7 @@ public class Player {
         fouls = 0;
     }
 
+    public boolean hasDbRecord() {
+        return dbRecord != null;
+    }
 }

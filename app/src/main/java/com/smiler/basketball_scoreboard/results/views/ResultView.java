@@ -11,7 +11,7 @@ import com.smiler.basketball_scoreboard.db.GameDetails;
 import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
-import com.smiler.basketball_scoreboard.game.Player;
+import com.smiler.basketball_scoreboard.game.InGamePlayer;
 import com.smiler.basketball_scoreboard.results.Result;
 import com.smiler.basketball_scoreboard.results.ResultGameDetails;
 
@@ -49,7 +49,7 @@ public class ResultView extends LinearLayout {
 
         getData();
         Result result = getResult();
-        TreeMap<String, ArrayList<Player>> playersData = getPlayersContent();
+        TreeMap<String, ArrayList<InGamePlayer>> playersData = getPlayersContent();
         TreeMap<String, Integer> detailData = getDetailContent();
         JSONArray playByPlay = getPlayByPlay();
 
@@ -70,12 +70,12 @@ public class ResultView extends LinearLayout {
         }
 
         if (playByPlay != null && playByPlay.length() > 0) {
-            SparseArray<Player> hPlayers = new SparseArray<>();
-            SparseArray<Player> gPlayers = new SparseArray<>();
+            SparseArray<InGamePlayer> hPlayers = new SparseArray<>();
+            SparseArray<InGamePlayer> gPlayers = new SparseArray<>();
             if (!playersData.isEmpty()) {
-                for (Map.Entry<String, ArrayList<Player>> entry : playersData.entrySet()) {
-                    SparseArray<Player> players = entry.getKey().equals(result.getHomeName()) ? hPlayers : gPlayers;
-                    for (Player player : entry.getValue()) {
+                for (Map.Entry<String, ArrayList<InGamePlayer>> entry : playersData.entrySet()) {
+                    SparseArray<InGamePlayer> players = entry.getKey().equals(result.getHomeName()) ? hPlayers : gPlayers;
+                    for (InGamePlayer player : entry.getValue()) {
                         players.put(player.getNumber(), player);
                     }
                 }
@@ -129,12 +129,12 @@ public class ResultView extends LinearLayout {
                 gameResult.getRegularPeriods());
     }
 
-    private TreeMap<String, ArrayList<Player>> getPlayersContent() {
-        TreeMap<String, ArrayList<Player>> result = new TreeMap<>();
+    private TreeMap<String, ArrayList<InGamePlayer>> getPlayersContent() {
+        TreeMap<String, ArrayList<InGamePlayer>> result = new TreeMap<>();
         for (PlayersResults r : gamePlayers) {
             String team = r.getTeam();
-            if (result.get(team) == null) { result.put(team, new ArrayList<Player>()); }
-            result.get(team).add(new Player(
+            if (result.get(team) == null) { result.put(team, new ArrayList<InGamePlayer>()); }
+            result.get(team).add(new InGamePlayer(
                     r.getNumber(),
                     r.getPlayerName(),
                     r.getPoints(),

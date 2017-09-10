@@ -9,7 +9,7 @@ import android.widget.TableLayout;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.elements.DetailViewExpandable;
 import com.smiler.basketball_scoreboard.game.ActionRecord;
-import com.smiler.basketball_scoreboard.game.Player;
+import com.smiler.basketball_scoreboard.game.InGamePlayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,7 +86,7 @@ class ResultViewPlayByPlay extends DetailViewExpandable {
         if (record.getNumber() == -1) {
             return record.getTeam() == HOME ? hName : gName;
         }
-        return String.format("%s (%d)", players.indexOfKey(record.getNumber()) > -1 ? ((Player)players.get(record.getNumber())).getName() : getResources().getString(R.string.text_name), record.getNumber());
+        return String.format("%s (%d)", players.indexOfKey(record.getNumber()) > -1 ? ((InGamePlayer)players.get(record.getNumber())).getName() : getResources().getString(R.string.text_player), record.getNumber());
     }
 
     private String actionString(ActionRecord record) {

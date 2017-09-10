@@ -41,7 +41,7 @@ public class NavigationDrawer {
     private IDrawerItem[] initDrawerItems() {
         Resources resources = activity.getResources();
         return new IDrawerItem[]{
-                new SecondaryDrawerItem().withName(R.string.action_new_game).withIcon(resources.getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
+                new SecondaryDrawerItem().withName(R.string.new_game).withIcon(resources.getDrawable(R.drawable.ic_action_replay)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_results).withIcon(resources.getDrawable(R.drawable.ic_action_storage)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_profiles).withIcon(resources.getDrawable(R.drawable.ic_action_group)).withCheckable(false),
                 new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(resources.getDrawable(R.drawable.ic_action_settings)).withCheckable(false),

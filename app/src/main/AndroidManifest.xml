@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.smiler.basketball_scoreboard">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.smiler.basketball_scoreboard">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"/>
 
     <application
         android:name=".ScoreboardApplication"
@@ -16,47 +19,64 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
-        <meta-data android:name="android.max_aspect" android:value="2.1" />
-
-        <uses-library android:name="com.sec.android.app.multiwindow" android:required="false"/>
-        <meta-data android:name="com.sec.android.support.multiwindow" android:value="true"/>
-        <meta-data android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W" android:value="632.0dip"/>
-        <meta-data android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H" android:value="598.0dip"/>
-        <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W" android:value="632.0dip"/>
-        <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H" android:value="598.0dip"/>
+        android:theme="@style/AppTheme"
+        >
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false"/>
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="632.0dip"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="598.0dip"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:value="632.0dip"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:value="598.0dip"/>
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1"/>
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name=".preferences.PrefActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/SecondaryTheme">
+            android:theme="@style/SecondTheme">
         </activity>
+
         <activity
             android:name=".results.ResultsActivity"
             android:label="@string/title_activity_results"
-            android:theme="@style/SecondaryTheme">
+            android:theme="@style/SecondTheme">
         </activity>
+
         <activity
-            android:name=".profiles.ProfilesActivity"
-            android:label="@string/title_activity_profiles"
-            android:theme="@style/SecondaryTheme">
+            android:name=".profiles.TeamsActivity"
+            android:label="@string/title_activity_teams"
+            android:theme="@style/SecondTheme"
+            >
         </activity>
+
         <activity
             android:name=".help.HelpActivity"
             android:configChanges="screenSize|orientation"
             android:label="@string/title_activity_help"
-            android:theme="@style/SecondaryTheme">
+            android:theme="@style/SecondTheme">
         </activity>
 
         <!--
@@ -66,6 +86,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
-    </application>
 
+    </application>
 </manifest>

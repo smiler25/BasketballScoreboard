@@ -12,18 +12,18 @@
         android:id="@+id/profile_player_number"
         style="@style/detailViewTableRowChild"
         android:text="@string/text_number"
-        android:layout_weight="1"
+        android:layout_weight="1.6"
         />
     <TextView
         android:id="@+id/profile_player_name"
         style="@style/detailViewTableRowChild"
-        android:text="@string/text_name"
-        android:layout_weight="1.5"
-        />
-    <Button
-        android:id="@+id/profile_player_edit"
-        style="@style/detailViewTableRowChild"
-        android:text="@string/edit"
+        android:text="@string/text_player"
         android:layout_weight="1"
         />
+
+    <Button
+        android:id="@+id/profile_player_edit"
+        style="@style/detailViewTableRowChildButton"
+        android:layout_weight="1.6"
+        android:text="@string/edit"/>
 </TableRow>

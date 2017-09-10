@@ -32,16 +32,19 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.smiler.basketball_scoreboard.camera.CameraFragment;
 import com.smiler.basketball_scoreboard.camera.CameraUtils;
 import com.smiler.basketball_scoreboard.db.RealmController;
+import com.smiler.basketball_scoreboard.db.Team;
 import com.smiler.basketball_scoreboard.db.deprecated.DbHelper;
+import com.smiler.basketball_scoreboard.elements.NavigationDrawer;
+import com.smiler.basketball_scoreboard.elements.OverlayFragment;
 import com.smiler.basketball_scoreboard.elements.dialogs.AppUpdatesDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.DialogTypes;
-import com.smiler.basketball_scoreboard.elements.dialogs.EditPlayerDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.FloatingCountdownTimerDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.ListDialog;
-import com.smiler.basketball_scoreboard.elements.dialogs.NameEditDialog;
-import com.smiler.basketball_scoreboard.elements.NavigationDrawer;
-import com.smiler.basketball_scoreboard.elements.OverlayFragment;
+import com.smiler.basketball_scoreboard.elements.dialogs.NewGameDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.PlayerEditDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.TeamEditInGameDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.TeamSelector;
 import com.smiler.basketball_scoreboard.elements.dialogs.TimePickerDialog;
 import com.smiler.basketball_scoreboard.game.Game;
 import com.smiler.basketball_scoreboard.help.HelpActivity;
@@ -56,7 +59,7 @@ import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
-import com.smiler.basketball_scoreboard.profiles.ProfilesActivity;
+import com.smiler.basketball_scoreboard.profiles.TeamsActivity;
 import com.smiler.basketball_scoreboard.results.ResultsActivity;
 
 import java.io.File;
@@ -71,7 +74,6 @@ import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_STORAGE
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_APP_UPDATES;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_CONFIRM;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_MAIN_TIME_PICKER;
-import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_NAME_EDIT;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_SHOT_TIME_PICKER;
 import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_TIME;
 
@@ -83,13 +85,14 @@ public class MainActivity extends AppCompatActivity implements
         CameraFragment.CameraFragmentListener,
         ConfirmDialog.ConfirmDialogListener,
         Drawer.OnDrawerItemClickListener,
-        EditPlayerDialog.OnPanelsListener,
-        NameEditDialog.OnChangeNameListener,
+        PlayerEditDialog.EditPlayerInGameListener,
+        TeamEditInGameDialog.ChangeTeamListener,
+        NewGameDialog.NewGameDialogListener,
         OverlayFragment.OverlayFragmentListener,
         SidePanelFragment.SidePanelListener,
         SoundPool.OnLoadCompleteListener,
         ListDialog.ListDialogListener,
-        TimePickerDialog.OnChangeTimeListener {
+        TimePickerDialog.ChangeTimeListener {
 
     public static final String TAG = "BS-MainActivity";
     private NavigationDrawer drawer;
@@ -333,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void runProfilesActivity() {
-        Intent intent = new Intent(this, ProfilesActivity.class);
+        Intent intent = new Intent(this, TeamsActivity.class);
         startActivity(intent);
     }
 
@@ -378,6 +381,11 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void initGame(boolean restore, Team hTeam, Team gTeam) {
+        initGame(restore);
+        game.setHomeTeam(hTeam).setGuestTeam(gTeam);
+    }
+
     private BaseLayout initGameLayout() {
         layout = LayoutFactory.getLayout(this, preferences, this, this);
         BoardFragment frag = BoardFragment.newInstance();
@@ -397,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void startNewGame(boolean save) {
         if (save) {
-            game.newGameSave();
+            game.saveGame();
         } else {
             initGame(false);
         }
@@ -521,9 +529,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showConfirmDialog(DialogTypes type) {
-        ConfirmDialog dialog;
-        dialog = ConfirmDialog.newInstance(type);
-        dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+        ConfirmDialog.newInstance(type).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+    }
+
+    private void showNewGameDialog() {
+        NewGameDialog.newInstance(preferences.autoSaveResults).show(getFragmentManager(), NewGameDialog.TAG);
     }
 
     private void showWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
@@ -549,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements
         ArrayList<String> numberNameList = new ArrayList<>();
         TreeMap<Integer, SidePanelRow> choices = game.getInactivePlayers(left);
         if (choices == null || choices.isEmpty()){
-            Toast.makeText(this, getResources().getString(R.string.side_panel_no_data), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.sp_no_data), Toast.LENGTH_LONG).show();
             return;
         }
         for (Map.Entry<Integer, SidePanelRow> entry : choices.entrySet()) {
@@ -561,8 +571,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void chooseTeamNameDialog(int team, String name) {
-        DialogFragment nameEdit = NameEditDialog.newInstance(team, name);
-        nameEdit.show(getFragmentManager(), TAG_FRAGMENT_NAME_EDIT);
+        TeamEditInGameDialog.newInstance(team, name).show(getFragmentManager(), TeamEditInGameDialog.TAG);
     }
 
     private void showMainTimePicker() {
@@ -648,8 +657,23 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSelectAddPlayers(int which, boolean left) {
         if (which == 0) {
+            ListDialog.newInstance(DialogTypes.SELECT_TEAM, left).show(getFragmentManager(), ListDialog.TAG);
         } else {
             game.addPlayers(left);
+        }
+    }
+
+    @Override
+    public void onSelectTeam(int type, Team team) {
+        Fragment dialog;
+        dialog = getFragmentManager().findFragmentByTag(NewGameDialog.TAG);
+        if (dialog == null) {
+            dialog = getFragmentManager().findFragmentByTag(TeamEditInGameDialog.TAG);
+        }
+        if (dialog != null) {
+            ((TeamSelector) dialog).handleTeamSelect(type, team);
+        } else {
+            game.setTeam(team, type);
         }
     }
 
@@ -658,6 +682,11 @@ public class MainActivity extends AppCompatActivity implements
         if (value.length() > 0) {
             game.setTeamName(value, team);
         }
+    }
+
+    @Override
+    public void onTeamChanged(Team value, int team) {
+        game.setTeam(value, team);
     }
 
     @Override
@@ -674,7 +703,7 @@ public class MainActivity extends AppCompatActivity implements
                 startNewGame(true);
                 break;
             case EDIT_CAPTAIN:
-                EditPlayerDialog f = (EditPlayerDialog) getFragmentManager().findFragmentByTag(EditPlayerDialog.TAG);
+                PlayerEditDialog f = (PlayerEditDialog) getFragmentManager().findFragmentByTag(PlayerEditDialog.TAG);
                 if (f != null) {f.changeCaptainConfirmed();}
                 break;
         }
@@ -724,22 +753,22 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPanelAddPlayer(boolean left, int number, String name, boolean captain) {
+    public void onAddPlayerInGame(boolean left, int number, String name, boolean captain) {
         game.addPlayer(left, number, name, captain);
     }
 
     @Override
-    public void onPanelEditPlayer(boolean left, int id, int number, String name, boolean captain) {
+    public void onEditPlayerInGame(boolean left, int id, int number, String name, boolean captain) {
         game.editPlayer(left, id, number, name, captain);
     }
 
     @Override
-    public void onPanelDeletePlayer(boolean left, int id) {
+    public void onDeletePlayerInGame(boolean left, int id) {
         game.deletePlayer(left, id);
     }
 
     @Override
-    public int onPanelCheckPlayer(boolean left, int number, boolean captain) {
+    public int onCheckPlayerInGame(boolean left, int number, boolean captain) {
         return game.validatePlayer(left, number, captain);
     }
 
@@ -910,11 +939,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewGame() {
-        initGame(false);
-    }
-
-    @Override
     public BaseLayout onInitLayout() {
         return initGameLayout();
     }
@@ -930,6 +954,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConfirmDialog(DialogTypes type) {
         showConfirmDialog(type);
+    }
+
+    @Override
+    public void onNewGameDialog() {
+        showNewGameDialog();
     }
 
     @Override
@@ -961,5 +990,20 @@ public class MainActivity extends AppCompatActivity implements
     public void onCameraPause() {
         getFragmentManager().popBackStack();
         game.setLayout(layout);
+    }
+
+    @Override
+    public void onStartSameTeams(boolean saveResult) {
+        initGame(false);
+    }
+
+    @Override
+    public void onStartNewTeams(boolean saveResult, Team hTeam, Team gTeam) {
+        initGame(false, hTeam, gTeam);
+    }
+
+    @Override
+    public void onStartNoTeams(boolean saveResult) {
+        initGame(false, null, null);
     }
 }

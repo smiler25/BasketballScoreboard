@@ -92,4 +92,7 @@
     <dimen name="side_panel_open_icon_padding">4dp</dimen>
     <dimen name="help_side_panels_toolbar_margin">5dp</dimen>
     <dimen name="side_panel_select_padding">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="dialog_new_game_margin">5dp</dimen>
+    <dimen name="dialog_new_game_margin2">15dp</dimen>
 </resources>

@@ -8,8 +8,9 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
-import com.smiler.basketball_scoreboard.elements.OverlayFragment;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.db.Team;
+import com.smiler.basketball_scoreboard.elements.OverlayFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
@@ -38,6 +39,13 @@ public class PlayersPanels {
         init();
     }
 
+    public PlayersPanels(Context context, Preferences preferences, Team leftTeam, Team rightTeam) {
+        this.context = context;
+        this.preferences = preferences;
+        fragmentManager = ((Activity) context).getFragmentManager();
+        init(leftTeam, rightTeam);
+    }
+
     private PlayersPanels init() {
         leftPanel = SidePanelFragment.newInstance(LEFT);
         rightPanel = SidePanelFragment.newInstance(RIGHT);
@@ -54,6 +62,13 @@ public class PlayersPanels {
           .hide(rightPanel)
           .addToBackStack(null)
           .commit();
+        return this;
+    }
+
+    private PlayersPanels init(Team leftTeam, Team rightTeam) {
+        init();
+        leftPanel.setTeam(leftTeam);
+        rightPanel.setTeam(rightTeam);
         return this;
     }
 
@@ -274,5 +289,13 @@ public class PlayersPanels {
 
     public void substitute(boolean left, SidePanelRow in, SidePanelRow out) {
         (left ? leftPanel : rightPanel).substitute(in, out);
+    }
+
+    public void setLeftTeam(Team team) {
+        leftPanel.setTeam(team);
+    }
+
+    public void setRightTeam(Team team) {
+        rightPanel.setTeam(team);
     }
 }

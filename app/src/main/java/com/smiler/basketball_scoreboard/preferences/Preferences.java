@@ -34,7 +34,8 @@ public class Preferences {
     private final SharedPreferences prefs;
     private final Resources resources;
 
-    public int autoSaveResults, autoSound, actualTime;
+    public boolean autoSaveResults;
+    public int autoSound, actualTime;
     public Rules.TO_RULES timeoutRules;
     public BaseLayout.GAME_LAYOUT layoutType;
     public int playByPlay;
@@ -97,7 +98,7 @@ public class Preferences {
         fixLandscape = fixLandscape_;
         autoSound = Integer.parseInt(prefs.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
         hornUserRepeats = prefs.getInt(PrefActivity.PREF_HORN_LENGTH, DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f);
-        autoSaveResults = Integer.parseInt(prefs.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0"));
+        autoSaveResults = Integer.parseInt(prefs.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0")) != 0;
         autoShowTimeout = prefs.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = prefs.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
         autoSwitchSides = prefs.getBoolean(PrefActivity.PREF_AUTO_SWITCH_SIDES, false);

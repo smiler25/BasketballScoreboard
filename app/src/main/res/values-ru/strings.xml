@@ -3,22 +3,26 @@
     <string name="app_name">Баскетбольное табло</string>
     <string name="title_activity_results">История результатов</string>
     <string name="title_activity_help">Помощь</string>
-    <string name="title_activity_profiles">Команды</string>
+    <string name="title_activity_teams">Команды</string>
 
     <string name="action_apply">Применить</string>
     <string name="action_add_player_multi">Добавить несколько игроков</string>
     <string name="action_add_player">Добавить игрока</string>
+    <string name="action_add_team">Добавить команду</string>
+    <string name="action_cancel">Отменить</string>
     <string name="action_close_panel">Закрыть панель</string>
     <string name="action_clear_panel">Очистить панель</string>
     <string name="action_close">Закрыть</string>
     <string name="action_confirm">Подтвердите действие</string>
     <string name="action_confirm_new_game">Начать новую игру?</string>
     <string name="action_help">Помощь</string>
-    <string name="action_new_game">Новая игра</string>
     <string name="action_rate">Оценить</string>
     <string name="action_reset">Сбросить</string>
     <string name="action_save">Сохранить</string>
     <string name="action_save_continue">Сохранить и продолжить</string>
+    <string name="action_save_more">Сохранить и добавить ещё</string>
+    <string name="action_save_result">Сохранить результат?</string>
+    <string name="action_save_teams">Сохранить команды</string>
     <string name="action_select">Выбрать</string>
     <string name="action_settings">Настройки</string>
     <string name="action_share">Поделиться</string>
@@ -26,6 +30,12 @@
     <string name="action_results">Результаты</string>
     <string name="action_profiles">Команды</string>
     <string name="action_whats_new">Что нового</string>
+
+    <string name="team_home">Команда хозяев</string>
+    <string name="team_guest">Команда гостей</string>
+
+    <string name="select_home_team">Выберите команду хозяев</string>
+    <string name="select_guest_team">Выберите команду гостей</string>
 
     <string name="edit">Редактировать</string>
     <string name="switch_sides">Поменять стороны</string>
@@ -55,6 +65,7 @@
     <string name="final_result">Итог</string>
     <string name="timeout_title">Таймаут</string>
     <string name="set_main_time">Установить время</string>
+
     <string name="toast_confirm_exit">Нажмите ещё раз, чтобы выйти</string>
     <string name="toast_select_players">Выберите активных игроков</string>
     <string name="toast_camera_fail">Камера недоступна</string>
@@ -70,10 +81,6 @@
     </string-array>
 
     <string name="edit_player_dialog_title">Информация об игроке</string>
-    <string name="edit_player_dialog_add">Сохранить</string>
-    <string name="edit_player_dialog_add2">Сохранить и добавить ещё</string>
-    <string name="edit_player_dialog_cancel">Отмена</string>
-    <string name="edit_player_dialog_delete">Удалить</string>
     <string name="edit_player_dialog_name">Имя</string>
     <string name="edit_player_dialog_number">Номер</string>
     <string name="edit_player_dialog_number_warning">Номер уже занят</string>
@@ -81,7 +88,6 @@
     <string name="edit_player_dialog_captain_confirm">Капитан уже назначен. Изменить?</string>
     <string name="edit_player_dialog_number_required">Номер обязателен</string>
 
-    <string name="edit_team_name">Введите название команды</string>
     <string name="timeout_format_1">%1$d-минутный перерыв</string>
     <string name="timeout_format_2">%2$d-секундный таймаут (%1$s)</string>
 
@@ -92,7 +98,6 @@
     <string name="cab_subtitle">Выбрано: %1$d</string>
     <string name="cab_success">Результаты удалены</string>
     <string name="no_results">Нет сохраненных игр</string>
-    <string name="action_save_result">Сохранить результат?</string>
     <string name="camera_take_picture">Сделать снимок</string>
     <string name="results_boxscore">Протокол:</string>
     <string name="results_detail">Подробно:</string>
@@ -116,24 +121,55 @@
         <item quantity="other">%d очков</item>
     </plurals>
 
-    <string name="text_name">Игрок</string>
+    <string name="text_player">Игрок</string>
     <string name="text_points">Очки</string>
     <string name="text_fouls">Фолы</string>
     <string name="text_points_short">О</string>
     <string name="text_fouls_short">Ф</string>
-    <string name="side_panel_no_data">Игроки ещё не добавлены</string>
-    <string name="side_panel_confirm">Подтвердите выбор</string>
-    <string name="side_panel_few">Слишком мало игроков (%1$d)</string>
-    <string name="side_panel_many">Слишком много игроков (%1$d)</string>
-    <string name="side_panel_player_name">Игрок №%1$d</string>
-    <string name="side_panel_players_limit">Можно добавить только %1$d игроков</string>
-    <string name="side_panel_fouls_limit_home">Игрок хозяев №%1$d (%2$s) достиг предела фолов</string>
-    <string name="side_panel_fouls_limit_guest">Игрок гостей №%1$d (%2$s) достиг предела фолов</string>
-    <string name="side_panel_no_save_data">Нет сохранённых данных</string>
+    <string name="text_or">или</string>
+
+    <string name="sp_no_data">Игроки ещё не добавлены</string>
+    <string name="sp_confirm">Подтвердите выбор</string>
+    <string name="sp_few">Слишком мало игроков (%1$d)</string>
+    <string name="sp_many">Слишком много игроков (%1$d)</string>
+    <string name="sp_player_name">Игрок №%1$d</string>
+    <string name="sp_players_limit">Можно добавить только %1$d игроков</string>
+    <string name="sp_fouls_limit_home">Игрок хозяев №%1$d (%2$s) достиг предела фолов</string>
+    <string name="sp_fouls_limit_guest">Игрок гостей №%1$d (%2$s) достиг предела фолов</string>
+    <string name="sp_no_saved_data">Нет сохранённых данных</string>
 
     <string name="substitute_dialog_title_home">Выберите замену для игрока №%1$d команды хозяев</string>
     <string name="substitute_dialog_title_home0">Выберите игрока команды хозяев</string>
     <string name="substitute_dialog_title_guest">Выберите замену для игрока №%1$d команды гостей</string>
     <string name="substitute_dialog_title_guest0">Выберите игрока команды гостей</string>
+
+    <string name="edit_team_dialog_title">Информация о команде</string>
+    <string name="edit_team_dialog_name">Название</string>
+    <string name="edit_team_dialog_active">Активная</string>
+    <string name="edit_team_dialog_name_confirm">Название уже использовано. Продолжить?</string>
+    <string name="edit_team_dialog_name_required">Название обязательно</string>
+
+    <string name="new_game">Новая игра</string>
+    <string name="new_game_same_teams">Новая игра с этими командами</string>
+    <string name="new_game_new_teams">Новая игра с другими командами</string>
+    <string name="new_game_no_teams">Новая игра без команд</string>
+
+    <string name="save_home_team">Сохранить команду хозяев</string>
+    <string name="save_guest_team">Сохранить команду гостей</string>
+    <string name="save_home_team_names">Сохранить команду хозяев (%1$s)</string>
+    <string name="save_guest_team_names">Сохранить команду гостей (%1$s)</string>
+
+    <string name="select_guest_team_selected">Выберите команду гостей: %1$s</string>
+    <string name="select_home_team_selected">Выберите команду хозяев: %1$s</string>
+    <string name="select_team_already_selected">Команда уже выбрана</string>
+    <string name="select_team">Выберите команду</string>
+    <string name="select_team_both_required">Выберите обе команды</string>
+    <string name="team_no_selected_create">Выберите команду или нажмите для создания</string>
+    <string name="select_team_selected">Выберите команду: %1$s</string>
+
+    <string name="team_total_games">Игр: %1$d</string>
+    <string name="team_wins">Побед: %1$d</string>
+    <string name="team_avg_pts_opp">Пропущено в среднем: %1$s</string>
+    <string name="team_avg_pts">Набрано в среднем: %1$s</string>
 
 </resources>

@@ -62,7 +62,6 @@ public final class Constants {
     public static final String TAG_FRAGMENT_APP_UPDATES = "AppUpdatesDialog";
     static final String TAG_FRAGMENT_TIME = "TimeDialog";
     public static final String TAG_FRAGMENT_CONFIRM = "ConfirmDialog";
-    static final String TAG_FRAGMENT_NAME_EDIT = "NameEditDialog";
     static final String TAG_FRAGMENT_MAIN_TIME_PICKER = "MainTimePicker";
     static final String TAG_FRAGMENT_SHOT_TIME_PICKER = "ShotTimePicker";
 

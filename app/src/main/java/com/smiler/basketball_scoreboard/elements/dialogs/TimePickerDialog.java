@@ -18,7 +18,7 @@ import static com.smiler.basketball_scoreboard.Constants.SECONDS_60;
 
 public class TimePickerDialog extends DialogFragment {
 
-    private OnChangeTimeListener changeTimeListener;
+    private ChangeTimeListener listener;
     private CustomNumberPicker minutesPicker;
     private CustomNumberPicker secondsPicker;
     private CustomNumberPicker millisPicker;
@@ -37,7 +37,7 @@ public class TimePickerDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         isMain = args.getBoolean("isMain");
-        int layoutId = isMain ? R.layout.main_time_picker : R.layout.shot_time_picker;
+        int layoutId = isMain ? R.layout.time_picker_main : R.layout.time_picker_shot;
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -65,13 +65,13 @@ public class TimePickerDialog extends DialogFragment {
         secondsPicker.setValue(seconds);
         millisPicker.setValue(millis);
 
-        v.findViewById(R.id.buttonApply).setOnClickListener(new View.OnClickListener() {
+        v.findViewById(R.id.dialog_apply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isMain) {
-                    changeTimeListener.onTimeChanged(getMainTime(), isMain);
+                    listener.onTimeChanged(getMainTime(), isMain);
                 } else {
-                    changeTimeListener.onTimeChanged(getShotTime(), isMain);
+                    listener.onTimeChanged(getShotTime(), isMain);
                 }
                 dismiss();
             }
@@ -79,7 +79,7 @@ public class TimePickerDialog extends DialogFragment {
         return builder.create();
     }
 
-    public interface OnChangeTimeListener {
+    public interface ChangeTimeListener {
         void onTimeChanged(long time, boolean main);
     }
 
@@ -97,7 +97,7 @@ public class TimePickerDialog extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            changeTimeListener = (OnChangeTimeListener) activity;
+            listener = (ChangeTimeListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement onChangeTimeListener");
         }

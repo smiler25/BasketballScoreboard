@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/floating_fragment"
+    >
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/new_game"
+        android:textSize="@dimen/dialog_title_font_size"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <CheckBox
+            android:id="@+id/new_game_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:text="@string/action_save"
+            style="?android:attr/textAppearanceMedium"
+            />
+
+        <Button
+            android:id="@+id/new_game_save_teams"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/action_save_teams"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/save_teams_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/dialog_new_game_margin"
+        android:layout_marginEnd="@dimen/dialog_new_game_margin"
+        android:layout_marginBottom="@dimen/dialog_new_game_margin2"
+        android:background="@drawable/rectangle"
+        android:visibility="gone"
+        >
+
+        <Button
+            android:id="@+id/new_game_save_home_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:textSize="12sp"
+            android:text="@string/save_home_team"
+            />
+
+        <Button
+            android:id="@+id/new_game_save_guest_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:textSize="12sp"
+            android:text="@string/save_guest_team"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/new_game_same_teams"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/new_game_same_teams"
+        />
+
+    <Button
+        android:id="@+id/new_game_no_teams"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/new_game_no_teams"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/dialog_new_game_margin"
+        android:layout_marginEnd="@dimen/dialog_new_game_margin"
+        android:layout_marginBottom="@dimen/dialog_new_game_margin2"
+        android:background="@drawable/rectangle"
+        >
+        <Button
+            android:id="@+id/new_game_other_teams"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/new_game_new_teams"
+            />
+
+        <Button
+            android:id="@+id/new_game_select_first_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:textSize="12sp"
+            android:text="@string/select_home_team"/>
+
+        <Button
+            android:id="@+id/new_game_select_second_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/select_guest_team"
+            android:textSize="12sp"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>
+

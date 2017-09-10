@@ -8,23 +8,9 @@
             android:id="@+id/menu_add"
             android:orderInCategory="1"
             android:icon="@drawable/ic_action_new"
-            android:title="@string/save_picture"
-            app:showAsAction="ifRoom"
-            />
-        <item
-            android:id="@+id/menu_share"
-            android:orderInCategory="2"
-            android:icon="@drawable/ic_action_share_light"
-            android:title="@string/action_share"
+            android:title="@string/action_add_team"
             app:showAsAction="ifRoom"
             />
 
-        <item
-            android:id="@+id/menu_delete"
-            android:orderInCategory="2"
-            android:icon="@drawable/ic_action_discard_light"
-            android:title="@string/action_delete"
-            app:showAsAction="ifRoom" />
-            
     </group>
 </menu>

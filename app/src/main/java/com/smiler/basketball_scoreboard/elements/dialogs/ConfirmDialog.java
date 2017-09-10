@@ -15,6 +15,7 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
 
     private DialogTypes type;
     private CheckBox checkbox;
+    private ConfirmDialogListener listener;
 
     public static ConfirmDialog newInstance(DialogTypes type) {
         ConfirmDialog f = new ConfirmDialog();
@@ -88,7 +89,6 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         void onConfirmDialogNegative(DialogTypes type);
         void onConfirmDialogNeutral(boolean dontShow);
     }
-    private ConfirmDialogListener listener;
 
     @Override
     public void onAttach(Activity activity) {

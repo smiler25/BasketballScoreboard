@@ -5,7 +5,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.game.Player;
+import com.smiler.basketball_scoreboard.game.InGamePlayer;
 
 class ResultViewBoxscoreRow extends TableRow {
 
@@ -19,7 +19,7 @@ class ResultViewBoxscoreRow extends TableRow {
         setBackground(getResources().getDrawable(R.drawable.res_score_header_shape));
     }
 
-    ResultViewBoxscoreRow(Context context, Player record, boolean even, boolean last) {
+    ResultViewBoxscoreRow(Context context, InGamePlayer record, boolean even, boolean last) {
         super(context);
         inflate(context, R.layout.result_view_info_table_row, this);
         ((TextView) findViewById(R.id.results_player_number)).setText(String.valueOf(record.getNumber()));

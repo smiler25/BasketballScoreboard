@@ -27,7 +27,7 @@
     <!--side panels-->
     <dimen name="side_panel_width">220dp</dimen>
     <dimen name="player_button_size">35dp</dimen>
-    <dimen name="side_panel_row_font_size">13sp</dimen>
+    <dimen name="side_panel_row_font_size">12sp</dimen>
     <dimen name="side_panel_edit_size">20dp</dimen>
     <dimen name="substitute_list_padding">2dp</dimen>
     <dimen name="player_button_padding">2dp</dimen>

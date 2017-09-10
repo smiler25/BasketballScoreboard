@@ -7,44 +7,45 @@ import android.widget.TextView;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Team;
-import com.smiler.basketball_scoreboard.profiles.TeamProfile;
-import com.smiler.basketball_scoreboard.profiles.TeamStats;
+import com.smiler.basketball_scoreboard.profiles.TeamViewCallback;
 
-class TeamView extends LinearLayout {
+public class TeamView extends LinearLayout {
     public static String TAG = "BS-TeamView";
     private TextView title;
-    private String teamName;
     private RealmController realmController;
     private Team team;
 
-    TeamView(Context context, String teamName) {
+    public TeamView(Context context, int teamId, TeamViewCallback listener) {
         super(context);
         realmController = RealmController.with();
         if(!isInEditMode()) {
-            this.teamName = teamName;
-            init();
+            init(teamId, listener);
         }
     }
 
-    private void init() {
+    private void init(int teamId, TeamViewCallback listener) {
         inflate(getContext(), R.layout.detail_scroll_view, this);
         title = (TextView)findViewById(R.id.detail_scroll_view_title);
         LinearLayout layout = (LinearLayout) findViewById(R.id.container);
 
-        getData();
-        title.setText(team.getName());
-        layout.addView(new TeamViewPlayers(getContext(), new TeamProfile(team)));
-        if (!team.getGames().isEmpty()) {
-            layout.addView(new TeamViewStats(getContext(), new TeamStats(team)));
+        getData(teamId);
+        if (team == null) {
+            return;
         }
-//
+        title.setText(team.getName());
+        layout.addView(new TeamViewStats(getContext(), team));
+        layout.addView(new TeamViewPlayers(getContext(), team, listener));
     }
 
     public void setTitle(String value) {
         title.setText(value);
     }
 
-    private void getData() {
-        team = realmController.getTeam(teamName);
+    private void getData(int teamId) {
+        team = realmController.getTeam(teamId);
+    }
+
+    public void setListener() {
+
     }
 }

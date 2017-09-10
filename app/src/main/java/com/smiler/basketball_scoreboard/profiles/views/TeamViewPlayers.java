@@ -6,32 +6,52 @@ import android.widget.TableLayout;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.Player;
+import com.smiler.basketball_scoreboard.db.Team;
 import com.smiler.basketball_scoreboard.elements.DetailViewExpandable;
-import com.smiler.basketball_scoreboard.profiles.TeamProfile;
+import com.smiler.basketball_scoreboard.profiles.TeamViewCallback;
 
-import java.util.ArrayList;
+import io.realm.RealmList;
 
 class TeamViewPlayers extends DetailViewExpandable {
+    TeamViewCallback listener;
 
     public TeamViewPlayers(Context context) {
         super(context);
     }
 
-    TeamViewPlayers(Context context, TeamProfile data) {
+    TeamViewPlayers(Context context, Team data, TeamViewCallback listener) {
         super(context, R.string.profile_players);
-        addView(initView(context, data, null), false);
+        this.listener = listener;
+        addView(initView(context, data), false);
     }
 
-    private View initView(Context context, TeamProfile data, OnClickListener listener) {
+    private View initView(Context context, Team data) {
         TableLayout table = getTable(context);
-        ArrayList<Player> players = data.getPlayers();
+        RealmList<Player> players = data.getPlayers();
         table.addView(new TeamViewPlayersRow(context));
         int line = 0;
+
+        OnClickListener editListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onTeamPlayerEdit((Integer) view.getTag());
+                }
+            }
+        };
+
         for (Player player: players) {
-            table.addView(new TeamViewPlayersRow(context, Integer.toString(player.getNumber()), player.getName(), (line & 1) == 0, listener));
+            table.addView(new TeamViewPlayersRow(context, player.getId(), Integer.toString(player.getNumber()), player.getName(), (line & 1) == 0, editListener));
             line++;
         }
-        table.addView(new TeamViewPlayersRow(context, listener));
+        table.addView(new TeamViewPlayersRow(context, new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onTeamPlayerAdd();
+                }
+            }
+        }));
         return table;
     }
 }

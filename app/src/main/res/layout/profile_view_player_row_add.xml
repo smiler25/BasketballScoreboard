@@ -14,5 +14,9 @@
         android:text="@string/action_add_player"
         android:background="@drawable/dvt_row_last"
         android:layout_weight="1"
+        android:textSize="12sp"
+        android:minHeight="0dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         />
 </TableRow>

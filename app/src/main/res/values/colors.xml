@@ -11,11 +11,13 @@
     <color name="window_background">#ff653c41</color>
     <color name="white">#ffffff</color>
     <color name="light_grey_background">#eeeeee</color>
+    <color name="dark_grey_background">#bdbdbd</color>
     <color name="red">#fffe1508</color>
     <color name="light_red">#ff5e54</color>
     <color name="orange">#fffea31d</color>
     <color name="green">#ff00aa00</color>
     <color name="floating_fragment">#ff2a2a2a</color>
+    <color name="floating_fragment_light">#505050</color>
     <color name="pref_system_bars">#ff252525</color>
     <color name="result_table_item">#97249eff</color>
     <color name="dve_table_header">@color/colorPrimaryLight</color>

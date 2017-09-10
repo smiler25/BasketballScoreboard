@@ -3,7 +3,7 @@
     <item
         android:id="@+id/drawer_new_game"
         android:icon="@drawable/ic_action_replay"
-        android:title="@string/action_new_game"/>
+        android:title="@string/new_game"/>
     <item
         android:id="@+id/drawer_results"
         android:icon="@drawable/ic_action_storage"

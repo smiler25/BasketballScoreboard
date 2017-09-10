@@ -14,7 +14,9 @@ public class Team extends RealmObject {
     private RealmList<Player> players;
     private RealmList<Results> games;
     private float avgPoints;
+    private float avgPointsOpp;
     private int wins;
+    private int loses;
 
     public int getId() { return id; }
     public Team setId(int id) {
@@ -49,13 +51,28 @@ public class Team extends RealmObject {
     public int getWins() {
         return wins;
     }
-    public void setWins(int wins) {
-        this.wins = wins;
+    public void incrementWins() {
+        wins++;
     }
+
+    public int getLoses() {
+        return loses;
+    }
+    public void incrementLoses() {
+        loses++;
+    }
+
     public float getAvgPoints() {
         return avgPoints;
     }
-    public void setAvgPoints(float avgPoints) {
-        this.avgPoints = avgPoints;
+    public void calcAvgPoints(float value) {
+        avgPoints = value;
+    }
+
+    public float getAvgPointsOpp() {
+        return avgPointsOpp;
+    }
+    public void calcAvgPointsOpp(float value) {
+        avgPointsOpp = value;
     }
 }

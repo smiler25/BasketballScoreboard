@@ -16,7 +16,7 @@ class Migration implements RealmMigration {
         /*
          Version 0 -> 1
            add teams to Results
-           add Team
+           add Team, Player
          */
         if (oldVersion == 0) {
             RealmObjectSchema teamSchema = schema.create("Team")
@@ -24,7 +24,9 @@ class Migration implements RealmMigration {
                     .addField("name", String.class, FieldAttribute.REQUIRED)
                     .addField("active", boolean.class)
                     .addField("avgPoints", float.class)
+                    .addField("avgPointsOpp", float.class)
                     .addField("wins", int.class)
+                    .addField("loses", int.class)
                     .addRealmListField("games", schema.get("Results"));
 
             RealmObjectSchema playerSchema = schema.create("Player")

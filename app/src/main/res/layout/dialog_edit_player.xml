@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:theme="@style/SecondTheme"
+    >
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_player_dialog_title"
+        android:textSize="@dimen/dialog_title_font_size"
+        android:gravity="center"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <EditText
+            android:id="@+id/edit_player_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/edit_name_margin"
+            android:layout_weight="1"
+            android:hint="@string/edit_player_dialog_number"
+            android:inputType="number"
+            android:maxLength="2"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            />
+
+        <Switch
+            android:id="@+id/edit_player_captain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:text="@string/edit_player_dialog_captain"
+            android:gravity="center|right"
+            />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_player_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/edit_name_margin"
+        android:inputType="text"
+        android:hint="@string/edit_player_dialog_name"
+        android:maxLength="25"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/action_cancel"/>
+
+        <Button
+            android:id="@+id/button_custom_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/action_save_more"
+            />
+
+        <Button
+            android:id="@+id/button_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/action_save"
+            />
+
+    </LinearLayout>
+</LinearLayout>

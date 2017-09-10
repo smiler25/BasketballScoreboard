@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.elements.DetailViewExpandable;
-import com.smiler.basketball_scoreboard.game.Player;
+import com.smiler.basketball_scoreboard.game.InGamePlayer;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,23 +20,23 @@ class ResultViewBoxscore extends DetailViewExpandable {
         super(context);
     }
 
-    ResultViewBoxscore(Context context, TreeMap<String, ArrayList<Player>> result) {
+    ResultViewBoxscore(Context context, TreeMap<String, ArrayList<InGamePlayer>> result) {
         super(context, R.string.results_boxscore);
         addView(initView(context, result), true);
     }
 
-    private View initView(Context context, TreeMap<String, ArrayList<Player>> data) {
+    private View initView(Context context, TreeMap<String, ArrayList<InGamePlayer>> data) {
         LinearLayout layout = new LinearLayout(context);
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
         layout.setOrientation(VERTICAL);
         layout.setLayoutParams(params);
-        for (Map.Entry<String, ArrayList<Player>> entry : data.entrySet()) {
+        for (Map.Entry<String, ArrayList<InGamePlayer>> entry : data.entrySet()) {
             layout.addView(createPlayersTable(context, entry.getKey(), entry.getValue()));
         }
         return layout;
     }
 
-    private View createPlayersTable(Context context, String team, ArrayList<Player> data) {
+    private View createPlayersTable(Context context, String team, ArrayList<InGamePlayer> data) {
         View tableWithHeader = inflate(context, R.layout.result_view_info_table, null);
         TextView title = (TextView) tableWithHeader.findViewById(R.id.result_view_players_table_title);
         final TableLayout table = (TableLayout) tableWithHeader.findViewById(R.id.result_view_players_table);
