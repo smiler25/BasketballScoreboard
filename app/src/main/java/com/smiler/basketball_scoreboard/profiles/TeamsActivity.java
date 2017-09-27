@@ -32,6 +32,7 @@ public class TeamsActivity extends AppCompatActivity implements
     private ActionMode actionMode;
     private TextView actionModeText;
     private TeamViewFragment detailViewFrag;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class TeamsActivity extends AppCompatActivity implements
     }
 
     protected void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
@@ -58,7 +59,7 @@ public class TeamsActivity extends AppCompatActivity implements
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
     }
@@ -79,6 +80,16 @@ public class TeamsActivity extends AppCompatActivity implements
             detailViewFrag = null;
         }
         transaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0 ){
+            getSupportFragmentManager().popBackStack();
+            toolbar.setTitle(R.string.title_activity_teams);
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -199,9 +210,9 @@ public class TeamsActivity extends AppCompatActivity implements
     }
 
     private void openTeamInfo() {
-        System.out.println("BS-TeamsActivity openTeamInfo: selected = " + selected);
         if (wide && detailViewFrag != null) {
             detailViewFrag.updateContent(selected);
+
         } else {
             Fragment selectedFrag = TeamViewFragment.newInstance(selected);
             getSupportFragmentManager().beginTransaction()

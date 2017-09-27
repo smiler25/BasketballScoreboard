@@ -1,8 +1,9 @@
 package com.smiler.basketball_scoreboard.game;
 
 import com.smiler.basketball_scoreboard.db.Player;
+import com.smiler.basketball_scoreboard.db.PlayerEntry;
 
-public class InGamePlayer {
+public class InGamePlayer implements PlayerEntry {
 
     private String name;
     private int points;
@@ -39,6 +40,7 @@ public class InGamePlayer {
         this.captain = captain;
     }
 
+    @Override
     public int getNumber() {
         return number;
     }
@@ -47,6 +49,7 @@ public class InGamePlayer {
         number = value;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -73,6 +76,7 @@ public class InGamePlayer {
         return fouls;
     }
 
+    @Override
     public boolean isCaptain() {
         return captain;
     }

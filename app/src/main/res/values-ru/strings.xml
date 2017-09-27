@@ -171,5 +171,11 @@
     <string name="team_wins">Побед: %1$d</string>
     <string name="team_avg_pts_opp">Пропущено в среднем: %1$s</string>
     <string name="team_avg_pts">Набрано в среднем: %1$s</string>
+    <string name="team_already_selected">Команда уже выбрана</string>
+    <string name="team_toolbar">: %1$s</string>
+    <string name="team_lot_players_dialog_title">Выберите игроков на текущую игру</string>
+    <string name="team_few_players_dialog_title">В команде нет или не хватает игроков</string>
+    <string name="team_few_players_dialog_msg">Нажмите ДА, чтобы добавить игроков. Нажмите НЕТ, чтобы продолжить.</string>
+    <string name="team_already_selected_dialog_msg">Нажмите ДА, чтобы удалить текущих игроков с данными. Нажмите НЕТ, чтобы оставить текущую команду.</string>
 
 </resources>

@@ -26,11 +26,19 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
     private CheckBox saveCheckBox;
     private Button hSelector, gSelector;
     private Team hSelectedTeam, gSelectedTeam;
+    private View saveButtons, saveTeamsToggle;
+    private static String askSaveHomeTeamKey = "askSaveHomeTeam";
+    private static String askSaveGuestTeamKey = "askSaveGuestTeam";
+    private boolean saveHomeAvail = true;
+    private boolean saveGuestAvail = true;
 
-    public static NewGameDialog newInstance(boolean saveSelected) {
+    public static NewGameDialog newInstance(boolean saveSelected, boolean askSaveHomeTeam,
+                                            boolean askSaveGuestTeam) {
         NewGameDialog f = new NewGameDialog();
         Bundle args = new Bundle();
         args.putBoolean("saveSelected", saveSelected);
+        args.putBoolean(askSaveHomeTeamKey, askSaveHomeTeam);
+        args.putBoolean(askSaveGuestTeamKey, askSaveGuestTeam);
         f.setArguments(args);
         return f;
     }
@@ -39,6 +47,7 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
         void onStartSameTeams(boolean saveResult);
         void onStartNewTeams(boolean saveResult, Team hTeam, Team gTeam);
         void onStartNoTeams(boolean saveResult);
+        boolean onSaveTeam(int team);
     }
 
     @Override
@@ -55,20 +64,63 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        saveHomeAvail = args.getBoolean(askSaveHomeTeamKey, true);
+        saveGuestAvail = args.getBoolean(askSaveGuestTeamKey, true);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_new_game, null);
         builder.setView(v).setCancelable(true);
         saveCheckBox = (CheckBox) v.findViewById(R.id.new_game_save);
         saveCheckBox.setChecked(args.getBoolean("saveSelected", true));
-        final View saveButtons = v.findViewById(R.id.save_teams_buttons);
+        saveButtons = v.findViewById(R.id.save_teams_buttons);
+        saveTeamsToggle = v.findViewById(R.id.new_game_save_teams);
 
-        v.findViewById(R.id.new_game_save_teams).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleSaveTeamsBlock(saveButtons);
+        if (saveHomeAvail || saveGuestAvail) {
+            View saveHomeTeamBu = v.findViewById(R.id.new_game_save_home_team);
+            View saveGuestTeamBu = v.findViewById(R.id.new_game_save_guest_team);
+            if (saveHomeAvail) {
+                saveHomeTeamBu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (listener.onSaveTeam(HOME)) {
+                            view.setVisibility(View.GONE);
+                            saveHomeAvail = false;
+                        }
+                        if (canHideSaveButtons()) {
+                            hideSaveButtons();
+                        }
+                    }
+                });
+            } else {
+                saveHomeTeamBu.setVisibility(View.GONE);
             }
-        });
+            if (saveGuestAvail) {
+                saveGuestTeamBu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (listener.onSaveTeam(GUEST)) {
+                            view.setVisibility(View.GONE);
+                            saveGuestAvail = false;
+                        }
+                        if (canHideSaveButtons()) {
+                            hideSaveButtons();
+                        }
+                    }
+                });
+            } else {
+                saveGuestTeamBu.setVisibility(View.GONE);
+            }
+            saveTeamsToggle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toggleSaveTeamsBlock(saveButtons);
+                }
+            });
+        } else {
+            saveTeamsToggle.setVisibility(View.GONE);
+            saveButtons.setVisibility(View.GONE);
+        }
+
         v.findViewById(R.id.new_game_same_teams).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +155,19 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
             }
         });
         return builder.create();
+    }
+
+    private boolean canHideSaveButtons() {
+        return !(saveHomeAvail || saveGuestAvail);
+    }
+
+    private void hideSaveButtons() {
+        if (saveButtons != null) {
+            saveButtons.setVisibility(View.GONE);
+        }
+        if (saveTeamsToggle != null) {
+            saveTeamsToggle.setVisibility(View.GONE);
+        }
     }
 
     private void showTeamsList(int team) {

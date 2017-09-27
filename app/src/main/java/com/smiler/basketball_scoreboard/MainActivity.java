@@ -43,6 +43,7 @@ import com.smiler.basketball_scoreboard.elements.dialogs.FloatingCountdownTimerD
 import com.smiler.basketball_scoreboard.elements.dialogs.ListDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.NewGameDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.PlayerEditDialog;
+import com.smiler.basketball_scoreboard.elements.dialogs.SelectPlayersDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.TeamEditInGameDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.TeamSelector;
 import com.smiler.basketball_scoreboard.elements.dialogs.TimePickerDialog;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements
         TeamEditInGameDialog.ChangeTeamListener,
         NewGameDialog.NewGameDialogListener,
         OverlayFragment.OverlayFragmentListener,
+        SelectPlayersDialog.SelectPlayersDialogListener,
         SidePanelFragment.SidePanelListener,
         SoundPool.OnLoadCompleteListener,
         ListDialog.ListDialogListener,
@@ -381,11 +383,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void initGame(boolean restore, Team hTeam, Team gTeam) {
-        initGame(restore);
-        game.setHomeTeam(hTeam).setGuestTeam(gTeam);
-    }
-
     private BaseLayout initGameLayout() {
         layout = LayoutFactory.getLayout(this, preferences, this, this);
         BoardFragment frag = BoardFragment.newInstance();
@@ -406,9 +403,20 @@ public class MainActivity extends AppCompatActivity implements
     private void startNewGame(boolean save) {
         if (save) {
             game.saveGame();
-        } else {
-            initGame(false);
         }
+        initGame(false);
+    }
+
+    private void startNewGameSameTeams(boolean save) {
+        if (save) {
+            game.saveGame();
+        }
+        game.initNewGameSameTeams();
+    }
+
+    private void startNewGame(boolean save, Team hTeam, Team gTeam) {
+        startNewGame(save);
+        game.setHomeTeam(hTeam).setGuestTeam(gTeam);
     }
 
     private void initSounds() {
@@ -533,7 +541,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showNewGameDialog() {
-        NewGameDialog.newInstance(preferences.autoSaveResults).show(getFragmentManager(), NewGameDialog.TAG);
+        NewGameDialog.newInstance(preferences.autoSaveResults, !game.homeTeamSet(), !game.guestTeamSet())
+                .show(getFragmentManager(), NewGameDialog.TAG);
     }
 
     private void showWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
@@ -646,7 +655,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClearPanelDialogItemClick(int type, boolean left) {
-        game.deletePlayers(type, left);
+        game.clearPlayersPanel(type, left);
     }
 
     @Override
@@ -705,6 +714,9 @@ public class MainActivity extends AppCompatActivity implements
             case EDIT_CAPTAIN:
                 PlayerEditDialog f = (PlayerEditDialog) getFragmentManager().findFragmentByTag(PlayerEditDialog.TAG);
                 if (f != null) {f.changeCaptainConfirmed();}
+                break;
+            case TEAM_ALREADY_SELECTED:
+                game.confirmSetTeam();
                 break;
         }
     }
@@ -893,7 +905,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onNameLongClick(boolean left) {
-        chooseTeamNameDialog(game.getTeam(left), game.getName(left));
+        chooseTeamNameDialog(game.getTeamType(left), game.getName(left));
         return true;
     }
 
@@ -982,6 +994,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onShowToast(int resId, int len, Object... args) {
+        Toast.makeText(this, String.format(getResources().getString(resId), args), len).show();
+    }
+
+    @Override
     public void onViewCreated(BaseLayout layout) {
         game.setLayout(layout);
     }
@@ -994,16 +1011,26 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onStartSameTeams(boolean saveResult) {
-        initGame(false);
+        startNewGameSameTeams(saveResult);
     }
 
     @Override
     public void onStartNewTeams(boolean saveResult, Team hTeam, Team gTeam) {
-        initGame(false, hTeam, gTeam);
+        startNewGame(false, hTeam, gTeam);
     }
 
     @Override
     public void onStartNoTeams(boolean saveResult) {
-        initGame(false, null, null);
+        startNewGame(false, null, null);
+    }
+
+    @Override
+    public boolean onSaveTeam(int team) {
+        return game.saveTeam(team);
+    }
+
+    @Override
+    public void onSelectPlayers() {
+        game.confirmSetTeam();
     }
 }

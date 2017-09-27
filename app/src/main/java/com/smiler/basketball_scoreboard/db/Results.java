@@ -83,13 +83,21 @@ public class Results extends RealmObject {
         return this;
     }
 
+    public Results setFirstTeam(Team team) {
+        firstTeam = team;
+        return this;
+    }
+
+    public Team getFirstTeam() {
+        return firstTeam;
+    }
+
     public Results setSecondTeam(Team team) {
         secondTeam = team;
         return this;
     }
 
-    public Results setFirstTeam(Team team) {
-        firstTeam = team;
-        return this;
+    public Team getSecondTeam() {
+        return secondTeam;
     }
 }

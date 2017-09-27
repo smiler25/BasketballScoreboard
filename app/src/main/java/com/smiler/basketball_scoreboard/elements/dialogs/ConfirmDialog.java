@@ -47,9 +47,9 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
 
         int titleId;
         if (type != null) {
+            String msg = "";
             switch (type) {
                 case NEW_GAME:
-                    String msg;
                     titleId = R.string.action_confirm_new_game;
                     String team = args.getString("team", null);
                     if (team != null) {
@@ -65,7 +65,6 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                     } else {
                         msg = getResources().getString(R.string.confirm_new_game_message_settings);
                     }
-                    builder.setMessage(msg);
                     break;
                 case RESULT_SAVE:
                     titleId = R.string.action_save_result;
@@ -73,11 +72,27 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                 case EDIT_CAPTAIN:
                     titleId = R.string.edit_player_dialog_captain_confirm;
                     break;
+                case SELECT_TEAM_CONFIRM:
+                    titleId = R.string.action_confirm_new_game;
+                    builder.setNeutralButton(R.string.confirm_new_neutral_option, this);
+//                    msg = getResources().getString(R.string.confirm_new_game_message_settings);
+                    break;
+                case TEAM_PLAYERS_FEW:
+                    titleId = R.string.team_few_players_dialog_title;
+                    msg = getResources().getString(R.string.team_few_players_dialog_msg);
+                    break;
+                case TEAM_ALREADY_SELECTED:
+                    titleId = R.string.team_already_selected;
+                    msg = getResources().getString(R.string.team_already_selected_dialog_msg);
+                    break;
                 default:
                     titleId = R.string.action_confirm;
                     break;
             }
             builder.setTitle(titleId);
+            if (!msg.equals("")) {
+                builder.setMessage(msg);
+            }
         }
         return builder.create();
     }

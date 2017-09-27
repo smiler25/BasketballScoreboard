@@ -29,6 +29,8 @@ import static com.smiler.basketball_scoreboard.Rules.DEFAULT_SHOT_TIME;
 import static com.smiler.basketball_scoreboard.Rules.DEFAULT_TIMEOUTS;
 import static com.smiler.basketball_scoreboard.Rules.MAX_PLAYERS;
 import static com.smiler.basketball_scoreboard.Rules.MAX_PLAYERS_3X3;
+import static com.smiler.basketball_scoreboard.Rules.MIN_PLAYERS;
+import static com.smiler.basketball_scoreboard.Rules.MIN_PLAYERS_3X3;
 
 public class Preferences {
     private final SharedPreferences prefs;
@@ -157,7 +159,14 @@ public class Preferences {
         if (temp_rules != timeoutRules) {
             timeoutsRulesChanged = true;
             timeoutRules = temp_rules;
-            SidePanelFragment.setMaxPlayers(temp_rules == Rules.TO_RULES.STREETBALL ? MAX_PLAYERS_3X3 : MAX_PLAYERS);
+            if (temp_rules == Rules.TO_RULES.STREETBALL) {
+                SidePanelFragment.setMaxPlayers(MAX_PLAYERS_3X3);
+                SidePanelFragment.setMinPlayers(MIN_PLAYERS_3X3);
+            }
+            else {
+                SidePanelFragment.setMaxPlayers(MAX_PLAYERS);
+                SidePanelFragment.setMinPlayers(MIN_PLAYERS);
+            }
         }
         PrefActivity.prefChangedNoRestart = false;
         if (PrefActivity.prefColorChanged) {

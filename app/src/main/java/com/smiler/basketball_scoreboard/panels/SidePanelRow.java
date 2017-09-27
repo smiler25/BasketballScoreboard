@@ -10,10 +10,11 @@ import android.widget.Toast;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.Player;
+import com.smiler.basketball_scoreboard.db.PlayerEntry;
 import com.smiler.basketball_scoreboard.elements.dialogs.PlayerEditDialog;
 import com.smiler.basketball_scoreboard.game.InGamePlayer;
 
-public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
+public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>, PlayerEntry {
 
     private static int maxFouls;
     private static int count;
@@ -90,6 +91,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         return id;
     }
 
+    @Override
     public int getNumber() {
         return player.getNumber();
     }
@@ -99,6 +101,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         numberView.setText(player.isCaptain() ? "" + value + "*" : "" + value);
     }
 
+    @Override
     public String getName() {
         return player.getName();
     }
@@ -116,7 +119,8 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>{
         return player.getFouls();
     }
 
-    public boolean getCaptain() {
+    @Override
+    public boolean isCaptain() {
         return player.isCaptain();
     }
 

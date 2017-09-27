@@ -19,7 +19,7 @@ public final class Constants {
 //    public static final String ACTION_FORMAT = "%d;%d;%d";
 
     public static final int PANEL_DELETE_TYPE_FULL = 0;
-//    public static final int PANEL_DELETE_TYPE_DATA = 1;
+    public static final int PANEL_DELETE_TYPE_DATA = 1;
 
     public static final long SECOND = 1000;
     public static final long SECONDS_60 = 60 * SECOND;
@@ -46,6 +46,8 @@ public final class Constants {
     public static final String STATE_SHOT_TIME = "shotTime";
     public static final String STATE_HOME_SCORE = "homeScore";
     public static final String STATE_GUEST_SCORE = "guestScore";
+    public static final String STATE_HOME_ID = "homeTeamId";
+    public static final String STATE_GUEST_ID = "guestTeamId";
     public static final String STATE_HOME_NAME = "homeName";
     public static final String STATE_GUEST_NAME = "guestName";
     public static final String STATE_HOME_FOULS = "homeFouls";

@@ -85,7 +85,6 @@ public class TeamViewFragment extends ReattachedFragment implements
                 .show(getActivity().getFragmentManager(), PlayerEditDialog.TAG);
     }
 
-
     @Override
     public void onAddPlayer(int teamId, int number, String name, boolean captain) {
         RealmController.with().createPlayer(teamId, number, name, captain);

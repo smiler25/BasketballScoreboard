@@ -37,6 +37,7 @@ public class Rules {
     private static final String DEFAULT_TIMEOUTS_3X3 = "3";
 
     public static final int MAX_PLAYERS = 12;
+    public static final int MIN_PLAYERS = 5;
     public static final int DEFAULT_SHOT_TIME = 24;
     public static final int DEFAULT_SHORT_SHOT_TIME = 14;
     public static final int DEFAULT_NUM_REGULAR = 4;
@@ -58,6 +59,7 @@ public class Rules {
 //    private static final int DEFAULT_3X3_TIMEOUTS = 1;
     private static final int DEFAULT_3X3_PLAYER_FOULS = 4;
     public static final int MAX_PLAYERS_3X3 = 4;
+    public static final int MIN_PLAYERS_3X3 = 3;
     private static BaseLayout.GAME_LAYOUT prevLayout;
 
 

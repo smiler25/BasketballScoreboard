@@ -1,7 +1,10 @@
 package com.smiler.basketball_scoreboard.db;
 
+import java.util.ArrayList;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
@@ -17,6 +20,9 @@ public class Team extends RealmObject {
     private float avgPointsOpp;
     private int wins;
     private int loses;
+
+    @Ignore
+    private ArrayList<Player> gamePlayers;
 
     public int getId() { return id; }
     public Team setId(int id) {
@@ -65,14 +71,34 @@ public class Team extends RealmObject {
     public float getAvgPoints() {
         return avgPoints;
     }
-    public void calcAvgPoints(float value) {
-        avgPoints = value;
+    public void calcAvgPoints(int score, int scoreOpp) {
+        if (games.size() == 0) {
+            avgPoints = score;
+            avgPointsOpp = scoreOpp;
+            return;
+        }
+        int total = 0, totalOpp = 0;
+        for (Results game : games) {
+            if (this.equals(game.getFirstTeam())) {
+                total += game.getFirstScore();
+                totalOpp += game.getSecondScore();
+            } else {
+                total += game.getSecondScore();
+                totalOpp += game.getFirstScore();
+            }
+        }
+        avgPoints = (total + score) / games.size();
+        avgPointsOpp = (totalOpp + scoreOpp) / games.size();
     }
 
     public float getAvgPointsOpp() {
         return avgPointsOpp;
     }
-    public void calcAvgPointsOpp(float value) {
-        avgPointsOpp = value;
+
+    public void setGamePlayers(ArrayList<Player> players) {
+        gamePlayers = players;
+    }
+    public ArrayList<Player> getGamePlayers() {
+        return gamePlayers;
     }
 }

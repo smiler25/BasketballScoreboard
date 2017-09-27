@@ -44,7 +44,7 @@ public class TeamEditInGameDialog extends DialogFragment implements TeamSelector
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.team_name_edit, null);
+        View v = inflater.inflate(R.layout.team_edit_in_game, null);
 
         builder.setView(v).setCancelable(true);
 

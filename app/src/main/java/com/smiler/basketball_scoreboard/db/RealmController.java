@@ -1,5 +1,7 @@
 package com.smiler.basketball_scoreboard.db;
 
+import com.smiler.basketball_scoreboard.panels.SidePanelRow;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -147,7 +149,7 @@ public class RealmController {
         return realm.where(Team.class).equalTo("id", id).findFirst();
     }
 
-    public void createTeam(final String name, final boolean active) {
+    public int createTeam(final String name, final boolean active) {
         Number lastId = realm.where(Team.class).max("id");
         final long nextId = lastId != null ? (long) lastId + 1 : 0;
         realm.executeTransaction(new Realm.Transaction() {
@@ -158,6 +160,11 @@ public class RealmController {
                       .setActive(active);
             }
         });
+        return (int) nextId;
+    }
+
+    public Team createTeamAndGet(String name, boolean active) {
+        return getTeam(createTeam(name, active));
     }
 
     public Player createPlayer(int teamId, final int number, final String name, final boolean captain) {
@@ -173,6 +180,28 @@ public class RealmController {
             }
         });
         return realm.where(Player.class).equalTo("id", nextId).findFirst();
+    }
+
+    // TODO SidePanelRow -> PlayerEntry
+    public void createPlayers(final Team team, final Iterable<SidePanelRow> players) {
+        Number lastId = realm.where(Player.class).max("id");
+        final long nextId = lastId != null ? (long) lastId + 1 : 0;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                long playerId = nextId;
+
+                for (SidePanelRow entry : players) {
+                    Player player = realm.createObject(Player.class, playerId);
+                    player.setName(entry.getName())
+                            .setNumber(entry.getNumber())
+                            .setCaptain(entry.isCaptain())
+                            .setTeam(team);
+                    team.addPlayer(player);
+                    playerId++;
+                }
+            }
+        });
     }
 
     public void editPlayer(int playerId, final int number, final String name, final boolean captain) {

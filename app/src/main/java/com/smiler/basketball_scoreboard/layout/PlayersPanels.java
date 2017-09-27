@@ -219,11 +219,11 @@ public class PlayersPanels {
         return (left ? leftPanel : rightPanel).deleteRow(id);
     }
 
-    public void deletePlayers(int type, boolean left) {
+    public void clearPanel(int type, boolean left) {
         (left ? leftPanel : rightPanel).clear(type == PANEL_DELETE_TYPE_FULL);
     }
 
-    public void deletePlayers(boolean left) {
+    public void clearPanel(boolean left) {
         (left ? leftPanel : rightPanel).clear(preferences.spClearDelete);
     }
 
@@ -274,6 +274,14 @@ public class PlayersPanels {
         return rightPanel.getInactivePlayers();
     }
 
+    public TreeSet<SidePanelRow> getLeftActivePlayers() {
+        return leftPanel.getActivePlayers();
+    }
+
+    public TreeSet<SidePanelRow> getRightActivePlayers() {
+        return rightPanel.getActivePlayers();
+    }
+
     public void saveState() {
         if (leftPanel != null) {
             leftPanel.saveCurrentData();
@@ -291,11 +299,28 @@ public class PlayersPanels {
         (left ? leftPanel : rightPanel).substitute(in, out);
     }
 
-    public void setLeftTeam(Team team) {
-        leftPanel.setTeam(team);
+    public boolean setLeftTeam(Team team) {
+        return leftPanel.setTeam(team);
     }
 
-    public void setRightTeam(Team team) {
-        rightPanel.setTeam(team);
+    public boolean setRightTeam(Team team) {
+        return rightPanel.setTeam(team);
     }
+
+    public void changeLeftTeam(Team team) {
+        leftPanel.changeTeam(team);
+    }
+
+    public void changeRightTeam(Team team) {
+        rightPanel.changeTeam(team);
+    }
+
+    public void saveLeftPlayers() {
+        leftPanel.savePlayers();
+    }
+
+    public void saveRightPlayers() {
+        rightPanel.savePlayers();
+    }
+
 }
