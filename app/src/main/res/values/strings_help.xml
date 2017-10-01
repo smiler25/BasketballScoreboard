@@ -3,6 +3,7 @@
     <string-array name="help_activity_values">
         <item>Main interface</item>
         <item>Side panels</item>
+        <item>Teams profiles</item>
         <item>Basketball rules in app</item>
         <item>Privacy policy</item>
         <item>About update</item>
@@ -27,6 +28,25 @@
         \n
         Back button:\n
         if \"Play-by-play history\" setting is selected to keep, then canceled one last action of the press (excluding the time), otherwise, after double-clicking the application closing occurs.
+    </string>
+
+    <string name="help_profiles_text">
+        You can save teams and players.\n
+        \n
+        Go to the Teams section to manage teams.\n
+        New team can be added in two ways:\n
+        1. in Teams section;\n
+        2. after the game when you start a new game.\n
+        \n
+        In Teams section you can look at the team stats and manage players.\n
+        \n
+        The choice of the team for a game is possible in three ways:\n
+        1. select when starting new game;\n
+        2. by long pressing team name;\n
+        3. from the side panels by group adding.\n
+        \n
+        If there are to many players in team for the current game type (12 for basketball and 4 for streetball) a dialog for selecting players for the game will be displayed.\n
+        If there are to few players in team for the current game type a warning dialog will be displayed but you can start the game.\n
     </string>
 
     <string name="help_privacy_text">
@@ -72,10 +92,10 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
-        v.2.7.1:\n
-          - fixed crash when trying to access settings on some devices.\n
+        v.3.0:\n
+          - teams profiles (see help).\n
         v.2.7:\n
-          - streetball layout and rules (settings, rules in help);\n
+          - streetball layout and rules (settings);\n
           - custom color for shot clock;\n
           - save team names when starting a new game (done through the default in settings).\n
         v.2.6.2:\n

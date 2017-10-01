@@ -15,7 +15,7 @@
 
     <string name="pref_auto_break">Показывать перерывы</string>
     <string name="pref_auto_break_descr">Начинать отсчет времени перерыва по окончании периода</string>
-    <string name="pref_auto_save_save_results">Сохранять результат перед новой игрой</string>
+    <string name="pref_save_game_results">Сохранять результат перед новой игрой</string>
     <string name="pref_auto_timeout">Показывать таймаут</string>
     <string name="pref_auto_timeout_descr">Показывать обратный отсчёт, если был взят таймаут</string>
     <string name="pref_choose_sound">Выбрать звук</string>
@@ -88,6 +88,7 @@
         <item>Простой, без времени на атаку, периода, фолов и таймаутов</item>
         <item>Стритбол</item>
     </string-array>
+
     <string-array name="timeout_variants">
         <item>2-х минутный перерыв</item>
         <item>15-ти минутный перерыв</item>
@@ -96,10 +97,7 @@
         <item>60-ти секундный таймаут</item>
         <item>100 секундный таймаут</item>
     </string-array>
-    <string-array name="pref_auto_save_save_results_titles">
-        <item>Включено</item>
-        <item>Выключено</item>
-    </string-array>
+
     <string-array name="pref_timeouts_rules_titles">
         <item>Не использовать</item>
         <item>FIBA</item>

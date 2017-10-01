@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements
             game.setSavedState();
         }
         handleOrientation();
+        preferences.resetChangeStates();
     }
 
     @Override
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements
 
         handleOrientation();
         initElements();
-        initGame(true);
+        initGame(preferences.saveOnExit);
         handleLaunch();
     }
 
@@ -666,7 +667,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSelectAddPlayers(int which, boolean left) {
         if (which == 0) {
-            ListDialog.newInstance(DialogTypes.SELECT_TEAM, left).show(getFragmentManager(), ListDialog.TAG);
+            ListDialog.newInstance(DialogTypes.SELECT_TEAM, game.getTeamType(left)).show(getFragmentManager(), ListDialog.TAG);
         } else {
             game.addPlayers(left);
         }
@@ -689,7 +690,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onNameChanged(String value, int team) {
         if (value.length() > 0) {
-            game.setTeamName(value, team);
+            game.resetTeamAndSetName(team, value);
         }
     }
 
@@ -705,6 +706,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onConfirmDialogPositive(DialogTypes type, int teamType) {
+        if (type == DialogTypes.TEAM_ALREADY_SELECTED) {
+            game.confirmSetTeam(teamType);
+        }
+    }
+
+    @Override
+    public void onConfirmDialogNegative(DialogTypes type, int teamType) {
+        if (type == DialogTypes.TEAM_PLAYERS_FEW) {
+            game.confirmSelectTeamPlayers(teamType);
+        }
+    }
+
+    @Override
     public void onConfirmDialogPositive(DialogTypes type) {
         switch (type) {
             case NEW_GAME:
@@ -714,9 +729,6 @@ public class MainActivity extends AppCompatActivity implements
             case EDIT_CAPTAIN:
                 PlayerEditDialog f = (PlayerEditDialog) getFragmentManager().findFragmentByTag(PlayerEditDialog.TAG);
                 if (f != null) {f.changeCaptainConfirmed();}
-                break;
-            case TEAM_ALREADY_SELECTED:
-                game.confirmSetTeam();
                 break;
         }
     }
@@ -752,6 +764,16 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSidePanelNoActive(boolean left) {
         game.deleteActivePlayers(left);
+    }
+
+    @Override
+    public void onSidePanelShowConfirmDialog(DialogTypes type, boolean left) {
+        ConfirmDialog.newInstance(type, game.getTeamType(left)).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+    }
+
+    @Override
+    public void onSidePanelShowSelectDialog(Team team, boolean left) {
+        SelectPlayersDialog.newInstance().setTeam(team, game.getTeamType(left)).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
     }
 
     @Override
@@ -964,6 +986,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onDeletePanels() {
+        panels = null;
+    }
+
+    @Override
     public void onConfirmDialog(DialogTypes type) {
         showConfirmDialog(type);
     }
@@ -1030,7 +1057,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSelectPlayers() {
-        game.confirmSetTeam();
+    public void onSelectPlayers(int teamType) {
+        game.confirmSelectTeamPlayers(teamType);
     }
 }

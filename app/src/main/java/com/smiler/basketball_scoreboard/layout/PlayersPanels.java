@@ -39,16 +39,11 @@ public class PlayersPanels {
         init();
     }
 
-    public PlayersPanels(Context context, Preferences preferences, Team leftTeam, Team rightTeam) {
-        this.context = context;
-        this.preferences = preferences;
-        fragmentManager = ((Activity) context).getFragmentManager();
-        init(leftTeam, rightTeam);
-    }
-
     private PlayersPanels init() {
         leftPanel = SidePanelFragment.newInstance(LEFT);
         rightPanel = SidePanelFragment.newInstance(RIGHT);
+        leftPanel.setShouldRestore(preferences.saveOnExit);
+        rightPanel.setShouldRestore(preferences.saveOnExit);
         overlayPanels = OverlayFragment.newInstance(OVERLAY_PANELS);
         leftPanel.setRetainInstance(true);
         rightPanel.setRetainInstance(true);
@@ -62,13 +57,6 @@ public class PlayersPanels {
           .hide(rightPanel)
           .addToBackStack(null)
           .commit();
-        return this;
-    }
-
-    private PlayersPanels init(Team leftTeam, Team rightTeam) {
-        init();
-        leftPanel.setTeam(leftTeam);
-        rightPanel.setTeam(rightTeam);
         return this;
     }
 
@@ -307,12 +295,28 @@ public class PlayersPanels {
         return rightPanel.setTeam(team);
     }
 
-    public void changeLeftTeam(Team team) {
-        leftPanel.changeTeam(team);
+    public void resetLeftTeam() {
+        leftPanel.clear(true);
     }
 
-    public void changeRightTeam(Team team) {
-        rightPanel.changeTeam(team);
+    public void resetRightTeam() {
+        rightPanel.clear(true);
+    }
+
+    public boolean changeLeftTeam(Team team) {
+        return leftPanel.changeTeam(team);
+    }
+
+    public boolean changeRightTeam(Team team) {
+        return rightPanel.changeTeam(team);
+    }
+
+    public void confirmLeftTeamPlayers(Team team) {
+        leftPanel.confirmTeamPlayers(team);
+    }
+
+    public void confirmRightTeamPlayers(Team team) {
+        rightPanel.confirmTeamPlayers(team);
     }
 
     public void saveLeftPlayers() {

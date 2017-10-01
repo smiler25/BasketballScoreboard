@@ -21,18 +21,20 @@ public class SelectPlayersDialog extends DialogFragment {
 
     public static final String TAG = "BS-SelectPlayersDialog";
     private Team team;
+    private int teamType;
     private SelectPlayersDialogListener listener;
 
     public interface SelectPlayersDialogListener {
-        void onSelectPlayers();
+        void onSelectPlayers(int teamType);
     }
 
     public static SelectPlayersDialog newInstance() {
         return new SelectPlayersDialog();
     }
 
-    public SelectPlayersDialog setTeam(Team team) {
+    public SelectPlayersDialog setTeam(Team team, int teamType) {
         this.team = team;
+        this.teamType = teamType;
         return this;
     }
 
@@ -64,7 +66,7 @@ public class SelectPlayersDialog extends DialogFragment {
                                     }
                                 }
                                 team.setGamePlayers(selected);
-                                listener.onSelectPlayers();
+                                listener.onSelectPlayers(teamType);
                             }
                         })
                 .setNegativeButton(R.string.action_cancel,

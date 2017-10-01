@@ -18,11 +18,9 @@ import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.db.Team;
-import com.smiler.basketball_scoreboard.elements.dialogs.ConfirmDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.DialogTypes;
 import com.smiler.basketball_scoreboard.elements.dialogs.ListDialog;
 import com.smiler.basketball_scoreboard.elements.dialogs.PlayerEditDialog;
-import com.smiler.basketball_scoreboard.elements.dialogs.SelectPlayersDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +30,6 @@ import java.util.TreeSet;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-
-import static com.smiler.basketball_scoreboard.Constants.TAG_FRAGMENT_CONFIRM;
 
 public class SidePanelFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
@@ -50,6 +46,8 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     private ToggleButton panelSelect;
     private boolean left = true;
     private Team team;
+    private boolean viewCreated = false;
+    private boolean shouldRestore = false;
 
     public static SidePanelFragment newInstance(boolean left) {
         Bundle args = new Bundle();
@@ -78,6 +76,8 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         void onSidePanelClose(boolean left);
         void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left);
         void onSidePanelNoActive(boolean left);
+        void onSidePanelShowConfirmDialog(DialogTypes type, boolean left);
+        void onSidePanelShowSelectDialog(Team team, boolean left);
     }
 
     @Override
@@ -94,7 +94,11 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
         left = args.getBoolean("left", true);
-        return initView(inflater, container);
+        View v = initView(inflater, container);
+        if (!viewCreated) {
+            viewCreated = afterViewCreate();
+        }
+        return v;
     }
 
     @NonNull
@@ -192,6 +196,22 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         minPlayers = number;
     }
 
+    public void setShouldRestore(boolean value) {
+        shouldRestore = value;
+    }
+
+    private boolean afterViewCreate() {
+        if (getActivity() == null) {
+            return false;
+        }
+        if (team != null) {
+            addPlayersRows(getActivity());
+        } else if (shouldRestore) {
+            restoreCurrentData();
+        }
+        return true;
+    }
+
     private void handleSelection() {
         if (panelSelect.isChecked() || activePlayers.size() <= 5) {
             View.OnClickListener l = panelSelect.isChecked() ? this : null;
@@ -270,19 +290,26 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     }
 
     private boolean addRowsTeam() {
-        if (!checkTeamPlayers()) {return false;}
+        Activity activity = getActivity();
+        if (activity == null) {
+            viewCreated = false;
+            return true;
+        }
+        addPlayersRows(activity);
+        return true;
+    }
+
+    private void addPlayersRows(Activity activity) {
         List<Player> players = team.getGamePlayers() != null && team.getGamePlayers().size() > 0
                 ? team.getGamePlayers()
                 : team.getPlayers();
 
-        Activity activity = getActivity();
         for (Player player : players) {
             SidePanelRow row = new SidePanelRow(activity, player, left);
             playersNumbers.add(player.getNumber());
             table.addView(row);
             rows.put(row.getId(), row);
         }
-        return true;
     }
 
     public int checkNewPlayer(int number, boolean captain) {
@@ -338,17 +365,21 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         return false;
     }
 
-    private boolean checkTeamPlayers() {
+    private boolean checkTeamPlayers(Team team) {
         int size = team.getGamePlayers() != null && team.getGamePlayers().size() > 0
                 ? team.getGamePlayers().size()
                 : team.getPlayers().size();
         if (size > maxPlayers) {
-            Toast.makeText(getActivity(), String.format(getResources().getString(R.string.sp_players_limit), maxPlayers), Toast.LENGTH_SHORT).show();
-            SelectPlayersDialog.newInstance().setTeam(team).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+            if (listener != null) {
+                Toast.makeText(getActivity(), String.format(getResources().getString(R.string.sp_players_limit), maxPlayers), Toast.LENGTH_SHORT).show();
+                listener.onSidePanelShowSelectDialog(team, left);
+            }
             return false;
         }
         if (size < minPlayers) {
-            ConfirmDialog.newInstance(DialogTypes.TEAM_PLAYERS_FEW).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+            if (listener != null) {
+                listener.onSidePanelShowConfirmDialog(DialogTypes.TEAM_PLAYERS_FEW, left);
+            }
             return false;
         }
         return true;
@@ -435,7 +466,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
     }
 
     private void restoreCurrentData() {
-        activePlayers = new TreeSet<>();
+        clear(true);
         RealmResults<PlayersResults> players = RealmController.with().getPlayers(-1, Boolean.toString(left));
         if (players.size() > 0) {
             for (PlayersResults player : players) {
@@ -497,21 +528,29 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
 
     public boolean setTeam(Team team) {
         if (team == null) {
-            this.team = null;
             clear(true);
             return true;
         }
         if (this.team != null) {
-            ConfirmDialog.newInstance(DialogTypes.TEAM_ALREADY_SELECTED).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+            listener.onSidePanelShowConfirmDialog(DialogTypes.TEAM_ALREADY_SELECTED, left);
             return false;
         }
+        this.team = team;
+        return checkTeamPlayers(team) && addRowsTeam();
+    }
+
+    public boolean changeTeam(Team team) {
+        if (!checkTeamPlayers(team)) {
+            return false;
+        }
+        clear(true);
         this.team = team;
         return addRowsTeam();
     }
 
-    public void changeTeam(Team team) {
-        this.team = team;
+    public void confirmTeamPlayers(Team team) {
         clear(true);
+        this.team = team;
         addRowsTeam();
     }
 }

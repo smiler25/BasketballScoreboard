@@ -11,6 +11,8 @@
     <string name="r" translatable="false">r</string>
     <string name="g" translatable="false">g</string>
     <string name="b" translatable="false">b</string>
+    <string name="dot" translatable="false">.</string>
+    <string name="colon" translatable="false">:</string>
 
     <string name="action_add_player_multi">Add several players</string>
     <string name="action_add_player">Add player</string>

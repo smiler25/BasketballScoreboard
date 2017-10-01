@@ -57,11 +57,11 @@ public class PrefActivity extends Activity implements
     public static final String PREF_SIDE_PANELS_FOULS_MAX = "side_panels_player_max_fouls";
 
     public static final String PREF_LAYOUT = "list_layout";
-    public static final String PREF_AUTO_SAVE_RESULTS = "auto_save_results";
     public static final String PREF_AUTO_BREAK = "auto_show_break";
     public static final String PREF_AUTO_TIMEOUT = "auto_show_timeout";
     public static final String PREF_AUTO_SWITCH_SIDES = "auto_switch_sides";
     public static final String PREF_VIBRATION = "vibration";
+    public static final String PREF_SAVE_GAME_RESULTS = "save_game_results";
     public static final String PREF_SAVE_ON_EXIT = "save_on_exit";
     public static final String PREF_POSSESSION_ARROWS = "possession_arrows";
 

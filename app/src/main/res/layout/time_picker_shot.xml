@@ -9,7 +9,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/dialog_title"
         android:text="@string/set_main_time"
         android:textSize="@dimen/dialog_title_font_size"
         android:gravity="center"
@@ -25,18 +24,21 @@
             android:id="@+id/pickerSeconds"
             style="@style/numberPicker"
             max="59"
-            min="0" />
+            min="0"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="."/>
+            android:text="@string/dot"
+            />
 
         <com.smiler.basketball_scoreboard.elements.CustomNumberPicker
             android:id="@+id/pickerMillis"
             style="@style/numberPicker"
             max="9"
-            min="0" />
+            min="0"
+            />
 
     </LinearLayout>
 

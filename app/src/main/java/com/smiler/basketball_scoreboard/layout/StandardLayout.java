@@ -821,6 +821,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         if (playersButtonsInitiated()) {
             leftPlayersButtonsGroup.setVisibility(View.VISIBLE);
             rightPlayersButtonsGroup.setVisibility(View.VISIBLE);
+        } else {
+            initPlayersButtons();
         }
     }
 

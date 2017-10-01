@@ -8,9 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.smiler.basketball_scoreboard.elements.dialogs.AppUpdatesDialog;
 import com.smiler.basketball_scoreboard.Constants;
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.elements.ScrolledTextFragment;
+import com.smiler.basketball_scoreboard.elements.dialogs.AppUpdatesDialog;
 
 public class HelpActivity extends AppCompatActivity implements HelpListFragment.HelpListListener {
 
@@ -56,18 +57,21 @@ public class HelpActivity extends AppCompatActivity implements HelpListFragment.
         Fragment selectedFrag = null;
         switch (position) {
             case 0:
-                selectedFrag = HelpFragment.newInstance(R.layout.help_main_fragment);
+                selectedFrag = ScrolledTextFragment.newInstance(R.string.help_main_text);
                 break;
             case 1:
                 selectedFrag = HelpFragment.newInstance(R.layout.help_panels_fragment);
                 break;
             case 2:
-                selectedFrag = new HelpRulesFragment();
+                selectedFrag = ScrolledTextFragment.newInstance(R.string.help_profiles_text);
                 break;
             case 3:
-                selectedFrag = HelpFragment.newInstance(R.layout.help_policy_fragment);
+                selectedFrag = new HelpRulesFragment();
                 break;
             case 4:
+                selectedFrag = HelpFragment.newInstance(R.layout.help_policy_fragment);
+                break;
+            case 5:
                 new AppUpdatesDialog().show(getFragmentManager(), Constants.TAG_FRAGMENT_APP_UPDATES);
                 return;
         }

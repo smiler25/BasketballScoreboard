@@ -8,7 +8,7 @@
     <string name="category_common">Common settings</string>
     <string name="category_default">Default values</string>
     <string name="category_layout">Layout settings</string>
-    <string name="category_profiles">Teams an</string>
+    <string name="category_profiles">Teams and players</string>
     <string name="category_side_panels">Players panels</string>
     <string name="screen_sounds">Sounds</string>
     <string name="screen_sp">Players panels settings</string>
@@ -90,11 +90,7 @@
         <item>Shot time</item>
     </string-array>
 
-    <string name="pref_auto_save_save_results">Save result before new game</string>
-    <string-array name="pref_auto_save_save_results_titles">
-        <item>On</item>
-        <item>Off</item>
-    </string-array>
+    <string name="pref_save_game_results">Save result before new game</string>
 
     <string name="pref_timeouts_rules">Timeouts rules</string>
     <string-array name="pref_timeouts_rules_titles">

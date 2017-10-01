@@ -100,7 +100,7 @@ public class Preferences {
         fixLandscape = fixLandscape_;
         autoSound = Integer.parseInt(prefs.getString(PrefActivity.PREF_AUTO_SOUND, "0"));
         hornUserRepeats = prefs.getInt(PrefActivity.PREF_HORN_LENGTH, DEFAULT_HORN_LENGTH) * Math.round(hornLength / 1000f);
-        autoSaveResults = Integer.parseInt(prefs.getString(PrefActivity.PREF_AUTO_SAVE_RESULTS, "0")) != 0;
+        autoSaveResults = prefs.getBoolean(PrefActivity.PREF_SAVE_GAME_RESULTS, true);
         autoShowTimeout = prefs.getBoolean(PrefActivity.PREF_AUTO_TIMEOUT, true);
         autoShowBreak = prefs.getBoolean(PrefActivity.PREF_AUTO_BREAK, true);
         autoSwitchSides = prefs.getBoolean(PrefActivity.PREF_AUTO_SWITCH_SIDES, false);
@@ -210,5 +210,14 @@ public class Preferences {
             editor.putString(PrefActivity.PREF_GUEST_NAME, value);
         }
         editor.apply();
+    }
+
+    public void resetChangeStates() {
+        arrowsStateChanged = false;
+        fixLandscapeChanged = false;
+        layoutChanged = false;
+        shotTimePrefChanged = false;
+        spStateChanged = false;
+        timeoutsRulesChanged = false;
     }
 }

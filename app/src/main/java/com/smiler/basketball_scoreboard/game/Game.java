@@ -95,8 +95,7 @@ public class Game {
     private short maxTimeouts, maxTimeouts20, maxTimeouts100;
     private short period;
     private String hName, gName;
-    private Team hTeam, gTeam, tmpTeam;
-    private int tmpTeamType;
+    private Team hTeam, gTeam, hTmpTeam, gTmpTeam;
     private Handler customHandler = new Handler();
     private CountDownTimer mainTimer, shotTimer;
     private boolean leftIsHome = true;
@@ -119,6 +118,7 @@ public class Game {
     public interface GameListener {
         BaseLayout onInitLayout();
         PlayersPanels onInitPanels();
+        void onDeletePanels();
         void onConfirmDialog(DialogTypes type);
         void onNewGameDialog();
         void onPlayHorn();
@@ -147,19 +147,12 @@ public class Game {
         this.layout = layout;
         this.listener = listener;
         this.panels = panels;
-        if (restore) {
-            initRestore(context);
-        } else {
-            init(context);
-            clearSavedState();
-        }
-    }
-
-    private void initRestore(Context context) {
         init(context);
-        if (preferences.saveOnExit) {
+        if (restore) {
             getSavedState();
             setSavedState();
+        } else {
+            clearSavedState();
         }
     }
 
@@ -1515,11 +1508,27 @@ public class Game {
         setTeamNames();
     }
 
-    public void setTeam(Team value, int team) {
-        if (team == HOME) {
+    public void setTeam(Team value, int teamType) {
+        if (teamType == HOME) {
             setHomeTeam(value);
         } else {
             setGuestTeam(value);
+        }
+    }
+
+    public void confirmSetTeam(int teamType) {
+        if (teamType == HOME) {
+            confirmSetHomeTeam();
+        } else {
+            confirmSetGuestTeam();
+        }
+    }
+
+    public void confirmSelectTeamPlayers(int teamType) {
+        if (teamType == HOME) {
+            confirmHomeTeamPlayers();
+        } else {
+            confirmGuestTeamPlayers();
         }
     }
 
@@ -1533,8 +1542,7 @@ public class Game {
             }
         }
         if (!playersSet) {
-            tmpTeam = value;
-            tmpTeamType = HOME;
+            hTmpTeam = value;
             return this;
         }
         hTeam = value;
@@ -1558,8 +1566,7 @@ public class Game {
             }
         }
         if (!playersSet) {
-            tmpTeam = value;
-            tmpTeamType = GUEST;
+            gTmpTeam = value;
             return this;
         }
         gTeam = value;
@@ -1573,41 +1580,72 @@ public class Game {
         return this;
     }
 
-    public void confirmSetTeam() {
-        if (tmpTeam == null) {
+    private void confirmSetHomeTeam() {
+        if (hTmpTeam == null) {
             return;
         }
-        if (tmpTeamType == HOME) {
-            confirmSetHomeTeam();
-        } else {
-            confirmSetGuestTeam();
-        }
-        tmpTeamType = NO_TEAM;
-        tmpTeam = null;
-    }
-
-    private void confirmSetHomeTeam() {
-        hTeam = tmpTeam;
-        hName = tmpTeam.getName();
-        gameResult.setHomeName(hName);
-        layout.setHomeName(hName);
+        boolean playersSet;
         if (leftIsHome) {
-            panels.changeLeftTeam(hTeam);
+            playersSet = panels.changeLeftTeam(hTmpTeam);
         } else {
-            panels.changeRightTeam(hTeam);
+            playersSet = panels.changeRightTeam(hTmpTeam);
+        }
+        if (playersSet) {
+            hTeam = hTmpTeam;
+            hName = hTmpTeam.getName();
+            gameResult.setHomeName(hName);
+            layout.setHomeName(hName);
+            hTmpTeam = null;
         }
     }
 
     private void confirmSetGuestTeam() {
-        gTeam = tmpTeam;
-        gName = tmpTeam.getName();
+        if (gTmpTeam == null) {
+            return;
+        }
+        boolean playersSet = true;
+        if (panels != null) {
+            if (leftIsHome) {
+                playersSet = panels.changeRightTeam(gTmpTeam);
+            } else {
+                playersSet = panels.changeLeftTeam(gTmpTeam);
+            }
+        }
+        if (playersSet) {
+            gTeam = gTmpTeam;
+            gName = gTmpTeam.getName();
+            gameResult.setGuestName(gName);
+            layout.setGuestName(gName);
+            gTmpTeam = null;
+        }
+    }
+
+    private void confirmHomeTeamPlayers() {
+        if (panels != null) {
+            if (leftIsHome) {
+                panels.confirmLeftTeamPlayers(hTmpTeam);
+            } else {
+                panels.confirmRightTeamPlayers(hTmpTeam);
+            }
+        }
+        hTeam = hTmpTeam;
+        hName = hTeam.getName();
+        gameResult.setHomeName(hName);
+        layout.setHomeName(hName);
+        hTmpTeam = null;
+    }
+
+    private void confirmGuestTeamPlayers() {
+        if (leftIsHome) {
+            panels.confirmRightTeamPlayers(gTmpTeam);
+        } else {
+            panels.confirmLeftTeamPlayers(gTmpTeam);
+        }
+        gTeam = gTmpTeam;
+        gName = gTeam.getName();
         gameResult.setGuestName(gName);
         layout.setGuestName(gName);
-        if (leftIsHome) {
-            panels.changeRightTeam(gTeam);
-        } else {
-            panels.changeLeftTeam(gTeam);
-        }
+        gTmpTeam = null;
     }
 
     private void setTeamNames(String home, String guest) {
@@ -1621,10 +1659,12 @@ public class Game {
         setTeamNames(hName, gName);
     }
 
-    public void setTeamName(String value, int team) {
-        if (team == HOME) {
+    public void resetTeamAndSetName(int teamType, String value) {
+        if (teamType == HOME) {
+            resetHomeTeam();
             setHomeName(value);
         } else {
+            resetGuestTeam();
             setGuestName(value);
         }
     }
@@ -1641,6 +1681,28 @@ public class Game {
         gameResult.setGuestName(value);
         layout.setGuestName(value);
         preferences.setTeamName(GUEST, value);
+    }
+
+    private void resetHomeTeam() {
+        hTeam = null;
+        if (panels != null) {
+            if (leftIsHome) {
+                panels.resetLeftTeam();
+            } else {
+                panels.resetRightTeam();
+            }
+        }
+    }
+
+    private void resetGuestTeam() {
+        gTeam = null;
+        if (panels != null) {
+            if (leftIsHome) {
+                panels.resetRightTeam();
+            } else {
+                panels.resetLeftTeam();
+            }
+        }
     }
 
     public String getName(boolean left) {
@@ -1746,8 +1808,18 @@ public class Game {
                 panels = listener.onInitPanels();
             }
             layout.showPlayersButtons();
+            if (homeTeamSet()) {
+                setHomeTeam(hTeam);
+            }
+            if (guestTeamSet()) {
+                setGuestTeam(gTeam);
+            }
         } else {
             layout.hidePlayersButtons();
+            panels = null;
+            if (listener != null) {
+                listener.onDeletePanels();
+            }
         }
     }
 

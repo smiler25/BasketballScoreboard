@@ -28,7 +28,7 @@ public class HelpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
-        int layoutId = args != null ? args.getInt("layout", R.layout.help_main_fragment) : R.layout.help_main_fragment;
+        int layoutId = args != null ? args.getInt("layout", R.layout.scroll_text_view) : R.layout.scroll_text_view;
         View v = inflater.inflate(layoutId, container, false);
         if (args != null && layoutId == R.layout.help_panels_fragment) {
             panelsOn = (Switch) v.findViewById(R.id.help_panels_switch);

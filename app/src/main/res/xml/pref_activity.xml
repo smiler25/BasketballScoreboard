@@ -135,15 +135,10 @@
             >
         </PreferenceScreen>
 
-        <ListPreference
-            android:key="auto_save_results"
-            android:title="@string/pref_auto_save_save_results"
-            android:defaultValue="0"
-            android:summary="%s"
-            android:entries="@array/pref_auto_save_save_results_titles"
-            android:entryValues="@array/pref_values_0_2"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
+        <CheckBoxPreference
+            android:key="save_game_results"
+            android:title="@string/pref_save_game_results"
+            android:defaultValue="true" />
 
         <CheckBoxPreference
             android:key="auto_show_break"

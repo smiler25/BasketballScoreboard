@@ -7,9 +7,9 @@
     >
 
     <TextView
+        android:id="@+id/dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/dialog_title"
         android:text="@string/timeout_title"
         android:textSize="@dimen/dialog_title_font_size"
         android:gravity="center"
