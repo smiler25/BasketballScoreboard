@@ -1501,7 +1501,7 @@ public class Game {
             hName = preferences.hName;
         }
         if (gTeam != null) {
-            hName = gTeam.getName();
+            gName = gTeam.getName();
         } else if (gName == null || gName.equals("")) {
             gName = preferences.gName;
         }
@@ -1673,14 +1673,14 @@ public class Game {
         hName = value;
         gameResult.setHomeName(value);
         layout.setHomeName(value);
-        preferences.setTeamName(HOME, value);
+//        preferences.setTeamName(HOME, value);
     }
 
     private void setGuestName(String value) {
         gName = value;
         gameResult.setGuestName(value);
         layout.setGuestName(value);
-        preferences.setTeamName(GUEST, value);
+//        preferences.setTeamName(GUEST, value);
     }
 
     private void resetHomeTeam() {
@@ -1729,25 +1729,23 @@ public class Game {
         return gTeam != null;
     }
 
-    public boolean saveTeam(int team) {
-        String teamName;
-        if (team == HOME) {
-            hTeam = RealmController.with().createTeamAndGet(hName, true);
-            teamName = hTeam.getName();
+    public boolean saveTeam(int teamType) {
+        Team savedTeam;
+        if (teamType == HOME) {
+            hTeam = savedTeam = RealmController.with().createTeamAndGet(hName, true);
         } else {
-            gTeam = RealmController.with().createTeamAndGet(gName, true);
-            teamName = gTeam.getName();
+            gTeam = savedTeam = RealmController.with().createTeamAndGet(gName, true);
         }
 
         if (panels != null) {
             if (leftIsHome) {
-                panels.saveLeftPlayers();
+                panels.saveLeftPlayers(savedTeam);
             } else {
-                panels.saveRightPlayers();
+                panels.saveRightPlayers(savedTeam);
             }
         }
 
-        listener.onShowToast(R.string.toast_team_saved, Toast.LENGTH_SHORT, teamName);
+        listener.onShowToast(R.string.toast_team_saved, Toast.LENGTH_SHORT, savedTeam.getName());
         return true;
     }
 

@@ -69,6 +69,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import static com.smiler.basketball_scoreboard.Constants.GUEST;
+import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.OVERLAY_SWITCH;
 import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_CAMERA;
 import static com.smiler.basketball_scoreboard.Constants.PERMISSION_CODE_STORAGE;
@@ -542,8 +544,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showNewGameDialog() {
-        NewGameDialog.newInstance(preferences.autoSaveResults, !game.homeTeamSet(), !game.guestTeamSet())
-                .show(getFragmentManager(), NewGameDialog.TAG);
+        NewGameDialog dialog = NewGameDialog.newInstance(preferences.autoSaveResults, !game.homeTeamSet(), !game.guestTeamSet());
+        if (!game.homeTeamSet()) {
+            dialog.setHomeName(game.getName(HOME));
+        }
+        if (!game.guestTeamSet()) {
+            dialog.setGuestName(game.getName(GUEST));
+        }
+        dialog.show(getFragmentManager(), NewGameDialog.TAG);
     }
 
     private void showWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
@@ -1052,8 +1060,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onSaveTeam(int team) {
-        return game.saveTeam(team);
+    public boolean onSaveTeam(int teamType) {
+        return game.saveTeam(teamType);
     }
 
     @Override

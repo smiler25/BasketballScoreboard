@@ -319,12 +319,11 @@ public class PlayersPanels {
         rightPanel.confirmTeamPlayers(team);
     }
 
-    public void saveLeftPlayers() {
-        leftPanel.savePlayers();
+    public void saveLeftPlayers(Team team) {
+        leftPanel.savePlayers(team);
     }
 
-    public void saveRightPlayers() {
-        rightPanel.savePlayers();
+    public void saveRightPlayers(Team team) {
+        rightPanel.savePlayers(team);
     }
-
 }

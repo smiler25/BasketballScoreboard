@@ -156,8 +156,8 @@
 
     <string name="save_home_team">Сохранить команду хозяев</string>
     <string name="save_guest_team">Сохранить команду гостей</string>
-    <string name="save_home_team_names">Сохранить команду хозяев (%1$s)</string>
-    <string name="save_guest_team_names">Сохранить команду гостей (%1$s)</string>
+    <string name="save_home_team_with_name">Сохранить команду хозяев (%1$s)</string>
+    <string name="save_guest_team_with_name">Сохранить команду гостей (%1$s)</string>
 
     <string name="select_guest_team_selected">Выберите команду гостей: %1$s</string>
     <string name="select_home_team_selected">Выберите команду хозяев: %1$s</string>
