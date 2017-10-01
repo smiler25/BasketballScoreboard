@@ -93,7 +93,8 @@
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
         v.3.0:\n
-          - teams profiles (see help).\n
+          - teams profiles (see help);\n
+          - restoring side panels state.\n
         v.2.7:\n
           - streetball layout and rules (settings);\n
           - custom color for shot clock;\n

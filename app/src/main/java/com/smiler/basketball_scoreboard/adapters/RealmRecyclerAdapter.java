@@ -125,7 +125,9 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
     }
 
     public void deleteSelection() {
-        RealmController.with().deleteTeams(selectedIds.toArray(new Integer[selectedIds.size()]));
+        if (selectedIds.size() > 0) {
+            RealmController.with().deleteTeams(selectedIds.toArray(new Integer[selectedIds.size()]));
+        }
         selectedItem = null;
         selectedIds.clear();
         multiSelection = false;

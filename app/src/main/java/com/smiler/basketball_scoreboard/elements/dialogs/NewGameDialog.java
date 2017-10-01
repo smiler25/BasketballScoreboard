@@ -31,6 +31,7 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
     private static String askSaveGuestTeamKey = "askSaveGuestTeam";
     private boolean saveHomeAvail = true;
     private boolean saveGuestAvail = true;
+    private String hName, gName;
 
     public static NewGameDialog newInstance(boolean saveSelected, boolean askSaveHomeTeam,
                                             boolean askSaveGuestTeam) {
@@ -47,7 +48,15 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
         void onStartSameTeams(boolean saveResult);
         void onStartNewTeams(boolean saveResult, Team hTeam, Team gTeam);
         void onStartNoTeams(boolean saveResult);
-        boolean onSaveTeam(int team);
+        boolean onSaveTeam(int teamType);
+    }
+
+    public void setHomeName(String value) {
+        hName = value;
+    }
+
+    public void setGuestName(String value) {
+        gName = value;
     }
 
     @Override
@@ -79,6 +88,9 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
             View saveHomeTeamBu = v.findViewById(R.id.new_game_save_home_team);
             View saveGuestTeamBu = v.findViewById(R.id.new_game_save_guest_team);
             if (saveHomeAvail) {
+                if (hName != null && !hName.equals("")) {
+                    ((Button) saveHomeTeamBu).setText(String.format(getResources().getString(R.string.save_home_team_with_name), hName));
+                }
                 saveHomeTeamBu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -95,6 +107,9 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
                 saveHomeTeamBu.setVisibility(View.GONE);
             }
             if (saveGuestAvail) {
+                if (gName != null && !gName.equals("")) {
+                    ((Button) saveGuestTeamBu).setText(String.format(getResources().getString(R.string.save_guest_team_with_name), gName));
+                }
                 saveGuestTeamBu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

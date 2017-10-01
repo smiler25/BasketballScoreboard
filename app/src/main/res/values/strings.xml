@@ -58,8 +58,8 @@
 
     <string name="save_home_team">Save home team</string>
     <string name="save_guest_team">Save guest team</string>
-    <string name="save_home_team_names">Save home team (%1$s)</string>
-    <string name="save_guest_team_names">Save guest team (%1$s)</string>
+    <string name="save_home_team_with_name">Save home team (%1$s)</string>
+    <string name="save_guest_team_with_name">Save guest team (%1$s)</string>
 
     <string name="select_team">Select team</string>
     <string name="select_team_selected">Select team: %1$s</string>

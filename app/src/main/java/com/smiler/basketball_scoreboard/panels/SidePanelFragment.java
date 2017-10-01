@@ -451,9 +451,9 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         return true;
     }
 
-    public boolean savePlayers() {
-        // save only if team exists
-        if (rows.size() == 0 || team == null) {
+    public boolean savePlayers(Team team) {
+        this.team = team;
+        if (rows.size() == 0) {
             return true;
         }
 
@@ -477,6 +477,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
                     activePlayers.add(row);
                     row.toggleSelected();
                 }
+                rows.put(row.getId(), row);
             }
             listener.onSidePanelActiveSelected(activePlayers, left);
         } else {
