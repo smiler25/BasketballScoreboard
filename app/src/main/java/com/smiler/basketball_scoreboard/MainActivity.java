@@ -554,10 +554,8 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show(getFragmentManager(), NewGameDialog.TAG);
     }
 
-    private void showWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
-        ConfirmDialog dialog;
-        dialog = ConfirmDialog.newInstance(type, team, winScore, loseScore);
-        dialog.show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
+    private void showWinDialog(String team, int winScore, int loseScore) {
+        ConfirmDialog.newInstance(DialogTypes.GAME_END, team, winScore, loseScore).show(getFragmentManager(), TAG_FRAGMENT_CONFIRM);
     }
 
     private void showListDialog(DialogTypes type) {
@@ -708,12 +706,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfirmDialogPositive(DialogTypes type, boolean dontShow) {
-        preferences.setDontAskNewGame(dontShow ? 2 : 0);
-        initGame(false);
-    }
-
-    @Override
     public void onConfirmDialogPositive(DialogTypes type, int teamType) {
         if (type == DialogTypes.TEAM_ALREADY_SELECTED) {
             game.confirmSetTeam(teamType);
@@ -730,6 +722,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConfirmDialogPositive(DialogTypes type) {
         switch (type) {
+            case GAME_END:
+                showNewGameDialog();
+                break;
             case NEW_GAME:
             case RESULT_SAVE:
                 startNewGame(true);
@@ -742,14 +737,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfirmDialogNeutral(boolean dontShow) {
-        preferences.setDontAskNewGame(dontShow ? 2 : 0);
-        startNewGame(true);
-    }
-
-    @Override
-    public void onConfirmDialogNegative(DialogTypes type, boolean dontShow) {
-        preferences.setDontAskNewGame(dontShow ? 1 : 0);
+    public void onConfirmDialogNeutral() {
+        game.saveGame();
     }
 
     @Override
@@ -1009,8 +998,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onWinDialog(DialogTypes type, String team, int winScore, int loseScore) {
-        showWinDialog(type, team, winScore, loseScore);
+    public void onWinDialog(String team, int winScore, int loseScore) {
+        showWinDialog(team, winScore, loseScore);
     }
 
     @Override

@@ -43,10 +43,6 @@
     <string name="action_start_camera">Start camera</string>
     <string name="action_whats_new">What new</string>
 
-    <string name="confirm_new_neutral_option">Yes (Save result)</string>
-    <string name="confirm_new_game_message_win">Team %1$s won %2$d-%3$d.</string>
-    <string name="confirm_new_game_message_settings">Settings changed. Changes will take effect at the start of a new game.</string>
-
     <string name="team_home">Home team</string>
     <string name="team_guest">Guest team</string>
     <string name="team_toolbar">Team: %1$s</string>
@@ -55,6 +51,9 @@
     <string name="new_game_same_teams">New game with same teams</string>
     <string name="new_game_new_teams">New game with other teams</string>
     <string name="new_game_no_teams">New game without teams</string>
+    <string name="new_game_settings_changed">Settings changed. Changes will take effect at the start of a new game.</string>
+    <string name="game_end_dialog_neutral">No (Save result)</string>
+    <string name="game_end_message">Team %1$s won %2$d-%3$d.</string>
 
     <string name="save_home_team">Save home team</string>
     <string name="save_guest_team">Save guest team</string>

@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.CheckBox;
 
 import com.smiler.basketball_scoreboard.R;
 
@@ -15,7 +13,6 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
     private static String argType = "type";
     private static String argTeamType = "teamType";
     private DialogTypes type;
-    private CheckBox checkbox;
     private ConfirmDialogListener listener;
     private int teamType;
 
@@ -36,13 +33,13 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         return f;
     }
 
-    public static ConfirmDialog newInstance(DialogTypes type, String win_team, int win_score, int score2) {
+    public static ConfirmDialog newInstance(DialogTypes type, String winTeam, int winScore, int loseScore) {
         ConfirmDialog f = new ConfirmDialog();
         Bundle args = new Bundle();
         args.putSerializable(argType, type);
-        args.putString("team", win_team);
-        args.putInt("win_score", win_score);
-        args.putInt("score2", score2);
+        args.putString("winTeam", winTeam);
+        args.putInt("winScore", winScore);
+        args.putInt("loseScore", loseScore);
         f.setArguments(args);
         return f;
     }
@@ -56,37 +53,28 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         Bundle args = getArguments();
         type = (DialogTypes) args.get(argType);
 
-        int titleId;
         if (type != null) {
+            int titleId = R.string.action_confirm;
+            String title = "";
             String msg = "";
             switch (type) {
+                case GAME_END:
+                    String team = args.getString("winTeam", "");
+                    int winScore = args.getInt("winScore");
+                    int loseScore = args.getInt("loseScore");
+                    title = String.format(getResources().getString(R.string.game_end_message), team, winScore, loseScore);
+                    msg = getResources().getString(R.string.action_confirm_new_game);
+                    builder.setNeutralButton(R.string.game_end_dialog_neutral, this);
+                    break;
                 case NEW_GAME:
                     titleId = R.string.action_confirm_new_game;
-                    String team = args.getString("team", null);
-                    if (team != null) {
-                        int winScore = args.getInt("win_score");
-                        int score2 = args.getInt("score2");
-                        msg = String.format(getResources().getString(R.string.confirm_new_game_message_win),
-                                team, winScore, score2);
-
-                        View checkboxView = getActivity().getLayoutInflater().inflate(R.layout.confirm_dialog_checkbox, null);
-                        checkbox = (CheckBox) checkboxView.findViewById(R.id.confirm_checkbox);
-                        builder.setNeutralButton(R.string.confirm_new_neutral_option, this)
-                                .setView(checkboxView);
-                    } else {
-                        msg = getResources().getString(R.string.confirm_new_game_message_settings);
-                    }
+                    msg = getResources().getString(R.string.new_game_settings_changed);
                     break;
                 case RESULT_SAVE:
                     titleId = R.string.action_save_result;
                     break;
                 case EDIT_CAPTAIN:
                     titleId = R.string.edit_player_dialog_captain_confirm;
-                    break;
-                case SELECT_TEAM_CONFIRM:
-                    titleId = R.string.action_confirm_new_game;
-                    builder.setNeutralButton(R.string.confirm_new_neutral_option, this);
-//                    msg = getResources().getString(R.string.confirm_new_game_message_settings);
                     break;
                 case TEAM_ALREADY_SELECTED:
                     titleId = R.string.team_already_selected;
@@ -98,11 +86,12 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                     msg = getResources().getString(R.string.team_few_players_dialog_msg);
                     teamType = args.getInt(argTeamType);
                     break;
-                default:
-                    titleId = R.string.action_confirm;
-                    break;
             }
-            builder.setTitle(titleId);
+            if (title != null && !title.equals("")) {
+                builder.setTitle(title);
+            } else {
+                builder.setTitle(titleId);
+            }
             if (!msg.equals("")) {
                 builder.setMessage(msg);
             }
@@ -113,11 +102,9 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
     public interface ConfirmDialogListener {
         void onConfirmDialogPositive(DialogTypes type);
         void onConfirmDialogPositive(DialogTypes type, int teamType);
-        void onConfirmDialogPositive(DialogTypes type, boolean dontShow);
-        void onConfirmDialogNegative(DialogTypes type, int teamType);
-        void onConfirmDialogNegative(DialogTypes type, boolean dontShow);
         void onConfirmDialogNegative(DialogTypes type);
-        void onConfirmDialogNeutral(boolean dontShow);
+        void onConfirmDialogNegative(DialogTypes type, int teamType);
+        void onConfirmDialogNeutral();
     }
 
     @Override
@@ -134,34 +121,26 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
-                if (checkbox != null) {
-                    listener.onConfirmDialogPositive(type, checkbox.isChecked());
-                } else {
-                    switch (type) {
-                        case TEAM_ALREADY_SELECTED:
-                        case TEAM_PLAYERS_FEW:
-                            listener.onConfirmDialogPositive(type, teamType);
-                            break;
-                        default:
-                            listener.onConfirmDialogPositive(type);
-                    }
+                switch (type) {
+                    case TEAM_ALREADY_SELECTED:
+                    case TEAM_PLAYERS_FEW:
+                        listener.onConfirmDialogPositive(type, teamType);
+                        break;
+                    default:
+                        listener.onConfirmDialogPositive(type);
                 }
                 break;
             case Dialog.BUTTON_NEUTRAL:
-                listener.onConfirmDialogNeutral(checkbox.isChecked());
+                listener.onConfirmDialogNeutral();
                 break;
             case Dialog.BUTTON_NEGATIVE:
-                if (checkbox != null) {
-                        listener.onConfirmDialogNegative(type, checkbox.isChecked());
-                } else {
-                    switch (type) {
-                        case TEAM_ALREADY_SELECTED:
-                        case TEAM_PLAYERS_FEW:
-                            listener.onConfirmDialogNegative(type, teamType);
-                            break;
-                        default:
-                            listener.onConfirmDialogNegative(type);
-                    }
+                switch (type) {
+                    case TEAM_ALREADY_SELECTED:
+                    case TEAM_PLAYERS_FEW:
+                        listener.onConfirmDialogNegative(type, teamType);
+                        break;
+                    default:
+                        listener.onConfirmDialogNegative(type);
                 }
                 break;
         }

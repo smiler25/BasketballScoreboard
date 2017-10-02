@@ -48,9 +48,9 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
 
-    <string name="confirm_new_game_message_settings">Настройки изменились. Изменения вступят в силу при старте новой игры.</string>
-    <string name="confirm_new_game_message_win">Команда %1$s выиграла со счетом %2$d-%3$d.</string>
-    <string name="confirm_new_neutral_option">Да (Сохранить результат)</string>
+    <string name="new_game_settings_changed">Настройки изменились. Изменения вступят в силу при старте новой игры.</string>
+    <string name="game_end_message">Команда %1$s выиграла со счетом %2$d-%3$d.</string>
+    <string name="game_end_dialog_neutral">Нет (Сохранить результат)</string>
 
     <string name="edit_name">Введите название</string>
     <string name="edit_home_name">Введите название команды хозяев</string>

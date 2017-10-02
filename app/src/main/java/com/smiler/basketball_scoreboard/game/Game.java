@@ -126,7 +126,7 @@ public class Game {
         void onShowToast(int resId, int len);
         void onShowToast(int resId, int len, Object... args);
         void onSwitchSides(boolean show);
-        void onWinDialog(DialogTypes type, String team, int winScore, int loseScore);
+        void onWinDialog(String team, int winScore, int loseScore);
     }
 
     public static Game newGame(Context context, GameListener listener, BaseLayout layout, boolean restore) {
@@ -460,9 +460,9 @@ public class Game {
     private void showDialog(DialogTypes type, boolean win) {
         if (win) {
             if (hScore > gScore) {
-                listener.onWinDialog(type, hName, hScore, gScore);
+                listener.onWinDialog(hName, hScore, gScore);
             } else {
-                listener.onWinDialog(type, gName, gScore, hScore);
+                listener.onWinDialog(gName, gScore, hScore);
             }
         } else {
             listener.onConfirmDialog(type);
@@ -1146,7 +1146,7 @@ public class Game {
             layout.setPeriod(Short.toString(period), true);
         } else {
             mainTime = totalTime = preferences.overTimePref;
-            layout.setPeriod(Short.toString(period), false);
+            layout.setPeriod(Integer.toString(period - preferences.numRegularPeriods), false);
         }
         if (preferences.useDirectTimer) {
             mainTime = 0;
