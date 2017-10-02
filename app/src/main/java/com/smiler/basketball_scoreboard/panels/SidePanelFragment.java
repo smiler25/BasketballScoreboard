@@ -182,7 +182,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.left_panel_add_auto:
             case R.id.right_panel_add_auto:
-                restoreCurrentData();
+                restoreCurrentData(false);
                 return true;
         }
         return false;
@@ -207,7 +207,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         if (team != null) {
             addPlayersRows(getActivity());
         } else if (shouldRestore) {
-            restoreCurrentData();
+            restoreCurrentData(true);
         }
         return true;
     }
@@ -465,7 +465,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         RealmController.with().deletePlayerResults(-1);
     }
 
-    private void restoreCurrentData() {
+    private void restoreCurrentData(boolean silent) {
         clear(true);
         RealmResults<PlayersResults> players = RealmController.with().getPlayers(-1, Boolean.toString(left));
         if (players.size() > 0) {
@@ -480,7 +480,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
                 rows.put(row.getId(), row);
             }
             listener.onSidePanelActiveSelected(activePlayers, left);
-        } else {
+        } else if (!silent){
             Toast.makeText(getActivity(), getResources().getString(R.string.sp_no_saved_data), Toast.LENGTH_LONG).show();
         }
     }

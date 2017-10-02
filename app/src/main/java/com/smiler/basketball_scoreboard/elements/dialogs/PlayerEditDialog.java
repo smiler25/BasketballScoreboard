@@ -174,12 +174,20 @@ public class PlayerEditDialog extends DialogFragment {
 
     private void apply() {
         if (inGame) {
+            if (listenerInGame == null) {
+                Toast.makeText(getActivity(), R.string.edit_player_dialog_error, Toast.LENGTH_LONG).show();
+                return;
+            }
             if (edit) {
                 listenerInGame.onEditPlayerInGame(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             } else {
                 listenerInGame.onAddPlayerInGame(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             }
         } else {
+            if (listenerInGame == null) {
+                Toast.makeText(getActivity(), R.string.edit_player_dialog_error, Toast.LENGTH_LONG).show();
+                return;
+            }
             if (edit) {
                 listener.onEditPlayer(teamId, playerId, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             } else {
