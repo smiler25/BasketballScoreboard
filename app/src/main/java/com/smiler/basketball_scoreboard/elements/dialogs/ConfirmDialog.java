@@ -73,7 +73,7 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
                 case RESULT_SAVE:
                     titleId = R.string.action_save_result;
                     break;
-                case EDIT_CAPTAIN:
+                case CAPTAIN_ALREADY_ASSIGNED:
                     titleId = R.string.edit_player_dialog_captain_confirm;
                     break;
                 case TEAM_ALREADY_SELECTED:
@@ -113,8 +113,13 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         try {
             listener = (ConfirmDialogListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement ConfirmDialogListener");
+//            throw new ClassCastException(activity.toString() + " must implement ConfirmDialogListener");
         }
+    }
+
+    public ConfirmDialog setListener(ConfirmDialogListener listener) {
+        this.listener = listener;
+        return this;
     }
 
     @Override

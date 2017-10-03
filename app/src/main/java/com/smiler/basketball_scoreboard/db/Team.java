@@ -101,4 +101,27 @@ public class Team extends RealmObject {
     public ArrayList<Player> getGamePlayers() {
         return gamePlayers;
     }
+
+    public Player getCaptain() {
+        if (players.size() == 0) {
+            return null;
+        }
+        for (Player player : players) {
+            if (player.getCaptain()) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public void cancelCaptain() {
+        if (players.size() == 0) {
+            return;
+        }
+        for (Player player : players) {
+            if (player.getCaptain()) {
+                player.setCaptain(false);
+            }
+        }
+    }
 }

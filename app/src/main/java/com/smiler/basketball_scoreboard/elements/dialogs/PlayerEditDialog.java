@@ -84,9 +84,9 @@ public class PlayerEditDialog extends DialogFragment {
     }
 
     public interface EditPlayerListener {
-        void onAddPlayer(int teamId, int number, String name, boolean captain);
-        void onEditPlayer(int teamId, int playerId, int number, String name, boolean captain);
-        void onDeletePlayer(int playerId);
+        boolean onAddPlayer(int teamId, int number, String name, boolean captain);
+        boolean onEditPlayer(int teamId, int playerId, int number, String name, boolean captain);
+        boolean onDeletePlayer(int playerId);
     }
 
     public PlayerEditDialog setListener(EditPlayerListener listener) {
@@ -172,26 +172,27 @@ public class PlayerEditDialog extends DialogFragment {
         return builder.create();
     }
 
-    private void apply() {
+    private boolean apply() {
         if (inGame) {
             if (listenerInGame == null) {
                 Toast.makeText(getActivity(), R.string.edit_player_dialog_error, Toast.LENGTH_LONG).show();
-                return;
+                return true;
             }
             if (edit) {
                 listenerInGame.onEditPlayerInGame(left, id, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             } else {
                 listenerInGame.onAddPlayerInGame(left, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             }
+            return true;
         } else {
-            if (listenerInGame == null) {
+            if (listener == null) {
                 Toast.makeText(getActivity(), R.string.edit_player_dialog_error, Toast.LENGTH_LONG).show();
-                return;
+                return true;
             }
             if (edit) {
-                listener.onEditPlayer(teamId, playerId, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+                return listener.onEditPlayer(teamId, playerId, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             } else {
-                listener.onAddPlayer(teamId, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
+                return listener.onAddPlayer(teamId, Integer.parseInt(numberView.getText().toString()), nameView.getText().toString(), captainView.isChecked());
             }
         }
     }
@@ -218,7 +219,7 @@ public class PlayerEditDialog extends DialogFragment {
         if (status == 1 || status == 3) {
             Toast.makeText(getActivity(), getResources().getString(R.string.edit_player_dialog_number_warning), Toast.LENGTH_LONG).show();
         } else if (status == 2) {
-            ConfirmDialog.newInstance(DialogTypes.EDIT_CAPTAIN).show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
+            ConfirmDialog.newInstance(DialogTypes.CAPTAIN_ALREADY_ASSIGNED).show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
 
         }
         return status == 0;

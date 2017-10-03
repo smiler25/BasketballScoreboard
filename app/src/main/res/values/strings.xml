@@ -176,7 +176,7 @@
     <string name="edit_player_dialog_name">Name</string>
     <string name="edit_player_dialog_number">Number</string>
     <string name="edit_player_dialog_captain">Captain</string>
-    <string name="edit_player_dialog_captain_confirm">Captain already assigned. Change?</string>
+    <string name="edit_player_dialog_captain_confirm">Captain already assigned. Replace?</string>
     <string name="edit_player_dialog_number_warning">Number already assigned</string>
     <string name="edit_player_dialog_number_required">Number required</string>
     <string name="edit_player_dialog_error">An error has occurred. Can\'t save player</string>

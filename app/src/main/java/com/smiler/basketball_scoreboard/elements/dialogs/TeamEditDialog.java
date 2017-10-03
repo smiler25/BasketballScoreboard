@@ -133,7 +133,7 @@ public class TeamEditDialog extends DialogFragment {
 //        if (status == 1 || status == 3) {
 //            Toast.makeText(getActivity(), getResources().getString(R.string.edit_player_dialog_number_warning), Toast.LENGTH_LONG).show();
 //        } else if (status == 2) {
-//            ConfirmDialog.newInstance(DialogTypes.EDIT_CAPTAIN).show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
+//            ConfirmDialog.newInstance(DialogTypes.CAPTAIN_ALREADY_ASSIGNED).show(getFragmentManager(), Constants.TAG_FRAGMENT_CONFIRM);
 //
 //        }
 //        return status == 0;

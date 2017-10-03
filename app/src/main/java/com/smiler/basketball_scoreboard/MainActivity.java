@@ -729,7 +729,7 @@ public class MainActivity extends AppCompatActivity implements
             case RESULT_SAVE:
                 startNewGame(true);
                 break;
-            case EDIT_CAPTAIN:
+            case CAPTAIN_ALREADY_ASSIGNED:
                 PlayerEditDialog f = (PlayerEditDialog) getFragmentManager().findFragmentByTag(PlayerEditDialog.TAG);
                 if (f != null) {f.changeCaptainConfirmed();}
                 break;

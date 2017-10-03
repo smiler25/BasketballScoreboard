@@ -1,5 +1,6 @@
 package com.smiler.basketball_scoreboard.profiles;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import io.realm.RealmResults;
 
 class TeamsRealmRecyclerAdapter extends RealmRecyclerAdapter {
     protected final RealmResults<Team> data;
+    private String TAG = "BS-RealmRecyclerAdapter";
 
     TeamsRealmRecyclerAdapter(RealmResults<Team> data) {
         super();
@@ -36,6 +38,11 @@ class TeamsRealmRecyclerAdapter extends RealmRecyclerAdapter {
 
     @Override
     public int getItemCount() {
-        return data.size();
+        try {
+            return data.size();
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Error getting size data size");
+            return 0;
+        }
     }
 }

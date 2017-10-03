@@ -40,7 +40,6 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>, 
     public SidePanelRow(Context context, Player dbRecord, boolean left) {
         super(context);
         this.left = left;
-        this.left = left;
         createView(context);
         player = new InGamePlayer(dbRecord);
         setFromDb();

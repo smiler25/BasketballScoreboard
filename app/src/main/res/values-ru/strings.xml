@@ -85,7 +85,7 @@
     <string name="edit_player_dialog_number">Номер</string>
     <string name="edit_player_dialog_number_warning">Номер уже занят</string>
     <string name="edit_player_dialog_captain">Капитан</string>
-    <string name="edit_player_dialog_captain_confirm">Капитан уже назначен. Изменить?</string>
+    <string name="edit_player_dialog_captain_confirm">Капитан уже назначен. Заменить?</string>
     <string name="edit_player_dialog_number_required">Номер обязателен</string>
 
     <string name="timeout_format_1">%1$d-минутный перерыв</string>

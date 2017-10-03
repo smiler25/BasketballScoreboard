@@ -1,5 +1,6 @@
 package com.smiler.basketball_scoreboard.db;
 
+import com.smiler.basketball_scoreboard.exceptions.CaptainAlreadyAssignedException;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 
 import io.realm.Realm;
@@ -167,15 +168,27 @@ public class RealmController {
         return getTeam(createTeam(name, active));
     }
 
-    public Player createPlayer(int teamId, final int number, final String name, final boolean captain) {
+    public Player createPlayer(int teamId, final int number, final String name,
+                               final boolean isCaptain, final boolean replaceCaptain) throws CaptainAlreadyAssignedException {
         final Team team = realm.where(Team.class).equalTo("id", teamId).findFirst();
+        if (isCaptain) {
+            Player captain = team.getCaptain();
+            if (captain != null) {
+                if (!replaceCaptain) {
+                    throw new CaptainAlreadyAssignedException();
+                }
+            }
+        }
         Number lastId = realm.where(Player.class).max("id");
         final long nextId = lastId != null ? (long) lastId + 1 : 0;
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                if (replaceCaptain) {
+                    team.cancelCaptain();
+                }
                 Player player = realm.createObject(Player.class, nextId);
-                player.setName(name).setNumber(number).setCaptain(captain).setTeam(team);
+                player.setName(name).setNumber(number).setCaptain(isCaptain).setTeam(team);
                 team.addPlayer(player);
             }
         });
