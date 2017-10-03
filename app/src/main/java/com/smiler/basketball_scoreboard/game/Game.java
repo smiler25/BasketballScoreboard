@@ -103,6 +103,7 @@ public class Game {
     private long mainTickInterval = SECOND;
     private long shotTickInterval = SECOND;
     private boolean changedUnder2Minutes = false;
+    public boolean gameSaved = false;
     private boolean scoreSaved = false;
     private ActionRecord lastAction;
     private int timesTie = 1, timesLeadChanged = 0;
@@ -154,6 +155,7 @@ public class Game {
         } else {
             clearSavedState();
         }
+        gameSaved = false;
     }
 
     private void init(Context context) {
@@ -514,7 +516,7 @@ public class Game {
         clearSavedState();
     }
 
-    private void save() {
+    private void savePeriod() {
         if (!scoreSaved) {
             // возможно, надо учитывать сброс периода
             if (period > 0 && gameResult.getHomeScoreByPeriod().size() == period) {
@@ -623,8 +625,9 @@ public class Game {
     }
 
     public void saveGame() {
-        save();
+        savePeriod();
         saveDb();
+        gameSaved = true;
     }
 
     public String getShareString() {
@@ -960,7 +963,7 @@ public class Game {
             shotTimer.cancel();
             layout.setShotTimeText(0);
         }
-        save();
+        savePeriod();
 
         switch (preferences.layoutType) {
             case STREETBALL:
@@ -1122,7 +1125,7 @@ public class Game {
             nullFouls();
         }
         setTimeouts();
-        save();
+        savePeriod();
         scoreSaved = false;
     }
 

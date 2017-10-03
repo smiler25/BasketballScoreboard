@@ -27,17 +27,20 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
     private Button hSelector, gSelector;
     private Team hSelectedTeam, gSelectedTeam;
     private View saveButtons, saveTeamsToggle;
+    private static String argSaveEnabled = "saveEnabled";
+    private static String argSaveSelected = "saveSelected";
     private static String askSaveHomeTeamKey = "askSaveHomeTeam";
     private static String askSaveGuestTeamKey = "askSaveGuestTeam";
     private boolean saveHomeAvail = true;
     private boolean saveGuestAvail = true;
     private String hName, gName;
 
-    public static NewGameDialog newInstance(boolean saveSelected, boolean askSaveHomeTeam,
-                                            boolean askSaveGuestTeam) {
+    public static NewGameDialog newInstance(boolean saveEnabled, boolean saveSelected,
+                                            boolean askSaveHomeTeam, boolean askSaveGuestTeam) {
         NewGameDialog f = new NewGameDialog();
         Bundle args = new Bundle();
-        args.putBoolean("saveSelected", saveSelected);
+        args.putBoolean(argSaveEnabled, saveEnabled);
+        args.putBoolean(argSaveSelected, saveSelected);
         args.putBoolean(askSaveHomeTeamKey, askSaveHomeTeam);
         args.putBoolean(askSaveGuestTeamKey, askSaveGuestTeam);
         f.setArguments(args);
@@ -79,8 +82,12 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_new_game, null);
         builder.setView(v).setCancelable(true);
-        saveCheckBox = (CheckBox) v.findViewById(R.id.new_game_save);
-        saveCheckBox.setChecked(args.getBoolean("saveSelected", true));
+        saveCheckBox = v.findViewById(R.id.new_game_save);
+        if (args.getBoolean(argSaveEnabled, true)) {
+            saveCheckBox.setChecked(args.getBoolean(argSaveSelected, true));
+        } else {
+            saveCheckBox.setVisibility(View.GONE);
+        }
         saveButtons = v.findViewById(R.id.save_teams_buttons);
         saveTeamsToggle = v.findViewById(R.id.new_game_save_teams);
 
@@ -155,8 +162,8 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
             }
         });
 
-        hSelector = (Button) v.findViewById(R.id.new_game_select_first_team);
-        gSelector = (Button) v.findViewById(R.id.new_game_select_second_team);
+        hSelector = v.findViewById(R.id.new_game_select_first_team);
+        gSelector = v.findViewById(R.id.new_game_select_second_team);
         hSelector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -544,7 +544,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showNewGameDialog() {
-        NewGameDialog dialog = NewGameDialog.newInstance(preferences.autoSaveResults, !game.homeTeamSet(), !game.guestTeamSet());
+        NewGameDialog dialog = NewGameDialog.newInstance(!game.gameSaved, preferences.autoSaveResults,
+                !game.homeTeamSet(), !game.guestTeamSet());
         if (!game.homeTeamSet()) {
             dialog.setHomeName(game.getName(HOME));
         }

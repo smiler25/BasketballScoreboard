@@ -87,8 +87,8 @@ public class Team extends RealmObject {
                 totalOpp += game.getFirstScore();
             }
         }
-        avgPoints = (total + score) / games.size();
-        avgPointsOpp = (totalOpp + scoreOpp) / games.size();
+        avgPoints = total / games.size();
+        avgPointsOpp = totalOpp / games.size();
     }
 
     public float getAvgPointsOpp() {

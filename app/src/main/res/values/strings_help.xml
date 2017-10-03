@@ -86,7 +86,7 @@
         When changing score or foul click on player button to apply the action to the player.\n
         Substitution active players can be either through the panel, or after long pressing on the button of the player.\n
         \n
-        * Currently, automatic data recovery players panels not working. So you have to do it manually by long pressing the button automatic adding multiple players.
+        There is automatic data recovery players panels. Also you can do this by long pressing the button automatic adding multiple players.
     </string>
 
     <string name="appupdate_title">Update info</string>

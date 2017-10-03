@@ -38,7 +38,7 @@ class ResultViewDetail extends DetailViewExpandable {
             val = entry.getValue();
             parts.add(String.format("%s: %s", strings.containsKey(key) ? strings.get(key) : key, val));
         }
-        info.setText(TextUtils.join("; ", parts));
+        info.setText(TextUtils.join("\n", parts));
         return info;
     }
 }
