@@ -92,6 +92,8 @@
     <string name="appupdate_title">Информация об обновлении</string>
     <string name="appupdate_info_link_help">справке</string>
     <string name="appupdate_info">
+        v.3.0.1:\n
+          - исправлена ошибка в результатах при широком макете.\n
         v.3.0:\n
           - профили команд (подробности в справке);\n
           - восстановление состояния боковых панелей.\n
