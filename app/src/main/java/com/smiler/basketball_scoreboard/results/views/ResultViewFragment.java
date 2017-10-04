@@ -1,14 +1,14 @@
 package com.smiler.basketball_scoreboard.results.views;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.smiler.basketball_scoreboard.R;
+import com.smiler.basketball_scoreboard.elements.ReattachedFragment;
 
-public class ResultViewFragment extends Fragment {
+public class ResultViewFragment extends ReattachedFragment {
     public static String TAG = "BS-ResultViewFragment";
     private static final String gameId = "gameId";
     private ViewGroup view;

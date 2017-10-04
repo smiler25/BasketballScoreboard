@@ -16,7 +16,7 @@ public class Result {
     private ArrayList<Integer> hScorePeriods = new ArrayList<>();
     private ArrayList<Integer> gScorePeriods = new ArrayList<>();
     private Stack<ActionRecord> play_by_play = new Stack<>();
-    private JSONArray play_by_play_by_period= new JSONArray();
+    private JSONArray play_by_play_by_period = new JSONArray();
 
     private boolean complete;
     private long date;
@@ -114,10 +114,6 @@ public class Result {
         return TextUtils.join("-", gScorePeriods);
     }
 
-    public String getPlayByPlayString() {
-        return TextUtils.join("-", play_by_play);
-    }
-
     public String getResultString(boolean ot) {
         String result =  String.format("%s - %s: %d - %d", hName, gName, hScore, gScore);
         if (hScorePeriods.isEmpty()) { return result; }
@@ -136,12 +132,6 @@ public class Result {
 
     public int getNumRegular() {
         return numRegular;
-    }
-
-    public ActionRecord addAction(long time, int type, int team, int number, int value) {
-        ActionRecord record = new ActionRecord(time, type, team, number, value);
-        play_by_play.push(record);
-        return record;
     }
 
     public ActionRecord addAction(long time, int type, int team, int value) {

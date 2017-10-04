@@ -151,4 +151,7 @@ public class TeamViewFragment extends ReattachedFragment implements
 
     @Override
     public void onConfirmDialogNeutral() {}
+
+    public void clear() {
+    }
 }

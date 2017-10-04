@@ -226,11 +226,11 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     }
 
     private StandardLayout init() {
-        mainTimeView = (TextView) findViewById(R.id.mainTimeView);
-        hScoreView = (TextView) findViewById(R.id.leftScoreView);
-        gScoreView = (TextView) findViewById(R.id.rightScoreView);
-        hNameView = (TextView) findViewById(R.id.leftNameView);
-        gNameView = (TextView) findViewById(R.id.rightNameView);
+        mainTimeView = findViewById(R.id.mainTimeView);
+        hScoreView = findViewById(R.id.leftScoreView);
+        gScoreView = findViewById(R.id.rightScoreView);
+        hNameView = findViewById(R.id.leftNameView);
+        gNameView = findViewById(R.id.rightNameView);
 
         mainTimeView.setOnClickListener(this);
         mainTimeView.setOnLongClickListener(this);
@@ -254,12 +254,12 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     }
 
     private void initExtended() {
-        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
+        ViewStub stub = findViewById(R.id.bottom_line_stub);
         stub.setLayoutResource(preferences.timeoutRules == Rules.TO_RULES.NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
         stub.inflate();
 
-        shotTimeView = (TextView) findViewById(R.id.shotTimeView);
-        shotTimeSwitchView = (TextView) findViewById(R.id.shotTimeSwitch);
+        shotTimeView = findViewById(R.id.shotTimeView);
+        shotTimeSwitchView = findViewById(R.id.shotTimeSwitch);
         if (preferences.enableShotTime) {
             shotTimeView.setOnClickListener(this);
             shotTimeView.setOnLongClickListener(this);
@@ -274,7 +274,7 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             }
         }
 
-        periodView = (TextView) findViewById(R.id.periodView);
+        periodView = findViewById(R.id.periodView);
         periodView.setOnClickListener(this);
         periodView.setOnLongClickListener(this);
 
@@ -283,14 +283,14 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     }
 
     private void initSimple() {
-        ImageView startNewPeriodView = (ImageView) findViewById(R.id.newPeriodIconView);
+        ImageView startNewPeriodView = findViewById(R.id.newPeriodIconView);
         startNewPeriodView.setOnClickListener(this);
         preferences.enableShotTime = false;
     }
 
     private void initFouls() {
-        hFoulsView = (TextView) findViewById(R.id.leftFoulsView);
-        gFoulsView = (TextView) findViewById(R.id.rightFoulsView);
+        hFoulsView = findViewById(R.id.leftFoulsView);
+        gFoulsView = findViewById(R.id.rightFoulsView);
         hFoulsView.setOnClickListener(this);
         gFoulsView.setOnClickListener(this);
         hFoulsView.setOnLongClickListener(this);
@@ -298,8 +298,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     }
 
     private void initTimeouts() {
-        hTimeoutsView = (TextView) findViewById(R.id.leftTimeoutsView);
-        gTimeoutsView = (TextView) findViewById(R.id.rightTimeoutsView);
+        hTimeoutsView = findViewById(R.id.leftTimeoutsView);
+        gTimeoutsView = findViewById(R.id.rightTimeoutsView);
         hTimeoutsView.setOnClickListener(this);
         gTimeoutsView.setOnClickListener(this);
         hTimeoutsView.setOnLongClickListener(this);
@@ -308,8 +308,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             ((TextView) findViewById(R.id.leftTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
             ((TextView) findViewById(R.id.rightTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
         } else if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
-            hTimeouts20View = (TextView) findViewById(R.id.leftTimeouts20View);
-            gTimeouts20View = (TextView) findViewById(R.id.rightTimeouts20View);
+            hTimeouts20View = findViewById(R.id.leftTimeouts20View);
+            gTimeouts20View = findViewById(R.id.rightTimeouts20View);
             hTimeouts20View.setOnClickListener(this);
             hTimeouts20View.setOnLongClickListener(this);
             gTimeouts20View.setOnClickListener(this);
@@ -369,8 +369,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
 
     private void initPlayersButtons() {
         try {
-            ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
-            ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
+            ViewStub leftPlayersStub = findViewById(R.id.left_panel_stub);
+            ViewStub rightPlayersStub = findViewById(R.id.right_panel_stub);
             leftPlayersStub.setLayoutResource(R.layout.sp_left_buttons);
             leftPlayersStub.inflate();
             rightPlayersStub.setLayoutResource(R.layout.sp_right_buttons);
@@ -378,13 +378,13 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             findViewById(R.id.left_panel_toggle).setOnClickListener(this);
             findViewById(R.id.right_panel_toggle).setOnClickListener(this);
 
-            leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
+            leftPlayersButtonsGroup = findViewById(R.id.left_panel);
             leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
             for (View bu : leftPlayersButtons) {
                 attachLeftButton(bu);
             }
 
-            rightPlayersButtonsGroup = (ViewGroup) findViewById(R.id.right_panel);
+            rightPlayersButtonsGroup = findViewById(R.id.right_panel);
             rightPlayersButtons = getAllButtons(rightPlayersButtonsGroup);
             for (View bu : rightPlayersButtons) {
                 attachRightButton(bu);
@@ -396,8 +396,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
 
     private void initArrows() {
         try {
-            leftArrow = (TriangleView) findViewById(R.id.leftArrowView);
-            rightArrow = (TriangleView) findViewById(R.id.rightArrowView);
+            leftArrow = findViewById(R.id.leftArrowView);
+            rightArrow = findViewById(R.id.rightArrowView);
             leftArrow.setOnClickListener(this);
             rightArrow.setOnClickListener(this);
             leftArrow.setOnLongClickListener(this);

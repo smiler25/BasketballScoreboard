@@ -181,7 +181,7 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
     }
 
     private StreetballLayout init() {
-        ViewStub stub = (ViewStub) findViewById(R.id.bottom_line_stub);
+        ViewStub stub = findViewById(R.id.bottom_line_stub);
         stub.setLayoutResource(R.layout.bottom_line_3x3);
         stub.inflate();
 
@@ -201,8 +201,8 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
     }
 
     private void initScores() {
-        hScoreView = (TextView) findViewById(R.id.leftScoreView);
-        gScoreView = (TextView) findViewById(R.id.rightScoreView);
+        hScoreView = findViewById(R.id.leftScoreView);
+        gScoreView = findViewById(R.id.rightScoreView);
         hScoreView.setOnClickListener(this);
         hScoreView.setOnLongClickListener(this);
         gScoreView.setOnClickListener(this);
@@ -210,7 +210,7 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
     }
 
     private void initTimes() {
-        shotTimeView = (TextView) findViewById(R.id.shotTimeView);
+        shotTimeView = findViewById(R.id.shotTimeView);
         if (preferences.enableShotTime) {
             shotTimeView.setOnClickListener(this);
             shotTimeView.setOnLongClickListener(this);
@@ -221,14 +221,14 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
                 Log.e(TAG, "shotTimeView is null");
             }
         }
-        mainTimeView = (TextView) findViewById(R.id.mainTimeView);
+        mainTimeView = findViewById(R.id.mainTimeView);
         mainTimeView.setOnClickListener(this);
         mainTimeView.setOnLongClickListener(this);
     }
 
     private void initNames() {
-        hNameView = (TextView) findViewById(R.id.leftNameView);
-        gNameView = (TextView) findViewById(R.id.rightNameView);
+        hNameView = findViewById(R.id.leftNameView);
+        gNameView = findViewById(R.id.rightNameView);
         hNameView.setOnClickListener(this);
         hNameView.setOnLongClickListener(this);
         gNameView.setOnClickListener(this);
@@ -243,8 +243,8 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
     }
 
     private void initFouls() {
-        hFoulsView = (TextView) findViewById(R.id.leftFoulsView);
-        gFoulsView = (TextView) findViewById(R.id.rightFoulsView);
+        hFoulsView = findViewById(R.id.leftFoulsView);
+        gFoulsView = findViewById(R.id.rightFoulsView);
         hFoulsView.setOnClickListener(this);
         gFoulsView.setOnClickListener(this);
         hFoulsView.setOnLongClickListener(this);
@@ -252,8 +252,8 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
     }
 
     private void initTimeouts() {
-        hTimeoutsView = (TextView) findViewById(R.id.leftTimeoutsView);
-        gTimeoutsView = (TextView) findViewById(R.id.rightTimeoutsView);
+        hTimeoutsView = findViewById(R.id.leftTimeoutsView);
+        gTimeoutsView = findViewById(R.id.rightTimeoutsView);
         hTimeoutsView.setOnClickListener(this);
         gTimeoutsView.setOnClickListener(this);
         hTimeoutsView.setOnLongClickListener(this);
@@ -303,8 +303,8 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
 
     private void initPlayersButtons() {
         try {
-            ViewStub leftPlayersStub = (ViewStub) findViewById(R.id.left_panel_stub);
-            ViewStub rightPlayersStub = (ViewStub) findViewById(R.id.right_panel_stub);
+            ViewStub leftPlayersStub = findViewById(R.id.left_panel_stub);
+            ViewStub rightPlayersStub = findViewById(R.id.right_panel_stub);
             leftPlayersStub.setLayoutResource(R.layout.sp_left_buttons_3x3);
             leftPlayersStub.inflate();
             rightPlayersStub.setLayoutResource(R.layout.sp_right_buttons_3x3);
@@ -312,13 +312,13 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
             findViewById(R.id.left_panel_toggle).setOnClickListener(this);
             findViewById(R.id.right_panel_toggle).setOnClickListener(this);
 
-            leftPlayersButtonsGroup = (ViewGroup) findViewById(R.id.left_panel);
+            leftPlayersButtonsGroup = findViewById(R.id.left_panel);
             leftPlayersButtons = getAllButtons(leftPlayersButtonsGroup);
             for (View bu : leftPlayersButtons) {
                 attachLeftButton(bu);
             }
 
-            rightPlayersButtonsGroup = (ViewGroup) findViewById(R.id.right_panel);
+            rightPlayersButtonsGroup = findViewById(R.id.right_panel);
             rightPlayersButtons = getAllButtons(rightPlayersButtonsGroup);
             for (View bu : rightPlayersButtons) {
                 attachRightButton(bu);
@@ -330,8 +330,8 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
 
     private void initArrows() {
         try {
-            leftArrow = (TriangleView) findViewById(R.id.leftArrowView);
-            rightArrow = (TriangleView) findViewById(R.id.rightArrowView);
+            leftArrow = findViewById(R.id.leftArrowView);
+            rightArrow = findViewById(R.id.rightArrowView);
             leftArrow.setOnClickListener(this);
             rightArrow.setOnClickListener(this);
             leftArrow.setOnLongClickListener(this);

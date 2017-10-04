@@ -25,12 +25,12 @@ android {
         applicationId "com.smiler.scoreboard"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 27
-        versionName "3.0"
+        versionCode 28
+        versionName "3.0.1"
     }
     buildTypes {
         release {
-            shrinkResources true
+            shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config

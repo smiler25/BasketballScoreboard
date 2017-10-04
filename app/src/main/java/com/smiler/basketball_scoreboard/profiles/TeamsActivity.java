@@ -20,7 +20,6 @@ import com.smiler.basketball_scoreboard.elements.CABListener;
 import com.smiler.basketball_scoreboard.elements.dialogs.TeamEditDialog;
 import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 import com.smiler.basketball_scoreboard.elements.lists.RecyclerListFragment;
-import com.smiler.basketball_scoreboard.results.views.ResultViewFragment;
 
 public class TeamsActivity extends AppCompatActivity implements
         TeamEditDialog.EditTeamCallback
@@ -49,7 +48,7 @@ public class TeamsActivity extends AppCompatActivity implements
     }
 
     protected void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
@@ -124,10 +123,10 @@ public class TeamsActivity extends AppCompatActivity implements
             Toast.makeText(this, String.format(getResources().getString(R.string.toast_result_delete_error), selected), Toast.LENGTH_SHORT).show();
         }
 
-        RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.recycler_content_fragment);
         if (list != null) {
             if (!list.updateList()) {
-                ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
+                TeamViewFragment detailViewFrag = (TeamViewFragment) getSupportFragmentManager().findFragmentById(R.id.details_frag);
                 detailViewFrag.clear();
             } else {
                 setEmptyLayout();

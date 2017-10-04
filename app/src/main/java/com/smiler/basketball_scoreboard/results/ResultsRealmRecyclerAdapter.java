@@ -1,6 +1,7 @@
 package com.smiler.basketball_scoreboard.results;
 
 import com.smiler.basketball_scoreboard.adapters.RealmRecyclerAdapter;
+import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
 
 import java.text.DateFormat;
@@ -29,6 +30,16 @@ public class ResultsRealmRecyclerAdapter extends RealmRecyclerAdapter {
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public void deleteSelection() {
+        if (selectedIds.size() > 0) {
+            RealmController.with().deleteResults(selectedIds.toArray(new Integer[selectedIds.size()]));
+        }
+        selectedItem = null;
+        selectedIds.clear();
+        multiSelection = false;
+        notifyDataSetChanged();
     }
 
 }

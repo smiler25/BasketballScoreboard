@@ -2,6 +2,8 @@ package com.smiler.basketball_scoreboard.results;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -16,12 +18,10 @@ import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.CAB;
 import com.smiler.basketball_scoreboard.elements.CABListener;
-import com.smiler.basketball_scoreboard.elements.lists.ExpandableListListener;
 import com.smiler.basketball_scoreboard.elements.lists.ListListener;
-import com.smiler.basketball_scoreboard.elements.lists.RecyclerListFragment;
 import com.smiler.basketball_scoreboard.results.views.ResultViewFragment;
 
-public class ResultsActivity extends AppCompatActivity implements ExpandableListListener {
+public class ResultsActivity extends AppCompatActivity {
 
     private Menu menu;
     private int selected = -1;
@@ -30,40 +30,52 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
     private TextView actionModeText;
     private ResultViewFragment detailViewFrag;
     private boolean wide;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results);
+        setContentView(R.layout.activity_recycler);
+        initFragments();
         initToolbar();
-        initList();
+    }
+
+    private void initFragments() {
+        ResultsRecyclerFragment fragment = new ResultsRecyclerFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.recycler_content_fragment, fragment, ResultsRecyclerFragment.TAG);
+
+        View view = findViewById(R.id.details_frag);
+        if (view != null) {
+            wide = true;
+            detailViewFrag = new ResultViewFragment();
+            transaction.replace(R.id.details_frag, detailViewFrag, ResultViewFragment.TAG);
+        } else {
+            wide = false;
+            detailViewFrag = null;
+        }
+        transaction.commit();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initList();
+        setListeners();
     }
 
-    private void initList() {
-        detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-        ResultsListFragment list;
-        if (detailViewFrag != null && detailViewFrag.isAdded()) {
-            wide = true;
-            list = (ResultsListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
-            if (list != null) {
-                setListeners(list);
-            }
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0 ){
+            getSupportFragmentManager().popBackStack();
+            toolbar.setTitle(R.string.title_activity_results);
         } else {
-            wide = false;
-            list = (ResultsExpListFragment) getSupportFragmentManager().findFragmentById(R.id.expandable_list_frag);
-            if (list != null) {
-                setListeners(list);
-            }
+            finish();
         }
     }
 
-    private void setListeners(final ResultsListFragment list) {
+    private void setListeners() {
+        final ResultsRecyclerFragment list = (ResultsRecyclerFragment) getSupportFragmentManager().findFragmentByTag(ResultsRecyclerFragment.TAG);
         final String cabString = getResources().getString(R.string.cab_subtitle);
 
         final CABListener cabListener = new CABListener() {
@@ -86,9 +98,7 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
                     if (!actionModeActive) {
                         menu.setGroupVisible(R.id.group, true);
                         selected = value;
-                        if (wide && detailViewFrag != null) {
-                            detailViewFrag.updateContent(value);
-                        }
+                        openResultInfo();
                     } else {
                         actionModeText.setText(String.format(cabString, value));
                     }
@@ -110,7 +120,7 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
     }
 
     private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
@@ -120,7 +130,7 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
     }
@@ -164,11 +174,15 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
             Toast.makeText(this, String.format(getResources().getString(R.string.toast_result_delete_error), selected), Toast.LENGTH_SHORT).show();
         }
 
-        RecyclerListFragment list = (RecyclerListFragment) getSupportFragmentManager().findFragmentById(R.id.list_frag);
+        ResultsRecyclerFragment list = (ResultsRecyclerFragment) getSupportFragmentManager().findFragmentByTag(ResultsRecyclerFragment.TAG);
         if (list != null) {
             if (!list.updateList()) {
-                ResultViewFragment detailViewFrag = (ResultViewFragment) getFragmentManager().findFragmentById(R.id.details_frag);
-                detailViewFrag.clear();
+                ResultViewFragment detailViewFrag = (ResultViewFragment) getSupportFragmentManager().findFragmentById(R.id.details_frag);
+                if (detailViewFrag != null) {
+                    detailViewFrag.clear();
+                } else {
+                    closeInfo();
+                }
             } else {
                 setEmptyLayout();
             }
@@ -176,25 +190,28 @@ public class ResultsActivity extends AppCompatActivity implements ExpandableList
         }
     }
 
-    @Override
-    public void onListEmpty() {
-        setEmptyLayout();
-    }
-
-    @Override
-    public void onExpListItemSelected() {
-        //menu.setGroupVisible(R.id.group, true);
-    }
-
-    @Override
-    public void onExpListItemDeleted(boolean empty) {
-        if (empty){
-            setEmptyLayout();
-        }
-    }
-
     private void setEmptyLayout() {
         setContentView(R.layout.activity_results_empty);
         initToolbar();
+    }
+
+    private void openResultInfo() {
+        if (wide && detailViewFrag != null) {
+            detailViewFrag.updateContent(selected);
+        } else {
+            Fragment selectedFrag = ResultViewFragment.newInstance(selected);
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.recycler_content_fragment, selectedFrag, ResultViewFragment.TAG)
+                    .setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit();
+        }
+    }
+
+    public void closeInfo() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0 ){
+            getSupportFragmentManager().popBackStack();
+            toolbar.setTitle(R.string.title_activity_results);
+        }
     }
 }

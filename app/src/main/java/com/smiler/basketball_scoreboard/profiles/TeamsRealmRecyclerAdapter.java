@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.adapters.RealmRecyclerAdapter;
+import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Team;
 
 import io.realm.RealmResults;
@@ -45,4 +46,16 @@ class TeamsRealmRecyclerAdapter extends RealmRecyclerAdapter {
             return 0;
         }
     }
+
+    @Override
+    public void deleteSelection() {
+        if (selectedIds.size() > 0) {
+            RealmController.with().deleteTeams(selectedIds.toArray(new Integer[selectedIds.size()]));
+        }
+        selectedItem = null;
+        selectedIds.clear();
+        multiSelection = false;
+        notifyDataSetChanged();
+    }
+
 }

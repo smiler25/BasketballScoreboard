@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.smiler.basketball_scoreboard.R;
-import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.elements.lists.ListListener;
 
 import java.util.ArrayList;
@@ -15,8 +14,8 @@ import java.util.ArrayList;
 abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRecyclerAdapter.ViewHolder> {
     private static final String TAG = "BS-RealmRecyclerAdapter";
     private ListListener listener;
-    private boolean multiSelection = false;
-    private View selectedItem;
+    protected boolean multiSelection = false;
+    protected View selectedItem;
     protected ItemsCallback callback;
     public ArrayList<Integer> selectedIds = new ArrayList<>();
 
@@ -103,7 +102,7 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
                     return false;
                 }
             });
-            textView = (TextView) v.findViewById(R.id.textView);
+            textView = v.findViewById(R.id.textView);
         }
 
         public void setTextView(String text) { textView.setText(text); }
@@ -124,13 +123,5 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
         notifyDataSetChanged();
     }
 
-    public void deleteSelection() {
-        if (selectedIds.size() > 0) {
-            RealmController.with().deleteTeams(selectedIds.toArray(new Integer[selectedIds.size()]));
-        }
-        selectedItem = null;
-        selectedIds.clear();
-        multiSelection = false;
-        notifyDataSetChanged();
-    }
+    abstract public void deleteSelection();
 }
