@@ -112,9 +112,6 @@ public class ResultsActivity extends AppCompatActivity {
                     actionModeActive = true;
                 }
 
-                @Override
-                public void onListEmpty() {
-                }
             });
         }
     }

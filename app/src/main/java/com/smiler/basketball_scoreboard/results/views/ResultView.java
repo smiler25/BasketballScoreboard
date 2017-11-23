@@ -133,7 +133,7 @@ public class ResultView extends LinearLayout {
         TreeMap<String, ArrayList<InGamePlayer>> result = new TreeMap<>();
         for (PlayersResults r : gamePlayers) {
             String team = r.getTeam();
-            if (result.get(team) == null) { result.put(team, new ArrayList<InGamePlayer>()); }
+            if (result.get(team) == null) { result.put(team, new ArrayList<>()); }
             result.get(team).add(new InGamePlayer(
                     r.getNumber(),
                     r.getPlayerName(),

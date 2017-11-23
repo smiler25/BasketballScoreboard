@@ -196,9 +196,6 @@ public class TeamsActivity extends AppCompatActivity implements
                     actionModeActive = true;
                 }
 
-                @Override
-                public void onListEmpty() {
-                }
             });
         }
     }
