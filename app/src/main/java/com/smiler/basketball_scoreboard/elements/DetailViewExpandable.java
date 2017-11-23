@@ -24,7 +24,7 @@ public class DetailViewExpandable extends LinearLayout {
     }
 
     private void initTitle(int textRes) {
-        TextView title = (TextView) findViewById(R.id.dve_title);
+        TextView title = findViewById(R.id.dve_title);
         title.setText(textRes);
         int padding = getResources().getDimensionPixelSize(R.dimen.results_boxscore_padding);
         title.setPadding(padding, padding, padding, padding);
@@ -37,7 +37,7 @@ public class DetailViewExpandable extends LinearLayout {
     }
 
     public void addView(View view, boolean hidden) {
-        LinearLayout ll = (LinearLayout) findViewById(R.id.detail_view_expandable);
+        LinearLayout ll = findViewById(R.id.detail_view_expandable);
         ll.addView(view);
         this.view = view;
         if (hidden) {

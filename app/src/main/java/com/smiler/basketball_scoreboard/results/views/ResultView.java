@@ -45,7 +45,7 @@ public class ResultView extends LinearLayout {
 
     private void init() {
         inflate(getContext(), R.layout.detail_scroll_view, this);
-        title = (TextView)findViewById(R.id.detail_scroll_view_title);
+        title = findViewById(R.id.detail_scroll_view_title);
 
         getData();
         Result result = getResult();
@@ -58,7 +58,7 @@ public class ResultView extends LinearLayout {
         String dateStr = dateFormat.format(new Date(date));
         title.setText(dateStr);
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.container);
+        LinearLayout layout = findViewById(R.id.container);
         layout.addView(new ResultViewScoreTable(getContext(), result));
 
         if (!detailData.isEmpty()) {

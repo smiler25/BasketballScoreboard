@@ -29,7 +29,7 @@ public class AppUpdatesDialog extends DialogFragment{
         String text = getResources().getString(R.string.appupdate_info);
         String help_text = getResources().getString(R.string.appupdate_info_link_help).toLowerCase();
         String settings_text = getResources().getString(R.string.action_settings).toLowerCase();
-        TextView textView = (TextView) v.findViewById(R.id.dialog_text);
+        TextView textView = v.findViewById(R.id.dialog_text);
         SpannableString spannable = new SpannableString(text);
         ClickableSpan openHelpSpan = new ClickableSpan() {
             @Override

@@ -58,18 +58,18 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>, 
         View edit;
         if (left) {
             inflate(context, R.layout.sp_row_left, this);
-            numberView = (TextView) findViewById(R.id.left_panel_number);
-            nameView = (TextView) findViewById(R.id.left_panel_name);
-            pointsView = (TextView) findViewById(R.id.left_panel_points);
-            foulsView = (TextView) findViewById(R.id.left_panel_fouls);
+            numberView = findViewById(R.id.left_panel_number);
+            nameView = findViewById(R.id.left_panel_name);
+            pointsView = findViewById(R.id.left_panel_points);
+            foulsView = findViewById(R.id.left_panel_fouls);
             edit = findViewById(R.id.left_panel_edit);
 
         } else {
             inflate(context, R.layout.sp_row_right, this);
-            numberView = (TextView) findViewById(R.id.right_panel_number);
-            nameView = (TextView) findViewById(R.id.right_panel_name);
-            pointsView = (TextView) findViewById(R.id.right_panel_points);
-            foulsView = (TextView) findViewById(R.id.right_panel_fouls);
+            numberView = findViewById(R.id.right_panel_number);
+            nameView = findViewById(R.id.right_panel_name);
+            pointsView = findViewById(R.id.right_panel_points);
+            foulsView = findViewById(R.id.right_panel_fouls);
             edit = findViewById(R.id.right_panel_edit);
         }
         edit.setOnClickListener(v -> setRow());

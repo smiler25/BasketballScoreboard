@@ -25,8 +25,8 @@ public class TeamView extends LinearLayout {
 
     private void init(int teamId, TeamViewCallback listener) {
         inflate(getContext(), R.layout.detail_scroll_view, this);
-        title = (TextView)findViewById(R.id.detail_scroll_view_title);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.container);
+        title = findViewById(R.id.detail_scroll_view_title);
+        LinearLayout layout = findViewById(R.id.container);
 
         getData(teamId);
         if (team == null) {

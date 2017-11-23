@@ -123,7 +123,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         }
 
         View v = inflater.inflate(layout_id, container, false);
-        table = (TableLayout) v.findViewById(table_layout_id);
+        table = v.findViewById(table_layout_id);
         addHeader();
         v.findViewById(close_bu_id).setOnClickListener(this);
         v.findViewById(add_bu_id).setOnClickListener(this);
@@ -131,7 +131,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         View addAutoView = v.findViewById(add_auto_bu_id);
         addAutoView.setOnClickListener(this);
         addAutoView.setOnLongClickListener(this);
-        panelSelect = (ToggleButton) v.findViewById(toggle_bu_id);
+        panelSelect = v.findViewById(toggle_bu_id);
         panelSelect.setOnClickListener(this);
         return v;
     }

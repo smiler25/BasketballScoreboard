@@ -97,7 +97,7 @@ public class CameraUtils {
         @Override
         protected void onPreExecute() {
             String res_type = activity.getResources().getString(R.string.res_type);
-            view = (ViewGroup) layout.findViewById(R.id.camera_line);
+            view = layout.findViewById(R.id.camera_line);
             overlayW = view.getWidth();
             int h = view.getHeight();
             if (res_type.equals("port") && (degree == 90 || degree == 270)) {

@@ -62,8 +62,8 @@ public class TeamEditDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.edit_team_dialog, null);
         builder.setView(v).setCancelable(true);
 
-        nameView = (EditText) v.findViewById(R.id.edit_team_name);
-        activeView = (Switch) v.findViewById(R.id.edit_team_active);
+        nameView = v.findViewById(R.id.edit_team_name);
+        activeView = v.findViewById(R.id.edit_team_active);
         activeView.setChecked(true);
 
         v.findViewById(R.id.button_add).setOnClickListener(v14 -> {
@@ -73,7 +73,7 @@ public class TeamEditDialog extends DialogFragment {
             }
         });
         v.findViewById(R.id.button_cancel).setOnClickListener(v13 -> dismiss());
-        Button add_another_bu = (Button) v.findViewById(R.id.button_custom_action);
+        Button add_another_bu = v.findViewById(R.id.button_custom_action);
         if (args != null) {
             nameView.setText(args.getString("name", ""));
             nameView.selectAll();

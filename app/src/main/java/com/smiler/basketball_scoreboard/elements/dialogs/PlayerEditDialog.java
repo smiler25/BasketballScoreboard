@@ -107,9 +107,9 @@ public class PlayerEditDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.dialog_edit_player, null);
         builder.setView(v).setCancelable(true);
 
-        nameView = (EditText) v.findViewById(R.id.edit_player_name);
-        numberView = (EditText) v.findViewById(R.id.edit_player_number);
-        captainView = (Switch) v.findViewById(R.id.edit_player_captain);
+        nameView = v.findViewById(R.id.edit_player_name);
+        numberView = v.findViewById(R.id.edit_player_number);
+        captainView = v.findViewById(R.id.edit_player_captain);
 
         v.findViewById(R.id.button_add).setOnClickListener(v14 -> {
             if (checkForm()) {
@@ -119,7 +119,7 @@ public class PlayerEditDialog extends DialogFragment {
         });
         v.findViewById(R.id.button_cancel).setOnClickListener(v13 -> dismiss());
         Bundle args = getArguments();
-        Button actionButton = (Button)v.findViewById(R.id.button_custom_action);
+        Button actionButton = v.findViewById(R.id.button_custom_action);
         if (args == null) {
             return null;
         }

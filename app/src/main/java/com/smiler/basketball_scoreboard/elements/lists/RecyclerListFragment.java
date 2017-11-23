@@ -24,7 +24,7 @@ abstract public class RecyclerListFragment extends BaseListFragment {
         View rootView = inflater.inflate(R.layout.recycler_view, container, false);
         rootView.setTag(TAG);
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        recyclerView = rootView.findViewById(R.id.recycler_view);
         initAdapter();
         recyclerView.setAdapter(adapter);
         setRecyclerViewLayoutManager();

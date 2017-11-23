@@ -127,12 +127,12 @@ public class CameraLayout extends BaseLayout implements
                 break;
         }
         init();
-        FrameLayout view = (FrameLayout) findViewById(R.id.camera_preview);
+        FrameLayout view = findViewById(R.id.camera_preview);
         view.addView(camera);
     }
 
     private void initFull() {
-        periodView = (TextView) findViewById(R.id.camera_period);
+        periodView = findViewById(R.id.camera_period);
         periodView.setOnClickListener(this);
         periodView.setOnLongClickListener(this);
         initShotTime();
@@ -143,18 +143,18 @@ public class CameraLayout extends BaseLayout implements
     }
 
     private void initShotTime() {
-        shotTimeView = (TextView) findViewById(R.id.camera_shot_clock);
+        shotTimeView = findViewById(R.id.camera_shot_clock);
         shotTimeView.setOnClickListener(this);
         shotTimeView.setOnLongClickListener(this);
     }
 
     private CameraLayout init() {
-        ImageView takePictureBu = (ImageView) findViewById(R.id.camera_take_picture);
-        mainTimeView = (TextView) findViewById(R.id.camera_time);
-        hScoreView = (TextView) findViewById(R.id.camera_home_score);
-        gScoreView = (TextView) findViewById(R.id.camera_guest_score);
-        hNameView = (TextView) findViewById(R.id.camera_home_name);
-        gNameView = (TextView) findViewById(R.id.camera_guest_name);
+        ImageView takePictureBu = findViewById(R.id.camera_take_picture);
+        mainTimeView = findViewById(R.id.camera_time);
+        hScoreView = findViewById(R.id.camera_home_score);
+        gScoreView = findViewById(R.id.camera_guest_score);
+        hNameView = findViewById(R.id.camera_home_name);
+        gNameView = findViewById(R.id.camera_guest_name);
 
         takePictureBu.setOnClickListener(this);
         mainTimeView.setOnClickListener(this);

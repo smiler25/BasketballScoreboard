@@ -53,14 +53,14 @@ public class ColorPickerPreference extends DialogPreference implements
 
     @Override
     protected void onBindDialogView(View view) {
-        redSeekbar = (SeekBar) view.findViewById(R.id.seekbar_red);
-        greenSeekbar = (SeekBar) view.findViewById(R.id.seekbar_green);
-        blueSeekbar = (SeekBar) view.findViewById(R.id.seekbar_blue);
+        redSeekbar = view.findViewById(R.id.seekbar_red);
+        greenSeekbar = view.findViewById(R.id.seekbar_green);
+        blueSeekbar = view.findViewById(R.id.seekbar_blue);
         redSeekbar.setOnSeekBarChangeListener(this);
         greenSeekbar.setOnSeekBarChangeListener(this);
         blueSeekbar.setOnSeekBarChangeListener(this);
-        colorPreview = (CustomFontTextView) view.findViewById(R.id.color_picker_preview);
-        elementPicker = (Spinner) view.findViewById(R.id.color_picker_element);
+        colorPreview = view.findViewById(R.id.color_picker_preview);
+        elementPicker = view.findViewById(R.id.color_picker_element);
         elementPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View itemSelected, int selectedItemPosition, long selectedId) {
                 setPreviewColor(selectedId);

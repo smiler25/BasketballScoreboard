@@ -24,7 +24,7 @@ public class HelpRulesFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.expandable_list, container, false);
-        ExpandableListView expListView = (ExpandableListView) rootView.findViewById(R.id.expListView);
+        ExpandableListView expListView = rootView.findViewById(R.id.expListView);
 
         Resources resources = getResources();
         final String[] titles = resources.getStringArray(R.array.help_rules_titles);

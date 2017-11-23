@@ -52,7 +52,7 @@ public class TimePickerDialog extends DialogFragment {
             seconds = (int) (TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
             millis = (int) (time % 1000) / 100;
 
-            minutesPicker = (CustomNumberPicker) v.findViewById(R.id.pickerMinutes);
+            minutesPicker = v.findViewById(R.id.pickerMinutes);
             minutesPicker.setValue(minutes);
 
         } else {
@@ -60,8 +60,8 @@ public class TimePickerDialog extends DialogFragment {
             millis = (int) (time % 1000) / 100;
 
         }
-        secondsPicker = (CustomNumberPicker) v.findViewById(R.id.pickerSeconds);
-        millisPicker = (CustomNumberPicker) v.findViewById(R.id.pickerMillis);
+        secondsPicker = v.findViewById(R.id.pickerSeconds);
+        millisPicker = v.findViewById(R.id.pickerMillis);
         secondsPicker.setValue(seconds);
         millisPicker.setValue(millis);
 

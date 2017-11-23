@@ -47,8 +47,8 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.timeout_dialog, null);
         builder.setView(v);
-        clockView = (TextView) v.findViewById(R.id.timeoutClock);
-        titleView = (TextView) v.findViewById(R.id.dialog_title);
+        clockView = v.findViewById(R.id.timeoutClock);
+        titleView = v.findViewById(R.id.dialog_title);
         titleView.setText(title);
         v.findViewById(R.id.buttonClose).setOnClickListener(v1 -> {
             if (timer != null) {

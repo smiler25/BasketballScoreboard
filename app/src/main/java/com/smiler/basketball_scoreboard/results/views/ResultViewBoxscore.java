@@ -38,8 +38,8 @@ class ResultViewBoxscore extends DetailViewExpandable {
 
     private View createPlayersTable(Context context, String team, ArrayList<InGamePlayer> data) {
         View tableWithHeader = inflate(context, R.layout.result_view_info_table, null);
-        TextView title = (TextView) tableWithHeader.findViewById(R.id.result_view_players_table_title);
-        final TableLayout table = (TableLayout) tableWithHeader.findViewById(R.id.result_view_players_table);
+        TextView title = tableWithHeader.findViewById(R.id.result_view_players_table_title);
+        final TableLayout table = tableWithHeader.findViewById(R.id.result_view_players_table);
         title.setText(team);
         title.setOnClickListener(v -> table.setVisibility(table.getVisibility() == VISIBLE ? GONE : VISIBLE));
 
