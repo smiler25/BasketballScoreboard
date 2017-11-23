@@ -98,16 +98,13 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
                 if (hName != null && !hName.equals("")) {
                     ((Button) saveHomeTeamBu).setText(String.format(getResources().getString(R.string.save_home_team_with_name), hName));
                 }
-                saveHomeTeamBu.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (listener.onSaveTeam(HOME)) {
-                            view.setVisibility(View.GONE);
-                            saveHomeAvail = false;
-                        }
-                        if (canHideSaveButtons()) {
-                            hideSaveButtons();
-                        }
+                saveHomeTeamBu.setOnClickListener(view -> {
+                    if (listener.onSaveTeam(HOME)) {
+                        view.setVisibility(View.GONE);
+                        saveHomeAvail = false;
+                    }
+                    if (canHideSaveButtons()) {
+                        hideSaveButtons();
                     }
                 });
             } else {
@@ -117,65 +114,32 @@ public class NewGameDialog extends DialogFragment implements TeamSelector {
                 if (gName != null && !gName.equals("")) {
                     ((Button) saveGuestTeamBu).setText(String.format(getResources().getString(R.string.save_guest_team_with_name), gName));
                 }
-                saveGuestTeamBu.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (listener.onSaveTeam(GUEST)) {
-                            view.setVisibility(View.GONE);
-                            saveGuestAvail = false;
-                        }
-                        if (canHideSaveButtons()) {
-                            hideSaveButtons();
-                        }
+                saveGuestTeamBu.setOnClickListener(view -> {
+                    if (listener.onSaveTeam(GUEST)) {
+                        view.setVisibility(View.GONE);
+                        saveGuestAvail = false;
+                    }
+                    if (canHideSaveButtons()) {
+                        hideSaveButtons();
                     }
                 });
             } else {
                 saveGuestTeamBu.setVisibility(View.GONE);
             }
-            saveTeamsToggle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleSaveTeamsBlock(saveButtons);
-                }
-            });
+            saveTeamsToggle.setOnClickListener(v16 -> toggleSaveTeamsBlock(saveButtons));
         } else {
             saveTeamsToggle.setVisibility(View.GONE);
             saveButtons.setVisibility(View.GONE);
         }
 
-        v.findViewById(R.id.new_game_same_teams).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectSameTeams();
-            }
-        });
-        v.findViewById(R.id.new_game_other_teams).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectNewTeams();
-            }
-        });
-        v.findViewById(R.id.new_game_no_teams).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectNoTeams();
-            }
-        });
+        v.findViewById(R.id.new_game_same_teams).setOnClickListener(v15 -> selectSameTeams());
+        v.findViewById(R.id.new_game_other_teams).setOnClickListener(v14 -> selectNewTeams());
+        v.findViewById(R.id.new_game_no_teams).setOnClickListener(v13 -> selectNoTeams());
 
         hSelector = v.findViewById(R.id.new_game_select_first_team);
         gSelector = v.findViewById(R.id.new_game_select_second_team);
-        hSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTeamsList(HOME);
-            }
-        });
-        gSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTeamsList(GUEST);
-            }
-        });
+        hSelector.setOnClickListener(v12 -> showTeamsList(HOME));
+        gSelector.setOnClickListener(v1 -> showTeamsList(GUEST));
         return builder.create();
     }
 

@@ -1,7 +1,6 @@
 package com.smiler.basketball_scoreboard.db;
 
 import io.realm.DynamicRealm;
-import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
@@ -50,18 +49,15 @@ class Migration implements RealmMigration {
                     .addField("regularPeriods", int.class)
                     .addRealmObjectField("firstTeam", schema.get("Team"))
                     .addRealmObjectField("secondTeam", schema.get("Team"))
-                    .transform(new RealmObjectSchema.Function() {
-                        @Override
-                        public void apply(DynamicRealmObject obj) {
-                            obj.set("firstTeamName", obj.getString("home_team"));
-                            obj.set("secondTeamName", obj.getString("guest_team"));
-                            obj.set("firstScore", obj.getInt("home_score"));
-                            obj.set("secondScore", obj.getInt("guest_score"));
-                            obj.set("firstPeriods", obj.getString("home_periods"));
-                            obj.set("secondPeriods", obj.getString("guest_periods"));
-                            obj.set("shareString", obj.getString("share_string"));
-                            obj.set("regularPeriods", obj.getInt("regular_periods"));
-                        }
+                    .transform(obj -> {
+                        obj.set("firstTeamName", obj.getString("home_team"));
+                        obj.set("secondTeamName", obj.getString("guest_team"));
+                        obj.set("firstScore", obj.getInt("home_score"));
+                        obj.set("secondScore", obj.getInt("guest_score"));
+                        obj.set("firstPeriods", obj.getString("home_periods"));
+                        obj.set("secondPeriods", obj.getString("guest_periods"));
+                        obj.set("shareString", obj.getString("share_string"));
+                        obj.set("regularPeriods", obj.getInt("regular_periods"));
                     })
                     .removeField("home_team")
                     .removeField("guest_team")

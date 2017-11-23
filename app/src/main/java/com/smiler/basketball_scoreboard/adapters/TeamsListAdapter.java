@@ -27,7 +27,7 @@ public class TeamsListAdapter extends ArrayAdapter<Team> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_list_item, parent, false);
         }
 
-        TextView text = (TextView) convertView.findViewById(R.id.list_text);
+        TextView text = convertView.findViewById(R.id.list_text);
         if (team != null && text != null) {
             text.setText(team.getName());
             text.setId(team.getId());

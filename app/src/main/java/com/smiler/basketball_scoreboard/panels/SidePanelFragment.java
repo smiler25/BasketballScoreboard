@@ -431,21 +431,18 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         RealmController.with().deleteTmpPlayers(team);
         final Results tmpResult = RealmController.with().getTmpResult();
         Realm realm = RealmController.with().getRealm();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
-                    SidePanelRow row = entry.getValue();
-                    PlayersResults playersResults = realm.createObject(PlayersResults.class);
-                    playersResults.setGame(tmpResult)
-                            .setTeam(team)
-                            .setNumber(row.getNumber())
-                            .setName(row.getName())
-                            .setPoints(row.getPoints())
-                            .setFouls(row.getFouls())
-                            .setCaptain(row.isCaptain())
-                            .setActive(row.getSelected());
-                }
+        realm.executeTransaction(realm1 -> {
+            for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
+                SidePanelRow row = entry.getValue();
+                PlayersResults playersResults = realm1.createObject(PlayersResults.class);
+                playersResults.setGame(tmpResult)
+                        .setTeam(team)
+                        .setNumber(row.getNumber())
+                        .setName(row.getName())
+                        .setPoints(row.getPoints())
+                        .setFouls(row.getFouls())
+                        .setCaptain(row.isCaptain())
+                        .setActive(row.getSelected());
             }
         });
         return true;

@@ -65,12 +65,7 @@ public class TeamViewFragment extends ReattachedFragment implements
 
     private View initEmptyView(LayoutInflater inflater, ViewGroup container) {
         View view = inflater.inflate(R.layout.team_view_empty, container, false);
-        view.findViewById(R.id.text_view_empty).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCreateTeamDialog();
-            }
-        });
+        view.findViewById(R.id.text_view_empty).setOnClickListener(view1 -> showCreateTeamDialog());
         return view;
     }
 

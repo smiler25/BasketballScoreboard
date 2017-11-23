@@ -182,6 +182,7 @@ public class Game {
         setZeroState();
         handleTeams();
         leftIsHome = true;
+        gameSaved = false;
     }
 
     public void initNewGameSameTeams() {
@@ -541,64 +542,61 @@ public class Game {
         Realm realm = RealmController.with().getRealm();
         Number lastId = realm.where(Results.class).max("id");
         final long nextID = lastId != null ? (long) lastId + 1 : 0;
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Results result = realm.createObject(Results.class, nextID);
-                result.setDate(new Date())
-                        .setFirstTeamName(hName)
-                        .setSecondTeamName(gName)
-                        .setFirstScore(hScore)
-                        .setSecondScore(gScore)
-                        .setFirstPeriods(gameResult.getHomeScoreByPeriodString())
-                        .setSecondPeriods(gameResult.getGuestScoreByPeriodString())
-                        .setShareString(gameResult.getResultString(period > preferences.numRegularPeriods))
-                        .setRegularPeriods(preferences.numRegularPeriods)
-                        .setComplete(gameResult.isComplete());
-                if (hTeam != null) {
-                    result.setFirstTeam(hTeam);
-                    handleHomeTeamDb(result);
-                }
-                if (gTeam != null) {
-                    result.setSecondTeam(gTeam);
-                    handleGuestTeamDb(result);
-                }
+        realm.executeTransaction(realm1 -> {
+            Results result = realm1.createObject(Results.class, nextID);
+            result.setDate(new Date())
+                    .setFirstTeamName(hName)
+                    .setSecondTeamName(gName)
+                    .setFirstScore(hScore)
+                    .setSecondScore(gScore)
+                    .setFirstPeriods(gameResult.getHomeScoreByPeriodString())
+                    .setSecondPeriods(gameResult.getGuestScoreByPeriodString())
+                    .setShareString(gameResult.getResultString(period > preferences.numRegularPeriods))
+                    .setRegularPeriods(preferences.numRegularPeriods)
+                    .setComplete(gameResult.isComplete());
+            if (hTeam != null) {
+                result.setFirstTeam(hTeam);
+                handleHomeTeamDb(result);
+            }
+            if (gTeam != null) {
+                result.setSecondTeam(gTeam);
+                handleGuestTeamDb(result);
+            }
 
-                GameDetails details = realm.createObject(GameDetails.class);
-                details.setLeadChanged(timesLeadChanged)
-                        .setHomeMaxLead(hMaxLead)
-                        .setGuestMaxLead(gMaxLead)
-                        .setTie(timesTie);
-                if (preferences.playByPlay == 2) {
-                    details.setPlayByPlay(gameResult.toString());
-                }
-                result.setDetails(details);
+            GameDetails details = realm1.createObject(GameDetails.class);
+            details.setLeadChanged(timesLeadChanged)
+                    .setHomeMaxLead(hMaxLead)
+                    .setGuestMaxLead(gMaxLead)
+                    .setTie(timesTie);
+            if (preferences.playByPlay == 2) {
+                details.setPlayByPlay(gameResult.toString());
+            }
+            result.setDetails(details);
 
-                if (preferences.spOn) {
-                    TreeMap<Integer, SidePanelRow> allHomePlayers = getHomePlayers();
-                    TreeMap<Integer, SidePanelRow> allGuestPlayers = getGuestPlayers();
-                    for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
-                        SidePanelRow row = entry.getValue();
-                        PlayersResults playersResults = realm.createObject(PlayersResults.class);
-                        playersResults.setGame(result)
-                                .setTeam(hName)
-                                .setNumber(row.getNumber())
-                                .setName(row.getName())
-                                .setPoints(row.getPoints())
-                                .setFouls(row.getFouls())
-                                .setCaptain(row.isCaptain());
-                    }
-                    for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
-                        SidePanelRow row = entry.getValue();
-                        PlayersResults playersResults = realm.createObject(PlayersResults.class);
-                        playersResults.setGame(result)
-                                .setTeam(gName)
-                                .setNumber(row.getNumber())
-                                .setName(row.getName())
-                                .setPoints(row.getPoints())
-                                .setFouls(row.getFouls())
-                                .setCaptain(row.isCaptain());
-                    }
+            if (preferences.spOn) {
+                TreeMap<Integer, SidePanelRow> allHomePlayers = getHomePlayers();
+                TreeMap<Integer, SidePanelRow> allGuestPlayers = getGuestPlayers();
+                for (Map.Entry<Integer, SidePanelRow> entry : allHomePlayers.entrySet()) {
+                    SidePanelRow row = entry.getValue();
+                    PlayersResults playersResults = realm1.createObject(PlayersResults.class);
+                    playersResults.setGame(result)
+                            .setTeam(hName)
+                            .setNumber(row.getNumber())
+                            .setName(row.getName())
+                            .setPoints(row.getPoints())
+                            .setFouls(row.getFouls())
+                            .setCaptain(row.isCaptain());
+                }
+                for (Map.Entry<Integer, SidePanelRow> entry : allGuestPlayers.entrySet()) {
+                    SidePanelRow row = entry.getValue();
+                    PlayersResults playersResults = realm1.createObject(PlayersResults.class);
+                    playersResults.setGame(result)
+                            .setTeam(gName)
+                            .setNumber(row.getNumber())
+                            .setName(row.getName())
+                            .setPoints(row.getPoints())
+                            .setFouls(row.getFouls())
+                            .setCaptain(row.isCaptain());
                 }
             }
         });

@@ -48,9 +48,9 @@ public class TeamEditInGameDialog extends DialogFragment implements TeamSelector
 
         builder.setView(v).setCancelable(true);
 
-        TextView title = (TextView) v.findViewById(R.id.dialog_title);
+        TextView title = v.findViewById(R.id.dialog_title);
         title.setText(String.format(getResources().getString(titleResId), teamType));
-        editView = (EditText) v.findViewById(R.id.edit_text);
+        editView = v.findViewById(R.id.edit_text);
 
         String name = args.getString("name");
         if (name != null) {
@@ -58,24 +58,16 @@ public class TeamEditInGameDialog extends DialogFragment implements TeamSelector
             editView.selectAll();
         }
 
-        teamSelector = (Button) v.findViewById(R.id.new_game_select_first_team);
-        teamSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ListDialog.newInstance(DialogTypes.SELECT_TEAM, teamType).show(getFragmentManager(), ListDialog.TAG);
-            }
-        });
+        teamSelector = v.findViewById(R.id.new_game_select_first_team);
+        teamSelector.setOnClickListener(v12 -> ListDialog.newInstance(DialogTypes.SELECT_TEAM, teamType).show(getFragmentManager(), ListDialog.TAG));
 
-        v.findViewById(R.id.dialog_apply).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (team != null) {
-                    listener.onTeamChanged(team, teamType);
-                } else {
-                    listener.onNameChanged(editView.getText().toString(), teamType);
-                }
-                dismiss();
+        v.findViewById(R.id.dialog_apply).setOnClickListener(v1 -> {
+            if (team != null) {
+                listener.onTeamChanged(team, teamType);
+            } else {
+                listener.onNameChanged(editView.getText().toString(), teamType);
             }
+            dismiss();
         });
         return builder.create();
     }
@@ -98,7 +90,7 @@ public class TeamEditInGameDialog extends DialogFragment implements TeamSelector
         try {
             listener = (ChangeTeamListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement ChangeTeamListener");
+            throw new ClassCastException(activity.toString() + " must implement TeamEditInGameDialog");
         }
     }
 

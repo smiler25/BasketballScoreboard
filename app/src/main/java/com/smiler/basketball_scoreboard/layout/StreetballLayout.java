@@ -268,36 +268,30 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
         View whistleView = findViewById(R.id.whistleView);
         View hornView = findViewById(R.id.hornView);
         hornView.setOnClickListener(this);
-        hornView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        clickListener.onHornAction(false);
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        clickListener.onHornAction(true);
-                        break;
-                }
-                return true;
+        hornView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    clickListener.onHornAction(false);
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    clickListener.onHornAction(true);
+                    break;
             }
+            return true;
         });
 
-        whistleView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        clickListener.onWhistleAction(false);
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        clickListener.onWhistleAction(true);
-                        break;
-                }
-                return true;
+        whistleView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    clickListener.onWhistleAction(false);
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    clickListener.onWhistleAction(true);
+                    break;
             }
+            return true;
         });
     }
 
@@ -621,36 +615,20 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
 
     // players
     private void attachLeftButton(View button) {
-        button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag());
-            }
-        });
-        button.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                longClickPlayerBu = (Button) v;
-                longClickListener.onPlayerButtonLongClick(LEFT);
-                return false;
-            }
+        button.setOnClickListener(v -> clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag()));
+        button.setOnLongClickListener(v -> {
+            longClickPlayerBu = (Button) v;
+            longClickListener.onPlayerButtonLongClick(LEFT);
+            return false;
         });
     }
 
     private void attachRightButton(View button) {
-        button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag());
-            }
-        });
-        button.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                longClickPlayerBu = (Button) v;
-                longClickListener.onPlayerButtonLongClick(RIGHT);
-                return false;
-            }
+        button.setOnClickListener(v -> clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag()));
+        button.setOnLongClickListener(v -> {
+            longClickPlayerBu = (Button) v;
+            longClickListener.onPlayerButtonLongClick(RIGHT);
+            return false;
         });
     }
 

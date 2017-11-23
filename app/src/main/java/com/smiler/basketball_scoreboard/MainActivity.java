@@ -298,12 +298,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         doubleBackPressedFirst = true;
         Toast.makeText(this, getResources().getString(R.string.toast_confirm_exit), Toast.LENGTH_LONG).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackPressedFirst = false;
-            }
-        }, 3000);
+        new Handler().postDelayed(() -> doubleBackPressedFirst = false, 3000);
     }
 
     @Override
@@ -476,13 +471,10 @@ public class MainActivity extends AppCompatActivity implements
         whistleRepeats = repeats;
         if (repeats != -1) {
             new Handler().postDelayed(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            if (whistlePressed) {
-                                stopWhistle();
-                                playWhistle(-1);
-                            }
+                    () -> {
+                        if (whistlePressed) {
+                            stopWhistle();
+                            playWhistle(-1);
                         }
                     },
                     whistleLength * repeats);
@@ -501,15 +493,12 @@ public class MainActivity extends AppCompatActivity implements
         hornRepeats = repeats;
         if (repeats != -1) {
             new Handler().postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
+                    () -> {
                         if (hornPressed) {
                             stopHorn();
                             playHorn(-1);
                         }
-                    }
-                },
+                    },
                     hornLength * repeats);
         }
     }

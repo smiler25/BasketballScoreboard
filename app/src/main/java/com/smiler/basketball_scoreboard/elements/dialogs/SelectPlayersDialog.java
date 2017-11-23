@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.ListView;
 
@@ -55,27 +54,19 @@ public class SelectPlayersDialog extends DialogFragment {
         builder.setTitle(R.string.team_lot_players_dialog_title)
                 .setMultiChoiceItems(names, null, null)
                 .setPositiveButton(R.string.action_apply,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                ListView list = ((AlertDialog) dialog).getListView();
-                                ArrayList<Player> selected = new ArrayList<>();
-                                for (int i = 0; i < list.getCount(); i++) {
-                                    if (list.isItemChecked(i)) {
-                                        selected.add(players.get(i));
-                                    }
+                        (dialog, id) -> {
+                            ListView list = ((AlertDialog) dialog).getListView();
+                            ArrayList<Player> selected = new ArrayList<>();
+                            for (int i = 0; i < list.getCount(); i++) {
+                                if (list.isItemChecked(i)) {
+                                    selected.add(players.get(i));
                                 }
-                                team.setGamePlayers(selected);
-                                listener.onSelectPlayers(teamType);
                             }
+                            team.setGamePlayers(selected);
+                            listener.onSelectPlayers(teamType);
                         })
                 .setNegativeButton(R.string.action_cancel,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
+                        (dialog, id) -> dialog.cancel());
         return builder.create();
     }
 

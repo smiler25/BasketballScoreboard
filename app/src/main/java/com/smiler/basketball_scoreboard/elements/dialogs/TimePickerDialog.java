@@ -65,16 +65,13 @@ public class TimePickerDialog extends DialogFragment {
         secondsPicker.setValue(seconds);
         millisPicker.setValue(millis);
 
-        v.findViewById(R.id.dialog_apply).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isMain) {
-                    listener.onTimeChanged(getMainTime(), isMain);
-                } else {
-                    listener.onTimeChanged(getShotTime(), isMain);
-                }
-                dismiss();
+        v.findViewById(R.id.dialog_apply).setOnClickListener(v1 -> {
+            if (isMain) {
+                listener.onTimeChanged(getMainTime(), isMain);
+            } else {
+                listener.onTimeChanged(getShotTime(), isMain);
             }
+            dismiss();
         });
         return builder.create();
     }

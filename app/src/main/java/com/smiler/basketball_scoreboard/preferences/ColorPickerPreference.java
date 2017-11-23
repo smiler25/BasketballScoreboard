@@ -67,18 +67,8 @@ public class ColorPickerPreference extends DialogPreference implements
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-        view.findViewById(R.id.apply_color).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveColor();
-            }
-        });
-        view.findViewById(R.id.reset_color).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetColor();
-            }
-        });
+        view.findViewById(R.id.apply_color).setOnClickListener(view12 -> saveColor());
+        view.findViewById(R.id.reset_color).setOnClickListener(view1 -> resetColor());
         setPreviewColor(0);
         int max = 255;
         redSeekbar.setMax(max);

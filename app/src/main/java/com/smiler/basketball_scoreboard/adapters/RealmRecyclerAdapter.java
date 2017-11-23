@@ -85,22 +85,16 @@ abstract public class RealmRecyclerAdapter extends RecyclerView.Adapter<RealmRec
         public ViewHolder(View v) {
             super(v);
             root = v;
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (callback != null) {
-                        callback.onElementClick(root);
-                    }
+            v.setOnClickListener(v1 -> {
+                if (callback != null) {
+                    callback.onElementClick(root);
                 }
             });
-            v.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    if (callback != null) {
-                        callback.onElementLongClick(root);
-                    }
-                    return false;
+            v.setOnLongClickListener(view -> {
+                if (callback != null) {
+                    callback.onElementLongClick(root);
                 }
+                return false;
             });
             textView = v.findViewById(R.id.textView);
         }

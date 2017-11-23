@@ -28,14 +28,11 @@ public class DetailViewExpandable extends LinearLayout {
         title.setText(textRes);
         int padding = getResources().getDimensionPixelSize(R.dimen.results_boxscore_padding);
         title.setPadding(padding, padding, padding, padding);
-        title.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (view != null) {
-                    view.setVisibility(view.getVisibility() == VISIBLE ? GONE : VISIBLE);
-                }
-
+        title.setOnClickListener(v -> {
+            if (view != null) {
+                view.setVisibility(view.getVisibility() == VISIBLE ? GONE : VISIBLE);
             }
+
         });
     }
 

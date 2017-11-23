@@ -30,7 +30,7 @@ abstract public class BaseRecyclerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recycler_view_frag, container, false);
         rootView.setTag(TAG);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        recyclerView = rootView.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getActivity());
         setRecyclerViewLayoutManager();
         initAdapter();

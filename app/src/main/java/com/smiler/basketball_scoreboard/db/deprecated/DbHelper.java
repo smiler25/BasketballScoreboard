@@ -99,24 +99,21 @@ public class DbHelper extends SQLiteOpenHelper {
 
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        do {
-                            Results result = realm.createObject(Results.class, c.getInt(10));
-                            result.setDate(new Date(c.getLong(0)))
-                                  .setFirstTeamName(c.getString(1))
-                                  .setSecondTeamName(c.getString(2))
-                                  .setFirstScore(c.getInt(3))
-                                  .setSecondScore(c.getInt(4))
-                                  .setFirstPeriods(c.getString(5))
-                                  .setSecondPeriods(c.getString(6))
-                                  .setShareString(c.getString(9))
-                                  .setRegularPeriods(c.getInt(7))
-                                  .setComplete(c.getInt(8) > 0);
-                            ids.add(c.getString(10));
-                        } while (c.moveToNext());
-                    }
+                realm.executeTransaction(realm -> {
+                    do {
+                        Results result = realm.createObject(Results.class, c.getInt(10));
+                        result.setDate(new Date(c.getLong(0)))
+                              .setFirstTeamName(c.getString(1))
+                              .setSecondTeamName(c.getString(2))
+                              .setFirstScore(c.getInt(3))
+                              .setSecondScore(c.getInt(4))
+                              .setFirstPeriods(c.getString(5))
+                              .setSecondPeriods(c.getString(6))
+                              .setShareString(c.getString(9))
+                              .setRegularPeriods(c.getInt(7))
+                              .setComplete(c.getInt(8) > 0);
+                        ids.add(c.getString(10));
+                    } while (c.moveToNext());
                 });
             }
             c.close();
@@ -147,22 +144,19 @@ public class DbHelper extends SQLiteOpenHelper {
 
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        do {
-                            Results game = realm.where(Results.class).equalTo("id", c.getInt(5)).findFirst();
+                realm.executeTransaction(realm -> {
+                    do {
+                        Results game = realm.where(Results.class).equalTo("id", c.getInt(5)).findFirst();
 
-                            PlayersResults playersResults = realm.createObject(PlayersResults.class);
-                            playersResults.setGame(game)
-                                          .setTeam(c.getString(0))
-                                          .setNumber(c.getInt(1))
-                                          .setName(c.getString(2))
-                                          .setPoints(c.getInt(3))
-                                          .setFouls(c.getInt(4))
-                                          .setCaptain(c.getInt(5) == 1);
-                        } while (c.moveToNext());
-                    }
+                        PlayersResults playersResults = realm.createObject(PlayersResults.class);
+                        playersResults.setGame(game)
+                                      .setTeam(c.getString(0))
+                                      .setNumber(c.getInt(1))
+                                      .setName(c.getString(2))
+                                      .setPoints(c.getInt(3))
+                                      .setFouls(c.getInt(4))
+                                      .setCaptain(c.getInt(5) == 1);
+                    } while (c.moveToNext());
                 });
             }
             c.close();
@@ -189,22 +183,19 @@ public class DbHelper extends SQLiteOpenHelper {
             );
             if (c.getCount() > 0) {
                 c.moveToFirst();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        do {
-                            Results game = realm.where(Results.class).equalTo("id", c.getInt(5)).findFirst();
-                            GameDetails details = realm.createObject(GameDetails.class);
-                            details.setLeadChanged(c.getInt(0))
-                                   .setHomeMaxLead(c.getInt(2))
-                                   .setGuestMaxLead(c.getInt(3))
-                                   .setTie(c.getInt(1));
-                            if (c.getString(4) != null) {
-                                details.setPlayByPlay(c.getString(4));
-                            }
-                            game.setDetails(details);
-                        } while (c.moveToNext());
-                    }
+                realm.executeTransaction(realm -> {
+                    do {
+                        Results game = realm.where(Results.class).equalTo("id", c.getInt(5)).findFirst();
+                        GameDetails details = realm.createObject(GameDetails.class);
+                        details.setLeadChanged(c.getInt(0))
+                               .setHomeMaxLead(c.getInt(2))
+                               .setGuestMaxLead(c.getInt(3))
+                               .setTie(c.getInt(1));
+                        if (c.getString(4) != null) {
+                            details.setPlayByPlay(c.getString(4));
+                        }
+                        game.setDetails(details);
+                    } while (c.moveToNext());
                 });
             }
             c.close();

@@ -24,12 +24,7 @@ public class AppUpdatesDialog extends DialogFragment{
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.app_updates_fragment, null);
-        v.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        v.findViewById(R.id.buttonOk).setOnClickListener(v1 -> dismiss());
 
         String text = getResources().getString(R.string.appupdate_info);
         String help_text = getResources().getString(R.string.appupdate_info_link_help).toLowerCase();

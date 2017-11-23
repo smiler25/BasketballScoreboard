@@ -66,21 +66,13 @@ public class TeamEditDialog extends DialogFragment {
         activeView = (Switch) v.findViewById(R.id.edit_team_active);
         activeView.setChecked(true);
 
-        v.findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkForm()) {
-                    apply();
-                    dismiss();
-                }
-            }
-        });
-        v.findViewById(R.id.button_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        v.findViewById(R.id.button_add).setOnClickListener(v14 -> {
+            if (checkForm()) {
+                apply();
                 dismiss();
             }
         });
+        v.findViewById(R.id.button_cancel).setOnClickListener(v13 -> dismiss());
         Button add_another_bu = (Button) v.findViewById(R.id.button_custom_action);
         if (args != null) {
             nameView.setText(args.getString("name", ""));
@@ -88,23 +80,17 @@ public class TeamEditDialog extends DialogFragment {
             activeView.setChecked(args.getBoolean("active", true));
             add_another_bu.setText(getResources().getText(R.string.action_delete));
             edit = true;
-            add_another_bu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checkForm()) {
-                        apply();
-                        dismiss();
-                    }
+            add_another_bu.setOnClickListener(v12 -> {
+                if (checkForm()) {
+                    apply();
+                    dismiss();
                 }
             });
         } else {
-            add_another_bu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checkForm()) {
-                        apply();
-                        clearForm();
-                    }
+            add_another_bu.setOnClickListener(v1 -> {
+                if (checkForm()) {
+                    apply();
+                    clearForm();
                 }
             });
         }

@@ -106,31 +106,16 @@ public class ListDialog extends DialogFragment {
     }
 
     private void initTimeout(AlertDialog.Builder builder) {
-        builder.setItems(R.array.timeout_variants, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.onTimeoutDialogItemClick(which);
-            }
-        });
+        builder.setItems(R.array.timeout_variants, (dialog, which) -> listener.onTimeoutDialogItemClick(which));
     }
 
     private void initNewPeriod(AlertDialog.Builder builder) {
-        builder.setItems(R.array.new_period_variants, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.onNewPeriodDialogItemClick(which);
-            }
-        });
+        builder.setItems(R.array.new_period_variants, (dialog, which) -> listener.onNewPeriodDialogItemClick(which));
     }
 
     private void initPanelClear(AlertDialog.Builder builder, Bundle args) {
         left = args.getBoolean("left", true);
-        builder.setItems(R.array.sp_clear_titles, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.onClearPanelDialogItemClick(which, left);
-            }
-        });
+        builder.setItems(R.array.sp_clear_titles, (dialog, which) -> listener.onClearPanelDialogItemClick(which, left));
     }
 
     private void initSubstitute(AlertDialog.Builder builder, Bundle args) {
@@ -171,12 +156,7 @@ public class ListDialog extends DialogFragment {
 
     private void initAddPlayersSelect(AlertDialog.Builder builder, Bundle args) {
         left = args.getBoolean("left", true);
-        builder.setItems(R.array.select_add_players, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.onSelectAddPlayers(which, left);
-            }
-        });
+        builder.setItems(R.array.select_add_players, (dialog, which) -> listener.onSelectAddPlayers(which, left));
     }
 
     DialogInterface.OnClickListener listClickListener = new DialogInterface.OnClickListener() {

@@ -32,12 +32,7 @@ public class HelpActivity extends AppCompatActivity implements HelpListFragment.
             bar.setDisplayShowHomeEnabled(true);
             bar.setDisplayHomeAsUpEnabled(true);
         }
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
     @Override

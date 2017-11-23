@@ -43,25 +43,10 @@ public class OverlayFragment extends Fragment{
         switch (type) {
             case OVERLAY_PANELS:
                 v = inflater.inflate(R.layout.overlay_panels, container, false);
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        listener.onOverlayClick();
-                    }
-                });
-                v.findViewById(R.id.left_panel_overlay_open).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        listener.onOverlayOpenPanel(Constants.LEFT);
-                    }
-                });
+                v.setOnClickListener(v13 -> listener.onOverlayClick());
+                v.findViewById(R.id.left_panel_overlay_open).setOnClickListener(v12 -> listener.onOverlayOpenPanel(Constants.LEFT));
 
-                v.findViewById(R.id.right_panel_overlay_open).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        listener.onOverlayOpenPanel(Constants.RIGHT);
-                    }
-                });
+                v.findViewById(R.id.right_panel_overlay_open).setOnClickListener(v1 -> listener.onOverlayOpenPanel(Constants.RIGHT));
                 break;
             case OVERLAY_SWITCH:
                 v = inflater.inflate(R.layout.overlay_switch, container, false);

@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
 
@@ -110,16 +109,13 @@ public class PrefActivity extends Activity implements
             LinearLayout root = getRoot(findViewById(android.R.id.list).getParent());
             toolbar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.toolbar_prefs, root, false);
             root.addView(toolbar, 0);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (getFragmentManager().getBackStackEntryCount() > 0) {
-                        getFragmentManager().popBackStack();
-                        toolbar.setTitle(R.string.action_help);
-                        toolbar.setTitle(R.string.title_activity_settings);
-                    } else {
-                        finish();
-                    }
+            toolbar.setNavigationOnClickListener(v -> {
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                    toolbar.setTitle(R.string.action_help);
+                    toolbar.setTitle(R.string.title_activity_settings);
+                } else {
+                    finish();
                 }
             });
 

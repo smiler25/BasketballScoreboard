@@ -50,14 +50,11 @@ public class FloatingCountdownTimerDialog extends DialogFragment {
         clockView = (TextView) v.findViewById(R.id.timeoutClock);
         titleView = (TextView) v.findViewById(R.id.dialog_title);
         titleView.setText(title);
-        v.findViewById(R.id.buttonClose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (timer != null) {
-                    timer.cancel();
-                }
-                dismiss();
+        v.findViewById(R.id.buttonClose).setOnClickListener(v1 -> {
+            if (timer != null) {
+                timer.cancel();
             }
+            dismiss();
         });
         return builder.create();
     }

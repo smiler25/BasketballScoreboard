@@ -111,21 +111,13 @@ public class PlayerEditDialog extends DialogFragment {
         numberView = (EditText) v.findViewById(R.id.edit_player_number);
         captainView = (Switch) v.findViewById(R.id.edit_player_captain);
 
-        v.findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkForm()) {
-                    apply();
-                    dismiss();
-                }
-            }
-        });
-        v.findViewById(R.id.button_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        v.findViewById(R.id.button_add).setOnClickListener(v14 -> {
+            if (checkForm()) {
+                apply();
                 dismiss();
             }
         });
+        v.findViewById(R.id.button_cancel).setOnClickListener(v13 -> dismiss());
         Bundle args = getArguments();
         Button actionButton = (Button)v.findViewById(R.id.button_custom_action);
         if (args == null) {
@@ -147,25 +139,19 @@ public class PlayerEditDialog extends DialogFragment {
             captainView.setChecked(args.getBoolean("captain", false));
             actionButton.setText(getResources().getText(R.string.action_delete));
             edit = true;
-            actionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (inGame) {
-                        listenerInGame.onDeletePlayerInGame(left, id);
-                    } else {
-                        listener.onDeletePlayer(playerId);
-                    }
-                    dismiss();
+            actionButton.setOnClickListener(v12 -> {
+                if (inGame) {
+                    listenerInGame.onDeletePlayerInGame(left, id);
+                } else {
+                    listener.onDeletePlayer(playerId);
                 }
+                dismiss();
             });
         } else {
-            actionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checkForm()) {
-                        apply();
-                        clearForm();
-                    }
+            actionButton.setOnClickListener(v1 -> {
+                if (checkForm()) {
+                    apply();
+                    clearForm();
                 }
             });
         }

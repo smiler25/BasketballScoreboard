@@ -24,11 +24,8 @@ public abstract class RealmRecyclerViewAdapter<T extends RealmObject>
 
         public ViewHolder(View v) {
             super(v);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            v.setOnClickListener(v1 -> {
 //                    Log.d(TAG, "Element " + getPosition() + " clicked.");
-                }
             });
             textView = (TextView) v.findViewById(R.id.textView);
         }

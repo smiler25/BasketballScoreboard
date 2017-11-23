@@ -31,12 +31,9 @@ class TeamViewPlayers extends DetailViewExpandable {
         table.addView(new TeamViewPlayersRow(context));
         int line = 0;
 
-        OnClickListener editListener = new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    listener.onTeamPlayerEdit((Integer) view.getTag());
-                }
+        OnClickListener editListener = view -> {
+            if (listener != null) {
+                listener.onTeamPlayerEdit((Integer) view.getTag());
             }
         };
 
@@ -44,12 +41,9 @@ class TeamViewPlayers extends DetailViewExpandable {
             table.addView(new TeamViewPlayersRow(context, player.getId(), Integer.toString(player.getNumber()), player.getName(), (line & 1) == 0, editListener));
             line++;
         }
-        table.addView(new TeamViewPlayersRow(context, new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    listener.onTeamPlayerAdd();
-                }
+        table.addView(new TeamViewPlayersRow(context, view -> {
+            if (listener != null) {
+                listener.onTeamPlayerAdd();
             }
         }));
         return table;

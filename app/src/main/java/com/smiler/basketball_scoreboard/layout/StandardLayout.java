@@ -773,36 +773,20 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
 
     // players
     private void attachLeftButton(View button) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag());
-            }
-        });
-        button.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                longClickPlayerBu = (Button) v;
-                longClickListener.onPlayerButtonLongClick(LEFT);
-                return false;
-            }
+        button.setOnClickListener(v -> clickListener.onPlayerButtonClick(LEFT, (SidePanelRow) v.getTag()));
+        button.setOnLongClickListener(v -> {
+            longClickPlayerBu = (Button) v;
+            longClickListener.onPlayerButtonLongClick(LEFT);
+            return false;
         });
     }
 
     private void attachRightButton(View button) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag());
-            }
-        });
-        button.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                longClickPlayerBu = (Button) v;
-                longClickListener.onPlayerButtonLongClick(RIGHT);
-                return false;
-            }
+        button.setOnClickListener(v -> clickListener.onPlayerButtonClick(RIGHT, (SidePanelRow) v.getTag()));
+        button.setOnLongClickListener(v -> {
+            longClickPlayerBu = (Button) v;
+            longClickListener.onPlayerButtonLongClick(RIGHT);
+            return false;
         });
     }
 

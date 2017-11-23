@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.smiler.basketball_scoreboard.R;
@@ -33,12 +32,7 @@ public class HelpFragment extends Fragment {
         if (args != null && layoutId == R.layout.help_panels_fragment) {
             panelsOn = (Switch) v.findViewById(R.id.help_panels_switch);
             panelsOn.setChecked(getPanelsState());
-            panelsOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    changePanelsState();
-                }
-            });
+            panelsOn.setOnCheckedChangeListener((buttonView, isChecked) -> changePanelsState());
         }
         return v;
     }

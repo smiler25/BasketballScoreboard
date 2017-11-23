@@ -72,12 +72,7 @@ public class SidePanelRow extends TableRow implements Comparable<SidePanelRow>, 
             foulsView = (TextView) findViewById(R.id.right_panel_fouls);
             edit = findViewById(R.id.right_panel_edit);
         }
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setRow();
-            }
-        });
+        edit.setOnClickListener(v -> setRow());
         id = count++;
     }
 
