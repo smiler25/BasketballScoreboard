@@ -60,10 +60,10 @@ SeekBar.OnSeekBarChangeListener{
 
     @Override
     protected void onBindDialogView(View view) {
-        SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
+        SeekBar seekBar = view.findViewById(R.id.seekbar);
         ((TextView) view.findViewById(R.id.seekbar_min)).setText(Integer.toString(min));
         ((TextView) view.findViewById(R.id.seekbar_max)).setText(Integer.toString(max));
-        currentTextView = (TextView) view.findViewById(R.id.seekbar_current);
+        currentTextView = view.findViewById(R.id.seekbar_current);
         currentTextView.setText(Integer.toString(current));
         seekBar.setMax(max - 1);
         seekBar.setProgress(current - 1);

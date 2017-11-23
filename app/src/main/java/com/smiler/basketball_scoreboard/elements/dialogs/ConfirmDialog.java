@@ -9,10 +9,14 @@ import android.os.Bundle;
 
 import com.smiler.basketball_scoreboard.R;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 public class ConfirmDialog extends DialogFragment implements DialogInterface.OnClickListener {
     private static String argType = "type";
     private static String argTeamType = "teamType";
     private DialogTypes type;
+    @Setter @Accessors(chain = true)
     private ConfirmDialogListener listener;
     private int teamType;
 
@@ -115,11 +119,6 @@ public class ConfirmDialog extends DialogFragment implements DialogInterface.OnC
         } catch (ClassCastException e) {
 //            throw new ClassCastException(activity.toString() + " must implement ConfirmDialogListener");
         }
-    }
-
-    public ConfirmDialog setListener(ConfirmDialogListener listener) {
-        this.listener = listener;
-        return this;
     }
 
     @Override

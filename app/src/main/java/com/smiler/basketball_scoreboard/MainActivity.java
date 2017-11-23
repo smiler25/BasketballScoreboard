@@ -393,9 +393,8 @@ public class MainActivity extends AppCompatActivity implements
         return layout;
     }
 
-    private PlayersPanels initPlayersPanels() {
+    private void initPlayersPanels() {
         panels = new PlayersPanels(this, preferences);
-        return panels;
     }
 
     private void startNewGame(boolean save) {

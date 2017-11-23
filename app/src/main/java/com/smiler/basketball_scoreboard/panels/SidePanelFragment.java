@@ -67,11 +67,6 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     public interface SidePanelListener {
         void onSidePanelClose(boolean left);
         void onSidePanelActiveSelected(TreeSet<SidePanelRow> rows, boolean left);

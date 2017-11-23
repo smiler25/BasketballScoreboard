@@ -3,11 +3,17 @@ package com.smiler.basketball_scoreboard.game;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ActionRecord {
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@ToString
+@Getter
+public class ActionRecord {
     private long time;
     private int type;
     private int team;
+    @Setter
     private int number;
     private int value;
 
@@ -23,50 +29,12 @@ public class ActionRecord {
          }
      }
 
-    public ActionRecord(long time, int type, int team, int number, int value) {
-        this.time = time;
-        this.type = type;
-        this.team = team;
-        this.number = number;
-        this.value = value;
-    }
-
     public ActionRecord(long time, int type, int team, int value) {
         this.time = time;
         this.type = type;
         this.team = team;
         number = -1;
         this.value = value;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public int getTeam() {
-        return team;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setNumber(int value) {
-        number = value;
-    }
-
-    @Override
-    public String toString() {
-//        return String.format(ACTION_FORMAT, type, team, value);
-        return getJson().toString();
     }
 
     public JSONObject getJson() {

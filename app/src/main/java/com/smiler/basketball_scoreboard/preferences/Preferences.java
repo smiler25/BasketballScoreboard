@@ -67,7 +67,7 @@ public class Preferences {
         GSCORE,
         MAIN_TIME,
         SHOT_TIME,
-        BACKGROUND;
+        BACKGROUND
     }
 
     private static Preferences instance;
