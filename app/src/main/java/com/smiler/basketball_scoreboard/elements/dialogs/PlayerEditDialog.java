@@ -71,7 +71,7 @@ public class PlayerEditDialog extends DialogFragment {
         args.putInt(playerIdArg, player.getId());
         args.putInt("number", player.getNumber());
         args.putString("name", player.getName());
-        args.putBoolean("captain", player.getCaptain());
+        args.putBoolean("captain", player.isCaptain());
         f.setArguments(args);
         return f;
     }

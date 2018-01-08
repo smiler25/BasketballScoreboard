@@ -462,10 +462,10 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         RealmResults<PlayersResults> players = RealmController.with().getPlayers(-1, Boolean.toString(left));
         if (players.size() > 0) {
             for (PlayersResults player : players) {
-                SidePanelRow row = addRow(player.getNumber(), player.getPlayerName(), player.getCaptain());
+                SidePanelRow row = addRow(player.getNumber(), player.getName(), player.isCaptain());
                 row.changePoints(player.getPoints());
                 row.changeFouls(player.getFouls());
-                if (player.getActive()) {
+                if (player.isActive()) {
                     activePlayers.add(row);
                     row.toggleSelected();
                 }

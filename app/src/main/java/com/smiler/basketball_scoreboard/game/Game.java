@@ -34,11 +34,6 @@ import java.util.TreeSet;
 
 import io.realm.Realm;
 
-import static com.smiler.basketball_scoreboard.Constants.ACTION_FLS;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_NONE;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_PTS;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_TO;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_TO20;
 import static com.smiler.basketball_scoreboard.Constants.GUEST;
 import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.LEFT;
@@ -108,7 +103,7 @@ public class Game {
     private ActionRecord lastAction;
     private int timesTie = 1, timesLeadChanged = 0;
     private int hMaxLead = 0, gMaxLead = 0;
-    private short hActionType = ACTION_NONE, gActionType = ACTION_NONE;
+    private Actions hActionType = null, gActionType = null;
     private int hActionValue = 0, gActionValue = 0;
 
     private Preferences preferences;
@@ -520,7 +515,7 @@ public class Game {
     private void savePeriod() {
         if (!scoreSaved) {
             // возможно, надо учитывать сброс периода
-            if (period > 0 && gameResult.getHomeScoreByPeriod().size() == period) {
+            if (period > 0 && gameResult.getHomeScorePeriods().size() == period) {
                 gameResult.replacePeriodScores(period, hScore, gScore);
             } else {
                 gameResult.addPeriodScores(hScore, gScore);
@@ -569,7 +564,7 @@ public class Game {
                     .setGuestMaxLead(gMaxLead)
                     .setTie(timesTie);
             if (preferences.playByPlay == 2) {
-                details.setPlayByPlay(gameResult.toString());
+                details.setPlayByPlay(gameResult.getString());
             }
             result.setDetails(details);
 
@@ -653,9 +648,9 @@ public class Game {
         }
     }
 
-    private void addAction(int type, int team, int value) {
+    private void addAction(Actions action, int team, int value) {
         if (preferences.playByPlay != 0) {
-            lastAction = gameResult.addAction(mainTime, type, team, value);
+            lastAction = gameResult.addAction(mainTime, action, team, value);
         }
     }
 
@@ -678,23 +673,23 @@ public class Game {
         if (lastAction == null) {
             return false;
         }
-        switch (lastAction.getType()) {
-            case ACTION_PTS:
+        switch (lastAction.getAction()) {
+            case SCORE:
                 revertScore(lastAction.getTeam(), lastAction.getValue());
                 if (preferences.spOn) {
                     cancelPlayerScore(lastAction.getTeam(), lastAction.getNumber(), lastAction.getValue());
                 }
                 break;
-            case ACTION_FLS:
+            case FOUL:
                 revertFoul(lastAction.getTeam());
                 if (preferences.spOn) {
                     cancelPlayerFoul(lastAction.getTeam(), lastAction.getNumber(), lastAction.getValue());
                 }
                 break;
-            case ACTION_TO:
+            case TIMEOUT:
                 revertTimeout(lastAction.getTeam());
                 break;
-            case ACTION_TO20:
+            case TIMEOUT_20:
                 revertTimeout20(lastAction.getTeam());
                 break;
         }
@@ -735,18 +730,17 @@ public class Game {
             if (!changeHomeScore(value)) {
                 return;
             }
-            hActionType = ACTION_PTS;
+            hActionType = Actions.SCORE;
             hActionValue += value;
-            addAction(ACTION_PTS, HOME, value);
         } else {
             gScorePrev = gScore;
             if (!changeGuestScore(value)) {
                 return;
             }
-            gActionType = ACTION_PTS;
+            gActionType = Actions.SCORE;
             gActionValue += value;
-            addAction(ACTION_PTS, GUEST, value);
         }
+        addAction(Actions.SCORE, team, value);
         updateStats();
     }
 
@@ -1314,7 +1308,7 @@ public class Game {
                 }
             }
         }
-        addAction(ACTION_TO, team, 1);
+        addAction(Actions.TIMEOUT, team, 1);
     }
 
     private void revertTimeout(int team) {
@@ -1366,7 +1360,7 @@ public class Game {
             }
 
         }
-        addAction(ACTION_TO20, team, 1);
+        addAction(Actions.TIMEOUT_20, team, 1);
     }
 
     private void revertTimeout20(int team) {
@@ -1412,7 +1406,7 @@ public class Game {
                 if (hFouls < preferences.maxFouls) {
                     layout.setHomeFoul(Short.toString(++hFouls), getFoulLevel(hFouls));
                 }
-                hActionType = ACTION_FLS;
+                hActionType = Actions.FOUL;
                 hActionValue += 1;
                 break;
             case GUEST:
@@ -1420,12 +1414,12 @@ public class Game {
                     layout.setGuestFoul(Short.toString(++gFouls), getFoulLevel(gFouls));
                 }
 
-                gActionType = ACTION_FLS;
+                gActionType = Actions.FOUL;
                 gActionValue += 1;
                 break;
         }
 
-        addAction(ACTION_FLS, team, 1);
+        addAction(Actions.FOUL, team, 1);
     }
 
     private void nullFouls() {
@@ -1768,25 +1762,25 @@ public class Game {
     }
 
     private void hPlayerAction(SidePanelRow player) {
-        if (hActionType != ACTION_NONE) {
-            if (hActionType == ACTION_PTS) {
+        if (hActionType != null) {
+            if (hActionType == Actions.SCORE) {
                 player.changePoints(hActionValue);
-            } else if (hActionType == ACTION_FLS) {
+            } else if (hActionType == Actions.FOUL) {
                 player.changeFouls(hActionValue);
             }
-            hActionType = ACTION_NONE;
+            hActionType = null;
             hActionValue = 0;
         }
     }
 
     private void gPlayerAction(SidePanelRow player) {
-        if (gActionType != ACTION_NONE) {
-            if (gActionType == ACTION_PTS) {
+        if (gActionType != null) {
+            if (gActionType == Actions.SCORE) {
                 player.changePoints(gActionValue);
-            } else if (gActionType == ACTION_FLS) {
+            } else if (gActionType == Actions.FOUL) {
                 player.changeFouls(gActionValue);
             }
-            gActionType = ACTION_NONE;
+            gActionType = null;
             gActionValue = 0;
         }
     }

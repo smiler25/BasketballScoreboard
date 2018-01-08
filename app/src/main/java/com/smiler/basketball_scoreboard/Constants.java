@@ -11,11 +11,6 @@ public final class Constants {
     public static final int HOME = 0;
     public static final int GUEST = 1;
     public static final int NO_TEAM = 2;
-    public static final int ACTION_NONE = -1;
-    public static final int ACTION_PTS = 0;
-    public static final int ACTION_FLS = 1;
-    public static final int ACTION_TO = 2;
-    public static final int ACTION_TO20 = 3;
 //    public static final String ACTION_FORMAT = "%d;%d;%d";
 
     public static final int PANEL_DELETE_TYPE_FULL = 0;

@@ -29,7 +29,7 @@ class ResultViewScoreTable extends TableLayout {
         TableRow headerRow = findViewById(R.id.res_score_table_title_row);
         int numRegular = result.getNumRegular();
         int pos = 1;
-        for (int i=0; i < result.getHomeScoreByPeriod().size(); i++, pos++) {
+        for (int i = 0; i < result.getHomeScorePeriods().size(); i++, pos++) {
             TextView view = (TextView) inflate(getContext(), cellLayoutId, null);
             view.setText(i < numRegular ? String.valueOf(pos) : "OT" + (pos - numRegular));
             headerRow.addView(view, pos);
@@ -41,7 +41,7 @@ class ResultViewScoreTable extends TableLayout {
     private void initHomeRow() {
         TableRow row = findViewById(R.id.res_score_table_home_row);
         ((TextView) findViewById(R.id.res_score_table_home_name)).setText(result.getHomeName());
-        for (int score : result.getHomeScoreByPeriod()) {
+        for (int score : result.getHomeScorePeriods()) {
             TextView view = (TextView) inflate(getContext(), cellLayoutId, null);
             view.setText(String.valueOf(score));
             row.addView(view);
@@ -54,7 +54,7 @@ class ResultViewScoreTable extends TableLayout {
     private void initGuestRow() {
         TableRow row = findViewById(R.id.res_score_table_guest_row);
         ((TextView) findViewById(R.id.res_score_table_guest_name)).setText(result.getGuestName());
-        for (int score : result.getGuestScoreByPeriod()) {
+        for (int score : result.getGuestScorePeriods()) {
             TextView view = (TextView) inflate(getContext(), cellLayoutId, null);
             view.setText(String.valueOf(score));
             row.addView(view);

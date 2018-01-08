@@ -12,6 +12,7 @@ import lombok.ToString;
 public class ActionRecord {
     private long time;
     private int type;
+    private Actions action;
     private int team;
     @Setter
     private int number;
@@ -29,9 +30,9 @@ public class ActionRecord {
          }
      }
 
-    public ActionRecord(long time, int type, int team, int value) {
+    public ActionRecord(long time, Actions action, int team, int value) {
         this.time = time;
-        this.type = type;
+        this.action = action;
         this.team = team;
         number = -1;
         this.value = value;
@@ -41,7 +42,7 @@ public class ActionRecord {
         JSONObject obj = new JSONObject();
         try {
             obj.put("time", time);
-            obj.put("type", type);
+            obj.put("action", action.name());
             obj.put("team", team);
             obj.put("value", value);
             obj.put("number", number);

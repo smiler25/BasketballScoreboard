@@ -7,7 +7,13 @@ import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Accessors(chain = true)
 public class Team extends RealmObject {
     @PrimaryKey
     private int id;
@@ -24,53 +30,22 @@ public class Team extends RealmObject {
     @Ignore
     private ArrayList<Player> gamePlayers;
 
-    public int getId() { return id; }
-    public Team setId(int id) {
-        this.id = id;
-        return this;
-    }
-    public String getName() { return name; }
-    public Team setName(String name) {
-        this.name = name;
-        return this;
-    }
-    public boolean getActive() { return active; }
-    public Team setActive(boolean active) {
-        this.active = active;
-        return this;
-    }
-    public RealmList<Player> getPlayers() { return players; }
-    public Team setPlayers(RealmList<Player> players) {
-        this.players = players;
-        return this;
-    }
-    public Team addPlayer(Player player) {
+    public void addPlayer(Player player) {
         players.add(player);
-        return this;
     }
 
-    public RealmList<Results> getGames() { return games; }
-    public Team addGame(Results game) {
+    public void addGame(Results game) {
         games.add(game);
-        return this;
     }
-    public int getWins() {
-        return wins;
-    }
+
     public void incrementWins() {
         wins++;
     }
 
-    public int getLoses() {
-        return loses;
-    }
     public void incrementLoses() {
         loses++;
     }
 
-    public float getAvgPoints() {
-        return avgPoints;
-    }
     public void calcAvgPoints(int score, int scoreOpp) {
         if (games.size() == 0) {
             avgPoints = score;
@@ -91,23 +66,12 @@ public class Team extends RealmObject {
         avgPointsOpp = totalOpp / games.size();
     }
 
-    public float getAvgPointsOpp() {
-        return avgPointsOpp;
-    }
-
-    public void setGamePlayers(ArrayList<Player> players) {
-        gamePlayers = players;
-    }
-    public ArrayList<Player> getGamePlayers() {
-        return gamePlayers;
-    }
-
     public Player getCaptain() {
         if (players.size() == 0) {
             return null;
         }
         for (Player player : players) {
-            if (player.getCaptain()) {
+            if (player.isCaptain()) {
                 return player;
             }
         }
@@ -119,7 +83,7 @@ public class Team extends RealmObject {
             return;
         }
         for (Player player : players) {
-            if (player.getCaptain()) {
+            if (player.isCaptain()) {
                 player.setCaptain(false);
             }
         }

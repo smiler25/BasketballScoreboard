@@ -98,7 +98,7 @@ public class ResultView extends LinearLayout {
         ArrayList<Integer> gPeriods = new ArrayList<>();
         String hPeriodsString = gameResult.getFirstPeriods();
         String gPeriodsString = gameResult.getSecondPeriods();
-        if (hPeriodsString != null && !hPeriodsString.equals("")) {
+        if (hPeriodsString != null && !hPeriodsString.isEmpty()) {
             for (String periodString : hPeriodsString.split("-")) {
                 try {
                     hPeriods.add(Integer.parseInt(periodString));
@@ -107,7 +107,7 @@ public class ResultView extends LinearLayout {
                 }
             }
         }
-        if (gPeriodsString != null && !gPeriodsString.equals("")) {
+        if (gPeriodsString != null && !gPeriodsString.isEmpty()) {
             for (String periodString : gPeriodsString.split("-")) {
                 try {
                     gPeriods.add(Integer.parseInt(periodString));
@@ -124,7 +124,7 @@ public class ResultView extends LinearLayout {
                 gameResult.getSecondScore(),
                 hPeriods,
                 gPeriods,
-                gameResult.getComplete(),
+                gameResult.isComplete(),
                 gameResult.getDate().getTime(),
                 gameResult.getRegularPeriods());
     }
@@ -136,10 +136,10 @@ public class ResultView extends LinearLayout {
             if (result.get(team) == null) { result.put(team, new ArrayList<>()); }
             result.get(team).add(new InGamePlayer(
                     r.getNumber(),
-                    r.getPlayerName(),
+                    r.getName(),
                     r.getPoints(),
                     r.getFouls(),
-                    r.getCaptain()));
+                    r.isCaptain()));
         }
         return result;
     }

@@ -16,10 +16,6 @@ import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 
-import static com.smiler.basketball_scoreboard.Constants.ACTION_FLS;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_PTS;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_TO;
-import static com.smiler.basketball_scoreboard.Constants.ACTION_TO20;
 import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.SECONDS_60;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
@@ -91,14 +87,14 @@ class ResultViewPlayByPlay extends DetailViewExpandable {
 
     private String actionString(ActionRecord record) {
         Resources res = getResources();
-        switch (record.getType()) {
-            case ACTION_PTS:
+        switch (record.getAction()) {
+            case SCORE:
                 return res.getQuantityString(R.plurals.points, record.getValue(), record.getValue());
-            case ACTION_FLS:
+            case FOUL:
                 return res.getString(R.string.foul);
-            case ACTION_TO:
+            case TIMEOUT:
                 return res.getString(R.string.timeout);
-            case ACTION_TO20:
+            case TIMEOUT_20:
                 return res.getString(R.string.timeout20);
             default:
                 return "";
