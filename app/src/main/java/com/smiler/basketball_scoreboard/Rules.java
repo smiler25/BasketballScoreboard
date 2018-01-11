@@ -60,7 +60,7 @@ public class Rules {
     private static final int DEFAULT_3X3_PLAYER_FOULS = 4;
     public static final int MAX_PLAYERS_3X3 = 4;
     public static final int MIN_PLAYERS_3X3 = 3;
-    private static BaseLayout.GAME_LAYOUT prevLayout;
+    private static BaseLayout.GameLayoutTypes prevLayout;
 
 
     public static void setDefaultRules(SharedPreferences prefs, int type) {
@@ -68,7 +68,7 @@ public class Rules {
         if (type == RULES_3X3) {
             set3X3Rules(editor);
         } else {
-            prevLayout = BaseLayout.GAME_LAYOUT.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
+            prevLayout = BaseLayout.GameLayoutTypes.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
             setCommon(editor);
             if (type == RULES_FIBA) {
                 setFIBA(editor);
@@ -80,7 +80,7 @@ public class Rules {
     }
 
     private static void setCommon(SharedPreferences.Editor editor) {
-        if (prevLayout == BaseLayout.GAME_LAYOUT.STREETBALL) {
+        if (prevLayout == BaseLayout.GameLayoutTypes.STREETBALL) {
             editor.putString(PREF_LAYOUT, LAYOUT_COMMON);
         }
         editor.putInt(PREF_NUM_REGULAR, DEFAULT_NUM_REGULAR);
@@ -120,13 +120,13 @@ public class Rules {
         editor.putInt(PREF_SIDE_PANELS_FOULS_MAX, DEFAULT_3X3_PLAYER_FOULS);
     }
 
-    public enum TO_RULES {
+    public enum TimeoutRules {
         NONE,
         FIBA,
         NBA,
         STREETBALL;
 
-        public static TO_RULES fromInteger(int x) {
+        public static TimeoutRules fromInteger(int x) {
             switch (x) {
                 case 0:
                     return NONE;

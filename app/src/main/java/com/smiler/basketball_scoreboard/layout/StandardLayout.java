@@ -46,8 +46,8 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
     private TextView hTimeouts20View, gTimeouts20View;
     private TextView hFoulsView, gFoulsView;
     private TriangleView leftArrow, rightArrow;
-    private Rules.TO_RULES timeoutRules;
-    private GAME_LAYOUT layoutType;
+    private Rules.TimeoutRules timeoutRules;
+    private GameLayoutTypes layoutType;
     private ClickListener clickListener;
     private LongClickListener longClickListener;
     private boolean blockLongClick;
@@ -255,7 +255,7 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
 
     private void initExtended() {
         ViewStub stub = findViewById(R.id.bottom_line_stub);
-        stub.setLayoutResource(preferences.timeoutRules == Rules.TO_RULES.NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
+        stub.setLayoutResource(preferences.timeoutRules == Rules.TimeoutRules.NBA ? R.layout.full_bottom_nba : R.layout.full_bottom_simple);
         stub.inflate();
 
         shotTimeView = findViewById(R.id.shotTimeView);
@@ -304,10 +304,10 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         gTimeoutsView.setOnClickListener(this);
         hTimeoutsView.setOnLongClickListener(this);
         gTimeoutsView.setOnLongClickListener(this);
-        if (preferences.timeoutRules == Rules.TO_RULES.NONE) {
+        if (preferences.timeoutRules == Rules.TimeoutRules.NONE) {
             ((TextView) findViewById(R.id.leftTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
             ((TextView) findViewById(R.id.rightTimeoutsLabel)).setText(getResources().getString(R.string.label_timeouts));
-        } else if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
+        } else if (preferences.timeoutRules == Rules.TimeoutRules.NBA) {
             hTimeouts20View = findViewById(R.id.leftTimeouts20View);
             gTimeouts20View = findViewById(R.id.rightTimeouts20View);
             hTimeouts20View.setOnClickListener(this);
@@ -431,7 +431,7 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
         gScoreView = _ScoreView;
         setScores(gScoreView.getText(), hScoreView.getText());
 
-        if (layoutType != BaseLayout.GAME_LAYOUT.SIMPLE) {
+        if (layoutType != GameLayoutTypes.SIMPLE) {
             TextView _FoulsView = hFoulsView;
             hFoulsView = gFoulsView;
             gFoulsView = _FoulsView;
@@ -442,7 +442,7 @@ public class StandardLayout extends BaseLayout implements View.OnClickListener, 
             gTimeoutsView = _TimeoutsView;
             setTimeouts(gTimeoutsView.getText(), hTimeoutsView.getText(), gTimeoutsView.getCurrentTextColor(), hTimeoutsView.getCurrentTextColor());
 
-            if (timeoutRules == Rules.TO_RULES.NBA) {
+            if (timeoutRules == Rules.TimeoutRules.NBA) {
                 TextView _Timeouts20View = hTimeouts20View;
                 hTimeouts20View = gTimeouts20View;
                 gTimeouts20View = _Timeouts20View;

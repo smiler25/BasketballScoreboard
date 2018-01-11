@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class BaseLayout extends LinearLayout {
-    public enum GAME_LAYOUT {
+    public enum GameLayoutTypes {
         COMMON,
         SIMPLE,
         STREETBALL;
 
-        public static GAME_LAYOUT fromInteger(int x) {
+        public static GameLayoutTypes fromInteger(int x) {
             switch (x) {
                 case 0:
                     return COMMON;

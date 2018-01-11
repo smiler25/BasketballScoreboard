@@ -69,6 +69,7 @@ public class PrefActivity extends Activity implements
     public static final String PREF_HORN_LENGTH = "horn_length";
     public static final String PREF_FIX_LANDSCAPE = "fix_landscape";
     public static final String PREF_PLAY_BY_PLAY = "play_by_play";
+    public static final String PREF_PROTOCOL = "protocol";
 
     public static final String SIDE_PANEL_FOULS_RULES_STRICT = "1";
 //    private static final String DEFAULT_SIDE_PANEL_FOULS_RULES = "2";

@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 
+import com.smiler.basketball_scoreboard.ProtocolTypes;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.Rules;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
@@ -13,6 +14,8 @@ import com.smiler.basketball_scoreboard.panels.SidePanelFragment;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 
 import java.text.SimpleDateFormat;
+
+import lombok.Getter;
 
 import static com.smiler.basketball_scoreboard.Constants.DEFAULT_HORN_LENGTH;
 import static com.smiler.basketball_scoreboard.Constants.HOME;
@@ -38,8 +41,8 @@ public class Preferences {
 
     public boolean autoSaveResults;
     public int autoSound, actualTime;
-    public Rules.TO_RULES timeoutRules;
-    public BaseLayout.GAME_LAYOUT layoutType;
+    public Rules.TimeoutRules timeoutRules;
+    public BaseLayout.GameLayoutTypes layoutType;
     public int playByPlay;
     public boolean fixLandscape, fixLandscapeChanged;
     public boolean layoutChanged, timeoutsRulesChanged;
@@ -61,6 +64,8 @@ public class Preferences {
     private int defaultScoreColor, defaultTimeColor;
     public String hName, gName;
     public int dontAskNewGame;
+    @Getter
+    private ProtocolTypes protocolType;
 
     public enum Elements {
         HSCORE,
@@ -88,13 +93,12 @@ public class Preferences {
         defaultTimeColor = context.getResources().getColor(R.color.red);
     }
 
-    public Preferences read() {
+    public void read() {
         readNoRestart();
         readRestart();
-        return this;
     }
 
-    public Preferences readNoRestart() {
+    public void readNoRestart() {
         boolean fixLandscape_ = prefs.getBoolean(PrefActivity.PREF_FIX_LANDSCAPE, true);
         fixLandscapeChanged = fixLandscape != fixLandscape_;
         fixLandscape = fixLandscape_;
@@ -143,6 +147,7 @@ public class Preferences {
 
         restartShotTimer = prefs.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, true);
         playByPlay = Integer.parseInt(prefs.getString(PrefActivity.PREF_PLAY_BY_PLAY, "0"));
+        protocolType = ProtocolTypes.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_PROTOCOL, "0")));
 
         boolean arrowsOn_ = prefs.getBoolean(PrefActivity.PREF_POSSESSION_ARROWS, false);
         if (arrowsOn != arrowsOn_) {
@@ -150,16 +155,16 @@ public class Preferences {
             arrowsOn = arrowsOn_;
         }
 
-        BaseLayout.GAME_LAYOUT temp = BaseLayout.GAME_LAYOUT.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
+        BaseLayout.GameLayoutTypes temp = BaseLayout.GameLayoutTypes.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_LAYOUT, "0")));
         if (temp != layoutType) {
             layoutChanged = true;
             layoutType = temp;
         }
-        Rules.TO_RULES temp_rules = Rules.TO_RULES.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, DEFAULT_TIMEOUTS)));
+        Rules.TimeoutRules temp_rules = Rules.TimeoutRules.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_TIMEOUTS_RULES, DEFAULT_TIMEOUTS)));
         if (temp_rules != timeoutRules) {
             timeoutsRulesChanged = true;
             timeoutRules = temp_rules;
-            if (temp_rules == Rules.TO_RULES.STREETBALL) {
+            if (temp_rules == Rules.TimeoutRules.STREETBALL) {
                 SidePanelFragment.setMaxPlayers(MAX_PLAYERS_3X3);
                 SidePanelFragment.setMinPlayers(MIN_PLAYERS_3X3);
             }
@@ -172,14 +177,11 @@ public class Preferences {
         if (PrefActivity.prefColorChanged) {
             PrefActivity.prefColorChanged = false;
         }
-
-        return this;
     }
 
-    private Preferences readRestart() {
+    private void readRestart() {
         useDirectTimer = prefs.getBoolean(PrefActivity.PREF_DIRECT_TIMER, false);
         PrefActivity.prefChangedRestart = false;
-        return this;
     }
 
     public void setDontAskNewGame(int value) {

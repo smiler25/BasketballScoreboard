@@ -117,8 +117,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/category_app">
-
+    <PreferenceCategory android:title="@string/category_stats">
         <ListPreference
             android:key="play_by_play"
             android:title="@string/pref_play_by_play"
@@ -128,6 +127,20 @@
             android:entryValues="@array/pref_values_0_2"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
+
+        <ListPreference
+            android:key="protocol"
+            android:title="@string/pref_protocol"
+            android:defaultValue="0"
+            android:summary="%s"
+            android:entries="@array/pref_protocol_titles"
+            android:entryValues="@array/pref_values_0_2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_app">
 
         <PreferenceScreen
             android:key="sounds_screen"

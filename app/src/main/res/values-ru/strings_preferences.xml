@@ -8,6 +8,7 @@
     <string name="category_layout">Настройки макета</string>
     <string name="category_profiles">Команды и игроки</string>
     <string name="category_side_panels">Панели игроков</string>
+    <string name="category_stats">Статистика</string>
     <string name="category_time">Настройки времени</string>
     <string name="screen_sounds">Звуки</string>
     <string name="screen_sp">Настройки панелей игроков</string>
@@ -81,6 +82,13 @@
         <item>Не запоминать</item>
         <item>Запоминать только во время игры (для отмены действий)</item>
         <item>Запоминать и сохранять в результатах</item>
+    </string-array>
+
+    <string name="pref_protocol">Протокол</string>
+    <string-array name="pref_protocol_titles">
+        <item>Не вести</item>
+        <item>Вести. Отсчет времени от начала игры</item>
+        <item>Вести. Отсчет времени от начала каждого периода</item>
     </string-array>
 
     <string-array name="pref_layout_titles">

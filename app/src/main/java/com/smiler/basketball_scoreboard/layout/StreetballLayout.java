@@ -43,7 +43,7 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
     private TextView hTimeoutsView, gTimeoutsView;
     private TextView hFoulsView, gFoulsView;
     private TriangleView leftArrow, rightArrow;
-    private GAME_LAYOUT layoutType;
+    private GameLayoutTypes layoutType;
     private ClickListener clickListener;
     private LongClickListener longClickListener;
     private boolean blockLongClick;
@@ -365,7 +365,7 @@ public class StreetballLayout extends BaseLayout implements View.OnClickListener
         gScoreView = _ScoreView;
         setScores(gScoreView.getText(), hScoreView.getText());
 
-        if (layoutType != BaseLayout.GAME_LAYOUT.SIMPLE) {
+        if (layoutType != GameLayoutTypes.SIMPLE) {
             TextView _FoulsView = hFoulsView;
             hFoulsView = gFoulsView;
             gFoulsView = _FoulsView;

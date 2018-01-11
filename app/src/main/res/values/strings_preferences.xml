@@ -10,6 +10,7 @@
     <string name="category_layout">Layout settings</string>
     <string name="category_profiles">Teams and players</string>
     <string name="category_side_panels">Players panels</string>
+    <string name="category_stats">Statistics</string>
     <string name="screen_sounds">Sounds</string>
     <string name="screen_sp">Players panels settings</string>
     <string name="screen_time">Time settings</string>
@@ -42,6 +43,13 @@
         <item>Do not keep</item>
         <item>Keep only during the game (to undo)</item>
         <item>Keep and save in results</item>
+    </string-array>
+
+    <string name="pref_protocol">Protocol</string>
+    <string-array name="pref_protocol_titles">
+        <item>Do not record</item>
+        <item>Record. Track time from the beginning of the game</item>
+        <item>Record. Track time from the beginning of each period</item>
     </string-array>
 
     <string name="pref_possession_arrows">Possession arrows</string>

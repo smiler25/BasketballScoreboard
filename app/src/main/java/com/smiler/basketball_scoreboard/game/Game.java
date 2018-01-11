@@ -218,11 +218,11 @@ public class Game {
         layout.setMainTimeFormat(TIME_FORMAT);
         layout.setMainTimeText(mainTime);
 
-        if (preferences.layoutType == BaseLayout.GAME_LAYOUT.COMMON) {
+        if (preferences.layoutType == BaseLayout.GameLayoutTypes.COMMON) {
             period = 1;
             layout.setPeriod(Short.toString(period), true);
         }
-        if (preferences.layoutType != BaseLayout.GAME_LAYOUT.SIMPLE) {
+        if (preferences.layoutType != BaseLayout.GameLayoutTypes.SIMPLE) {
             if (preferences.enableShotTime) {
                 shotTime = preferences.shotTimePref;
                 layout.setShotTimeText(shotTime);
@@ -429,7 +429,7 @@ public class Game {
         mainTime = mainTimeTemp;
         layout.setHomeTimeouts(Short.toString(hTimeouts), noTimeouts(hTimeouts));
         layout.setGuestTimeouts(Short.toString(gTimeouts), noTimeouts(gTimeouts));
-        if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
+        if (preferences.timeoutRules == Rules.TimeoutRules.NBA) {
             layout.setHomeTimeouts20(Short.toString(hTimeouts20), noTimeouts(gTimeouts20));
             layout.setGuestTimeouts20(Short.toString(gTimeouts20), noTimeouts(gTimeouts20));
         }
@@ -472,7 +472,7 @@ public class Game {
     }
 
     private void showTimeout() {
-        if (preferences.layoutType == BaseLayout.GAME_LAYOUT.STREETBALL) {
+        if (preferences.layoutType == BaseLayout.GameLayoutTypes.STREETBALL) {
             showTimeout(30, "");
         } else {
             if (period == 2) {
@@ -769,7 +769,7 @@ public class Game {
     }
 
     private void handleScoreChange() {
-        if (preferences.layoutType != BaseLayout.GAME_LAYOUT.SIMPLE &&
+        if (preferences.layoutType != BaseLayout.GameLayoutTypes.SIMPLE &&
                 preferences.enableShotTime && preferences.restartShotTimer) {
             if (mainTimerOn) {
                 startShotCountDownTimer(preferences.shotTimePref);
@@ -854,7 +854,7 @@ public class Game {
             }
         }.start();
         mainTimerOn = true;
-        if (preferences.layoutType != BaseLayout.GAME_LAYOUT.SIMPLE &&
+        if (preferences.layoutType != BaseLayout.GameLayoutTypes.SIMPLE &&
                 preferences.enableShotTime && !shotTimerOn && mainTime > shotTime) {
             startShotCountDownTimer();
         }
@@ -905,7 +905,7 @@ public class Game {
         layout.setMainTimeFormat(TIME_FORMAT);
         mainTimerOn = true;
         customHandler.postDelayed(directTimerThread, 0);
-        if (preferences.layoutType != BaseLayout.GAME_LAYOUT.SIMPLE && preferences.enableShotTime) {
+        if (preferences.layoutType != BaseLayout.GameLayoutTypes.SIMPLE && preferences.enableShotTime) {
             startShotCountDownTimer();
         }
     }
@@ -1002,7 +1002,7 @@ public class Game {
     }
 
     private void under2Minutes() {
-        if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
+        if (preferences.timeoutRules == Rules.TimeoutRules.NBA) {
             if (period == 4) {
                 if (hTimeouts == 2 || hTimeouts == 3) {
                     hTimeouts = 1;
@@ -1073,7 +1073,7 @@ public class Game {
     }
 
     private void handleShotTimes() {
-        if (preferences.layoutType != BaseLayout.GAME_LAYOUT.SIMPLE) {
+        if (preferences.layoutType != BaseLayout.GameLayoutTypes.SIMPLE) {
             if (!preferences.enableShotTime) {
                 layout.hideShotTime();
                 layout.hideShotTimeSwitch();
@@ -1216,7 +1216,7 @@ public class Game {
     }
 
     public void nullTimeouts(boolean left) {
-        if (preferences.timeoutRules == Rules.TO_RULES.NONE) {
+        if (preferences.timeoutRules == Rules.TimeoutRules.NONE) {
             nullTimeoutsNoRules(left == leftIsHome ? HOME : GUEST);
             return;
         }
@@ -1276,7 +1276,7 @@ public class Game {
     public void timeout(int team) {
         pauseGame();
         takenTimeoutsFull++;
-        if (preferences.timeoutRules == Rules.TO_RULES.NONE) {
+        if (preferences.timeoutRules == Rules.TimeoutRules.NONE) {
             if (team == HOME) {
                 layout.setHomeTimeouts(Short.toString(++hTimeouts), false);
                 if (preferences.autoShowTimeout) {
@@ -1289,7 +1289,7 @@ public class Game {
                 }
             }
         } else {
-            if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
+            if (preferences.timeoutRules == Rules.TimeoutRules.NBA) {
                 timeoutFullDuration = takenTimeoutsFull <= maxTimeouts100 ? 100 : 60;
             }
             if (team == HOME) {
@@ -1313,14 +1313,14 @@ public class Game {
 
     private void revertTimeout(int team) {
         takenTimeoutsFull--;
-        if (preferences.timeoutRules == Rules.TO_RULES.NONE) {
+        if (preferences.timeoutRules == Rules.TimeoutRules.NONE) {
             if (team == HOME) {
                 layout.setHomeTimeouts(Short.toString(--hTimeouts), false);
             } else if (team == GUEST) {
                 layout.setGuestTimeouts(Short.toString(--gTimeouts), false);
             }
         } else {
-            if (preferences.timeoutRules == Rules.TO_RULES.NBA) {
+            if (preferences.timeoutRules == Rules.TimeoutRules.NBA) {
                 timeoutFullDuration = takenTimeoutsFull <= maxTimeouts100 ? 100 : 60;
             }
             if (team == HOME) {
@@ -1385,7 +1385,7 @@ public class Game {
     }
 
     private boolean noTimeouts(short value) {
-        return preferences.timeoutRules != Rules.TO_RULES.NONE && value == 0;
+        return preferences.timeoutRules != Rules.TimeoutRules.NONE && value == 0;
     }
 
 
