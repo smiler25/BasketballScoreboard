@@ -36,11 +36,16 @@ android {
             signingConfig signingConfigs.config
             applicationIdSuffix ""
             applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def fileName = "basketball_scoreboard_" + variant.versionName + ".apk"
-                    output.outputFileName = new File(output.outputFile.parent, fileName)
+                variant.outputs.all {
+                    outputFileName = "${variant.name}-${variant.versionName}.apk"
                 }
             }
+//            applicationVariants.all { variant ->
+//                variant.outputs.each { output ->
+//                    def fileName = "basketball_scoreboard_" + variant.versionName + ".apk"
+//                    output.outputFileName = new File(output.outputFile.parent, fileName)
+//                }
+//            }
         }
         debug {
             versionNameSuffix '-debug'

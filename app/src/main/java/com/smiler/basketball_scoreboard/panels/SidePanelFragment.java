@@ -324,7 +324,7 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
 
     public TreeMap<Integer, SidePanelRow> getInactivePlayers() {
         TreeMap<Integer, SidePanelRow> res = new TreeMap<>();
-        for (TreeMap.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
+        for (Map.Entry<Integer, SidePanelRow> entry : rows.entrySet()) {
             if (!activePlayers.contains(entry.getValue())) {
                 res.put(entry.getValue().getNumber(), entry.getValue());
             }
@@ -417,9 +417,9 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    public boolean saveCurrentData() {
+    public void saveCurrentData() {
         if (rows.size() == 0) {
-            return true;
+            return;
         }
 
         final String team = Boolean.toString(left);
@@ -440,17 +440,15 @@ public class SidePanelFragment extends Fragment implements View.OnClickListener,
                         .setActive(row.getSelected());
             }
         });
-        return true;
     }
 
-    public boolean savePlayers(Team team) {
+    public void savePlayers(Team team) {
         this.team = team;
         if (rows.size() == 0) {
-            return true;
+            return;
         }
 
         RealmController.with().createPlayers(team, rows.values());
-        return true;
     }
 
     public static void clearCurrentData() {

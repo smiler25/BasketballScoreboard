@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class GameDetails extends RealmObject {
     private String playByPlay;
+    private String protocol;
     private int leadChanged;
     private int homeMaxLead;
     private int guestMaxLead;

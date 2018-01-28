@@ -68,7 +68,11 @@ class Migration implements RealmMigration {
                     .removeField("share_string")
                     .removeField("regular_periods");
 
-//            oldVersion++;
+            oldVersion++;
+        }
+        if (oldVersion == 2) {
+            RealmObjectSchema resultsSchema = schema.get("GameDetails");
+            resultsSchema.addField("protocol", String.class);
         }
     }
 }

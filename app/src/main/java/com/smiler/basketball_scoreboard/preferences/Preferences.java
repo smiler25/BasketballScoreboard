@@ -6,7 +6,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 
-import com.smiler.basketball_scoreboard.ProtocolTypes;
+import com.smiler.basketball_scoreboard.results.PlayByPlayTypes;
+import com.smiler.basketball_scoreboard.results.ProtocolTypes;
 import com.smiler.basketball_scoreboard.R;
 import com.smiler.basketball_scoreboard.Rules;
 import com.smiler.basketball_scoreboard.layout.BaseLayout;
@@ -43,7 +44,7 @@ public class Preferences {
     public int autoSound, actualTime;
     public Rules.TimeoutRules timeoutRules;
     public BaseLayout.GameLayoutTypes layoutType;
-    public int playByPlay;
+    public PlayByPlayTypes playByPlay;
     public boolean fixLandscape, fixLandscapeChanged;
     public boolean layoutChanged, timeoutsRulesChanged;
     public boolean autoShowTimeout, autoShowBreak;
@@ -146,7 +147,7 @@ public class Preferences {
         SidePanelRow.setMaxFouls(prefs.getInt(PrefActivity.PREF_SIDE_PANELS_FOULS_MAX, DEFAULT_FIBA_PLAYER_FOULS));
 
         restartShotTimer = prefs.getBoolean(PrefActivity.PREF_SHOT_TIME_RESTART, true);
-        playByPlay = Integer.parseInt(prefs.getString(PrefActivity.PREF_PLAY_BY_PLAY, "0"));
+        playByPlay = PlayByPlayTypes.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_PLAY_BY_PLAY, "0")));
         protocolType = ProtocolTypes.fromInteger(Integer.parseInt(prefs.getString(PrefActivity.PREF_PROTOCOL, "0")));
 
         boolean arrowsOn_ = prefs.getBoolean(PrefActivity.PREF_POSSESSION_ARROWS, false);

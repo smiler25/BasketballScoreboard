@@ -143,6 +143,7 @@
     <string name="results_detail">Detail:</string>
     <string name="results_boxscore">Boxscore:</string>
     <string name="results_play_by_play">Play-by-play:</string>
+    <string name="results_protocol">Protocol:</string>
 
     <string name="profile_stats">Statistics:</string>
     <string name="profile_players">Players:</string>

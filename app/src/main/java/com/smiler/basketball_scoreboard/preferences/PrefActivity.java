@@ -78,7 +78,6 @@ public class PrefActivity extends Activity implements
 
     private SharedPreferences prefs;
     private Toolbar toolbar;
-//    private final List<String> restartPrefs = Arrays.asList(PREF_DIRECT_TIMER);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

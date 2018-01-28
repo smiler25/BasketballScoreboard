@@ -14,7 +14,7 @@ public class RealmController {
     private static RealmController instance;
     protected final Realm realm;
     public static String realmName = "main.realm";
-    private final int dbVersion = 2;
+    private static final int dbVersion = 3;
 
     protected RealmController() {
         RealmConfiguration realmConfig = new RealmConfiguration.Builder()

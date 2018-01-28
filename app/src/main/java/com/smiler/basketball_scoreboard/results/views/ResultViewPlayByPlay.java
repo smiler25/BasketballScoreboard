@@ -40,7 +40,7 @@ class ResultViewPlayByPlay extends DetailViewExpandable {
         int periods = data.length();
         int count;
         ActionRecord record;
-        JSONArray period_data;
+        JSONArray periodData;
         String left, center, right;
         String recordFmt = "%s: %s";
         String text;
@@ -53,10 +53,10 @@ class ResultViewPlayByPlay extends DetailViewExpandable {
             table.addView(new ResultViewPlayByPlayRow(context, hName, gName));
             for (int i = 0; i < periods; i++) {
                 table.addView(new ResultViewPlayByPlayRow(context, String.format(quarterFmt, i+1)));
-                period_data = data.getJSONArray(i);
-                count = period_data.length();
+                periodData = data.getJSONArray(i);
+                count = periodData.length();
                 for (int y = 0; y < count; y++) {
-                    record = new ActionRecord(period_data.getJSONObject(y));
+                    record = new ActionRecord(periodData.getJSONObject(y));
                     time = record.getTime();
                     mainTimeFormat = 0 < time && time < SECONDS_60 ? TIME_FORMAT_MILLIS : TIME_FORMAT;
                     center = mainTimeFormat.format(time);

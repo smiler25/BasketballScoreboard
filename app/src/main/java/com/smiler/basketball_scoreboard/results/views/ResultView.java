@@ -12,6 +12,7 @@ import com.smiler.basketball_scoreboard.db.PlayersResults;
 import com.smiler.basketball_scoreboard.db.RealmController;
 import com.smiler.basketball_scoreboard.db.Results;
 import com.smiler.basketball_scoreboard.game.InGamePlayer;
+import com.smiler.basketball_scoreboard.results.Protocol;
 import com.smiler.basketball_scoreboard.results.Result;
 import com.smiler.basketball_scoreboard.results.ResultGameDetails;
 
@@ -52,6 +53,7 @@ public class ResultView extends LinearLayout {
         TreeMap<String, ArrayList<InGamePlayer>> playersData = getPlayersContent();
         TreeMap<String, Integer> detailData = getDetailContent();
         JSONArray playByPlay = getPlayByPlay();
+        Protocol protocol = getProtocol();
 
         long date = result.getDate();
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
@@ -70,6 +72,19 @@ public class ResultView extends LinearLayout {
         }
 
         if (playByPlay != null && playByPlay.length() > 0) {
+            SparseArray<InGamePlayer> hPlayers = new SparseArray<>();
+            SparseArray<InGamePlayer> gPlayers = new SparseArray<>();
+            if (!playersData.isEmpty()) {
+                for (Map.Entry<String, ArrayList<InGamePlayer>> entry : playersData.entrySet()) {
+                    SparseArray<InGamePlayer> players = entry.getKey().equals(result.getHomeName()) ? hPlayers : gPlayers;
+                    for (InGamePlayer player : entry.getValue()) {
+                        players.put(player.getNumber(), player);
+                    }
+                }
+            }
+            layout.addView(new ResultViewPlayByPlay(getContext(), playByPlay, hPlayers, gPlayers, result.getHomeName(), result.getGuestName()));
+        }
+        if (protocol != null) {
             SparseArray<InGamePlayer> hPlayers = new SparseArray<>();
             SparseArray<InGamePlayer> gPlayers = new SparseArray<>();
             if (!playersData.isEmpty()) {
@@ -170,5 +185,17 @@ public class ResultView extends LinearLayout {
             }
         }
         return result;
+    }
+
+    private Protocol getProtocol() {
+        GameDetails details = gameResult.getDetails();
+        if (details == null) {
+            return null;
+        }
+        String protocolString = details.getProtocol();
+        if (protocolString == null || protocolString.isEmpty()) {
+            return null;
+        }
+        return new Protocol(protocolString);
     }
 }

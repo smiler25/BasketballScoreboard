@@ -61,6 +61,7 @@ import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
 import com.smiler.basketball_scoreboard.profiles.TeamsActivity;
+import com.smiler.basketball_scoreboard.results.PlayByPlayTypes;
 import com.smiler.basketball_scoreboard.results.ResultsActivity;
 
 import java.io.File;
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        if (preferences.playByPlay != 0 && game != null && game.cancelLastAction()) {
+        if (preferences.playByPlay != PlayByPlayTypes.NONE && game != null && game.cancelLastAction()) {
             return;
         }
 

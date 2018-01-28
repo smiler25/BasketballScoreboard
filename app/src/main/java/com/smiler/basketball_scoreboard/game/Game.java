@@ -25,6 +25,9 @@ import com.smiler.basketball_scoreboard.layout.PlayersPanels;
 import com.smiler.basketball_scoreboard.panels.SidePanelRow;
 import com.smiler.basketball_scoreboard.preferences.PrefActivity;
 import com.smiler.basketball_scoreboard.preferences.Preferences;
+import com.smiler.basketball_scoreboard.results.PlayByPlayTypes;
+import com.smiler.basketball_scoreboard.results.Protocol;
+import com.smiler.basketball_scoreboard.results.ProtocolTypes;
 import com.smiler.basketball_scoreboard.results.Result;
 
 import java.util.Date;
@@ -79,6 +82,7 @@ public class Game {
     private int possession = NO_TEAM;
     public long mainTime, shotTime;
     private long startTime, totalTime;
+    private long timeFromGameStart, timeFromPeriodStart;
     private boolean infiniteDirectTimer;
     private long timeoutFullDuration;
     private short hScore, gScore;
@@ -108,6 +112,7 @@ public class Game {
 
     private Preferences preferences;
     private Result gameResult;
+    private Protocol protocol;
     private SharedPreferences statePref;
     private boolean showTimeoutDialog;
 
@@ -162,6 +167,7 @@ public class Game {
     private void initNewGame() {
         preferences.read();
         gameResult = new Result(hName, gName);
+        protocol = new Protocol(hName, gName);
         if (listener != null) {
             if (layout == null) {
                 layout = listener.onInitLayout();
@@ -183,6 +189,7 @@ public class Game {
     public void initNewGameSameTeams() {
         preferences.read();
         gameResult = new Result(hName, gName);
+        protocol = new Protocol(hName, gName);
         if (listener != null) {
             if (layout == null) {
                 layout = listener.onInitLayout();
@@ -204,9 +211,11 @@ public class Game {
         }
         handleTeams();
         leftIsHome = true;
+        gameSaved = false;
     }
 
     private void setZeroState() {
+        timeFromGameStart = 0;
         if (preferences.useDirectTimer) {
             totalTime = preferences.mainTimePref;
             mainTime = 0;
@@ -520,6 +529,7 @@ public class Game {
             } else {
                 gameResult.addPeriodScores(hScore, gScore);
             }
+            protocol.completePeriod();
             scoreSaved = true;
         }
     }
@@ -563,8 +573,11 @@ public class Game {
                     .setHomeMaxLead(hMaxLead)
                     .setGuestMaxLead(gMaxLead)
                     .setTie(timesTie);
-            if (preferences.playByPlay == 2) {
+            if (preferences.playByPlay == PlayByPlayTypes.SAVE) {
                 details.setPlayByPlay(gameResult.getString());
+            }
+            if (preferences.getProtocolType() != ProtocolTypes.NONE) {
+                details.setProtocol(protocol.getString());
             }
             result.setDetails(details);
 
@@ -649,7 +662,7 @@ public class Game {
     }
 
     private void addAction(Actions action, int team, int value) {
-        if (preferences.playByPlay != 0) {
+        if (preferences.playByPlay != PlayByPlayTypes.NONE) {
             lastAction = gameResult.addAction(mainTime, action, team, value);
         }
     }
@@ -693,6 +706,7 @@ public class Game {
                 revertTimeout20(lastAction.getTeam());
                 break;
         }
+        protocol.deleteLastRecord();
         return true;
     }
 
@@ -1100,6 +1114,7 @@ public class Game {
     public void newPeriod(boolean next) {
         pauseGame();
         changedUnder2Minutes = false;
+        timeFromPeriodStart = 0;
         if (next) {
             period++;
         } else {
@@ -1123,6 +1138,7 @@ public class Game {
 
     public void newPeriod(int type) {
         mainTickInterval = SECOND;
+        timeFromPeriodStart = 0;
         switch (type) {
             case REGULAR_PERIOD:
                 mainTime = preferences.mainTimePref;
@@ -1752,34 +1768,38 @@ public class Game {
             return;
         }
         if (left == leftIsHome) {
-            hPlayerAction(player);
+            homePlayerAction(player);
         } else {
-            gPlayerAction(player);
+            guestPlayerAction(player);
         }
         if (lastAction != null) {
             lastAction.setNumber(player.getNumber());
         }
     }
 
-    private void hPlayerAction(SidePanelRow player) {
+    private void homePlayerAction(SidePanelRow player) {
         if (hActionType != null) {
             if (hActionType == Actions.SCORE) {
                 player.changePoints(hActionValue);
             } else if (hActionType == Actions.FOUL) {
                 player.changeFouls(hActionValue);
             }
+            protocol.addRecord(hActionType, hActionValue, HOME, player.getNumber(), period,
+                    timeFromPeriodStart, timeFromGameStart);
             hActionType = null;
             hActionValue = 0;
         }
     }
 
-    private void gPlayerAction(SidePanelRow player) {
+    private void guestPlayerAction(SidePanelRow player) {
         if (gActionType != null) {
             if (gActionType == Actions.SCORE) {
                 player.changePoints(gActionValue);
             } else if (gActionType == Actions.FOUL) {
                 player.changeFouls(gActionValue);
             }
+            protocol.addRecord(gActionType, gActionValue, GUEST, player.getNumber(), period,
+                    timeFromPeriodStart, timeFromGameStart);
             gActionType = null;
             gActionValue = 0;
         }
