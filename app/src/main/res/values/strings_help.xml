@@ -92,6 +92,8 @@
     <string name="appupdate_title">Update info</string>
     <string name="appupdate_info_link_help">help</string>
     <string name="appupdate_info">
+        v.3.1:\n
+          - added protocol.\n
         v.3.0.1:\n
           - fixed bug in results wide layout.\n
         v.3.0:\n
