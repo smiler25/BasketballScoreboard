@@ -37,7 +37,7 @@ android {
             applicationIdSuffix ""
             applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "${variant.name}-${variant.versionName}.apk"
+                    outputFileName = "basketball_scoreboard_${variant.name}-${variant.versionName}.apk"
                 }
             }
 //            applicationVariants.all { variant ->
