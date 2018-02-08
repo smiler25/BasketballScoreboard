@@ -87,14 +87,31 @@ class ResultViewPlayByPlay extends DetailViewExpandable {
 
     private String actionString(ActionRecord record) {
         Resources res = getResources();
-        switch (record.getAction()) {
-            case SCORE:
-                return res.getQuantityString(R.plurals.points, record.getValue(), record.getValue());
-            case FOUL:
-                return res.getString(R.string.foul);
-            case TIMEOUT:
-                return res.getString(R.string.timeout);
-            case TIMEOUT_20:
+        if (record.getAction() != null) {
+            switch (record.getAction()) {
+                case SCORE:
+                    return res.getQuantityString(R.plurals.points, record.getValue(), record.getValue());
+                case FOUL:
+                    return res.getString(R.string.foul);
+                case TIMEOUT:
+                    return res.getString(R.string.timeout);
+                case TIMEOUT_20:
+                    return res.getString(R.string.timeout20);
+                default:
+                    return "";
+            }
+        }
+
+//        deprecated
+//      -1:  // ACTION_NONE
+        switch (record.getType()) {
+            case  0:  // ACTION_PTS
+               return res.getQuantityString(R.plurals.points, record.getValue(), record.getValue());
+            case  1:  // ACTION_FLS
+               return res.getString(R.string.foul);
+            case  2:  // ACTION_TO
+               return res.getString(R.string.timeout);
+            case  3:  // ACTION_TO20
                 return res.getString(R.string.timeout20);
             default:
                 return "";

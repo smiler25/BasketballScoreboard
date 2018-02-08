@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
-class ResultViewBoxscore extends DetailViewExpandable {
+class ResultViewPlayersStats extends DetailViewExpandable {
 
-    public ResultViewBoxscore(Context context) {
+    public ResultViewPlayersStats(Context context) {
         super(context);
     }
 
-    ResultViewBoxscore(Context context, TreeMap<String, ArrayList<InGamePlayer>> result) {
-        super(context, R.string.results_boxscore);
+    ResultViewPlayersStats(Context context, TreeMap<String, ArrayList<InGamePlayer>> result) {
+        super(context, R.string.results_players_stats);
         addView(initView(context, result), true);
     }
 

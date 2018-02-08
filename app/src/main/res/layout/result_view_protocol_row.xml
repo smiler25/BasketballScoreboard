@@ -21,12 +21,12 @@
     <TextView
         android:id="@+id/protocol_period_time"
         style="@style/detailViewTableRowChild"
-        android:layout_weight="1.5"
+        android:layout_weight="1"
         />
     <TextView
         android:id="@+id/protocol_game_time"
         style="@style/detailViewTableRowChild"
-        android:layout_weight="1.5"
+        android:layout_weight="1"
         />
     <TextView
         android:id="@+id/protocol_r_player"

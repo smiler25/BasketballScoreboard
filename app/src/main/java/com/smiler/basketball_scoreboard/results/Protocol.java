@@ -32,7 +32,7 @@ public class Protocol {
                 for (int y = 0; y < periodData.length(); y++) {
                     currentPeriod.add(new ProtocolRecord(periodData.getJSONObject(y)));
                 }
-                periods.add(currentPeriod);
+                periods.add(new ArrayList<>(currentPeriod));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -40,8 +40,7 @@ public class Protocol {
     }
 
     public void addRecord(Actions action, int value, int team, int playerNumber, short period, long periodTime, long gameTime) {
-        ProtocolRecord record = new ProtocolRecord(action, value, team, playerNumber, period, periodTime, gameTime);
-        currentPeriod.add(record);
+        currentPeriod.add(new ProtocolRecord(action, value, team, playerNumber, period, periodTime, gameTime));
     }
 
     public void deleteLastRecord() {
@@ -51,10 +50,7 @@ public class Protocol {
     }
 
     public void completePeriod() {
-        if (currentPeriod.isEmpty()) {
-            return;
-        }
-        periods.add(currentPeriod);
+        periods.add(new ArrayList<>(currentPeriod));
         currentPeriod.clear();
     }
 

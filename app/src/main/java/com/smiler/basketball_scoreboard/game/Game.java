@@ -81,8 +81,7 @@ public class Game {
     private boolean directTimerStopped;
     private int possession = NO_TEAM;
     public long mainTime, shotTime;
-    private long startTime, totalTime;
-    private long timeFromGameStart, timeFromPeriodStart;
+    private long startTime, totalTime, prevPeriodsTime;
     private boolean infiniteDirectTimer;
     private long timeoutFullDuration;
     private short hScore, gScore;
@@ -215,7 +214,6 @@ public class Game {
     }
 
     private void setZeroState() {
-        timeFromGameStart = 0;
         if (preferences.useDirectTimer) {
             totalTime = preferences.mainTimePref;
             mainTime = 0;
@@ -223,6 +221,7 @@ public class Game {
             mainTime = totalTime = preferences.mainTimePref;
             infiniteDirectTimer = false;
         }
+        prevPeriodsTime = 0;
 
         layout.setMainTimeFormat(TIME_FORMAT);
         layout.setMainTimeText(mainTime);
@@ -1109,12 +1108,24 @@ public class Game {
         }
     }
 
+    private long getTimeFromGameStart() {
+        if (preferences.useDirectTimer) {
+            return prevPeriodsTime + mainTime;
+        }
+        return prevPeriodsTime + totalTime - mainTime;
+    }
+
+    private long getTimeFromPeriodStart() {
+        if (preferences.useDirectTimer) {
+            return mainTime;
+        }
+        return totalTime - mainTime;
+    }
 
     // period
     public void newPeriod(boolean next) {
         pauseGame();
         changedUnder2Minutes = false;
-        timeFromPeriodStart = 0;
         if (next) {
             period++;
         } else {
@@ -1138,7 +1149,6 @@ public class Game {
 
     public void newPeriod(int type) {
         mainTickInterval = SECOND;
-        timeFromPeriodStart = 0;
         switch (type) {
             case REGULAR_PERIOD:
                 mainTime = preferences.mainTimePref;
@@ -1161,6 +1171,13 @@ public class Game {
         }
         if (preferences.useDirectTimer) {
             mainTime = 0;
+        }
+        if (period == 1) {
+            prevPeriodsTime = 0;
+        } else if (period - 1 <= preferences.numRegularPeriods) {
+            prevPeriodsTime += preferences.mainTimePref;
+        } else {
+            prevPeriodsTime += preferences.overTimePref;
         }
         layout.setMainTimeFormat(TIME_FORMAT);
         layout.setMainTimeText(mainTime);
@@ -1781,11 +1798,13 @@ public class Game {
         if (hActionType != null) {
             if (hActionType == Actions.SCORE) {
                 player.changePoints(hActionValue);
+                protocol.addRecord(hActionType, hScore, HOME, player.getNumber(), period,
+                        getTimeFromPeriodStart(), getTimeFromGameStart());
             } else if (hActionType == Actions.FOUL) {
                 player.changeFouls(hActionValue);
+                protocol.addRecord(hActionType, hFouls, HOME, player.getNumber(), period,
+                        getTimeFromPeriodStart(), getTimeFromGameStart());
             }
-            protocol.addRecord(hActionType, hActionValue, HOME, player.getNumber(), period,
-                    timeFromPeriodStart, timeFromGameStart);
             hActionType = null;
             hActionValue = 0;
         }
@@ -1795,11 +1814,13 @@ public class Game {
         if (gActionType != null) {
             if (gActionType == Actions.SCORE) {
                 player.changePoints(gActionValue);
+                protocol.addRecord(gActionType, gScore, GUEST, player.getNumber(), period,
+                        getTimeFromPeriodStart(), getTimeFromGameStart());
             } else if (gActionType == Actions.FOUL) {
                 player.changeFouls(gActionValue);
+                protocol.addRecord(gActionType, gFouls, GUEST, player.getNumber(), period,
+                        getTimeFromPeriodStart(), getTimeFromGameStart());
             }
-            protocol.addRecord(gActionType, gActionValue, GUEST, player.getNumber(), period,
-                    timeFromPeriodStart, timeFromGameStart);
             gActionType = null;
             gActionValue = 0;
         }

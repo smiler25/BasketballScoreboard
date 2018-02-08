@@ -141,7 +141,7 @@
     <string name="no_results">No saved games</string>
 
     <string name="results_detail">Detail:</string>
-    <string name="results_boxscore">Boxscore:</string>
+    <string name="results_players_stats">Players statistics:</string>
     <string name="results_play_by_play">Play-by-play:</string>
     <string name="results_protocol">Protocol:</string>
 
@@ -152,6 +152,12 @@
     <string name="team_wins">Wins: %1$d</string>
     <string name="team_avg_pts">Average points: %1$s</string>
     <string name="team_avg_pts_opp">Opponent average points: %1$s</string>
+
+    <string name="score">Score</string>
+    <string name="home_player">Home player</string>
+    <string name="guest_player">Guest player</string>
+    <string name="game_time">Game time</string>
+    <string name="period_time">Period time</string>
 
     <string name="tie">Score tie</string>
     <string name="lead_changed">Lead changed</string>

@@ -99,7 +99,7 @@
     <string name="cab_success">Результаты удалены</string>
     <string name="no_results">Нет сохраненных игр</string>
     <string name="camera_take_picture">Сделать снимок</string>
-    <string name="results_boxscore">Протокол:</string>
+    <string name="results_players_stats">Статистика игроков:</string>
     <string name="results_detail">Подробно:</string>
     <string name="results_play_by_play">Ход игры:</string>
     <string name="results_protocol">Протокол:</string>
@@ -180,5 +180,10 @@
     <string name="team_already_selected_dialog_msg">Нажмите ДА, чтобы удалить текущих игроков с данными. Нажмите НЕТ, чтобы оставить текущую команду.</string>
     <string name="edit_player_dialog_error">Произошла ошибка. Невозможно сохранить игрока</string>
     <string name="toast_team_saved">Команда %1$s сохранена</string>
+    <string name="score">Счёт</string>
+    <string name="home_player">Игрок хозяев</string>
+    <string name="guest_player">Игрок гостей</string>
+    <string name="period_time">Время периода</string>
+    <string name="game_time">Время игры</string>
 
 </resources>

@@ -68,7 +68,7 @@ public class ResultView extends LinearLayout {
         }
 
         if (!playersData.isEmpty()) {
-            layout.addView(new ResultViewBoxscore(getContext(), playersData));
+            layout.addView(new ResultViewPlayersStats(getContext(), playersData));
         }
 
         if (playByPlay != null && playByPlay.length() > 0) {
@@ -85,17 +85,7 @@ public class ResultView extends LinearLayout {
             layout.addView(new ResultViewPlayByPlay(getContext(), playByPlay, hPlayers, gPlayers, result.getHomeName(), result.getGuestName()));
         }
         if (protocol != null) {
-            SparseArray<InGamePlayer> hPlayers = new SparseArray<>();
-            SparseArray<InGamePlayer> gPlayers = new SparseArray<>();
-            if (!playersData.isEmpty()) {
-                for (Map.Entry<String, ArrayList<InGamePlayer>> entry : playersData.entrySet()) {
-                    SparseArray<InGamePlayer> players = entry.getKey().equals(result.getHomeName()) ? hPlayers : gPlayers;
-                    for (InGamePlayer player : entry.getValue()) {
-                        players.put(player.getNumber(), player);
-                    }
-                }
-            }
-            layout.addView(new ResultViewPlayByPlay(getContext(), playByPlay, hPlayers, gPlayers, result.getHomeName(), result.getGuestName()));
+            layout.addView(new ResultViewProtocol(getContext(), protocol));
         }
     }
 

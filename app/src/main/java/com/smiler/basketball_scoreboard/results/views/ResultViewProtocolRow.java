@@ -11,11 +11,10 @@ import static com.smiler.basketball_scoreboard.Constants.HOME;
 import static com.smiler.basketball_scoreboard.Constants.TIME_FORMAT;
 
 class ResultViewProtocolRow extends TableRow {
-
-    public ResultViewProtocolRow(Context context) {
+    ResultViewProtocolRow(Context context) {
         super(context);
-        inflate(context, R.layout.result_view_info_table_row, this);
-        setBackground(getResources().getDrawable(R.drawable.res_score_header_shape));
+        inflate(context, R.layout.result_view_protocol_row, this);
+        setBackground(getResources().getDrawable(R.drawable.res_score_footer_shape));
     }
 
     ResultViewProtocolRow(Context context, String text) {
@@ -27,9 +26,13 @@ class ResultViewProtocolRow extends TableRow {
 
     ResultViewProtocolRow(Context context, String hName, String gName) {
         super(context);
-        inflate(context, R.layout.result_view_play_by_play_row, this);
-        ((TextView) findViewById(R.id.results_play_by_play_left)).setText(hName);
-        ((TextView) findViewById(R.id.results_play_by_play_right)).setText(gName);
+        inflate(context, R.layout.result_view_protocol_row, this);
+        ((TextView) findViewById(R.id.protocol_l_player)).setText(R.string.home_player);
+        ((TextView) findViewById(R.id.protocol_r_player)).setText(R.string.guest_player);
+        ((TextView) findViewById(R.id.protocol_l_score)).setText(R.string.score);
+        ((TextView) findViewById(R.id.protocol_r_score)).setText(R.string.score);
+        ((TextView) findViewById(R.id.protocol_period_time)).setText(R.string.period_time);
+        ((TextView) findViewById(R.id.protocol_game_time)).setText(R.string.game_time);
         setBackground(getResources().getDrawable(R.drawable.res_score_header_shape));
     }
 

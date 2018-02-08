@@ -18,25 +18,28 @@ class ResultViewProtocol extends DetailViewExpandable {
     }
 
     ResultViewProtocol(Context context, Protocol protocol) {
-        super(context, R.string.results_play_by_play);
+        super(context, R.string.results_protocol);
         addView(initView(context, protocol), true);
     }
 
     private View initView(Context context, Protocol protocol) {
-//        String quarterFmt = "%s " + getResources().getString(R.string.quarter);
+        String quarterFmt = "%s " + getResources().getString(R.string.quarter);
         TableLayout table = getTable(context);
         table.addView(new ResultViewProtocolRow(context, protocol.getHomeName(), protocol.getGuestName()));
-        int totalPeriods = protocol.getPeriods().size();
-        boolean even = true;
+        boolean even;
+        short currentPeriod = 1;
         for (ArrayList<ProtocolRecord> period : protocol.getPeriods()) {
-//            table.addView(new ResultViewProtocolRow(context, String.format(quarterFmt, i+1)));
+            even = true;
+            table.addView(new ResultViewProtocolRow(context, String.format(quarterFmt, currentPeriod)));
             for (ProtocolRecord record : period) {
                 if (record.getAction() == Actions.SCORE) {
                     table.addView(new ResultViewProtocolRow(context, record, even));
+                    even = !even;
                 }
             }
-            even = !even;
+            currentPeriod += 1;
         }
+        table.addView(new ResultViewProtocolRow(context));
         return table;
     }
 }
